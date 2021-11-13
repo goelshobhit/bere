@@ -1,0 +1,533 @@
+const db = require("../models");
+const Users = db.users;
+const crypto = require("crypto");
+const User_profile = db.user_profile;
+const User_social_ext = db.user_social_ext;
+const mailer = require("../middleware/mailer.js");
+const Op = db.Sequelize.Op;
+const upload = require("../middleware/upload");
+const common = require("../common");
+const setSaltAndPassword = user => {
+    if (user.changed("u_pass")) {
+        user.u_salt = Users.generateSalt();
+        user.u_pass = Users.encryptPassword(user.u_pass, user.u_salt);
+    }
+};
+Users.beforeCreate(setSaltAndPassword);
+Users.beforeUpdate(setSaltAndPassword);
+/**
+ * Function to add new User
+ * @param  {object}  req expressJs request object
+ * @param  {object}  res expressJs response object
+ * @return {Promise}
+ */
+exports.createNewUser = async (req, res) => {
+    const body = req.body;   
+	console.log(body);
+	if (!req.body["User Type"]) {
+	res.status(500).send({
+	message: "User type required"
+	});
+	return
+	}
+	var login_type=req.body["User Type"];
+	if(login_type=='Instagram'){
+    const UserDetails = await Users.findOne({
+        where: {
+            u_instagram_id: req.body["Instagram id"]
+        }
+    });	
+    if (UserDetails) {		
+        res.status(200).send({
+            message: "Aleary Registered"
+		});
+        return;
+    }
+	}
+	if(login_type=='Normal' || login_type=='Gmail'){
+    const UserDetails = await Users.findOne({
+        where: {
+            u_email: req.body["User email"]
+        }
+    });
+	
+    if (UserDetails) {		
+        res.status(200).send({
+            message: "Aleary Registered"
+		});
+        return;
+    }
+	}
+	if(login_type=='Ymail'){
+    const UserDetails = await Users.findOne({
+        where: {
+            u_ymail_id: req.body["Ymail id"]
+        }
+    });
+	
+    if (UserDetails) {		
+        res.status(200).send({
+            message: "Aleary Registered"
+		});
+        return;
+    }
+	}	
+    const data = {
+		"u_acct_type": body.hasOwnProperty("Account type") ? req.body["Account type"] : 0,
+		"u_referer_id": body.hasOwnProperty("Referer id") ? req.body["Referer id"] : 0,
+		"u_act_sec": body.hasOwnProperty("User act sec") ? req.body["User act sec"] : 0,
+		"u_login": body.hasOwnProperty("User login") ? req.body["User login"] : "",
+		"u_pass": body.hasOwnProperty("User password") ? req.body["User password"] : "",
+		"u_email": req.body["User email"],
+		 "au_salt": Users.generateSalt(),
+		"u_active": body.hasOwnProperty("User status") ? req.body["User status"] : true,
+		"u_fb_username": body.hasOwnProperty("User fb name") ? req.body["User fb name"] : "",
+		"u_fb_id": body.hasOwnProperty("Fb id") ? req.body["Fb id"] : "",
+		"u_gmail_username": body.hasOwnProperty("User gmail name") ? req.body["User gmail name"] : "",
+		"u_gmail_id": body.hasOwnProperty("Gmail id") ? req.body["Gmail id"] : "",
+		"u_ymail_username": body.hasOwnProperty("User ymail name") ? req.body["User ymail name"] : "",
+		"u_ymail_id": body.hasOwnProperty("Ymail id") ? req.body["Ymail id"] : "",
+		"u_pref_login": body.hasOwnProperty("User pref login") ? req.body["User pref login"] : 0,
+		"u_instagram_username": body.hasOwnProperty("User instagram name") ? req.body["User instagram name"] : "",
+		"u_instagram_id": body.hasOwnProperty("Instagram id") ? req.body["Instagram id"] : ""
+    }
+    Users.create(data)
+        .then(data => {
+			User_profile.create({u_id:data.u_id});
+			User_social_ext.create({u_id:data.u_id});
+            res.status(201).send({			    
+                message: "User Added Successfully",
+                user_details:data,
+				access_token:common.genrateToken(data.u_id)
+            });
+        })
+        .catch(err => {
+            res.status(500).send({
+                message: err.message || "Some error occurred while creating the User."
+            });
+        });
+}
+/**
+ * Function to get all admin Role
+ * @param  {object}  req expressJs request object
+ * @param  {object}  res expressJs response object
+ * @return {Promise}
+ */
+exports.listing = async (req, res) => {
+    const pageSize = parseInt(req.query.pageSize || 10);
+    const pageNumber = parseInt(req.query.pageNumber || 1);
+    const skipCount = (pageNumber - 1) * pageSize;
+    const sortBy = req.query.sortBy || 'u_id'
+    const sortOrder = req.query.sortOrder || 'DESC'
+    const sortVal = req.query.sortVal;
+    var options = {       
+        limit: pageSize,
+        offset: skipCount,
+        order: [
+            [sortBy, sortOrder]
+        ],
+		attributes:["u_id","u_referer_id","u_acct_type","u_act_sec","u_email","u_active","u_fb_username","u_fb_id","u_gmail_username","u_gmail_id","u_ymail_username","u_ymail_id","u_pref_login","u_instagram_username","u_instagram_id","u_created_at","u_updated_at"],
+        where: {}
+    };
+    if (sortVal) {
+        var sortValue = sortVal.trim();
+        options.where = {
+            [sortBy]: {
+                [Op.iLike]: `%${sortValue}%`
+            }
+        }
+    }
+    var total = await Users.count({
+        where: options['where']
+    });
+    const users_list = await Users.findAll(options);
+    res.status(200).send({
+        data: users_list,
+        totalRecords: total
+    });
+}
+/**
+ * Function to get admin Role details
+ * @param  {object}  req expressJs request object
+ * @param  {object}  res expressJs response object
+ * @return {Promise}
+ */
+exports.userDetail = async (req, res) => {
+    const userID = req.params.userID;
+    const User = await Users.findOne({
+		include: [{
+            model: db.user_profile
+        },
+		{
+            model: db.user_social_ext
+        }
+		],
+		attributes:["u_id","u_referer_id","u_acct_type","u_act_sec","u_email","u_active","u_pref_login","u_created_at","u_updated_at"],
+        where: {
+            u_id: userID
+        }
+    });
+    if (!User) {
+        res.status(500).send({
+            message: "User not found"
+        });
+        return
+    }
+    res.status(200).send({
+        user_details: User
+    })
+}
+/**
+ * Function to update user details
+ * @param  {object}  req expressJs request object
+ * @param  {object}  res expressJs response object
+ * @return {Promise}
+ */
+exports.updateUser = async (req, res) => {
+    const id = req.params.userID;
+	if(!id){
+		res.status(404).send({
+            message: "User with id not found"
+        });
+		return;
+	}
+	if(req.body.u_pass){
+		res.status(500).send({
+            message: "User password can not be updated"
+        });
+		return;
+	}
+    Users.update(req.body, {
+        where: {
+            u_id: id
+        }
+    }).then(num => {
+        if (num == 1) {
+            res.status(200).send({
+                message: "User updated successfully."
+            });
+        } else {
+            res.status(400).send({
+                message: `Cannot update Role with id=${id}. Maybe User was not found or req.body is empty!`
+            });
+        }
+    }).catch(err => {
+        res.status(500).send({
+            message: "Error updating User with id=" + id
+        });
+		return;
+    });
+}
+/**
+ * Function to update user profile details
+ * @param  {object}  req expressJs request object
+ * @param  {object}  res expressJs response object
+ * @return {Promise}
+ */
+exports.updateUserProfile = async (req, res) => {
+    const id = req.params.userID;
+	if(!id){
+		res.status(404).send({
+            message: "User with id not found"
+        });
+		return;
+	}
+    User_profile.update(req.body, {
+        where: {
+            u_id: id
+        }
+    }).then(num => {
+        if (num == 1) {
+            res.status(200).send({
+                message: "User profile details updated successfully."
+            });
+        } else {
+            res.status(400).send({
+                message: `Cannot update Users with id=${id}. Maybe User was not found or req.body is empty!`
+            });
+        }
+    }).catch(err => {
+        res.status(500).send({
+            message: "Error updating User with id=" + id
+        });
+		return;
+    });
+}
+/**
+ * Function to update user social ext
+ * @param  {object}  req expressJs request object
+ * @param  {object}  res expressJs response object
+ * @return {Promise}
+ */
+exports.updateUsersocialExt = async (req, res) => {
+    const id = req.params.userID;
+	if(!id){
+		res.status(404).send({
+            message: "User with id not found"
+        });
+		return;
+	}
+    User_social_ext.update(req.body, {
+        where: {
+            u_id: id
+        }
+    }).then(num => {
+        if (num == 1) {
+            res.status(200).send({
+                message: "User social ext details updated successfully."
+            });
+        } else {
+            res.status(400).send({
+                message: `Cannot update Users with id=${id}. Maybe User social ext was not found or req.body is empty!`
+            });
+        }
+    }).catch(err => {
+        res.status(500).send({
+            message: "Error updating User social ext with id=" + id
+        });
+		return;
+    });
+}
+/**
+ * Function to check admin user credentials for login
+ * @param  {object}  req expressJs request object
+ * @param  {object}  res expressJs response object
+ * @return {Promise}
+ */
+exports.userlogin = async (req, res) => {
+    const {
+        username,
+        password,
+		login_type
+    } = req.body;
+	if(!login_type ||  !username) {
+        return res.status(422).send({
+            message: "Login details are required"
+        });
+    }
+	var uID=0;
+	switch(login_type) {
+case "Normal":
+	if (!username || !password) {
+        return res.status(422).send({
+            message: "email and password required"
+        });
+    }
+    const resultData = await Users.authenticate(username.toLowerCase(),'u_email');
+    if (!resultData) {
+        res.status(404).send({
+            message: "user does not exists"
+        });
+        return;
+    }
+    if(resultData.u_active !== true) {
+        res.status(404).send({
+            message: "Your account is deactivated by Admin"
+        });
+        return;
+    }
+    var user_password = Users.encryptPassword(password, resultData.u_salt);
+    if (user_password != resultData.u_pass) {
+        res.status(400).send({
+            message: "Email or Password is incorrect"
+        });
+        return;
+    }
+	uID=resultData.u_id;
+	break;
+case "Fb":
+	const resultFB = await Users.authenticate(username,'u_fb_id');
+    if (!resultFB) {
+        res.status(404).send({
+            message: "user does not exists"
+        });
+        return;
+    }
+    if(resultFB.u_active !== true) {
+        res.status(404).send({
+            message: "Your account is deactivated by Admin"
+        });
+        return;
+    }
+	uID=resultFB.u_id;
+	break;
+case "Gmail":
+	const resultGmail = await Users.authenticate(username,'u_gmail_id');
+    if (!resultGmail) {
+        res.status(404).send({
+            message: "user does not exists"
+        });
+        return;
+    }
+    if(resultGmail.u_active !== true) {
+        res.status(404).send({
+            message: "Your account is deactivated by Admin"
+        });
+        return;
+    }
+	uID=resultGmail.u_id;
+	break;
+case "Ymail":
+	const resultYmail = await Users.authenticate(username,'u_ymail_id');
+    if (!resultYmail) {
+        res.status(404).send({
+            message: "user does not exists"
+        });
+        return;
+    }
+    if(resultYmail.u_active !== true) {
+        res.status(404).send({
+            message: "Your account is deactivated by Admin"
+        });
+        return;
+    }
+	uID=resultYmail.u_id;
+	break;
+case "Instagram":
+    const resultInstagram = await Users.authenticate(username,'u_instagram_id');
+    if (!resultInstagram) {
+        res.status(404).send({
+            message: "user does not exists"
+        });
+        return;
+    }
+	if(resultInstagram.u_active !== true) {
+        res.status(404).send({
+            message: "Your account is deactivated by Admin"
+        });
+        return;
+    }
+	uID=resultInstagram.u_id;
+	break;
+default:
+	return res.status(422).send({
+            message: "Invalid Login"
+        });
+	}     
+    const UserDetails = await Users.findOne({
+		attributes:["u_id","u_referer_id","u_acct_type","u_act_sec","u_email","u_active","u_fb_username","u_fb_id","u_gmail_username","u_gmail_id","u_ymail_username","u_ymail_id","u_pref_login","u_instagram_username","u_instagram_id","u_created_at","u_updated_at"],
+        where: {
+            u_id: uID
+        }
+    });
+    var access_token = common.genrateToken(uID);
+    res.status(200).send({
+		message:"Login Successfully",
+        data: UserDetails,
+        access_token: access_token
+    });
+};
+/**
+ * [forgetPassword Function to change password of a user
+ * @param  {Object}  req expressJs request Object
+ * @param  {Object}  res expressJs request Object
+ * @return {Promise}
+ */
+exports.forgetPassword = async (req, res) => {
+    if (!req.body.email) {
+        res.status(400).send({
+            message: "Email can not be empty!"
+        });
+        return;
+    }
+    var emailId = req.body.email;
+	const resultData = await Users.authenticate(emailId.toLowerCase(),'u_email');
+	
+    if (!resultData) {
+        res.status(403).send({
+            message: " please enter valid user details"
+        });
+    } else {
+        var newpassword = crypto.randomBytes(8).toString("base64");
+		console.log(newpassword);
+        var new_salt = Users.generateSalt();
+        var gen_password = Users.encryptPassword(newpassword, new_salt);
+        const userData = {
+            u_pass: gen_password,
+            u_salt: new_salt
+        };
+        Users.update(userData, {
+            where: {
+                u_email: emailId
+            }
+        }).then(data => {
+            res.status(200).end();
+        });
+        var html =
+            "Dear " +
+            emailId +
+            " new password generated successfully.New Password is : " +
+            newpassword;
+        const message = {
+            from: "#",
+            to: emailId,
+            subject: "Forget Password: Request for new Passord",
+            html: html
+        };
+        mailer.sendMail(message);
+    }
+};
+/**
+ * [changePassword function to change password of the user
+ * @param  {[object]}  req request object
+ * @param  {[object]}  res response object
+ * @return {Promise}
+ */
+exports.changePassword = async (req, res) => {
+    if (
+        !req.body.current_password ||
+        !req.body.new_password ||
+        !req.body.confirm_password
+    ) {
+        return res.status(400).send({
+            message: " current_password,new password and confirm password required"
+        });
+    }
+    if (req.body.new_password != req.body.confirm_password) {
+        res.status(400).send({
+            message: "new password and confirm password does not match"
+        });
+        return;
+    }
+    var user_id = req.header(process.env.UKEY_HEADER || "x-api-key");
+    var new_password = req.body.new_password;
+    var current_password = req.body.current_password;
+    const user = Users.findOne({
+        where: {
+            u_id: user_id,
+            u_active: true
+        }
+    });
+    const resultData = await user;
+    if (resultData) {
+        var user_password = Users.encryptPassword(
+            current_password,
+            resultData.u_salt
+        );
+        if (user_password == resultData.u_pass) {
+            var salt = Users.generateSalt();
+            var createdpassword = Users.encryptPassword(new_password, salt);
+            const userData = {
+                u_pass: createdpassword,
+                u_salt: salt
+            };
+            Users.update(userData, {
+                where: {
+                    u_id: user_id
+                }
+            }).then(data => {
+                return res.status(200).send({
+					message: "password changed successfully"
+				});
+            });
+        } else {
+            res.status(400).send({
+                message: "Invalid user current password"
+            });
+        }
+    } else {
+        res.status(403).send({
+            message: "User does not Exit"
+        });
+    }
+};
