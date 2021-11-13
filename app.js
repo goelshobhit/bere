@@ -1,5 +1,4 @@
 const express = require("express");
-
 const bodyParser = require("body-parser");
 const cors = require("cors");
 require("dotenv").config();
@@ -81,8 +80,8 @@ const swaggerOptions = {
       description: "REST APIs to interact with app of Social Application",
       contact: {
         name: "SocialApp",
-        url: "https://earnki.com",
-        email: "Info@earnki.com"
+        url: "http://34.134.200.133:3015/",
+        email: "Info@socialapp.com"
       },
       servers: [
         {
@@ -221,7 +220,6 @@ require("./app/routes/comment_likes.routes")(app);
 require("./app/routes/post_reaction.routes")(app);
 require("./app/routes/post_report.routes")(app);
 require("./app/routes/audit_log.routes")(app);
-require("./app/routes/search.routes")(app);
 // set port, listen for requests
 const PORT = process.env.PORT || 3030;
 const server = https.createServer({
