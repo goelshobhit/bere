@@ -24,6 +24,17 @@ function Common() {
     }
   };
   Common.prototype.taskStatusArr = function() {
+    var taskSts = {
+        0: "Waiting for approval",
+        1: "Approved",
+        2: "Published",
+        3: "Draft",
+        4: "Closed",
+      5: "Cancelled"
+      };
+      return taskSts;  
+    };
+  Common.prototype.taskStatusArr = function() {
 	var taskSts = {
       0: "Waiting for approval",
       1: "Approved",
@@ -54,6 +65,14 @@ function Common() {
     };
     return campaignSts;  
   };
+  // Common.prototype.notifyGrpDelivMethodArr = function() {
+  //   var notifyGrpDelivMethods = {
+  //       0: "Inbox",
+  //       1: "Alert",
+  //       3: "Inbox and Alert"
+  //     };
+  //     return notifyGrpDelivMethods;  
+  //   };
   Common.prototype.reportQuestions = function() {
     var questions = {
         1: "Dangerous people",
@@ -194,7 +213,7 @@ Common.prototype.reactionsEmoji = function() {
             "campaign/delete": "DELETE/api/campaign"
           }
         },
-		{
+		    {
           "All Campaign": {
             "campaign/all": "GET/api/campaign"
           }
@@ -236,6 +255,33 @@ Common.prototype.reactionsEmoji = function() {
 		{
           "All Tasks": {
             "setting/all": "GET/api/admin_setting"
+          }
+        }
+      ],
+      "Notify Groups Rights": [
+        {
+          "View Notify Group": {
+            "notifyGrp/view": "GET/api/notify/groups/1"
+          }
+        },
+		   { 
+          "Add Notify Group": {
+            "notifyGrp/add": "POST/api/notify/groups"
+          }
+        },
+		    {
+          "Update Notify Group": {
+            "notifyGrp/update": "PUT/api/notify/groups"
+          }
+        },
+		    {
+          "Delete Notify Group": {
+            "notifyGrp/delete": "DELETE/api/notify/groups"
+          }
+        },
+		    {
+          "All Notify Groups": {
+            "notifyGrp/all": "GET/api/notify/groups"
           }
         }
       ]

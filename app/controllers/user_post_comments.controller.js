@@ -6,6 +6,7 @@ const audit_log = db.audit_log
 const Op = db.Sequelize.Op;
 const common = require("../common");
 const uploadComment = require("../middleware/uploadComment");
+const { Console } = require("winston/lib/winston/transports");
 /**
  * Function to add new Comment
  * @param  {object} req expressJs request object

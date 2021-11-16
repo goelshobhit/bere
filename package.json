@@ -34,6 +34,7 @@
     "path": "^0.12.7",
     "pg": "^8.3.3",
     "sequelize": "^6.3.5",
+    "sequelize-auto": "^0.8.5",
     "sequelize-cli": "^6.2.0",
     "sharp": "^0.27.0",
     "swagger-jsdoc": "^4.0.0",

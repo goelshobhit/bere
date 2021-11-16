@@ -76,6 +76,9 @@ db.post_report = require("./post_report.model")(sequelize, Sequelize);
 db.post_report = require("./post_report.model")(sequelize, Sequelize);
 db.user_fan_following = require("./user_fan_following.model")(sequelize, Sequelize);
 db.budget_history=require("./budget_history.model")(sequelize,Sequelize);
+db.notify_grp = require("./notify_grp.model.js")(sequelize, Sequelize);
+db.notify_event = require("./notify_event.model.js")(sequelize, Sequelize);
+db.notify_trig = require("./notify_trig.model.js")(sequelize, Sequelize);
 //email tempaltes 
 db.mail_templates=require("./mail_templates.model")(sequelize,Sequelize);
 db.user_feedback=require("./user_feedback.model")(sequelize,Sequelize);
@@ -130,7 +133,6 @@ db.tasks.hasMany(db.user_content_post, {foreignKey: 'ta_task_id', targetKey: 'ta
 
 db.user_content_post.belongsTo(db.contest_task, {as:'contestPosts',foreignKey: 'ta_task_id', targetKey: 'ct_id'});
 db.user_content_post.belongsTo(db.tasks, {as:'taskPosts',foreignKey: 'ta_task_id', targetKey: 'ta_task_id'});
-
 db.migrator = migrator;
 db.seeder = seeder;
 module.exports = db;
