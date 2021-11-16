@@ -1,0 +1,230 @@
+const db = require("../models");
+const UserProfile = db.user_profile;
+const Task = db.tasks;
+const ContestTask = db.contest_task;
+const Comment = db.post_comment;
+const SearchResults = db.search_results;
+const SearchObjects = db.search_objects;
+const Op = db.Sequelize.Op;
+const logger = require("../middleware/logger");
+const common = require("../common");
+
+/**
+ * Function to add search objects
+ * @param  {object} req expressJs request object
+ * @param  {object} res expressJs response object
+ * @return {Promise}
+*/
+exports.addSearchObject = async (req, res) => {
+  if (!req.body) {
+    res.status(400).send({
+      message: "search Object is required."
+    });
+    return;
+  }
+  SearchObjects.destroy({
+    where: {}
+  });
+  var searchObjectData = [];
+  var SearchData = req.body;
+  for (const SearchObject in SearchData) {
+    if (SearchData[SearchObject]) {
+      searchObjectData.push({
+        "search_obj_category": SearchObject
+      });
+    }
+  }
+  if (searchObjectData) {
+    SearchObjects.bulkCreate(searchObjectData).then(searchObjectAllData => {
+      const SearchObjectResultData = [];
+      for (const searchObjectDetail in searchObjectAllData) {
+        const SearchObjectResult = {};
+        SearchObjectResult.search_obj_id = searchObjectAllData[searchObjectDetail].search_obj_id;
+        SearchObjectResult.search_obj_category = searchObjectAllData[searchObjectDetail].search_obj_category;
+        SearchObjectResultData.push(SearchObjectResult);
+        }
+      res.status(200).send(SearchObjectResultData);
+    })
+      .catch(err => {
+        logger.log("error", "Some error occurred while creating the Search Objects=" + err);
+      });
+  }
+  return;
+}
+
+/**
+ * Function to get search object
+ * @param  {object}  req expressJs request object
+ * @param  {object}  res expressJs response object
+ * @return {Promise}
+ */
+exports.getSearchObject = async (req, res) => {
+  const searchObjectResult = await SearchObjects.findAll({
+    where: {},
+    attributes: ['search_obj_id', 'search_obj_category']
+  });
+ 
+  if (!searchObjectResult) {
+    res.status(500).send({
+      message: "Record not found"
+    });
+    return
+  }
+  res.status(200).send(searchObjectResult);
+}
+
+
+
+/**
+ * Function to get search result
+ * @param  {object}  req expressJs request object
+ * @param  {object}  res expressJs response object
+ * @return {Promise}
+ */
+exports.searchRecords = async (req, res) => {
+  const searchObjectConstant = common.searchObject();
+  if (!req.query.keyWord) {
+    res.status(400).send({
+      message: "Keyword is required parameters."
+    });
+    return;
+  }
+  const searchObjectValues = await SearchObjects.findAll({
+    where: {},
+    attributes: ['search_obj_category']
+  });
+  const keyWord = req.query.keyWord;
+  /* get Search result from search_results table */
+  const response_data = {};
+  var userId = req.header(process.env.UKEY_HEADER || "x-api-key");
+  var options = {
+    where: {
+      search_uid: userId
+    }
+  };
+  const Searchdata = await SearchResults.findAll(options);
+  var SearchUserCount = Searchdata.length;
+  if (Searchdata) {
+    for (var i = 0; i < SearchUserCount; i++) {
+      var FirstRecordId = Searchdata[0].id;
+      if (Searchdata[i].search_keyword == keyWord) {
+        res.status(200).send(Searchdata[i].search_results);
+        return;
+      }
+    }
+  }
+  for (var j = 0; j < searchObjectValues.length; j++) {
+    var searchObjectValue = searchObjectValues[j].search_obj_category.toLowerCase();
+    if (searchObjectValue == searchObjectConstant.Profile) {
+      var userOptions = {
+        where: {
+          u_display_name: {
+            [Op.iLike]: `%${keyWord}%`
+          }
+        }
+      };
+      const UserProfileDetails =  await UserProfile.findAll(userOptions);
+      if (UserProfileDetails.length) {
+        var UserProfileDisplayDetails = [];
+        for (const UserProfileDetail in UserProfileDetails) {
+          UserProfileDisplayDetails.push({
+             "u_display_name": UserProfileDetails[UserProfileDetail].u_display_name,
+              "u_f_name": UserProfileDetails[UserProfileDetail].u_f_name,
+              "u_l_name": UserProfileDetails[UserProfileDetail].u_l_name,
+              "u_prof_img_path": UserProfileDetails[UserProfileDetail].u_prof_img_path
+            });
+        }
+        response_data.Profile = UserProfileDisplayDetails;
+      }
+    }
+
+    if (searchObjectValue == searchObjectConstant.Comments) {
+      var commentOptions = {
+        where: {
+          pc_comments: {
+            [Op.iLike]: `%${keyWord}%`
+          }
+        }
+      };
+      const CommentsDetails =  await Comment.findAll(commentOptions);
+      if (CommentsDetails.length) {
+        var CommentsDisplayDetails = [];
+        for (const CommentsDetail in CommentsDetails) {
+          CommentsDisplayDetails.push({
+             "pc_comments": CommentsDetails[CommentsDetail].pc_comments,
+              "pc_comment_prof_img_url": CommentsDetails[CommentsDetail].pc_comment_prof_img_url
+            });
+        }
+        response_data.Comments = CommentsDisplayDetails;
+      }
+    }
+    if (searchObjectValue == searchObjectConstant.Tasks) {
+      var taskOptions = {
+        where: {
+          ta_name: {
+            [Op.iLike]: `%${keyWord}%`
+          }
+        }
+      };
+      const TaskDetails = await Task.findAll(taskOptions);
+      if (TaskDetails.length) {
+        const TaskDisplayDetails = [];
+        for (const TaskDetail in TaskDetails) {
+          TaskDisplayDetails.push({
+              "ta_name": TaskDetails[TaskDetail].ta_name,
+              "ta_post_insp_image": TaskDetails[TaskDetail].ta_post_insp_image,
+              "ta_header_image": TaskDetails[TaskDetail].ta_header_image,
+              "ta_do": TaskDetails[TaskDetail].ta_do,
+              "ta_dont_do": TaskDetails[TaskDetail].ta_dont_do,
+              "ta_insta_question": TaskDetails[TaskDetail].ta_insta_question
+            });
+        }
+        response_data.Tasks = TaskDisplayDetails;
+      }
+      
+    }
+    if (searchObjectValue == searchObjectConstant.Contest) {
+      var contentOptions = {
+        where: {
+          ct_name: {
+            [Op.iLike]: `%${keyWord}%`
+          }
+        }
+      };
+      const ContestTaskDetails = await ContestTask.findAll(contentOptions);
+      if (ContestTaskDetails.length) {
+        const ContestTaskDisplayDetails = [];
+        for (const ContestTaskDetail in ContestTaskDetails) {
+          ContestTaskDisplayDetails.push({
+              "ct_name": ContestTaskDetails[ContestTaskDetail].ct_name,
+              "ct_post_insp_image": ContestTaskDetails[ContestTaskDetail].ct_post_insp_image,
+              "ct_hashtag": ContestTaskDetails[ContestTaskDetail].ct_hashtag
+            });
+        }
+        response_data.Contest = ContestTaskDisplayDetails;
+      }
+    }
+  }
+  if (!Object.keys(response_data).length) {
+    res.status(500).send({
+      message: "Record not found"
+    });
+    return
+  }
+  const data = {  
+    "search_uid": userId,
+    "search_keyword": keyWord,
+    "search_results": response_data
+  }
+  if (FirstRecordId && SearchUserCount > common.searchUserCount()) {
+    SearchResults.destroy({
+      where: { id: FirstRecordId }
+    })
+  }
+  res.status(200).send(response_data);
+  SearchResults.create(data)
+    .catch(err => {
+      logger.log("error", "Some error occurred while creating the Campaign=" + err);
+    });
+
+}
