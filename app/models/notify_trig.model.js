@@ -6,7 +6,7 @@ module.exports = (sequelize, Sequelize) => {
             autoIncrement: true
         },
 		notify_event_id:{
-			type: Sequelize.TEXT,
+			type: Sequelize.INTEGER,
             allowNull: false,
 		},
 		notify_method:{
@@ -25,8 +25,8 @@ module.exports = (sequelize, Sequelize) => {
 			type: Sequelize.TEXT,
 			allowNull: false,
 		},
-		notify_trig_group_id:{
-			type: Sequelize.TEXT,
+		notify_trig_grp_id:{
+			type: Sequelize.INTEGER,
 		},
 		notify_group_name:{
 			type: Sequelize.TEXT,
@@ -43,11 +43,11 @@ module.exports = (sequelize, Sequelize) => {
 			type: Sequelize.DATE,
 			allowNull: false,
 		},
-		notify_push_id:{
+		notify_trig_push_id:{
 			type: Sequelize.INTEGER,
 			allowNull: false,
 		},
-		brand_id:{
+		cr_co_id:{
 			type: Sequelize.INTEGER,
 			allowNull: false,
 		}

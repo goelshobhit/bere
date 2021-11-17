@@ -13,7 +13,7 @@ module.exports = (sequelize, Sequelize) => {
 			type: Sequelize.INTEGER,
             allowNull: false,
         },
-        notify_brand_id: {
+        cr_co_id: {
 			type: Sequelize.INTEGER,
             allowNull: false,
         },

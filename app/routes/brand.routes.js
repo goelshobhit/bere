@@ -81,7 +81,7 @@ module.exports = app => {
      *                              type: string
      *                              example: Authorisation Required
      */
-    router.post("/brand", auth, Brands.createNewBrand);
+    router.post("/brand", Brands.createNewBrand);
 
     // Retrieve all Brands
     /**

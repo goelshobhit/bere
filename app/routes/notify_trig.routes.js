@@ -1,10 +1,10 @@
 module.exports = app => {
-    const NotifyGrp = require("../controllers/notify_grp.controller.js");
+    const NotifyTriggers = require("../controllers/notify_trig.controller.js");
     var router = require("express").Router();
     const auth = require("../middleware/auth");
   /**
    * @swagger
-   * /api/notify/groups:
+   * /api/notify/triggers:
    *   post:
    *     requestBody:
    *        required: false
@@ -13,22 +13,39 @@ module.exports = app => {
    *                schema:
    *                    type: object
    *                    properties:
+   *                        Event Id:
+   *                           type: integer
+   *                        Method:
+   *                           type: integer
+   *                        Pushalert:
+   *                           type: integer
+   *                        Message:
+   *                           type: string
+   *                        Group Id:
+   *                           type: integer
    *                        Group Name:
-   *                            type: integer
-   *                        Delivery Method:
-   *                            type: integer
-   *                        Sent Date:
-   *                            type: string
+   *                           type: integer
+   *                        Send Date:
    *                            format: date-time
    *                            example: 2020-09-30
+   *                        Ack:
+   *                            format: date-time
+   *                            example: 2020-09-30
+   *                        Trigger Status:
+   *                            format: date-time
+   *                            example: 2020-09-30
+   *                        Push Id:
+   *                           type: integer
+   *                        Brand Id:
+   *                           type: integer
    *     tags:
-   *       - Notify Groups
-   *     description: Add new Notify Groups
+   *       - Notify Triggers
+   *     description: Add new Notify Trigger
    *     produces:
    *       - application/json
    *     responses:
    *       201:
-   *         description: Add new Groups
+   *         description: Add new Triggers
    *       422:
    *         description: validation errors
    *       500:
@@ -44,10 +61,10 @@ module.exports = app => {
    *                              type: string
    *                              example: Authorisation Required
    */
-	router.post("/notify/groups", auth, NotifyGrp.createNotifyGrp);
+	router.post("/notify/triggers",auth, NotifyTriggers.createNotifyTrigger);
   /**
    * @swagger
-   * /api/notify/groups/{notifyTrigGrpId}:
+   * /api/notify/triggers/{notifyTriggerId}:
    *   put:
    *     requestBody:
    *        required: false
@@ -56,28 +73,42 @@ module.exports = app => {
    *                schema:
    *                    type: object
    *                    properties:
+   *                        Event Id:
+   *                           type: integer
+   *                        Method:
+   *                           type: integer
+   *                        Pushalert:
+   *                           type: integer
+   *                        Message:
+   *                           type: string
+   *                        Group Id:
+   *                           type: integer
    *                        Group Name:
-   *                            type: integer
-   *                        Delivery Method:
-   *                            type: integer
-   *                        Sent Date:
-   *                            type: string
-   *                            format: date-time
-   *                            example: 2020-09-30
+   *                           type: integer
+   *                        Send Date:
+   *                           type: integer
+   *                        Ack:
+   *                           type: integer
+   *                        Trigger Status:
+   *                           type: integer
+   *                        Push Id:
+   *                           type: integer
+   *                        Brand Id:
+   *                           type: integer
    *     parameters:
-   *         - name: notifyTrigGrpId
+   *         - name: notifyTrigId
    *           in: path
    *           required: true
    *           schema:
    *              type: string
    *     tags:
-   *       - Notify Groups
-   *     description: Update Notify Groups
+   *       - Notify Triggers
+   *     description: Update Notify Triggers
    *     produces:
    *       - application/json
    *     responses:
    *       201:
-   *         description: Notify Groups updated
+   *         description: Notify Triggers updated
    *       422:
    *         description: validation errors
    *       500:
@@ -93,10 +124,10 @@ module.exports = app => {
    *                              type: string
    *                              example: Authorisation Required
    */
-   router.put("/notify/groups/:notifyGrpId", auth, NotifyGrp.updateNotifyGrp);
+   router.put("/notify/triggers/:notifyTriggerId",auth, NotifyTriggers.updateNotifyTrigger);
   /**
    * @swagger
-   * /api/notify/groups:
+   * /api/notify/triggers:
    *   get:
    *     parameters:
    *         - name: pageNumber
@@ -109,7 +140,7 @@ module.exports = app => {
    *           required: false
    *           schema:
    *              type: string
-   *              example: notify_trig_grp_id,notify_grp_name,notify_grp_deliv_method,notify_trig_grp_sentdate   # Example of a parameter value
+   *              example: notify_trig_id,notify_event_id,notify_method,notify_type,notify_trig_pushalert,notify_trig_msg,notify_trig_grp_id,notify_group_name,notify_send_date,notify_ack,notify_trig_status,notify_trig_push_id,cr_co_id # Example of a parameter value
    *         - name: sortOrder
    *           in: query
    *           required: false
@@ -122,13 +153,13 @@ module.exports = app => {
    *           schema:
    *              type: string
    *     tags:
-   *       - Notify Groups
-   *     description: Returns all Notify Groups
+   *       - Notify Triggers
+   *     description: Returns all Notify Triggers
    *     produces:
    *       - application/json
    *     responses:
    *       200:
-   *         description: A list of Notify Groups
+   *         description: A list of Notify Triggers
    *       401:
    *          description: Unauthorized
    *          content:
@@ -140,13 +171,13 @@ module.exports = app => {
    *                              type: string
    *                              example: Authorisation Required
    */
-    router.get('/notify/groups', auth, NotifyGrp.notifyGrpListing)
+    router.get('/notify/triggers',auth, NotifyTriggers.notifyTriggerListing)
   /**
    * @swagger
-   * /api/notify/groups/{notifyTrigGrpId}:
+   * /api/notify/triggers/{notifyTriggerId}:
    *   get:
    *     parameters:
-   *         - name: notifyTrigGrpId
+   *         - name: notifyTriggerId
    *           in: path
    *           required: true
    *           schema:
@@ -162,13 +193,13 @@ module.exports = app => {
    *           schema:
    *              type: integer
    *     tags:
-   *       - Notify Groups
-   *     description: Retrieve a single Notify Group with notifyTrigGrpId
+   *       - Notify Triggers
+   *     description: Retrieve a single Notify Trigger with notifyTrigId
    *     produces:
    *       - application/json
    *     responses:
    *       200:
-   *         description: Details of a Notify Group
+   *         description: Details of a Notify Trigger
    *       401:
    *          description: Unauthorized
    *          content:
@@ -180,7 +211,7 @@ module.exports = app => {
    *                              type: string
    *                              example: Authorisation Required
    */
-    router.get("/notify/group/:notifyGrpId", auth, NotifyGrp.notifyGrpDetails);
+    router.get("/notify/triggers/:notifyTrigId",auth, NotifyTriggers.notifyTriggerDetails);
     app.use("/api", router);
 };
   

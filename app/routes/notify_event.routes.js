@@ -1,10 +1,10 @@
 module.exports = app => {
-    const NotifyGrp = require("../controllers/notify_grp.controller.js");
+    const NotifyEvents = require("../controllers/notify_event.controller.js");
     var router = require("express").Router();
     const auth = require("../middleware/auth");
   /**
    * @swagger
-   * /api/notify/groups:
+   * /api/notify/events:
    *   post:
    *     requestBody:
    *        required: false
@@ -13,22 +13,31 @@ module.exports = app => {
    *                schema:
    *                    type: object
    *                    properties:
-   *                        Group Name:
+   *                        Event Name:
    *                            type: integer
-   *                        Delivery Method:
+   *                        Event Type:
    *                            type: integer
-   *                        Sent Date:
-   *                            type: string
+   *                        Brand Id:
+   *                            type: integer
+   *                        Event Date:
    *                            format: date-time
    *                            example: 2020-09-30
+   *                        Event Usrid:
+   *                            type: integer
+   *                        Event UsrOptin:
+   *                            type: integer
+   *                        Event UsrOptOut:
+   *                            type: integer
+   *                        Event UsrOptOut Date:
+   *                           type: integer
    *     tags:
-   *       - Notify Groups
-   *     description: Add new Notify Groups
+   *       - Notify Events
+   *     description: Add new Notify Events
    *     produces:
    *       - application/json
    *     responses:
    *       201:
-   *         description: Add new Groups
+   *         description: Add new Events
    *       422:
    *         description: validation errors
    *       500:
@@ -44,10 +53,10 @@ module.exports = app => {
    *                              type: string
    *                              example: Authorisation Required
    */
-	router.post("/notify/groups", auth, NotifyGrp.createNotifyGrp);
+	router.post("/notify/events",auth, NotifyEvents.createNotifyEvent);
   /**
    * @swagger
-   * /api/notify/groups/{notifyTrigGrpId}:
+   * /api/notify/events/{notifyEventId}:
    *   put:
    *     requestBody:
    *        required: false
@@ -56,28 +65,37 @@ module.exports = app => {
    *                schema:
    *                    type: object
    *                    properties:
-   *                        Group Name:
+  *                        Event Name:
    *                            type: integer
-   *                        Delivery Method:
+   *                        Event Type:
    *                            type: integer
-   *                        Sent Date:
-   *                            type: string
+   *                        Brand Id:
+   *                            type: integer
+   *                        Event Date:
    *                            format: date-time
    *                            example: 2020-09-30
+   *                        Event Usrid:
+   *                            type: integer
+   *                        Event UsrOptin:
+   *                            type: integer
+   *                        Event UsrOptOut:
+   *                            type: integer
+   *                        Event UsrOptOut Date:
+   *                           type: integer
    *     parameters:
-   *         - name: notifyTrigGrpId
+   *         - name: notifyEventId
    *           in: path
    *           required: true
    *           schema:
    *              type: string
    *     tags:
-   *       - Notify Groups
-   *     description: Update Notify Groups
+   *       - Notify Events
+   *     description: Update Notify Events
    *     produces:
    *       - application/json
    *     responses:
    *       201:
-   *         description: Notify Groups updated
+   *         description: Notify Events updated
    *       422:
    *         description: validation errors
    *       500:
@@ -93,10 +111,10 @@ module.exports = app => {
    *                              type: string
    *                              example: Authorisation Required
    */
-   router.put("/notify/groups/:notifyGrpId", auth, NotifyGrp.updateNotifyGrp);
+   router.put("/notify/event/:notifyEventId",auth, NotifyEvents.updateNotifyEvent);
   /**
    * @swagger
-   * /api/notify/groups:
+   * /api/notify/events:
    *   get:
    *     parameters:
    *         - name: pageNumber
@@ -109,7 +127,7 @@ module.exports = app => {
    *           required: false
    *           schema:
    *              type: string
-   *              example: notify_trig_grp_id,notify_grp_name,notify_grp_deliv_method,notify_trig_grp_sentdate   # Example of a parameter value
+   *              example: notify_event_id,notify_event_name,notify_event_type,cr_co_id,notify_event_date,notify_event_usrid,notify_event_usrOptin,notify_event_usrOptOut,notify_event_usrOptOut_date # Example of a parameter value
    *         - name: sortOrder
    *           in: query
    *           required: false
@@ -122,13 +140,13 @@ module.exports = app => {
    *           schema:
    *              type: string
    *     tags:
-   *       - Notify Groups
-   *     description: Returns all Notify Groups
+   *       - Notify Events
+   *     description: Returns all Notify Events
    *     produces:
    *       - application/json
    *     responses:
    *       200:
-   *         description: A list of Notify Groups
+   *         description: A list of Notify Events
    *       401:
    *          description: Unauthorized
    *          content:
@@ -140,13 +158,13 @@ module.exports = app => {
    *                              type: string
    *                              example: Authorisation Required
    */
-    router.get('/notify/groups', auth, NotifyGrp.notifyGrpListing)
+    router.get('/notify/events',auth, NotifyEvents.notifyEventListing)
   /**
    * @swagger
-   * /api/notify/groups/{notifyTrigGrpId}:
+   * /api/notify/events/{notifyEventId}:
    *   get:
    *     parameters:
-   *         - name: notifyTrigGrpId
+   *         - name: notifyEventId
    *           in: path
    *           required: true
    *           schema:
@@ -162,13 +180,13 @@ module.exports = app => {
    *           schema:
    *              type: integer
    *     tags:
-   *       - Notify Groups
-   *     description: Retrieve a single Notify Group with notifyTrigGrpId
+   *       - Notify Events
+   *     description: Retrieve a single Notify Event with notifyEventId
    *     produces:
    *       - application/json
    *     responses:
    *       200:
-   *         description: Details of a Notify Group
+   *         description: Details of a Notify Event
    *       401:
    *          description: Unauthorized
    *          content:
@@ -180,7 +198,7 @@ module.exports = app => {
    *                              type: string
    *                              example: Authorisation Required
    */
-    router.get("/notify/group/:notifyGrpId", auth, NotifyGrp.notifyGrpDetails);
+    router.get("/notify/event/:notifyEventId",auth, NotifyEvents.notifyEventDetails);
     app.use("/api", router);
 };
   

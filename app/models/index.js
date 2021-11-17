@@ -52,7 +52,7 @@ db.Sequelize = Sequelize;
 db.sequelize = sequelize;
 
 //Modesl/Tables
-db.brands = require("./brands.model.js")(sequelize, Sequelize);
+db.brands = require("./brands.model")(sequelize, Sequelize);
 db.campaigns = require("./campaigns.model")(sequelize, Sequelize);
 db.tasks = require("./tasks.model")(sequelize, Sequelize);
 db.hashtags = require("./task.hashtag.model")(sequelize, Sequelize);
@@ -76,9 +76,9 @@ db.post_report = require("./post_report.model")(sequelize, Sequelize);
 db.post_report = require("./post_report.model")(sequelize, Sequelize);
 db.user_fan_following = require("./user_fan_following.model")(sequelize, Sequelize);
 db.budget_history=require("./budget_history.model")(sequelize,Sequelize);
-db.notify_grp = require("./notify_grp.model.js")(sequelize, Sequelize);
-db.notify_event = require("./notify_event.model.js")(sequelize, Sequelize);
-db.notify_trig = require("./notify_trig.model.js")(sequelize, Sequelize);
+db.notify_grp = require("./notify_grp.model")(sequelize, Sequelize);
+db.notify_event = require("./notify_event.model")(sequelize, Sequelize);
+db.notify_trig = require("./notify_trig.model")(sequelize, Sequelize);
 //email tempaltes 
 db.mail_templates=require("./mail_templates.model")(sequelize,Sequelize);
 db.user_feedback=require("./user_feedback.model")(sequelize,Sequelize);
@@ -88,6 +88,14 @@ db.account_balance=require("./accountBalance.model")(sequelize,Sequelize);
 db.admin_setting=require("./adminSetting.model")(sequelize,Sequelize);
 
 //Relations
+db.brands.hasMany(db.notify_event, {foreignKey: 'cr_co_id', targetKey: 'cr_co_id'});
+db.notify_event.belongsTo(db.brands, {foreignKey: 'cr_co_id', targetKey: 'cr_co_id'});
+db.brands.hasMany(db.notify_trig, {foreignKey: 'cr_co_id', targetKey: 'cr_co_id'});
+db.notify_trig.belongsTo(db.brands, {foreignKey: 'cr_co_id', targetKey: 'cr_co_id'})
+db.notify_event.hasMany(db.notify_trig, {foreignKey: 'notify_event_id', targetKey: 'notify_event_id'});
+db.notify_trig.belongsTo(db.notify_event, {foreignKey: 'notify_event_id', targetKey: 'notify_event_id'});
+db.notify_grp.hasMany(db.notify_trig, {foreignKey: 'notify_trig_grp_id', targetKey: 'notify_trig_grp_id'});
+db.notify_trig.belongsTo(db.notify_grp, {foreignKey: 'notify_trig_grp_id', targetKey: 'notify_trig_grp_id'});
 db.campaigns.belongsTo(db.brands, {foreignKey: 'cr_co_id', targetKey: 'cr_co_id'});
 db.brands.hasMany(db.campaigns, {foreignKey: 'cr_co_id', targetKey: 'cr_co_id'});
 db.campaigns.hasMany(db.tasks, {foreignKey: 'cp_campaign_id', targetKey: 'cp_campaign_id'});
