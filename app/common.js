@@ -14,6 +14,7 @@ const Contest = db.contest_task
 const Tasks = db.tasks
 const accountBalance=db.account_balance;
 const Op = db.Sequelize.Op;
+const searchUserCount = 8;
 function Common() {
   Common.prototype.mkdirpath = function(dirPath) {
     var dir = dirPath;
@@ -135,6 +136,11 @@ Common.prototype.reactionsEmoji = function() {
         {
           "Delete Users": {
             "user/delete": "DELETE/api/admin_users"
+          }
+        },
+        {
+          "Add Search Object": {
+            "/search/object": "POST/api/search"
           }
         }
       ],
@@ -529,6 +535,20 @@ Common.prototype.sendSMS =  function(phone, msg){
 	  console.log(message.sid)
 	  );
 	
+  };
+  Common.prototype.searchObject = function() {
+    return {
+      "Profile":'profile',
+      "Comments":'comments',
+      "Tasks":'tasks',
+      "Survey":"survey",
+      "Quizes":"quizes",
+      "Contest":"contest"
+      }
+  };
+
+  Common.prototype.searchUserCount = function() {
+    return 7;
   };
 }
 module.exports = new Common();

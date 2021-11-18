@@ -16,7 +16,6 @@ module.exports = async (req, res, next) => {
     }
     var menu = common.userroleActions();
     var validVal = common.getKeys(menu, method + originalUrl);
-	console.log(originalUrl+method);
     if (!validVal || validVal.length <= 0) {
         res.status(404).send({
             message: "resource not found"

@@ -86,6 +86,8 @@ db.user_feedback=require("./user_feedback.model")(sequelize,Sequelize);
 db.ledger_transactions=require("./ledgerTransaction.model")(sequelize,Sequelize);
 db.account_balance=require("./accountBalance.model")(sequelize,Sequelize);
 db.admin_setting=require("./adminSetting.model")(sequelize,Sequelize);
+db.search_results = require("./search_results.model")(sequelize, Sequelize);
+db.search_objects = require("./search_objects.model")(sequelize, Sequelize);
 
 //Relations
 db.brands.hasMany(db.notify_event, {foreignKey: 'cr_co_id', targetKey: 'cr_co_id'});

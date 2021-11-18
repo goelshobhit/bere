@@ -102,7 +102,8 @@ exports.listing = async (req, res) => {
 	todayDate.toLocaleString('en-US', { timeZone: 'Asia/Calcutta' })
 	console.log(todayDate);
     var options = {
-        include: [{
+        include: [
+            {
             model: db.campaigns,
             attributes: [
                 ["cp_campaign_name", "Campaign Name"]
