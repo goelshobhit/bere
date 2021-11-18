@@ -1,6 +1,9 @@
 module.exports = params => {
     const db = require("../models");
     const NotifyTrigger = db.notify_trig;
+    const NotifySent = db.notify_trig_sent;
+    const audit_log = db.audit_log
+    const logger = require("../middleware/logger");
     const auth = require("../middleware/auth");
     var router = require("express").Router();
     const {app, io} = params;
@@ -34,7 +37,8 @@ module.exports = params => {
                   delete connections[socket.connectionId];
               }
           },
-          pushMessage: function(userId, message) {
+          pushMessage: function(userId, notifyTrigger) {
+              const {notify_trig_msg: message} = notifyTrigger;
               var userConnections = connections[userId];
               if (userConnections) {
                   for (var connectionId in  userConnections) {
@@ -42,6 +46,26 @@ module.exports = params => {
                           var socket = userConnections[connectionId];
                           if (socket != null) {
                               socket.emit('message', message);
+                              const notifyTrigSent = {
+                                "notify_trig_id": notifyTrigger.notify_trig_id,
+                                "notify_event_id": notifyTrigger.notify_event_id,
+                                "notify_method": notifyTrigger.notify_method,
+                                "notify_type": notifyTrigger.notify_type,
+                                "notify_trig_pushalert": notifyTrigger.notify_trig_pushalert,
+                                "notify_trig_msg": notifyTrigger.notify_trig_msg,
+                                "notify_trig_group_id": notifyTrigger.notify_trig_group_id,
+                                "notify_group_name": notifyTrigger.notify_group_name,
+                                "notify_send_date": notifyTrigger.notify_send_date,
+                                "notify_ack": notifyTrigger.notify_ack,
+                                "notify_trig_status": notifyTrigger.notify_trig_status,
+                                "notify_trig_push_id": notifyTrigger.notify_trig_push_id,
+                                "cr_co_id": notifyTrigger.cr_co_id
+                            }
+                              NotifySent.create(notifyTrigSent).then(data => {
+                                audit_log.saveAuditLog(userId,'add','todayTimeStamp',data.notify_sent_trig_id,data.dataValues);
+                            }).catch(err => {
+                                logger.log("error", "Some error occurred while creating the Notify Trigger=" + err);
+                            })
                           }
                       }
                   }
@@ -149,7 +173,7 @@ router.post('/socket/push/:notifyEventId',auth, async function(req, res) {
             });
             return
         }
-        pushService.pushMessage(userId, notifyTrigger.notify_trig_msg);
+        pushService.pushMessage(userId, notifyTrigger);
         res.send();
     }
     else {
