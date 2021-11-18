@@ -1,6 +1,7 @@
 module.exports = params => {
     const db = require("../models");
     const NotifyTrigger = db.notify_trig;
+    const auth = require("../middleware/auth");
     var router = require("express").Router();
     const {app, io} = params;
   var pushService = (function() {
@@ -60,14 +61,8 @@ module.exports = params => {
   });
   /**
    * @swagger
-   * /api/socket/{userId}/register:
+   * /api/socket/register:
    *   post:
-   *     parameters:
-   *         - name: userId
-   *           in: path
-   *           required: true
-   *           schema:
-   *              type: integer
    *     tags:
    *       - Socket Server
    *     description: Register to receive notifications
@@ -91,8 +86,8 @@ module.exports = params => {
    *                              type: string
    *                              example: Authorisation Required
    */  
-router.post('/socket/:userId/register', function(req, res) {
-    const userId = parseInt(req.params.userId);
+router.post('/socket/register',auth, function(req, res) {
+    var userId=req.header(process.env.UKEY_HEADER || "x-api-key");
     const max = 9999999;
     const min = 0;
     var connectionId = Math.floor(Math.random() * (max - min) + min)
@@ -107,14 +102,9 @@ router.post('/socket/:userId/register', function(req, res) {
 });
   /**
    * @swagger
-   * /api/socket/{userId}/{notifyEventId}/push:
+   * /api/socket/push/{notifyEventId}:
    *   post:
    *     parameters:
-   *         - name: userId
-   *           in: path
-   *           required: true
-   *           schema:
-   *              type: integer
    *         - name: notifyEventId
    *           in: path
    *           required: true
@@ -143,8 +133,8 @@ router.post('/socket/:userId/register', function(req, res) {
    *                              type: string
    *                              example: Authorisation Required
    */  
-router.post('/socket/:userId/:notifyEventId/push', async function(req, res) {
-    const userId = parseInt(req.params.userId);
+router.post('/socket/push/:notifyEventId',auth, async function(req, res) {
+    var userId=req.header(process.env.UKEY_HEADER || "x-api-key");
     const notifyEventId = parseInt(req.params.notifyEventId);
     if (userId && notifyEventId) {
         var options = {
