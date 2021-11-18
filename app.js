@@ -222,9 +222,6 @@ require("./app/routes/post_reaction.routes")(app);
 require("./app/routes/post_report.routes")(app);
 require("./app/routes/audit_log.routes")(app);
 require("./app/routes/search.routes")(app);
-require("./app/routes/notify_grp.routes")(app);
-require("./app/routes/notify_event.routes")(app);
-require("./app/routes/notify_trig.routes")(app);
 // set port, listen for requests
 const PORT = process.env.PORT || 3030;
 const server = https.createServer({
