@@ -99,7 +99,7 @@ exports.notifyTriggerDetails = async(req, res) => {
         }
     };
     const notifyTrigger = await NotifyTrigger.findOne(options);
-    if(!notifyGrp){
+    if(!notifyTrigger){
         res.status(500).send({
             message: "Notify Trigger not found"
         });
@@ -117,7 +117,7 @@ exports.notifyTriggerDetails = async(req, res) => {
  */
 exports.updateNotifyTrigger = async(req, res) => {
     const body = req.body
-    const id = req.params.notifyTrigGrpId;
+    const id = req.params.notifyTrigId;
     var NotifyTriggerDetails = await NotifyTrigger.findOne({
         where: {
             notify_trig_id: id
@@ -169,20 +169,20 @@ exports.updateNotifyTrigger = async(req, res) => {
  * @return {Promise}
  */
  exports.deleteNotifyTrigger = async (req, res) => {
-    const notifyGrpDetails = await NotifyGrp.findOne({
+    const notifyTriggerDetails = await NotifyTrigger.findOne({
             where: {
-                notify_trig_id: req.params.notify_trig_id
+                notify_trig_id: req.params.notifyTrigId
             }
         });
-    if(!notifyGrpDetails){
+    if(!notifyTriggerDetails){
         res.status(500).send({
-            message: "Could not delete Notify Trigger with id=" + req.params.notify_trig_id
+            message: "Could not delete Notify Trigger with id=" + req.params.notifyTrigId
           });
           return;
     }
-    NotifyGrp.destroy({
+    notifyTrigger.destroy({
         where: { 
-            notify_trig_id: req.params.notify_trig_id
+            notify_trig_id: req.params.notifyTrigId
         }
       })
         .then(num => {
@@ -193,7 +193,7 @@ exports.updateNotifyTrigger = async(req, res) => {
         })
         .catch(err => {
           res.status(500).send({
-            message: "Could not delete Notify Trigger with id=" + req.params.notify_trig_id
+            message: "Could not delete Notify Trigger with id=" + req.params.notifyTrigId
           });
           return;
         });

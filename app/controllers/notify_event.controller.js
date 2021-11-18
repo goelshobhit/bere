@@ -168,18 +168,18 @@ exports.updateNotifyEvent = async(req, res) => {
  exports.deleteNotifyEvent = async (req, res) => {
     const notifyEventDetails = await NotifyEvent.findOne({
             where: {
-                notify_event_id: req.params.notify_event_id
+                notify_event_id: req.params.notifyEventId
             }
         });
     if(!notifyEventDetails){
         res.status(500).send({
-            message: "Could not delete Notify Event with id=" + req.params.notify_event_id
+            message: "Could not delete Notify Event with id=" + req.params.notifyEventId
           });
           return;
     }
     NotifyEvent.destroy({
         where: { 
-            notify_event_id: req.params.notify_event_id
+            notify_event_id: req.params.notifyEventId
         }
       })
         .then(num => {
@@ -190,7 +190,7 @@ exports.updateNotifyEvent = async(req, res) => {
         })
         .catch(err => {
           res.status(500).send({
-            message: "Could not delete Notify Event with id=" + req.params.notify_event_id
+            message: "Could not delete Notify Event with id=" + req.params.notifyEventId
           });
           return;
         });

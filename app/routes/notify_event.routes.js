@@ -111,7 +111,7 @@ module.exports = app => {
    *                              type: string
    *                              example: Authorisation Required
    */
-   router.put("/notify/event/:notifyEventId",auth, NotifyEvents.updateNotifyEvent);
+   router.put("/notify/events/:notifyEventId",auth, NotifyEvents.updateNotifyEvent);
   /**
    * @swagger
    * /api/notify/events:
@@ -198,7 +198,37 @@ module.exports = app => {
    *                              type: string
    *                              example: Authorisation Required
    */
-    router.get("/notify/event/:notifyEventId",auth, NotifyEvents.notifyEventDetails);
+    router.get("/notify/events/:notifyEventId",auth, NotifyEvents.notifyEventDetails);
+   /**
+   * @swagger
+   * /api/notify/events/{notifyEventId}:
+   *   delete:
+   *     parameters:
+   *         - name: notifyEventId
+   *           in: path
+   *           required: true
+   *           schema:
+   *              type: integer
+   *     tags:
+   *       - Notify Events
+   *     description: Delete a notify event with id
+   *     produces:
+   *       - application/json
+   *     responses:
+   *       200:
+   *         description: Delete a notify event
+   *       401:
+   *          description: Unauthorized
+   *          content:
+   *              application/json:
+   *                  schema:
+   *                      type: object
+   *                      properties:
+   *                          message:
+   *                              type: string
+   *                              example: Authorisation Required
+   */
+    router.delete("/notify/events/:notifyEventId", auth, NotifyEvents.deleteNotifyEvent); 
     app.use("/api", router);
 };
   

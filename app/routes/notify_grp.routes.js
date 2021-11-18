@@ -93,7 +93,7 @@ module.exports = app => {
    *                              type: string
    *                              example: Authorisation Required
    */
-   router.put("/notify/groups/:notifyGrpId", auth, NotifyGrp.updateNotifyGrp);
+   router.put("/notify/groups/:notifyTrigGrpId", auth, NotifyGrp.updateNotifyGrp);
   /**
    * @swagger
    * /api/notify/groups:
@@ -180,7 +180,37 @@ module.exports = app => {
    *                              type: string
    *                              example: Authorisation Required
    */
-    router.get("/notify/group/:notifyGrpId", auth, NotifyGrp.notifyGrpDetails);
+    router.get("/notify/groups/:notifyTrigGrpId", auth, NotifyGrp.notifyGrpDetails);
+  /**
+   * @swagger
+   * /api/notify/groups/{notifyTrigGrpId}:
+   *   delete:
+   *     parameters:
+   *         - name: notifyTrigGrpId
+   *           in: path
+   *           required: true
+   *           schema:
+   *              type: integer
+   *     tags:
+   *       - Notify Groups
+   *     description: Delete a notify group with id
+   *     produces:
+   *       - application/json
+   *     responses:
+   *       200:
+   *         description: Delete a notify group
+   *       401:
+   *          description: Unauthorized
+   *          content:
+   *              application/json:
+   *                  schema:
+   *                      type: object
+   *                      properties:
+   *                          message:
+   *                              type: string
+   *                              example: Authorisation Required
+   */
+   router.delete("/notify/groups/:notifyTrigGrpId", auth, NotifyGrp.deleteNotifyGrp);   
     app.use("/api", router);
 };
   

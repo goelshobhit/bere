@@ -64,7 +64,7 @@ module.exports = app => {
 	router.post("/notify/triggers",auth, NotifyTriggers.createNotifyTrigger);
   /**
    * @swagger
-   * /api/notify/triggers/{notifyTriggerId}:
+   * /api/notify/triggers/{notifyTrigId}:
    *   put:
    *     requestBody:
    *        required: false
@@ -124,7 +124,7 @@ module.exports = app => {
    *                              type: string
    *                              example: Authorisation Required
    */
-   router.put("/notify/triggers/:notifyTriggerId",auth, NotifyTriggers.updateNotifyTrigger);
+   router.put("/notify/triggers/:notifyTrigId",auth, NotifyTriggers.updateNotifyTrigger);
   /**
    * @swagger
    * /api/notify/triggers:
@@ -174,10 +174,10 @@ module.exports = app => {
     router.get('/notify/triggers',auth, NotifyTriggers.notifyTriggerListing)
   /**
    * @swagger
-   * /api/notify/triggers/{notifyTriggerId}:
+   * /api/notify/triggers/{notifyTrigId}:
    *   get:
    *     parameters:
-   *         - name: notifyTriggerId
+   *         - name: notifyTrigId
    *           in: path
    *           required: true
    *           schema:
@@ -212,6 +212,36 @@ module.exports = app => {
    *                              example: Authorisation Required
    */
     router.get("/notify/triggers/:notifyTrigId",auth, NotifyTriggers.notifyTriggerDetails);
+  /**
+   * @swagger
+   * /api/notify/triggers/{notifyTrigId}:
+   *   delete:
+   *     parameters:
+   *         - name: notifyTrigId
+   *           in: path
+   *           required: true
+   *           schema:
+   *              type: integer
+   *     tags:
+   *      - Notify Triggers
+   *     description: Delete a notify trigger with id
+   *     produces:
+   *       - application/json
+   *     responses:
+   *       200:
+   *         description: Delete a notify trigger
+   *       401:
+   *          description: Unauthorized
+   *          content:
+   *              application/json:
+   *                  schema:
+   *                      type: object
+   *                      properties:
+   *                          message:
+   *                              type: string
+   *                              example: Authorisation Required
+   */
+   router.delete("/notify/triggers/:notifyTrigId", auth, NotifyTriggers.deleteNotifyTrigger);   
     app.use("/api", router);
 };
   

@@ -112,13 +112,19 @@ exports.notifyGrpDetails = async(req, res) => {
  * @return {Promise}
  */
 exports.updateNotifyGrp = async(req, res) => {
+    const body = req.body
     const id = req.params.notifyTrigGrpId;
     var NotifyGrpDetails = await NotifyGrp.findOne({
         where: {
             notify_trig_grp_id: id
         }
     });
-    NotifyGrp.update(req.body, {
+    const notifyGrp = {
+        "notify_grp_name": body.hasOwnProperty("Group Name") ? body["Group Name"] : 0,
+        "notify_grp_deliv_method": body.hasOwnProperty("Delivery Method") ? body["Delivery Method"] : 0,
+        "notify_trig_grp_sentdate": body.hasOwnProperty("Sent Date") ? body["Sent Date"] : new Date(),
+    }
+    NotifyGrp.update(notifyGrp, {
 		returning:true,
         where: {
             notify_trig_grp_id: id
@@ -152,18 +158,18 @@ exports.updateNotifyGrp = async(req, res) => {
  exports.deleteNotifyGrp = async (req, res) => {
     const notifyGrpDetails = await NotifyGrp.findOne({
             where: {
-                notify_trig_grp_id: req.params.notify_trig_grp_id
+                notify_trig_grp_id: req.params.notifyTrigGrpId
             }
         });
     if(!notifyGrpDetails){
         res.status(500).send({
-            message: "Could not delete NotifyGrp with id=" + req.params.notify_trig_grp_id
+            message: "Could not delete NotifyGrp with id=" + req.params.notifyTrigGrpId
           });
           return;
     }
     NotifyGrp.destroy({
         where: { 
-            notify_trig_grp_id: req.params.notify_trig_grp_id
+            notify_trig_grp_id: req.params.notifyTrigGrpId
         }
       })
         .then(num => {
@@ -174,7 +180,7 @@ exports.updateNotifyGrp = async(req, res) => {
         })
         .catch(err => {
           res.status(500).send({
-            message: "Could not delete NotifyGrp with id=" + req.params.notify_trig_grp_id
+            message: "Could not delete NotifyGrp with id=" + req.params.notifyTrigGrpId
           });
           return;
         });
