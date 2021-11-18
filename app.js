@@ -80,8 +80,8 @@ const swaggerOptions = {
       description: "REST APIs to interact with app of Social Application",
       contact: {
         name: "SocialApp",
-        url: "http://34.134.200.133:3015/",
-        email: "Info@socialapp.com"
+        url: "https://earnki.com",
+        email: "Info@earnki.com"
       },
       servers: [
         {
@@ -220,6 +220,7 @@ require("./app/routes/comment_likes.routes")(app);
 require("./app/routes/post_reaction.routes")(app);
 require("./app/routes/post_report.routes")(app);
 require("./app/routes/audit_log.routes")(app);
+require("./app/routes/search.routes")(app);
 require("./app/routes/notify_grp.routes")(app);
 require("./app/routes/notify_event.routes")(app);
 require("./app/routes/notify_trig.routes")(app);
