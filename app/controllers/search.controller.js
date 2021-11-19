@@ -1,8 +1,10 @@
 const db = require("../models");
 const UserProfile = db.user_profile;
 const Task = db.tasks;
+const Brand = db.brands;
 const ContestTask = db.contest_task;
 const Comment = db.post_comment;
+const Hashtags = db.hashtags
 const SearchResults = db.search_results;
 const SearchObjects = db.search_objects;
 const Op = db.Sequelize.Op;
@@ -22,33 +24,44 @@ exports.addSearchObject = async (req, res) => {
     });
     return;
   }
-  SearchObjects.destroy({
-    where: {}
+  const searchObjectResult = await SearchObjects.findAll({
+    where: {},
+    attributes: ['search_obj_category']
+  });
+  const searchDBCategories = searchObjectResult.map(function (item) {
+    return item.search_obj_category
   });
   var searchObjectData = [];
   var SearchData = req.body;
   for (const SearchObject in SearchData) {
-    if (SearchData[SearchObject]) {
+    if (searchDBCategories.indexOf(SearchObject) >= 0) {
+      SearchObjects.update({
+        "is_active": SearchData[SearchObject]
+      }, {
+        where: {
+          search_obj_category: SearchObject
+        }
+    }).catch(err => {
+      logger.log("error", "Some error occurred while updating the Search Objects=" + err);
+    });
+    } else {
       searchObjectData.push({
-        "search_obj_category": SearchObject
+        "search_obj_category": SearchObject,
+        "is_active": SearchData[SearchObject]
       });
     }
   }
-  if (searchObjectData) {
-    SearchObjects.bulkCreate(searchObjectData).then(searchObjectAllData => {
-      const SearchObjectResultData = [];
-      for (const searchObjectDetail in searchObjectAllData) {
-        const SearchObjectResult = {};
-        SearchObjectResult.search_obj_id = searchObjectAllData[searchObjectDetail].search_obj_id;
-        SearchObjectResult.search_obj_category = searchObjectAllData[searchObjectDetail].search_obj_category;
-        SearchObjectResultData.push(SearchObjectResult);
-        }
-      res.status(200).send(SearchObjectResultData);
-    })
-      .catch(err => {
-        logger.log("error", "Some error occurred while creating the Search Objects=" + err);
-      });
+  //res.status(200).send({message:searchObjectData, update : searchUpdateObjectData});
+  
+  if (searchObjectData.length) {
+    SearchObjects.bulkCreate(searchObjectData).catch(err => {
+      logger.log("error", "Some error occurred while creating the Search Objects=" + err);
+    });
   }
+  res.status(201).send({
+    msg: "Search Objects added Successfully"
+  });
+
   return;
 }
 
@@ -60,7 +73,12 @@ exports.addSearchObject = async (req, res) => {
  */
 exports.getSearchObject = async (req, res) => {
   const searchObjectResult = await SearchObjects.findAll({
-    where: {},
+    where: {
+      is_active: 1
+    },
+    order: [
+      ['search_obj_id', 'ASC']
+  ],
     attributes: ['search_obj_id', 'search_obj_category']
   });
  
@@ -204,6 +222,46 @@ exports.searchRecords = async (req, res) => {
         response_data.Contest = ContestTaskDisplayDetails;
       }
     }
+    if (searchObjectValue == searchObjectConstant.Brand) {
+      var brandOptions = {
+        where: {
+          cr_co_name: {
+            [Op.iLike]: `%${keyWord}%`
+          }
+        }
+      };
+      const BrandTaskDetails = await Brand.findAll(brandOptions);
+      if (BrandTaskDetails.length) {
+        const BrandTaskDisplayDetails = [];
+        for (const BrandTaskDetail in BrandTaskDetails) {
+          BrandTaskDisplayDetails.push({
+              "cr_co_name": BrandTaskDetails[BrandTaskDetail].cr_co_name,
+              "cr_co_logo_path": BrandTaskDetails[BrandTaskDetail].cr_co_logo_path,
+              "cr_co_cover_img_path": BrandTaskDetails[BrandTaskDetail].cr_co_cover_img_path
+            });
+        }
+        response_data.Brand = BrandTaskDisplayDetails;
+      }
+    }
+    if (searchObjectValue == searchObjectConstant.Hashtags) {
+      var hashtagOptions = {
+        where: {
+          th_hashtag_values: {
+            [Op.iLike]: `%${keyWord}%`
+          }
+        }
+      };
+      const HashtagsDetails = await Hashtags.findAll(hashtagOptions);
+      if (HashtagsDetails.length) {
+        const HashtagsDisplayDetails = [];
+        for (const HashtagsDetail in HashtagsDetails) {
+          HashtagsDisplayDetails.push({
+              "th_hashtag_values": HashtagsDetails[HashtagsDetail].th_hashtag_values
+            });
+        }
+        response_data.Hashtags = HashtagsDisplayDetails;
+      }
+    }
   }
   if (!Object.keys(response_data).length) {
     res.status(500).send({
@@ -213,6 +271,7 @@ exports.searchRecords = async (req, res) => {
   }
   const data = {  
     "search_uid": userId,
+    "search_date": new Date(),
     "search_keyword": keyWord,
     "search_results": response_data
   }

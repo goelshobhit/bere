@@ -543,7 +543,9 @@ Common.prototype.sendSMS =  function(phone, msg){
       "Tasks":'tasks',
       "Survey":"survey",
       "Quizes":"quizes",
-      "Contest":"contest"
+      "Contest":"contest",
+      "Brand":"brand",
+      "Hashtags":"hashtags"
       }
   };
 

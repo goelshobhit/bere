@@ -27,7 +27,7 @@ module.exports = app => {
    *                              type: string
    *                              example: Authorisation Required
    */
-    router.get('/search/object',auth, access, Search.getSearchObject);
+    router.get('/search/object',auth,  Search.getSearchObject);
     /**
    * @swagger
    * /api/search:
@@ -95,6 +95,6 @@ module.exports = app => {
    *                              type: string
    *                              example: Authorisation Required
    */
-    router.post("/search/object", auth, access, Search.addSearchObject);
+    router.post("/search/object", auth,  Search.addSearchObject);
     app.use("/api", router);
 }

@@ -8,6 +8,9 @@ module.exports = (sequelize, Sequelize) => {
     },
     search_obj_category: {
       type: Sequelize.STRING(100)
+    },
+    is_active: {
+      type: Sequelize.INTEGER
     }
   }, {
     createdAt: 'created_at',
