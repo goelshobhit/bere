@@ -2,14 +2,16 @@ const db = require("../models");
 const UserProfile = db.user_profile;
 const Task = db.tasks;
 const Brand = db.brands;
+const Campaigns = db.campaigns;
 const ContestTask = db.contest_task;
 const Comment = db.post_comment;
-const Hashtags = db.hashtags
+const Hashtags = db.hashtags;
 const SearchResults = db.search_results;
 const SearchObjects = db.search_objects;
 const Op = db.Sequelize.Op;
 const logger = require("../middleware/logger");
 const common = require("../common");
+const sequelize= require('sequelize');
 
 /**
  * Function to add search objects
@@ -41,9 +43,9 @@ exports.addSearchObject = async (req, res) => {
         where: {
           search_obj_category: SearchObject
         }
-    }).catch(err => {
-      logger.log("error", "Some error occurred while updating the Search Objects=" + err);
-    });
+      }).catch(err => {
+        logger.log("error", "Some error occurred while updating the Search Objects=" + err);
+      });
     } else {
       searchObjectData.push({
         "search_obj_category": SearchObject,
@@ -52,7 +54,7 @@ exports.addSearchObject = async (req, res) => {
     }
   }
   //res.status(200).send({message:searchObjectData, update : searchUpdateObjectData});
-  
+
   if (searchObjectData.length) {
     SearchObjects.bulkCreate(searchObjectData).catch(err => {
       logger.log("error", "Some error occurred while creating the Search Objects=" + err);
@@ -78,10 +80,10 @@ exports.getSearchObject = async (req, res) => {
     },
     order: [
       ['search_obj_id', 'ASC']
-  ],
+    ],
     attributes: ['search_obj_id', 'search_obj_category']
   });
- 
+
   if (!searchObjectResult) {
     res.status(500).send({
       message: "Record not found"
@@ -141,16 +143,16 @@ exports.searchRecords = async (req, res) => {
           }
         }
       };
-      const UserProfileDetails =  await UserProfile.findAll(userOptions);
+      const UserProfileDetails = await UserProfile.findAll(userOptions);
       if (UserProfileDetails.length) {
         var UserProfileDisplayDetails = [];
         for (const UserProfileDetail in UserProfileDetails) {
           UserProfileDisplayDetails.push({
-             "u_display_name": UserProfileDetails[UserProfileDetail].u_display_name,
-              "u_f_name": UserProfileDetails[UserProfileDetail].u_f_name,
-              "u_l_name": UserProfileDetails[UserProfileDetail].u_l_name,
-              "u_prof_img_path": UserProfileDetails[UserProfileDetail].u_prof_img_path
-            });
+            "u_display_name": UserProfileDetails[UserProfileDetail].u_display_name,
+            "u_f_name": UserProfileDetails[UserProfileDetail].u_f_name,
+            "u_l_name": UserProfileDetails[UserProfileDetail].u_l_name,
+            "u_prof_img_path": UserProfileDetails[UserProfileDetail].u_prof_img_path
+          });
         }
         response_data.Profile = UserProfileDisplayDetails;
       }
@@ -164,14 +166,14 @@ exports.searchRecords = async (req, res) => {
           }
         }
       };
-      const CommentsDetails =  await Comment.findAll(commentOptions);
+      const CommentsDetails = await Comment.findAll(commentOptions);
       if (CommentsDetails.length) {
         var CommentsDisplayDetails = [];
         for (const CommentsDetail in CommentsDetails) {
           CommentsDisplayDetails.push({
-             "pc_comments": CommentsDetails[CommentsDetail].pc_comments,
-              "pc_comment_prof_img_url": CommentsDetails[CommentsDetail].pc_comment_prof_img_url
-            });
+            "pc_comments": CommentsDetails[CommentsDetail].pc_comments,
+            "pc_comment_prof_img_url": CommentsDetails[CommentsDetail].pc_comment_prof_img_url
+          });
         }
         response_data.Comments = CommentsDisplayDetails;
       }
@@ -181,25 +183,38 @@ exports.searchRecords = async (req, res) => {
         where: {
           ta_name: {
             [Op.iLike]: `%${keyWord}%`
-          }
+          },
+          ta_status: 2
         }
       };
       const TaskDetails = await Task.findAll(taskOptions);
       if (TaskDetails.length) {
         const TaskDisplayDetails = [];
+        const TaskDisplayVideoDetails = [];
         for (const TaskDetail in TaskDetails) {
-          TaskDisplayDetails.push({
-              "ta_name": TaskDetails[TaskDetail].ta_name,
-              "ta_post_insp_image": TaskDetails[TaskDetail].ta_post_insp_image,
-              "ta_header_image": TaskDetails[TaskDetail].ta_header_image,
-              "ta_do": TaskDetails[TaskDetail].ta_do,
-              "ta_dont_do": TaskDetails[TaskDetail].ta_dont_do,
-              "ta_insta_question": TaskDetails[TaskDetail].ta_insta_question
-            });
+          const TaskData = {
+            "ta_name": TaskDetails[TaskDetail].ta_name,
+            "ta_desc": TaskDetails[TaskDetail].ta_desc,
+            "ta_oneline_summary": TaskDetails[TaskDetail].ta_oneline_summary,
+            "ta_post_insp_image": TaskDetails[TaskDetail].ta_post_insp_image,
+            "ta_header_image": TaskDetails[TaskDetail].ta_header_image,
+            "ta_do": TaskDetails[TaskDetail].ta_do,
+            "ta_dont_do": TaskDetails[TaskDetail].ta_dont_do,
+            "ta_insta_question": TaskDetails[TaskDetail].ta_insta_question
+          };
+          if (TaskDetails[TaskDetail].ta_type == 3) {
+            TaskDisplayVideoDetails.push(TaskData);
+          } else {
+            TaskDisplayDetails.push(TaskData);
+          }
         }
-        response_data.Tasks = TaskDisplayDetails;
+        if (TaskDisplayDetails.length) {
+          response_data.Tasks = TaskDisplayDetails;
+        }
+        if (TaskDisplayVideoDetails.length) {
+          response_data.Videos = TaskDisplayVideoDetails;
+        }
       }
-      
     }
     if (searchObjectValue == searchObjectConstant.Contest) {
       var contentOptions = {
@@ -214,16 +229,35 @@ exports.searchRecords = async (req, res) => {
         const ContestTaskDisplayDetails = [];
         for (const ContestTaskDetail in ContestTaskDetails) {
           ContestTaskDisplayDetails.push({
-              "ct_name": ContestTaskDetails[ContestTaskDetail].ct_name,
-              "ct_post_insp_image": ContestTaskDetails[ContestTaskDetail].ct_post_insp_image,
-              "ct_hashtag": ContestTaskDetails[ContestTaskDetail].ct_hashtag
-            });
+            "ct_name": ContestTaskDetails[ContestTaskDetail].ct_name,
+            "ct_post_insp_image": ContestTaskDetails[ContestTaskDetail].ct_post_insp_image,
+            "ct_hashtag": ContestTaskDetails[ContestTaskDetail].ct_hashtag
+          });
         }
         response_data.Contest = ContestTaskDisplayDetails;
       }
     }
     if (searchObjectValue == searchObjectConstant.Brand) {
       var brandOptions = {
+        /* check active task exist in brand, return param is_task_active 1 if active task exist. */
+        include: [
+          {
+            model: Campaigns,
+            required:false,
+            attributes:['cp_campaign_id'],
+            where : {
+              cp_campaign_status: 2
+            },
+            include: [{
+              model: Task,
+              required:false,
+              where : {
+                ta_status: 2
+              },
+                attributes:['ta_name', 'ta_task_id'],
+              }]
+          }
+        ],
         where: {
           cr_co_name: {
             [Op.iLike]: `%${keyWord}%`
@@ -234,11 +268,21 @@ exports.searchRecords = async (req, res) => {
       if (BrandTaskDetails.length) {
         const BrandTaskDisplayDetails = [];
         for (const BrandTaskDetail in BrandTaskDetails) {
+          var isActiveTask = 0;
+          if (BrandTaskDetails[BrandTaskDetail].campaigns.length) {
+            const BrandCampaigns = BrandTaskDetails[BrandTaskDetail].campaigns;
+            for (const BrandCampaign in BrandCampaigns) {
+              if (BrandCampaigns[BrandCampaign].tasks.length) {
+                isActiveTask = 1;
+              }
+            }
+          }
           BrandTaskDisplayDetails.push({
-              "cr_co_name": BrandTaskDetails[BrandTaskDetail].cr_co_name,
-              "cr_co_logo_path": BrandTaskDetails[BrandTaskDetail].cr_co_logo_path,
-              "cr_co_cover_img_path": BrandTaskDetails[BrandTaskDetail].cr_co_cover_img_path
-            });
+            "cr_co_name": BrandTaskDetails[BrandTaskDetail].cr_co_name,
+            "cr_co_logo_path": BrandTaskDetails[BrandTaskDetail].cr_co_logo_path,
+            "cr_co_cover_img_path": BrandTaskDetails[BrandTaskDetail].cr_co_cover_img_path,
+            "is_task_active": isActiveTask
+          });
         }
         response_data.Brand = BrandTaskDisplayDetails;
       }
@@ -249,17 +293,17 @@ exports.searchRecords = async (req, res) => {
           th_hashtag_values: {
             [Op.iLike]: `%${keyWord}%`
           }
-        }
+        },
+        attributes: [
+          'th_hashtag_values',
+          [sequelize.fn('COUNT', sequelize.col('th_hashtag_values')), 'hashtag_count']
+        ],
+        group: ['th_hashtag_values']
       };
       const HashtagsDetails = await Hashtags.findAll(hashtagOptions);
+      
       if (HashtagsDetails.length) {
-        const HashtagsDisplayDetails = [];
-        for (const HashtagsDetail in HashtagsDetails) {
-          HashtagsDisplayDetails.push({
-              "th_hashtag_values": HashtagsDetails[HashtagsDetail].th_hashtag_values
-            });
-        }
-        response_data.Hashtags = HashtagsDisplayDetails;
+        response_data.Hashtags = HashtagsDetails;
       }
     }
   }
@@ -269,7 +313,7 @@ exports.searchRecords = async (req, res) => {
     });
     return
   }
-  const data = {  
+  const data = {
     "search_uid": userId,
     "search_date": new Date(),
     "search_keyword": keyWord,
