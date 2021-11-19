@@ -79,6 +79,7 @@ db.budget_history=require("./budget_history.model")(sequelize,Sequelize);
 db.notify_grp = require("./notify_grp.model")(sequelize, Sequelize);
 db.notify_event = require("./notify_event.model")(sequelize, Sequelize);
 db.notify_trig = require("./notify_trig.model")(sequelize, Sequelize);
+db.notify_trig_sent = require("./notify_trig_sent.model")(sequelize, Sequelize);
 //email tempaltes 
 db.mail_templates=require("./mail_templates.model")(sequelize,Sequelize);
 db.user_feedback=require("./user_feedback.model")(sequelize,Sequelize);

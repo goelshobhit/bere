@@ -14,6 +14,7 @@ var hpp = require("hpp");
 const morgan = require("morgan");
 const https = require('http');
 var fs = require("fs");
+const socketIO = require('socket.io')
 app.use(cors());
 app.use(morgan("combined"));
 app.use(helmet());
@@ -207,7 +208,17 @@ const job = schedule.scheduleJob('05 00 * * *',async function(){
 	});
 	
 });
-
+// set port, listen for requests
+const PORT = process.env.PORT || 3030;
+const server = https.createServer({
+  //key: fs.readFileSync('/etc/letsencrypt/live/earnki.com/privkey.pem'),
+  //cert: fs.readFileSync('/etc/letsencrypt/live/earnki.com/fullchain.pem')
+ }, app);
+const io = socketIO(server, {
+  cors: {
+    origin: '*',
+  }
+});
 require("./app/routes/brand.routes")(app);
 require("./app/routes/campaign.routes")(app);
 require("./app/routes/hashtag.routes")(app);
@@ -225,13 +236,8 @@ require("./app/routes/search.routes")(app);
 require("./app/routes/notify_grp.routes")(app);
 require("./app/routes/notify_event.routes")(app);
 require("./app/routes/notify_trig.routes")(app);
-// set port, listen for requests
-const PORT = process.env.PORT || 3030;
-const server = https.createServer({
- //key: fs.readFileSync('/etc/letsencrypt/live/earnki.com/privkey.pem'),
- //cert: fs.readFileSync('/etc/letsencrypt/live/earnki.com/fullchain.pem')
-}, app)
-.listen(PORT, function () {
+require("./app/routes/socket_server.routes")({app, io});
+server.listen(PORT, function () {
   console.log(`Server is running on port ${PORT}.`)
 });
 common.mkdirpath(appConfig[env].FILE_UPLOAD_DIR);
