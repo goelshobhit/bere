@@ -5,6 +5,10 @@ module.exports = (sequelize, Sequelize) => {
             primaryKey: true,
             autoIncrement: true
         },
+		u_id: {
+			type: Sequelize.INTEGER,
+			allowNull: false,
+		},
 		notify_trig_id: {
 			type: Sequelize.INTEGER,
 			allowNull: false,

@@ -30,7 +30,7 @@ exports.createNotifyGrp = async(req, res) => {
             audit_log.saveAuditLog(req.header(process.env.UKEY_HEADER || "x-api-key"),'add','todayTimeStamp',data.notify_trig_grp_id,data.dataValues);
         res.status(201).send({			
             msg: "NotifyGrp Created Successfully",
-            campID: data.notify_trig_grp_id
+            notifyTrigGrpId: data.notify_trig_grp_id
         });
     }).catch(err => {
         logger.log("error", "Some error occurred while creating the NotifyGrp=" + err);

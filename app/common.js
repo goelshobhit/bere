@@ -263,33 +263,6 @@ Common.prototype.reactionsEmoji = function() {
             "setting/all": "GET/api/admin_setting"
           }
         }
-      ],
-      "Notify Groups Rights": [
-        {
-          "View Notify Group": {
-            "notifyGrp/view": "GET/api/notify/groups/1"
-          }
-        },
-		   { 
-          "Add Notify Group": {
-            "notifyGrp/add": "POST/api/notify/groups"
-          }
-        },
-		    {
-          "Update Notify Group": {
-            "notifyGrp/update": "PUT/api/notify/groups"
-          }
-        },
-		    {
-          "Delete Notify Group": {
-            "notifyGrp/delete": "DELETE/api/notify/groups"
-          }
-        },
-		    {
-          "All Notify Groups": {
-            "notifyGrp/all": "GET/api/notify/groups"
-          }
-        }
       ]
     };
     return role_actions;
