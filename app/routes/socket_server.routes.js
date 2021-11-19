@@ -2,6 +2,7 @@ module.exports = params => {
     const db = require("../models");
     const NotifyTrigger = db.notify_trig;
     const NotifySent = db.notify_trig_sent;
+    const NotifyEvent = db.notify_event;
     const audit_log = db.audit_log
     const logger = require("../middleware/logger");
     const auth = require("../middleware/auth");
@@ -37,7 +38,7 @@ module.exports = params => {
                   delete connections[socket.connectionId];
               }
           },
-          pushMessage: function(userId, notifyTrigger) {
+          pushMessage: function(userId, notifyTrigger, notifyEvent) {
               const {notify_trig_msg: message} = notifyTrigger;
               var userConnections = connections[userId];
               if (userConnections) {
@@ -45,7 +46,10 @@ module.exports = params => {
                       if (userConnections.hasOwnProperty(connectionId)) {
                           var socket = userConnections[connectionId];
                           if (socket != null) {
-                              socket.emit('message', message);
+                              const { notify_event_usrOptOut } = notifyEvent;
+                              if(notify_event_usrOptOut !== 1) {
+                                socket.emit('message', message);
+                              }
                               const notifyTrigSent = {
                                 "notify_trig_id": notifyTrigger.notify_trig_id,
                                 "notify_event_id": notifyTrigger.notify_event_id,
@@ -53,7 +57,7 @@ module.exports = params => {
                                 "notify_type": notifyTrigger.notify_type,
                                 "notify_trig_pushalert": notifyTrigger.notify_trig_pushalert,
                                 "notify_trig_msg": notifyTrigger.notify_trig_msg,
-                                "notify_trig_group_id": notifyTrigger.notify_trig_group_id,
+                                "notify_trig_grp_id": notifyTrigger.notify_trig_grp_id,
                                 "notify_group_name": notifyTrigger.notify_group_name,
                                 "notify_send_date": notifyTrigger.notify_send_date,
                                 "notify_ack": notifyTrigger.notify_ack,
@@ -173,7 +177,14 @@ router.post('/socket/push/:notifyEventId',auth, async function(req, res) {
             });
             return
         }
-        pushService.pushMessage(userId, notifyTrigger);
+        const notifyEvent = await NotifyEvent.findOne(options);
+        if(!notifyEvent){
+            res.status(500).send({
+                message: "Notify Event not found"
+            });
+            return
+        }
+        pushService.pushMessage(userId, notifyTrigger, notifyEvent);
         res.send();
     }
     else {
