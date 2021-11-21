@@ -1,18 +1,17 @@
 const db = require("../models");
-const NotifyTrigger = db.notify_trig;
-const Op = db.Sequelize.Op;
+const NotifySent = db.notify_trig_sent;
 const audit_log = db.audit_log
 const logger = require("../middleware/logger");
 const {
     validationResult
 } = require("express-validator");
 /**
- * Function to add new Notify Trigger
+ * Function to add new Notify Sent
  * @param  {object}  req expressJs request object
  * @param  {object}  res expressJs response object
  * @return {Promise}
  */
-exports.createNotifyTrigger = async(req, res) => {
+exports.createNotifySent = async(req, res) => {
     const body = req.body
 	const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -21,7 +20,9 @@ exports.createNotifyTrigger = async(req, res) => {
         });
         return;
     }
-    const notifyTrig = {
+    const notifySent = {
+        "notify_trig_id": body.hasOwnProperty("Notify Trigger Id") ? body["Notify Trigger Id"] : 0,
+        "u_id": body.hasOwnProperty("User Id") ? body["User Id"] : 0,
         "notify_event_id": body.hasOwnProperty("Event Id") ? body["Event Id"] : 0,
         "notify_method": body.hasOwnProperty("Method") ? body["Method"] : "",
         "notify_type": body.hasOwnProperty("Type") ? body["Type"] : "",
@@ -35,31 +36,31 @@ exports.createNotifyTrigger = async(req, res) => {
         "notify_trig_push_id": body.hasOwnProperty("Trigger Push Id") ? body["Trigger Push Id"] : 0,
         "cr_co_id": body.hasOwnProperty("Brand Id") ? body["Brand Id"] : 0
     }
-    NotifyTrigger.create(notifyTrig).then(data => {
-            audit_log.saveAuditLog(req.header(process.env.UKEY_HEADER || "x-api-key"),'add','todayTimeStamp',data.notify_trig_id,data.dataValues);
+    NotifySent.create(notifySent).then(data => {
+            audit_log.saveAuditLog(req.header(process.env.UKEY_HEADER || "x-api-key"),'add','todayTimeStamp',data.notify_sent_trig_id,data.dataValues);
         res.status(201).send({			
-            msg: "Notify Trigger Created Successfully",
+            msg: "Notify Sent Created Successfully",
             notifyTrigId: data.notify_trig_id
         });
     }).catch(err => {
-        logger.log("error", "Some error occurred while creating the Notify Trigger=" + err);
+        logger.log("error", "Some error occurred while creating the Notify Sent=" + err);
         res.status(500).send({
-            message: err.message || "Some error occurred while creating the Notify Trigger."
+            message: err.message || "Some error occurred while creating the Notify Sent."
         });
     })
 };
 
 /**
- * Function to get all Notify Trigger
+ * Function to get all Notify Sent
  * @param  {object}  req expressJs request object
  * @param  {object}  res expressJs response object
  * @return {Promise}
  */
-exports.notifyTriggerListing = async(req, res) => {
+exports.notifySentListing = async(req, res) => {
     const pageSize = parseInt(req.query.pageSize || 10);
 	const pageNumber = parseInt(req.query.pageNumber || 1);
 	const skipCount = (pageNumber - 1) * pageSize;
-	const sortBy = req.query.sortBy || 'notify_trig_id'
+	const sortBy = req.query.sortBy || 'notify_sent_trig_id'
 	const sortOrder = req.query.sortOrder || 'DESC'
     
     var options = {
@@ -76,54 +77,95 @@ exports.notifyTriggerListing = async(req, res) => {
             [sortBy]: `${sortValue}`
         } : null;
     }
-    var total = await NotifyTrigger.count({
+    var total = await NotifySent.count({
         where: options['where']
     });
-    const notifyTrigger_list = await NotifyTrigger.findAll(options);
+    const notifySent_list = await NotifySent.findAll(options);
     res.status(200).send({
-        data: notifyTrigger_list,
+        data: notifySent_list,
 		totalRecords:total
     });
 };
 /**
- * Function to get single Notify Trigger
+ * Function to get all Notify Sent Of The User
+ * @param  {object}  req expressJs request object
+ * @param  {object}  res expressJs response object
+ * @return {Promise}
+ */
+ exports.notifySentListingOfTheUser = async(req, res) => {
+    const userId = req.header(process.env.UKEY_HEADER || "x-api-key");
+    const pageSize = parseInt(req.query.pageSize || 10);
+	const pageNumber = parseInt(req.query.pageNumber || 1);
+	const skipCount = (pageNumber - 1) * pageSize;
+	const sortBy = req.query.sortBy || 'notify_sent_trig_id'
+	const sortOrder = req.query.sortOrder || 'DESC'
+    
+    var options = {
+        limit: pageSize,
+        offset: skipCount,
+        order: [
+            [sortBy, sortOrder]
+        ],
+        where: {
+            u_id: userId
+        }
+    };
+    if(req.query.sortVal) {
+        var sortValue = req.query.sortVal;
+        options.where = sortValue ? {
+            [sortBy]: `${sortValue}`
+        } : null;
+    }
+    var total = await NotifySent.count({
+        where: options['where']
+    });
+    const notifySent_list = await NotifySent.findAll(options);
+    res.status(200).send({
+        data: notifySent_list,
+		totalRecords:total
+    });
+};
+/**
+ * Function to get single Notify Sent
  * @param  {object}  req expressJs request object
  * @param  {object}  res expressJs response object
  * @return {Promise}
  */
 exports.notifyTriggerDetails = async(req, res) => {
-    const notifyTrigId = req.params.notifyTrigId;
+    const notifySentTrigId = req.params.notifySentTrigId;
     var options = {
         where: {
-            notify_trig_id: notifyTrigId
+            notify_sent_trig_id: notifySentTrigId
         }
     };
-    const notifyTrigger = await NotifyTrigger.findOne(options);
-    if(!notifyTrigger){
+    const notifySent = await NotifySent.findOne(options);
+    if(!notifySent){
         res.status(500).send({
-            message: "Notify Trigger not found"
+            message: "Notify Sent not found"
         });
         return
     }
     res.status(200).send({
-        data: notifyTrigger
+        data: notifySent
     });
 };
 /**
- * Function to update single Notify Trigger
+ * Function to update single Notify Sent
  * @param  {object}  req expressJs request object
  * @param  {object}  res expressJs response object
  * @return {Promise}
  */
-exports.updateNotifyTrigger = async(req, res) => {
+exports.updateNotifySent = async(req, res) => {
     const body = req.body
-    const id = req.params.notifyTrigId;
-    var NotifyTriggerDetails = await NotifyTrigger.findOne({
+    const id = req.params.notifySentTrigId;
+    var NotifySentDetails = await NotifySent.findOne({
         where: {
-            notify_trig_id: id
+            notify_sent_trig_id: id
         }
     });
     const notifyTrig = {
+        "notify_trig_id": body.hasOwnProperty("Notify Trigger Id") ? body["Notify Trigger Id"] : 0,
+        "u_id": body.hasOwnProperty("User Id") ? body["User Id"] : 0,
         "notify_event_id": body.hasOwnProperty("Event Id") ? body["Event Id"] : 0,
         "notify_method": body.hasOwnProperty("Method") ? body["Method"] : "",
         "notify_type": body.hasOwnProperty("Type") ? body["Type"] : "",
@@ -137,63 +179,63 @@ exports.updateNotifyTrigger = async(req, res) => {
         "notify_trig_push_id": body.hasOwnProperty("Trigger Push Id") ? body["Trigger Push Id"] : 0,
         "cr_co_id": body.hasOwnProperty("Brand Id") ? body["Brand Id"] : 0
     }
-    NotifyTrigger.update(notifyTrig, {
+    NotifySent.update(notifyTrig, {
 		returning:true,
         where: {
             notify_trig_id: id
         }
     }).then(function([ num, [result] ]) {
         if (num == 1) {
-            audit_log.saveAuditLog(req.header(process.env.UKEY_HEADER || "x-api-key"),'update','notifyTrigger',id,result.dataValues,NotifyTriggerDetails);
+            audit_log.saveAuditLog(req.header(process.env.UKEY_HEADER || "x-api-key"),'update','notifySent',id,result.dataValues,NotifySentDetails);
             res.status(200).send({
-                message: "Notify Trigger updated successfully."
+                message: "Notify Sent updated successfully."
             });
         } else {
             res.status(400).send({
-                message: `Cannot update Notify Trigger with id=${id}. Maybe Notify Trigger was not found or req.body is empty!`
+                message: `Cannot update Notify Sent with id=${id}. Maybe Notify Sent was not found or req.body is empty!`
             });
         }
     }).catch(err => {
-        logger.log("error", err+":Error updating Notify Trigger with id=" + id);
+        logger.log("error", err+":Error updating Notify Sent with id=" + id);
         console.log(err)
         res.status(500).send({
-            message: "Error updating Notify Trigger with id=" + id
+            message: "Error updating Notify Sent with id=" + id
         });
     });
 };
 
 /**
- * Function to delete Notify Trigger
+ * Function to delete Notify Sent
  * @param  {object}  req expressJs request object
  * @param  {object}  res expressJs response object
  * @return {Promise}
  */
- exports.deleteNotifyTrigger = async (req, res) => {
-    const notifyTriggerDetails = await NotifyTrigger.findOne({
+ exports.deleteNotifySent = async (req, res) => {
+    const notifySentDetails = await NotifySent.findOne({
             where: {
-                notify_trig_id: req.params.notifyTrigId
+                notify_sent_trig_id: req.params.notifySentTrigId
             }
         });
-    if(!notifyTriggerDetails){
+    if(!notifySentDetails){
         res.status(500).send({
-            message: "Could not delete Notify Trigger with id=" + req.params.notifyTrigId
+            message: "Could not delete Notify Sent with id=" + req.params.notifySentTrigId
           });
           return;
     }
-    notifyTrigger.destroy({
+    notifySent.destroy({
         where: { 
-            notify_trig_id: req.params.notifyTrigId
+            notify_sent_trig_id: req.params.notifySentTrigId
         }
       })
         .then(num => {
         res.status(200).send({
-              message: "Notify Trigger deleted successfully!"
+              message: "Notify Sent deleted successfully!"
         });
             return;
         })
         .catch(err => {
           res.status(500).send({
-            message: "Could not delete Notify Trigger with id=" + req.params.notifyTrigId
+            message: "Could not delete Notify Sent with id=" + req.params.notifySentTrigId
           });
           return;
         });

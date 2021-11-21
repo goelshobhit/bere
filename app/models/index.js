@@ -91,6 +91,8 @@ db.search_results = require("./search_results.model")(sequelize, Sequelize);
 db.search_objects = require("./search_objects.model")(sequelize, Sequelize);
 
 //Relations
+db.notify_trig.hasMany(db.notify_trig_sent, {foreignKey: 'notify_trig_id', targetKey: 'notify_trig_id'});
+db.notify_trig_sent.belongsTo(db.notify_trig, {foreignKey: 'notify_trig_id', targetKey: 'notify_trig_id'});
 db.brands.hasMany(db.notify_event, {foreignKey: 'cr_co_id', targetKey: 'cr_co_id'});
 db.notify_event.belongsTo(db.brands, {foreignKey: 'cr_co_id', targetKey: 'cr_co_id'});
 db.brands.hasMany(db.notify_trig, {foreignKey: 'cr_co_id', targetKey: 'cr_co_id'});
@@ -135,7 +137,8 @@ db.user_fan_following.belongsTo(db.user_profile, { as:'follower',foreignKey: 'fa
 
 
 db.users.hasMany(db.user_content_post, {foreignKey: 'ucpl_u_id', targetKey: 'u_id'});
-
+db.users.hasMany(db.notify_trig_sent, {foreignKey: 'u_id', targetKey: 'u_id'});
+db.notify_trig_sent.belongsTo(db.users, {foreignKey: 'u_id', targetKey: 'u_id'});
 db.user_content_post.hasMany(db.post_comment, {foreignKey: 'ucpl_id', targetKey: 'ucpl_id'});
 db.user_content_post.hasMany(db.post_user_reactions, {foreignKey: 'ucpl_id', targetKey: 'ucpl_id'});
 

@@ -1,10 +1,10 @@
 module.exports = app => {
-    const NotifyTriggers = require("../controllers/notify_trig.controller.js");
+    const NotifyTriggersSent = require("../controllers/notify_trig_sent.controller.js");
     var router = require("express").Router();
     const auth = require("../middleware/auth");
   /**
    * @swagger
-   * /api/notify/triggers:
+   * /api/notify/sent/triggers:
    *   post:
    *     requestBody:
    *        required: false
@@ -13,6 +13,10 @@ module.exports = app => {
    *                schema:
    *                    type: object
    *                    properties:
+   *                        Notify Trigger Id:
+   *                           type: integer    
+   *                        User Id:
+   *                           type: integer          
    *                        Event Id:
    *                           type: integer
    *                        Method:
@@ -39,13 +43,13 @@ module.exports = app => {
    *                        Brand Id:
    *                           type: integer
    *     tags:
-   *       - Notify Triggers
-   *     description: Add new Notify Trigger
+   *       - Sent Notify Triggers
+   *     description: Add new Sent Notify Trigger
    *     produces:
    *       - application/json
    *     responses:
    *       201:
-   *         description: Add new Trigger
+   *         description: Add new Sent Trigger
    *       422:
    *         description: validation errors
    *       500:
@@ -61,10 +65,10 @@ module.exports = app => {
    *                              type: string
    *                              example: Authorisation Required
    */
-	router.post("/notify/triggers",auth, NotifyTriggers.createNotifyTrigger);
+	router.post("/notify/sent/triggers",auth, NotifyTriggersSent.createNotifySent);
   /**
    * @swagger
-   * /api/notify/triggers/{notifyTrigId}:
+   * /api/notify/sent/triggers/{notifySentTrigId}:
    *   put:
    *     requestBody:
    *        required: false
@@ -73,6 +77,10 @@ module.exports = app => {
    *                schema:
    *                    type: object
    *                    properties:
+   *                        Notify Trigger Id:
+   *                           type: integer
+   *                        User Id:
+   *                           type: integer
    *                        Event Id:
    *                           type: integer
    *                        Method:
@@ -96,19 +104,19 @@ module.exports = app => {
    *                        Brand Id:
    *                           type: integer
    *     parameters:
-   *         - name: notifyTrigId
+   *         - name: notifySentTrigId
    *           in: path
    *           required: true
    *           schema:
    *              type: string
    *     tags:
-   *       - Notify Triggers
-   *     description: Update Notify Trigger
+   *       - Sent Notify Triggers
+   *     description: Update a Sent Notify Trigger
    *     produces:
    *       - application/json
    *     responses:
    *       201:
-   *         description: Notify Triggers updated
+   *         description: Notify Trigger Sent updated
    *       422:
    *         description: validation errors
    *       500:
@@ -124,10 +132,10 @@ module.exports = app => {
    *                              type: string
    *                              example: Authorisation Required
    */
-   router.put("/notify/triggers/:notifyTrigId",auth, NotifyTriggers.updateNotifyTrigger);
+   router.put("/notify/sent/triggers/:notifySentTrigId",auth, NotifyTriggersSent.updateNotifySent);
   /**
    * @swagger
-   * /api/notify/triggers:
+   * /api/notify/sent/triggers/all:
    *   get:
    *     parameters:
    *         - name: pageNumber
@@ -140,7 +148,7 @@ module.exports = app => {
    *           required: false
    *           schema:
    *              type: string
-   *              example: notify_trig_id,notify_event_id,notify_method,notify_type,notify_trig_pushalert,notify_trig_msg,notify_trig_grp_id,notify_group_name,notify_send_date,notify_ack,notify_trig_status,notify_trig_push_id,cr_co_id # Example of a parameter value
+   *              example: notify_sent_trig_id,u_id,notify_trig_id,notify_event_id,notify_method,notify_type,notify_trig_pushalert,notify_trig_msg,notify_trig_grp_id,notify_group_name,notify_send_date,notify_ack,notify_trig_status,notify_trig_push_id,cr_co_id # Example of a parameter value
    *         - name: sortOrder
    *           in: query
    *           required: false
@@ -153,13 +161,13 @@ module.exports = app => {
    *           schema:
    *              type: string
    *     tags:
-   *       - Notify Triggers
-   *     description: Returns all Notify Triggers
+   *       - Sent Notify Triggers
+   *     description: Returns all Sent Notify Triggers
    *     produces:
    *       - application/json
    *     responses:
    *       200:
-   *         description: A list of Notify Triggers
+   *         description: A list of Sent Notify Triggers
    *       401:
    *          description: Unauthorized
    *          content:
@@ -171,13 +179,60 @@ module.exports = app => {
    *                              type: string
    *                              example: Authorisation Required
    */
-    router.get('/notify/triggers',auth, NotifyTriggers.notifyTriggerListing)
+    router.get('/notify/sent/triggers/all',auth, NotifyTriggersSent.notifySentListing)
   /**
    * @swagger
-   * /api/notify/triggers/{notifyTrigId}:
+   * /api/notify/sent/triggers:
    *   get:
    *     parameters:
-   *         - name: notifyTrigId
+   *         - name: pageNumber
+   *           in: query
+   *           required: false
+   *           schema:
+   *              type: integer
+   *         - name: sortBy
+   *           in: query
+   *           required: false
+   *           schema:
+   *              type: string
+   *              example: notify_sent_trig_id,u_id,notify_trig_id,notify_event_id,notify_method,notify_type,notify_trig_pushalert,notify_trig_msg,notify_trig_grp_id,notify_group_name,notify_send_date,notify_ack,notify_trig_status,notify_trig_push_id,cr_co_id # Example of a parameter value
+   *         - name: sortOrder
+   *           in: query
+   *           required: false
+   *           schema:
+   *              type: string
+   *              example: ASC,DESC    # Example of a parameter value
+   *         - name: sortVal
+   *           in: query
+   *           required: false
+   *           schema:
+   *              type: string
+   *     tags:
+   *       - Sent Notify Triggers
+   *     description: Returns all Sent Notify Triggers Of The User
+   *     produces:
+   *       - application/json
+   *     responses:
+   *       200:
+   *         description: A list of Sent Notify Triggers Of The User
+   *       401:
+   *          description: Unauthorized
+   *          content:
+   *              application/json:
+   *                  schema:
+   *                      type: object
+   *                      properties:
+   *                          message:
+   *                              type: string
+   *                              example: Authorisation Required
+   */
+   router.get('/notify/sent/triggers',auth, NotifyTriggersSent.notifySentListingOfTheUser)
+    /**
+   * @swagger
+   * /api/notify/sent/triggers/{notifySentTrigId}:
+   *   get:
+   *     parameters:
+   *         - name: notifySentTrigId
    *           in: path
    *           required: true
    *           schema:
@@ -193,13 +248,13 @@ module.exports = app => {
    *           schema:
    *              type: integer
    *     tags:
-   *       - Notify Triggers
-   *     description: Retrieve a single Notify Trigger with notifyTrigId
+   *       - Sent Notify Triggers
+   *     description: Retrieve a single Sent Notify Trigger with notifySentTrigId
    *     produces:
    *       - application/json
    *     responses:
    *       200:
-   *         description: Details of a Notify Trigger
+   *         description: Details of a Sent Notify Trigger
    *       401:
    *          description: Unauthorized
    *          content:
@@ -211,25 +266,25 @@ module.exports = app => {
    *                              type: string
    *                              example: Authorisation Required
    */
-    router.get("/notify/triggers/:notifyTrigId",auth, NotifyTriggers.notifyTriggerDetails);
+    router.get("/notify/sent/triggers/:notifySentTrigId",auth, NotifyTriggersSent.notifySentListing);
   /**
    * @swagger
-   * /api/notify/triggers/{notifyTrigId}:
+   * /api/notify/sent/triggers/{notifySentTrigId}:
    *   delete:
    *     parameters:
-   *         - name: notifyTrigId
+   *         - name: notifySentTrigId
    *           in: path
    *           required: true
    *           schema:
    *              type: integer
    *     tags:
-   *      - Notify Triggers
-   *     description: Delete a notify trigger with id
+   *      - Sent Notify Triggers
+   *     description: Delete a sent notify trigger with id
    *     produces:
    *       - application/json
    *     responses:
    *       200:
-   *         description: Delete a notify trigger
+   *         description: Delete a sent notify trigger
    *       401:
    *          description: Unauthorized
    *          content:
@@ -241,7 +296,7 @@ module.exports = app => {
    *                              type: string
    *                              example: Authorisation Required
    */
-   router.delete("/notify/triggers/:notifyTrigId", auth, NotifyTriggers.deleteNotifyTrigger);   
+   router.delete("/notify/sent/triggers/:notifySentTrigId", auth, NotifyTriggersSent.deleteNotifySent);   
     app.use("/api", router);
 };
   

@@ -39,49 +39,63 @@ module.exports = params => {
               }
           },
           pushMessage: function(userId, notifyTrigger, notifyEvent) {
-              const {notify_trig_msg: message} = notifyTrigger;
-              var userConnections = connections[userId];
-              if (userConnections) {
-                  for (var connectionId in  userConnections) {
-                      if (userConnections.hasOwnProperty(connectionId)) {
-                          var socket = userConnections[connectionId];
-                          if (socket != null) {
-                              const { notify_event_usrOptOut } = notifyEvent;
-                              if(notify_event_usrOptOut !== 1) {
-                                socket.emit('message', message);
-                              }
-                              const notifyTrigSent = {
-                                "notify_trig_id": notifyTrigger.notify_trig_id,
-                                "notify_event_id": notifyTrigger.notify_event_id,
-                                "notify_method": notifyTrigger.notify_method,
-                                "notify_type": notifyTrigger.notify_type,
-                                "notify_trig_pushalert": notifyTrigger.notify_trig_pushalert,
-                                "notify_trig_msg": notifyTrigger.notify_trig_msg,
-                                "notify_trig_grp_id": notifyTrigger.notify_trig_grp_id,
-                                "notify_group_name": notifyTrigger.notify_group_name,
-                                "notify_send_date": notifyTrigger.notify_send_date,
-                                "notify_ack": notifyTrigger.notify_ack,
-                                "notify_trig_status": notifyTrigger.notify_trig_status,
-                                "notify_trig_push_id": notifyTrigger.notify_trig_push_id,
-                                "cr_co_id": notifyTrigger.cr_co_id
+            try {
+                const {notify_trig_msg: message} = notifyTrigger;
+                var userConnections = connections[userId];
+                if (userConnections) {
+                    for (var connectionId in  userConnections) {
+                        if (userConnections.hasOwnProperty(connectionId)) {
+                            var socket = userConnections[connectionId];
+                            if (socket != null) {
+                                    const { notify_event_usrOptOut } = notifyEvent;
+                                    if(notify_event_usrOptOut !== 1) {
+                                        socket.emit('message', message);
+                                    }
                             }
-                              NotifySent.create(notifyTrigSent).then(data => {
-                                audit_log.saveAuditLog(userId,'add','todayTimeStamp',data.notify_sent_trig_id,data.dataValues);
-                            }).catch(err => {
-                                logger.log("error", "Some error occurred while creating the Notify Trigger=" + err);
-                            })
-                          }
-                      }
-                  }
-              }
+                        }
+                    }
+                }
+            } catch(err) {
+                logger.log("error", "Some error occurred while sending the Notify=" + err);
+            }
+              const notifyTrigSent = {
+                "notify_trig_id": notifyTrigger.notify_trig_id,
+                "u_id": userId,
+                "notify_event_id": notifyTrigger.notify_event_id,
+                "notify_method": notifyTrigger.notify_method,
+                "notify_type": notifyTrigger.notify_type,
+                "notify_trig_pushalert": notifyTrigger.notify_trig_pushalert,
+                "notify_trig_msg": notifyTrigger.notify_trig_msg,
+                "notify_trig_grp_id": notifyTrigger.notify_trig_grp_id,
+                "notify_group_name": notifyTrigger.notify_group_name,
+                "notify_send_date": notifyTrigger.notify_send_date,
+                "notify_ack": notifyTrigger.notify_ack,
+                "notify_trig_status": notifyTrigger.notify_trig_status,
+                "notify_trig_push_id": notifyTrigger.notify_trig_push_id,
+                "cr_co_id": notifyTrigger.cr_co_id
+                }
+                NotifySent.create(notifyTrigSent).then(data => {
+                    audit_log.saveAuditLog(userId,'add','todayTimeStamp',data.notify_sent_trig_id,data.dataValues);
+                }).catch(err => {
+                    logger.log("error", "Some error occurred while creating the Notify Sent=" + err);
+                })
           }
       }
   }());
   io.on('connection', function(socket) {
     socket.on('register', message => {
-        const json = JSON.parse(message);
-        const {userId, connectionId} = json;
-        pushService.registerSocket(userId, connectionId, socket);
+        var json = null;
+        try {
+            json = JSON.parse(message);
+        } catch (err) {
+            logger.log("error", "Some error occurred while registering the connection=" + err);
+        }
+        if(json) {
+            const {userId, connectionId} = json;
+            pushService.registerSocket(userId, connectionId, socket);
+        } else {
+            logger.log("error", "Some error occurred while registering the connection");
+        }
     });
     socket.on('disconnect', function() {
         pushService.removeConnection(socket);

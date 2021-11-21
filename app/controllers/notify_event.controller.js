@@ -35,7 +35,7 @@ exports.createNotifyEvent = async(req, res) => {
             audit_log.saveAuditLog(req.header(process.env.UKEY_HEADER || "x-api-key"),'add','todayTimeStamp',data.notify_event_id,data.dataValues);
         res.status(201).send({			
             msg: "Notify Event Created Successfully",
-            campID: data.notify_event_id
+            notifyEventId: data.notify_event_id
         });
     }).catch(err => {
         logger.log("error", "Some error occurred while creating the Notify Event=" + err);
