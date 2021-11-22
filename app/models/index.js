@@ -76,10 +76,14 @@ db.post_report = require("./post_report.model")(sequelize, Sequelize);
 db.post_report = require("./post_report.model")(sequelize, Sequelize);
 db.user_fan_following = require("./user_fan_following.model")(sequelize, Sequelize);
 db.budget_history=require("./budget_history.model")(sequelize,Sequelize);
+//notification templates
 db.notify_grp = require("./notify_grp.model")(sequelize, Sequelize);
 db.notify_event = require("./notify_event.model")(sequelize, Sequelize);
 db.notify_trig = require("./notify_trig.model")(sequelize, Sequelize);
 db.notify_trig_sent = require("./notify_trig_sent.model")(sequelize, Sequelize);
+// video ads templates
+db.video_ads = require("./video_ads.model")(sequelize, Sequelize);
+db.video_ads_submit = require("./video_ads_submit.model")(sequelize, Sequelize);
 //email tempaltes 
 db.mail_templates=require("./mail_templates.model")(sequelize,Sequelize);
 db.user_feedback=require("./user_feedback.model")(sequelize,Sequelize);
@@ -91,6 +95,8 @@ db.search_results = require("./search_results.model")(sequelize, Sequelize);
 db.search_objects = require("./search_objects.model")(sequelize, Sequelize);
 
 //Relations
+db.brands.hasMany(db.video_ads, {foreignKey: 'cr_co_id', targetKey: 'cr_co_id'});
+db.video_ads.belongsTo(db.brands, {foreignKey: 'cr_co_id', targetKey: 'cr_co_id'});
 db.notify_trig.hasMany(db.notify_trig_sent, {foreignKey: 'notify_trig_id', targetKey: 'notify_trig_id'});
 db.notify_trig_sent.belongsTo(db.notify_trig, {foreignKey: 'notify_trig_id', targetKey: 'notify_trig_id'});
 db.brands.hasMany(db.notify_event, {foreignKey: 'cr_co_id', targetKey: 'cr_co_id'});
