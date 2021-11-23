@@ -20,7 +20,7 @@ module.exports = app => {
    *                        Ads Url:
    *                           type: integer
    *                        Ads Timestamp:
-   *                          format: date-time
+   *                            format: date-time
    *                            example: 2020-09-30
    *                        Ads Lenght Secs:
    *                           type: integer
@@ -42,7 +42,6 @@ module.exports = app => {
    *                           type: integer
    *                        Stars Given Value:
    *                           type: integer
-   * 
    *     tags:
    *       - Video Ads
    *     description: Add new Video Ad
@@ -66,7 +65,7 @@ module.exports = app => {
    *                              type: string
    *                              example: Authorisation Required
    */
-	router.post("/video_ads",auth, VideoAds.createVideoAds);
+	 router.post("/video_ads",auth, VideoAds.createVideoAds);
   /**
    * @swagger
    * /api/video_ads/{videoAdsId}:
@@ -85,7 +84,7 @@ module.exports = app => {
    *                        Ads Url:
    *                           type: integer
    *                        Ads Timestamp:
-   *                          format: date-time
+   *                            format: date-time
    *                            example: 2020-09-30
    *                        Ads Lenght Secs:
    *                           type: integer
@@ -254,6 +253,6 @@ module.exports = app => {
    *                              example: Authorisation Required
    */
    router.delete("/video_ads/:videoAdsId", auth, VideoAds.deleteVideoAds);   
-    app.use("/api", router);
+   app.use("/api", router);
 };
   

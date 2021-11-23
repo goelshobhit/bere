@@ -65,14 +65,6 @@ module.exports = (sequelize, Sequelize) => {
             type: Sequelize.INTEGER,
             allowNull: false,
         },
-		video_tokens_given_value: {
-            type: Sequelize.INTEGER,
-            allowNull: false,
-        },
-		video_stars_given_value: {
-            type: Sequelize.INTEGER,
-            allowNull: false,
-        }
     }, {
         createdAt: 'va_created_at',
         updatedAt: 'va_updated_at',

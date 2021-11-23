@@ -91,7 +91,7 @@ exports.videoAdsSubmitDetails = async(req, res) => {
         }
     };
     const videoAdsSubmit = await VideoAdsSubmit.findOne(options);
-    if(!videoAds){
+    if(!videoAdsSubmit){
         res.status(500).send({
             message: "Video Ads Submit not found"
         });

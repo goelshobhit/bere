@@ -1,5 +1,5 @@
 module.exports = (sequelize, Sequelize) => {
-    const videoAdsSubmit = sequelize.define("video_ads_submit", {
+    const VideoAdsSubmit = sequelize.define("video_ads_submit", {
         video_ads_submit_id: {
             type: Sequelize.INTEGER,
             primaryKey: true,
@@ -32,5 +32,5 @@ module.exports = (sequelize, Sequelize) => {
         tableName: 'video_ads_submit',
         underscored: true
     });
-    return videoAdsSubmit;
+    return VideoAdsSubmit;
 };

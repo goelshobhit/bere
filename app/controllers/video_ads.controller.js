@@ -203,4 +203,4 @@ exports.updateVideoAds = async(req, res) => {
           });
           return;
         });
-    }
+    };

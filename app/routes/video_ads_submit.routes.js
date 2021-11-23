@@ -16,12 +16,12 @@ module.exports = app => {
    *                        User Id:
    *                           type: integer
    *                        Watch Timestamp:
-   *                           format: date-time
+   *                            format: date-time
    *                            example: 2020-09-30
    *                        Watch Completion:
    *                           type: integer
    *                        Submit Timestamp:
-   *                          format: date-time
+   *                            format: date-time
    *                            example: 2020-09-30
    *                        Reward Ack:
    *                           type: integer
@@ -64,12 +64,12 @@ module.exports = app => {
    *                        User Id:
    *                           type: integer
    *                        Watch Timestamp:
-   *                           format: date-time
+   *                            format: date-time
    *                            example: 2020-09-30
    *                        Watch Completion:
    *                           type: integer
    *                        Submit Timestamp:
-   *                          format: date-time
+   *                            format: date-time
    *                            example: 2020-09-30
    *                        Reward Ack:
    *                           type: integer

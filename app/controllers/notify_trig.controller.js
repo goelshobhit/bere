@@ -180,7 +180,7 @@ exports.updateNotifyTrigger = async(req, res) => {
           });
           return;
     }
-    notifyTrigger.destroy({
+    NotifyTrigger.destroy({
         where: { 
             notify_trig_id: req.params.notifyTrigId
         }
