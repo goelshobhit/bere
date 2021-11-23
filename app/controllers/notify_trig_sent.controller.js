@@ -222,7 +222,7 @@ exports.updateNotifySent = async(req, res) => {
           });
           return;
     }
-    notifySent.destroy({
+    NotifySent.destroy({
         where: { 
             notify_sent_trig_id: req.params.notifySentTrigId
         }
