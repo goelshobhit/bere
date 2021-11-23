@@ -89,6 +89,11 @@ db.account_balance=require("./accountBalance.model")(sequelize,Sequelize);
 db.admin_setting=require("./adminSetting.model")(sequelize,Sequelize);
 db.search_results = require("./search_results.model")(sequelize, Sequelize);
 db.search_objects = require("./search_objects.model")(sequelize, Sequelize);
+db.survey = require("./survey.model")(sequelize, Sequelize);
+db.survey_questions = require("./survey_questions.model")(sequelize, Sequelize);
+db.survey_submissions = require("./survey_submissions.model")(sequelize, Sequelize);
+db.survey_stats = require("./survey_stats.model")(sequelize, Sequelize);
+db.survey_user_complete = require("./survey_user_complete.model")(sequelize, Sequelize);
 
 //Relations
 db.brands.hasMany(db.notify_event, {foreignKey: 'cr_co_id', targetKey: 'cr_co_id'});
@@ -113,6 +118,8 @@ db.users.hasOne(db.user_profile, {foreignKey: 'u_id', targetKey: 'u_id'});
 db.user_profile.belongsTo(db.users, {foreignKey: 'u_id', targetKey: 'u_id'});
 db.users.hasOne(db.user_social_ext, {foreignKey: 'u_id', targetKey: 'u_id'});
 db.user_social_ext.belongsTo(db.users, {foreignKey: 'u_id', targetKey: 'u_id'});
+db.survey.belongsTo(db.brands, {foreignKey: 'sr_brand_id', targetKey: 'cr_co_id'});
+db.brands.hasMany(db.survey, {foreignKey: 'sr_brand_id', targetKey: 'cr_co_id'});
 
 
 

@@ -237,6 +237,7 @@ require("./app/routes/notify_grp.routes")(app);
 require("./app/routes/notify_event.routes")(app);
 require("./app/routes/notify_trig.routes")(app);
 require("./app/routes/socket_server.routes")({app, io});
+require("./app/routes/survey.routes")(app);
 server.listen(PORT, function () {
   console.log(`Server is running on port ${PORT}.`)
 });

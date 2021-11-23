@@ -200,7 +200,10 @@ exports.searchRecords = async (req, res) => {
             "ta_header_image": TaskDetails[TaskDetail].ta_header_image,
             "ta_do": TaskDetails[TaskDetail].ta_do,
             "ta_dont_do": TaskDetails[TaskDetail].ta_dont_do,
-            "ta_insta_question": TaskDetails[TaskDetail].ta_insta_question
+            "ta_insta_question": TaskDetails[TaskDetail].ta_insta_question,
+            "ta_type": TaskDetails[TaskDetail].ta_type,
+            "ta_start_date": TaskDetails[TaskDetail].ta_start_date,
+            "ta_end_date": TaskDetails[TaskDetail].ta_end_date
           };
           if (TaskDetails[TaskDetail].ta_type == 3) {
             TaskDisplayVideoDetails.push(TaskData);
@@ -231,7 +234,13 @@ exports.searchRecords = async (req, res) => {
           ContestTaskDisplayDetails.push({
             "ct_name": ContestTaskDetails[ContestTaskDetail].ct_name,
             "ct_post_insp_image": ContestTaskDetails[ContestTaskDetail].ct_post_insp_image,
-            "ct_hashtag": ContestTaskDetails[ContestTaskDetail].ct_hashtag
+            "ct_hashtag": ContestTaskDetails[ContestTaskDetail].ct_hashtag,
+            "ct_header_image": ContestTaskDetails[ContestTaskDetail].ct_header_image,
+            "ct_winner_token": ContestTaskDetails[ContestTaskDetail].ct_winner_token,
+            "ct_type": ContestTaskDetails[ContestTaskDetail].ct_type,
+            "ct_start_voting_date": ContestTaskDetails[ContestTaskDetail].ct_start_voting_date,
+            "ct_end_voting_date": ContestTaskDetails[ContestTaskDetail].ct_end_voting_date,
+            "ct_winner_date": ContestTaskDetails[ContestTaskDetail].ct_winner_date
           });
         }
         response_data.Contest = ContestTaskDisplayDetails;
@@ -261,7 +270,8 @@ exports.searchRecords = async (req, res) => {
         where: {
           cr_co_name: {
             [Op.iLike]: `%${keyWord}%`
-          }
+          },
+          cr_co_status:1
         }
       };
       const BrandTaskDetails = await Brand.findAll(brandOptions);
