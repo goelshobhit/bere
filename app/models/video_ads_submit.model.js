@@ -5,7 +5,7 @@ module.exports = (sequelize, Sequelize) => {
             primaryKey: true,
             autoIncrement: true
         },
-		video_ads_submit_usr_id: {
+		u_id: {
             type: Sequelize.INTEGER,
             allowNull: false,
         },

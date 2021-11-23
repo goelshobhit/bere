@@ -1,6 +1,5 @@
 const db = require("../models");
 const VideoAds = db.video_ads;
-const Op = db.Sequelize.Op;
 const audit_log = db.audit_log
 const logger = require("../middleware/logger");
 const {
