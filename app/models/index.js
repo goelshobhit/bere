@@ -93,6 +93,8 @@ db.account_balance=require("./accountBalance.model")(sequelize,Sequelize);
 db.admin_setting=require("./adminSetting.model")(sequelize,Sequelize);
 db.search_results = require("./search_results.model")(sequelize, Sequelize);
 db.search_objects = require("./search_objects.model")(sequelize, Sequelize);
+db.content_report = require("./content_report.model")(sequelize, Sequelize);
+db.content_report_category = require("./content_report_category.model")(sequelize, Sequelize);
 
 //Relations
 db.brands.hasMany(db.video_ads, {foreignKey: 'cr_co_id', targetKey: 'cr_co_id'});
