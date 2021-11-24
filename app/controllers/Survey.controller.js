@@ -1,5 +1,6 @@
 const db = require("../models");
 const Survey = db.survey;
+const Brand = db.brands;
 const SurveyQuestions = db.survey_questions;
 const SurveySubmissions = db.survey_submissions;
 const SurveyStats = db.survey_stats;
@@ -323,7 +324,8 @@ exports.submitSurvey = async (req, res) => {
     }
     var statOptions = {
         where: {
-            srq_answer: surveyAnswer
+            srq_answer: surveyAnswer,
+            srq_id: body["Question ID"]
         }
     };
     const surveyAnswerExist = await SurveyStats.findOne(statOptions);
@@ -408,6 +410,24 @@ exports.surveyStatsListing = async (req, res) => {
             ]
         } : null;
     }
+    options['include'] = [
+        {
+          model: Survey,
+          required:false,
+          attributes:['sr_title'],
+          where : {
+            sr_status: 1
+          },
+          include: [{
+            model: Brand,
+            required:false,
+            where : {
+              cr_co_status: 1
+            },
+              attributes:['cr_co_name'],
+            }]
+        }
+      ]
     if (req.query.surveyID) {
         options['where'] = {
             sr_id: req.query.surveyID
@@ -419,9 +439,46 @@ exports.surveyStatsListing = async (req, res) => {
     var total = await SurveyStats.count({
         where: options['where']
     });
-    const survey_stats_list = await SurveyStats.findAll(options);
+    const surveyStatsList = await SurveyStats.findAll(options);
+    // res.status(200).send({
+    //     data: surveyStatsList,
+    //     totalRecords: total
+    // });
+    const questionAnswerCount = [];
+    var QuestionCountObj = {};
+    for (const surveyStats in surveyStatsList) {
+        if (typeof QuestionCountObj[surveyStatsList[surveyStats].srq_id] !== 'undefined' && QuestionCountObj[surveyStatsList[surveyStats].srq_id]) {
+            QuestionCountObj[surveyStatsList[surveyStats].srq_id] += surveyStatsList[surveyStats].srq_answer_count;
+        } else {
+            QuestionCountObj[surveyStatsList[surveyStats].srq_id] = surveyStatsList[surveyStats].srq_answer_count;
+        }
+    }
+    questionAnswerCount.push(QuestionCountObj);
+    var answer_percentage  = 0;
+    const SurveyStatResult = [];
+    for (const surveyStats in surveyStatsList) {
+       answer_percentage = parseFloat(surveyStatsList[surveyStats].srq_answer_count*100/questionAnswerCount[0][surveyStatsList[surveyStats].srq_id]);
+    //    res.status(200).send({
+    //     survey: surveyStatsList[surveyStats].survey.brand.cr_co_name
+    // });
+    // return;
+    // console.log("survey======="+surveyStatsList[surveyStats].survey.sr_title);
+    // console.log("cr_co_name======="+surveyStatsList[surveyStats].survey.brand.cr_co_name);
+    // var surveyName = surveyStatsList[surveyStats].survey.sr_title;
+    // var brandName = surveyStatsList[surveyStats].survey.brand.cr_co_name;
+       SurveyStatResult.push({
+            //"Survey Name": surveyName,
+            //"Brand Name": brandName,
+            "Survey": surveyStatsList[surveyStats].survey,
+            "Survey Id": surveyStatsList[surveyStats].sr_id,
+            "Survey Question id": surveyStatsList[surveyStats].srq_id,
+            "Survey Answer": surveyStatsList[surveyStats].srq_answer,
+            "Answer Percentage": answer_percentage.toFixed(2)
+          });
+    }
+    
     res.status(200).send({
-        data: survey_stats_list,
+        data: SurveyStatResult,
         totalRecords: total
     });
 };

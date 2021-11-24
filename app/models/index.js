@@ -120,9 +120,14 @@ db.users.hasOne(db.user_social_ext, {foreignKey: 'u_id', targetKey: 'u_id'});
 db.user_social_ext.belongsTo(db.users, {foreignKey: 'u_id', targetKey: 'u_id'});
 db.survey.belongsTo(db.brands, {foreignKey: 'sr_brand_id', targetKey: 'cr_co_id'});
 db.brands.hasMany(db.survey, {foreignKey: 'sr_brand_id', targetKey: 'cr_co_id'});
+db.survey_questions.belongsTo(db.survey, {foreignKey: 'sr_id', targetKey: 'sr_id'});
+db.survey.hasMany(db.survey_questions, {foreignKey: 'sr_id', targetKey: 'sr_id'});
 
+db.survey_submissions.belongsTo(db.survey, {foreignKey: 'srs_sr_id', targetKey: 'sr_id'});
+db.survey.hasMany(db.survey_submissions, {foreignKey: 'srs_sr_id', targetKey: 'sr_id'});
 
-
+db.survey_stats.belongsTo(db.survey, {foreignKey: 'sr_id', targetKey: 'sr_id'});
+db.survey.hasMany(db.survey_stats, {foreignKey: 'sr_id', targetKey: 'sr_id'});
 
 db.user_profile.hasMany(db.post_comment, {foreignKey: 'pc_commenter_uid', targetKey: 'u_id'});
 db.post_comment.belongsTo(db.user_profile, {foreignKey: 'pc_commenter_uid', targetKey: 'u_id'});
