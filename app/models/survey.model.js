@@ -19,7 +19,7 @@ module.exports = (sequelize, Sequelize) => {
       allowNull: false,
     },
     sr_hashtags: {
-      type: Sequelize.STRING(255),
+      type: Sequelize.JSONB,
       allowNull: false,
     },
     sr_color: {
@@ -45,6 +45,11 @@ module.exports = (sequelize, Sequelize) => {
     sr_status: {
       allowNull: false,
       type: Sequelize.INTEGER
+    },
+    sr_usr_restriction: {
+      type: Sequelize.INTEGER,
+      allowNull: false,
+      defaultValue: '0'
     }
   }, {
       createdAt: 'sr_created_date_time',

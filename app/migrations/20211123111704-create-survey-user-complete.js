@@ -17,7 +17,6 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       sr_completion_date: {
-        allowNull: false,
         type: Sequelize.DATE
       },
       sr_usr_restriction: {

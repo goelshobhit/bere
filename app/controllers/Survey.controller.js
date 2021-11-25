@@ -20,13 +20,13 @@ const {
  */
 exports.createNewSurvey = async (req, res) => {
     const body = req.body;
-    // const errors = validationResult(req);
-    // if (!errors.isEmpty()) {
-    //     res.status(422).json({
-    //         errors: errors.array()
-    //     });
-    //     return;
-    // }
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        res.status(422).json({
+            errors: errors.array()
+        });
+        return;
+    }
     if (!req.body["Survey title"]) {
         res.status(500).send({
             msg:
@@ -48,7 +48,8 @@ exports.createNewSurvey = async (req, res) => {
         "sr_color": body.hasOwnProperty("Survey Color") ? body["Survey Color"] : 0,
         "sr_startdate_time": body.hasOwnProperty("Start Date") ? body["Start Date"] : new Date(),
         "sr_enddate_time": body.hasOwnProperty("End Date") ? body["End Date"] : new Date(),
-        "sr_status": body.hasOwnProperty("Survey Status") ? body["Survey Status"] : 1
+        "sr_status": body.hasOwnProperty("Survey Status") ? body["Survey Status"] : 1,
+        "sr_usr_restriction": body.hasOwnProperty("User Restriction") ? body["User Restriction"] : 0
     }
     Survey.create(SurveyData)
         .then(data => {
@@ -138,6 +139,13 @@ exports.surveyDetails = async (req, res) => {
  * @return {Promise}
  */
 exports.updateSurvey = async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        res.status(422).json({
+            errors: errors.array()
+        });
+        return;
+    }
     const body = req.body;
     const id = req.params.surveyID;
     var SurveyDetails = await Survey.findOne({
@@ -187,20 +195,15 @@ exports.updateSurvey = async (req, res) => {
  * @return {Promise}
  */
 exports.createSurveyQuestions = async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        res.status(422).json({
+            errors: errors.array()
+        });
+        return;
+    }
     const body = req.body;
-    if (!req.body["Survey Question"]) {
-        res.status(500).send({
-            msg:
-                "Survey question is required."
-        });
-        return;
-    }
-    if (!body.hasOwnProperty("Survey ID") || !req.body["Survey ID"]) {
-        res.status(500).send({
-            message: "Survey ID is required."
-        });
-        return;
-    }
+    /* check survey Valid or not. */
     const SurveyQuestionData = {
         "sr_id": body.hasOwnProperty("Survey ID") ? body["Survey ID"] : 0,
         "question": body.hasOwnProperty("Survey Question") ? body["Survey Question"] : "",
@@ -277,14 +280,14 @@ exports.surveyQuestionListing = async (req, res) => {
  * @return {Promise}
  */
 exports.submitSurvey = async (req, res) => {
-    const body = req.body;
-    if (!body["Survey ID"]) {
-        res.status(500).send({
-            msg:
-                "Survey ID is required."
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        res.status(422).json({
+            errors: errors.array()
         });
         return;
     }
+    const body = req.body;
     if (!body.hasOwnProperty("Question ID") || !body["Question ID"]) {
         res.status(500).send({
             message: "Question ID is required."
@@ -302,12 +305,13 @@ exports.submitSurvey = async (req, res) => {
     var options = {
         where: {
             sr_uid: uid,
-            sr_id: body["Survey ID"]
+            sr_id: body["Survey ID"],
+            sr_completed: 1
         }
     };
     const userSurvey = await SurveyUserComplete.findOne(options);
 
-    if (typeof userSurvey !== 'undefined' && userSurvey) {
+    if (userSurvey) {
         res.status(500).send({
             message: "The user is not permitted to complete the same survey Again."
         });
@@ -321,6 +325,20 @@ exports.submitSurvey = async (req, res) => {
         "srs_srq_answer": surveyAnswer,
         "srs_rewards_star": body.hasOwnProperty("Rewards Star") ? body["Rewards Star"] : "",
         "srs_rewards_collection_date": body.hasOwnProperty("Rewards Collection Date") ? body["Rewards Collection Date"] : ""
+    }
+    var SubmissionOptions = {
+        where: {
+            srs_srq_id: body["Question ID"],
+            srs_sr_id: body["Survey ID"],
+            srs_uid: uid
+        }
+    };
+    const SurveySubmissionsResult = await SurveySubmissions.findOne(SubmissionOptions);
+    if (SurveySubmissionsResult) {
+        res.status(500).send({
+            message: "The user is not permitted to answer the same Survey Question Again."
+        });
+        return;
     }
     var statOptions = {
         where: {
@@ -353,15 +371,6 @@ exports.submitSurvey = async (req, res) => {
                     logger.log("error", "Some error occurred while inserting data in surveyStat=" + err);
                 });
             }
-            const SurveyTrackingData = {
-                "sr_id": body["Survey ID"],
-                "sr_uid": uid,
-                "sr_completion_date": new Date(),
-                "sr_usr_restriction": 0
-            }
-            SurveyUserComplete.create(SurveyTrackingData).catch(err => {
-                logger.log("error", "Some error occurred while inserting data in survey tracking table=" + err);
-            });
             res.status(201).send({
                 msg: "Survey Submission Done Successfully",
                 SurveySubmissionID: data.srs_id,
@@ -482,3 +491,154 @@ exports.surveyStatsListing = async (req, res) => {
         totalRecords: total
     });
 };
+
+/**
+ * Function to track survey for user
+ * @param  {object}  req expressJs request object
+ * @param  {object}  res expressJs response object
+ * @return {Promise}
+ */
+exports.surveyTracking = async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        res.status(422).json({
+            errors: errors.array()
+        });
+        return;
+    }
+    const body = req.body;
+    /* check survey Valid or not. */
+    var surveyOptions = {
+        where: {
+            sr_id: body["Survey ID"],
+            sr_status: 1
+        }
+    };
+    const survey = await Survey.findOne(surveyOptions);
+    if (!survey) {
+        res.status(500).send({
+            message: "Survey not found or inactive."
+        });
+        return;
+    }
+    var surveyCompletionDate = null;
+    if (body.hasOwnProperty("Survey Completed") && body["Survey Completed"] == 1) {
+        surveyCompletionDate = body.hasOwnProperty("Survey Completion Date") ? body["Survey Completion Date"] : new Date();
+    }
+    var uid = req.header(process.env.UKEY_HEADER || "x-api-key");
+    const SurveyTrackingData = {
+        "sr_id": body["Survey ID"],
+        "sr_uid": uid,
+        "sr_completed": body.hasOwnProperty("Survey Completed") ? body["Survey Completed"] : 0,
+        "sr_completion_date": surveyCompletionDate,
+        "sr_usr_restriction": survey.sr_usr_restriction
+    }
+    SurveyUserComplete.create(SurveyTrackingData).then(data => {
+        audit_log.saveAuditLog(uid, 'tracking', 'Survey tracking', data.su_id, data.dataValues);
+        res.status(201).send({
+            msg: "Survey Tracking Record Added Successfully",
+            SurveyQuestionID: data.su_id
+        });
+    }).catch(err => {
+        logger.log("error", "Some error occurred while inserting data in survey tracking table=" + err);
+    });
+}
+
+/**
+ * Function to delete Survey Question
+ * @param  {object}  req expressJs request object
+ * @param  {object}  res expressJs response object
+ * @return {Promise}
+ */
+exports.deleteSurveyQuestion = async (req, res) => {
+    const surveyQuestionDetails = await SurveyQuestions.findOne({
+            where: {
+                srq_id: req.params.surveyQuestionId
+            }
+        });
+    if(!surveyQuestionDetails) {
+        res.status(500).send({
+            message: "Survey Question not Found with id=" + req.params.surveyQuestionId
+          });
+          return;
+    }
+    SurveyQuestions.destroy({
+        where: { 
+            srq_id: req.params.surveyQuestionId
+        }
+      })
+        .then(num => {
+        res.status(200).send({
+              message: "Survey Question deleted successfully!"
+        });
+            return;
+        })
+        .catch(err => {
+          res.status(500).send({
+            message: "Could not delete Survey Question with id=" + req.params.surveyQuestionId
+          });
+          return;
+        });
+    }
+
+/**
+ * Function to delete Survey Submit Record
+ * @param  {object}  req expressJs request object
+ * @param  {object}  res expressJs response object
+ * @return {Promise}
+ */
+exports.deleteSurveySubmission = async (req, res) => {
+    const surveySubmissionDetails = await SurveySubmissions.findOne({
+            where: {
+                srs_id: req.params.surveySubmissionId
+            }
+        });
+    if(!surveySubmissionDetails) {
+        res.status(500).send({
+            message: "Survey Submit Record not Found with id=" + req.params.surveySubmissionId
+          });
+          return;
+    }
+    const surveyStatsDetail = await SurveyStats.findOne({
+        where: {
+            sr_id: surveySubmissionDetails.srs_sr_id,
+            srq_id: surveySubmissionDetails.srs_srq_id,
+            srq_answer: surveySubmissionDetails.srs_srq_answer
+        }
+    });
+    SurveySubmissions.destroy({
+        where: { 
+            srs_id: req.params.surveySubmissionId
+        }
+      })
+        .then(num => {
+            if (typeof surveyStatsDetail !== 'undefined' && surveyStatsDetail) {
+                const total_answer_count = parseInt(surveyStatsDetail.srq_answer_count) - 1;
+                if (total_answer_count > 0) {
+                    SurveyStats.update({
+                        "srq_answer_count": total_answer_count
+                    }, {
+                        where: {
+                            st_id: surveyStatsDetail.st_id
+                        }
+                    });
+                } else {
+                    SurveyStats.destroy({
+                        where: { 
+                            st_id: surveyStatsDetail.st_id
+                        }
+                      });
+                }
+            }
+        res.status(200).send({
+              message: "Survey Submit Record deleted successfully!"
+        });
+            return;
+        })
+        .catch(err => {
+          res.status(500).send({
+            message: "Could not delete Survey Submit Record with id=" + req.params.surveySubmissionId
+          });
+          return;
+        });
+    }

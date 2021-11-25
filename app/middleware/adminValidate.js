@@ -42,5 +42,35 @@ exports.validate = (method) => {
                 body('Task type', 'Invalid Task type').isNumeric()
             ]
         }
+        case 'create_survey': {
+            return [
+                body('Brand ID', 'Invalid Brand').isNumeric(),
+                body('Survey title', 'Invalid Survey title').isLength({
+                    min: 3
+                }).withMessage('Survey title must be of 3 characters long.'),
+                body('User Restriction', 'Invalid User Restriction').isNumeric()
+            ]
+        }
+        case 'create_survey_question': {
+            return [
+                body('Survey ID', 'Invalid Survey').isNumeric(),
+                body('Survey Question', 'Invalid Survey Question').isLength({
+                    min: 3
+                }).withMessage('Survey Question must be of 3 characters long.'),
+                body('Question Status', 'Invalid Question Status').isNumeric()
+            ]
+        }
+        case 'survey_submit': {
+            return [
+                body('Survey ID', 'Invalid Survey').isNumeric(),
+                body('Question ID', 'Invalid Survey Question ID').isNumeric()
+            ]
+        }
+        case 'survey_tracking': {
+            return [
+                body('Survey ID', 'Invalid Survey').isNumeric(),
+                body('Survey Completed', 'Invalid Survey Completed').isNumeric()
+            ]
+        }
     }
 }

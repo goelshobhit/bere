@@ -14,8 +14,11 @@ module.exports = (sequelize, Sequelize) => {
       allowNull: false,
       type: Sequelize.INTEGER
     },
-    sr_completion_date: {
+    sr_completed: {
       allowNull: false,
+      type: Sequelize.INTEGER
+    },
+    sr_completion_date: {
       type: Sequelize.DATE
     },
     sr_usr_restriction: {
