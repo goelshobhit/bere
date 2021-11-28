@@ -1,55 +1,49 @@
 'use strict';
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable('content_report', {
-      content_report_id: {
+    await queryInterface.createTable('content_report_user', {
+      content_report_user_id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
+        type: Sequelize.INTEGER
+      },
+      content_report_uid: {
+        allowNull: false,
         type: Sequelize.INTEGER
       },
       content_report_cat_id: {
         allowNull: false,
         type: Sequelize.INTEGER
       },
-      content_report_name: {
-        allowNull: false,
-        type: Sequelize.STRING(255)
-      },
-      content_report_task_id: {
+      content_report_id: {
         allowNull: false,
         type: Sequelize.INTEGER
       },
-      content_report_content_id: {
+      content_report_type: {
+        allowNull: false,
+        type: Sequelize.STRING(50)
+      },
+      content_report_type_id: {
         allowNull: false,
         type: Sequelize.INTEGER
       },
-      content_report_owner_id: {
-        type: Sequelize.INTEGER
-      },
-      content_report_reporter_id: {
+      cru_status: {
         allowNull: false,
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
+        defaultValue: 1
       },
-      content_report_timestamp: {
-        allowNull: false,
-        type: Sequelize.STRING(255)
-      },
-      content_report_reason: {
-        allowNull: false,
-        type: Sequelize.STRING(255)
-      },
-      content_created_at: {
+      cru_created_at: {
         allowNull: false,
         type: Sequelize.DATE
       },
-      content_updated_at: {
+      cru_updated_at: {
         allowNull: false,
         type: Sequelize.DATE
       }
     });
   },
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable('content_report');
+    await queryInterface.dropTable('content_report_user');
   }
 };

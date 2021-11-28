@@ -20,9 +20,6 @@ module.exports = {
       content_report_cat_usr_hide: {
         type: Sequelize.INTEGER
       },
-      content_report_cat_us: {
-        type: Sequelize.INTEGER
-      },
       crc_created_at: {
         allowNull: false,
         type: Sequelize.DATE

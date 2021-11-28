@@ -21,10 +21,6 @@ module.exports = (sequelize, Sequelize) => {
     content_report_cat_usr_hide: {
       allowNull: false,
       type: Sequelize.INTEGER
-    },
-    content_report_cat_us: {
-      allowNull: false,
-      type: Sequelize.INTEGER
     }
   }, {
       createdAt: 'crc_created_at',

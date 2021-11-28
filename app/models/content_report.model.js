@@ -14,11 +14,11 @@ module.exports = (sequelize, Sequelize) => {
       allowNull: false,
       type: Sequelize.STRING(255)
     },
-    content_report_task_id: {
+    content_report_type: {
       allowNull: false,
-      type: Sequelize.INTEGER
+      type: Sequelize.STRING(50)
     },
-    content_report_content_id: {
+    content_report_type_id: {
       allowNull: false,
       type: Sequelize.INTEGER
     },
@@ -30,10 +30,6 @@ module.exports = (sequelize, Sequelize) => {
       type: Sequelize.INTEGER
     },
     content_report_timestamp: {
-      allowNull: false,
-      type: Sequelize.STRING(255)
-    },
-    content_report_category: {
       allowNull: false,
       type: Sequelize.STRING(255)
     },
