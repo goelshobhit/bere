@@ -98,6 +98,9 @@ db.survey_questions = require("./survey_questions.model")(sequelize, Sequelize);
 db.survey_submissions = require("./survey_submissions.model")(sequelize, Sequelize);
 db.survey_stats = require("./survey_stats.model")(sequelize, Sequelize);
 db.survey_user_complete = require("./survey_user_complete.model")(sequelize, Sequelize);
+db.content_report = require("./content_report.model")(sequelize, Sequelize);
+db.content_report_category = require("./content_report_category.model")(sequelize, Sequelize);
+db.content_report_user = require("./content_report_user.model")(sequelize, Sequelize);
 
 //Relations
 db.brands.hasMany(db.video_ads, {foreignKey: 'cr_co_id', targetKey: 'cr_co_id'});
@@ -131,11 +134,22 @@ db.brands.hasMany(db.survey, {foreignKey: 'sr_brand_id', targetKey: 'cr_co_id'})
 db.survey_questions.belongsTo(db.survey, {foreignKey: 'sr_id', targetKey: 'sr_id'});
 db.survey.hasMany(db.survey_questions, {foreignKey: 'sr_id', targetKey: 'sr_id'});
 
+<<<<<<< HEAD
 db.survey_submissions.belongsTo(db.survey, {foreignKey: 'srs_sr_id', targetKey: 'sr_id'});
 db.survey.hasMany(db.survey_submissions, {foreignKey: 'srs_sr_id', targetKey: 'sr_id'});
 
 db.survey_stats.belongsTo(db.survey, {foreignKey: 'sr_id', targetKey: 'sr_id'});
 db.survey.hasMany(db.survey_stats, {foreignKey: 'sr_id', targetKey: 'sr_id'});
+=======
+db.content_report.belongsTo(db.content_report_category, {foreignKey: 'content_report_cat_id', targetKey: 'content_report_cat_id'});
+db.content_report_category.hasMany(db.content_report, {foreignKey: 'content_report_cat_id', targetKey: 'content_report_cat_id'});
+
+db.content_report_user.belongsTo(db.content_report, {foreignKey: 'content_report_id', targetKey: 'content_report_id'});
+db.content_report.hasMany(db.content_report_user, {foreignKey: 'content_report_id', targetKey: 'content_report_id'});
+
+db.content_report_user.belongsTo(db.content_report_category, {foreignKey: 'content_report_cat_id', targetKey: 'content_report_cat_id'});
+db.content_report_category.hasMany(db.content_report_user, {foreignKey: 'content_report_cat_id', targetKey: 'content_report_cat_id'});
+>>>>>>> contentReport
 
 db.user_profile.hasMany(db.post_comment, {foreignKey: 'pc_commenter_uid', targetKey: 'u_id'});
 db.post_comment.belongsTo(db.user_profile, {foreignKey: 'pc_commenter_uid', targetKey: 'u_id'});
