@@ -134,13 +134,11 @@ db.brands.hasMany(db.survey, {foreignKey: 'sr_brand_id', targetKey: 'cr_co_id'})
 db.survey_questions.belongsTo(db.survey, {foreignKey: 'sr_id', targetKey: 'sr_id'});
 db.survey.hasMany(db.survey_questions, {foreignKey: 'sr_id', targetKey: 'sr_id'});
 
-<<<<<<< HEAD
 db.survey_submissions.belongsTo(db.survey, {foreignKey: 'srs_sr_id', targetKey: 'sr_id'});
 db.survey.hasMany(db.survey_submissions, {foreignKey: 'srs_sr_id', targetKey: 'sr_id'});
 
 db.survey_stats.belongsTo(db.survey, {foreignKey: 'sr_id', targetKey: 'sr_id'});
 db.survey.hasMany(db.survey_stats, {foreignKey: 'sr_id', targetKey: 'sr_id'});
-=======
 db.content_report.belongsTo(db.content_report_category, {foreignKey: 'content_report_cat_id', targetKey: 'content_report_cat_id'});
 db.content_report_category.hasMany(db.content_report, {foreignKey: 'content_report_cat_id', targetKey: 'content_report_cat_id'});
 
@@ -149,7 +147,6 @@ db.content_report.hasMany(db.content_report_user, {foreignKey: 'content_report_i
 
 db.content_report_user.belongsTo(db.content_report_category, {foreignKey: 'content_report_cat_id', targetKey: 'content_report_cat_id'});
 db.content_report_category.hasMany(db.content_report_user, {foreignKey: 'content_report_cat_id', targetKey: 'content_report_cat_id'});
->>>>>>> contentReport
 
 db.user_profile.hasMany(db.post_comment, {foreignKey: 'pc_commenter_uid', targetKey: 'u_id'});
 db.post_comment.belongsTo(db.user_profile, {foreignKey: 'pc_commenter_uid', targetKey: 'u_id'});
