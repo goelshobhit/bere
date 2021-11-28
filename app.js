@@ -9,7 +9,7 @@ const swaggerJsDoc = require("swagger-jsdoc");
 const swaggerUi = require("swagger-ui-express");
 const common = require("./app/common.js");
 const logger = require("./app/middleware/logger");
-const helmet = require("helmet");
+//const helmet = require("helmet");
 var hpp = require("hpp");
 const morgan = require("morgan");
 const https = require('http');
@@ -17,7 +17,7 @@ var fs = require("fs");
 const socketIO = require('socket.io')
 app.use(cors());
 app.use(morgan("combined"));
-app.use(helmet());
+//app.use(helmet());
 const schedule = require('node-schedule');
 // parse requests of content-type - application/json
 app.use(bodyParser.json());
