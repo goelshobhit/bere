@@ -98,16 +98,46 @@ exports.listing = async (req, res) => {
     const sortBy = req.query.sortBy || 'ta_task_id'
     const sortOrder = req.query.sortOrder || 'ASC'
     const sortVal = req.query.sortVal;
+    var UserId= req.header(process.env.UKEY_HEADER || "x-api-key");
     var todayDate=new Date();
 	todayDate.toLocaleString('en-US', { timeZone: 'Asia/Calcutta' })
-	console.log(todayDate);
+    console.log(todayDate);
+    
+    var reportOptions = { 
+        attributes:["content_report_type_id", "content_report_type"],
+        where: {
+            content_report_type : ['Task', 'Campaign', 'User Task Post'],
+            content_report_uid : UserId
+        }
+    };
+    
+    const contentUserTaskIds = await db.content_report_user.findAll(reportOptions);
+    
+    let taskIdsValues = [];
+    let CampaignIdsValues = [];
+    let userTaskPostIdsValues = [];
+    if (contentUserTaskIds.length) {
+        contentUserTaskIds.forEach(element => {
+            if (element.content_report_type == 'Task') {
+                taskIdsValues.push(element.content_report_type_id);
+            }
+            if (element.content_report_type == 'Campaign') {
+                CampaignIdsValues.push(element.content_report_type_id);
+            }
+            if (element.content_report_type == 'User Task Post') {
+                userTaskPostIdsValues.push(element.content_report_type_id);
+            }
+          });
+    }
+    
     var options = {
         include: [
             {
             model: db.campaigns,
             attributes: [
                 ["cp_campaign_name", "Campaign Name"]
-            ]
+            ],
+            where:{is_autotakedown:0}
         },
 		{
             model: Posts,
@@ -115,7 +145,11 @@ exports.listing = async (req, res) => {
                 ["ucpl_u_id","ucpl_content_id"],
 			required:false,
 			where : {
-				ucpl_status: 1
+                ucpl_status: 1,
+                is_autotakedown:0,
+                ucpl_id:{
+                    [Op.not]: userTaskPostIdsValues
+                }
 			},
 			order: [
 				['ucpl_added_by', 'ASC']
@@ -157,7 +191,17 @@ exports.listing = async (req, res) => {
             [sortBy]: `${sortValue}`
         }
     }
-
+    if (taskIdsValues.length) {
+        options['where']['ta_task_id'] = {
+                [Op.not]: taskIdsValues
+            }
+    }
+    if (CampaignIdsValues.length) {
+        options['where']['cp_campaign_id'] = {
+                [Op.not]: CampaignIdsValues
+            }
+    }
+    options['where']['is_autotakedown'] = 0;
     var total = await Tasks.count({
         where: options['where']
     });
@@ -832,14 +876,41 @@ exports.listingContest = async (req, res) => {
     const sortOrder = req.query.sortOrder || 'DESC'
     const sortVal = req.query.sortVal;
     var todayDate=new Date();
+    var UserId= req.header(process.env.UKEY_HEADER || "x-api-key");
 	todayDate.toLocaleString('en-US', { timeZone: 'Asia/Calcutta' })
-	console.log(todayDate);
+    console.log(todayDate);
+    
+    var reportOptions = { 
+        attributes:["content_report_type_id", "content_report_type"],
+        where: {
+            content_report_type : ['Contest', 'Campaign'],
+            content_report_uid : UserId
+        }
+    };
+    
+    const contentUserTaskIds = await db.content_report_user.findAll(reportOptions);
+    
+    let contestIdsValues = [];
+    let CampaignIdsValues = [];
+    if (contentUserTaskIds.length) {
+        contentUserTaskIds.forEach(element => {
+            if (element.content_report_type == 'Contest') {
+                contestIdsValues.push(element.content_report_type_id);
+            }
+            if (element.content_report_type == 'Campaign') {
+                CampaignIdsValues.push(element.content_report_type_id);
+            }
+          });
+    }
+    
+
     var options = {
         include: [{
             model: db.campaigns,
             attributes: [
                 ["cp_campaign_name", "Campaign Name"]
-            ]
+            ],
+            where:{is_autotakedown:0}
         }		
 		],
         limit: pageSize,
@@ -877,7 +948,17 @@ exports.listingContest = async (req, res) => {
             [sortBy]: `${sortValue}`
         }
     }
-
+    if (contestIdsValues.length) {
+        options['where']['ct_id'] = {
+                [Op.not]: contestIdsValues
+            }
+    }
+    options['where']['is_autotakedown'] = 0;
+    if (CampaignIdsValues.length) {
+        options['where']['cp_campaign_id'] = {
+                [Op.not]: CampaignIdsValues
+            }
+    }
     var total = await Contest.count({
         where: options['where']
     });

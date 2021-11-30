@@ -69,7 +69,11 @@ module.exports = (sequelize, Sequelize) => {
 		ucpl_added_by:{
 			type: Sequelize.INTEGER,
 			default:0  // 0 added by Admin and 1 for customer
-		}
+		},
+		is_autotakedown:{
+            type: Sequelize.INTEGER,
+			default: 0
+        }
     }, {
         createdAt: 'ucpl_created_at',
         updatedAt: 'ucpl_updated_at',

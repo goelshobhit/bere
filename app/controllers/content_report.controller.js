@@ -66,6 +66,14 @@ exports.submitContentReport = async (req, res) => {
     });
     return;
   }
+
+  if (!body["Content Report Type"] || !body["Content Report Type Id"]) {
+    res.status(500).send({
+      msg:
+        "Content Report Type or Content Report Type Id is required"
+    });
+    return;
+  }
   var userId = req.header(process.env.UKEY_HEADER || "x-api-key");
   var options = {
     where: {
@@ -84,7 +92,7 @@ exports.submitContentReport = async (req, res) => {
     "content_report_cat_id": body["Content Report Cat Id"],
     "content_report_name": body["Content Report Name"],
     "content_report_task_id": body["Content Report Type"],
-    "content_report_type": body.hasOwnProperty("Content Report Type") ? req.body["Content Report Type"] : "",
+    "content_report_type": body.hasOwnProperty("Content Report Type") ? body["Content Report Type"] : "",
     "content_report_type_id": body.hasOwnProperty("Content Report Type Id") ? req.body["Content Report Type Id"] : "",
     "content_report_owner_id": body.hasOwnProperty("Content Report Owner Id") ? req.body["Content Report Owner Id"] : "",
     "content_report_reporter_id": body.hasOwnProperty("Content Report Reporter Id") ? req.body["Content Report Reporter Id"] : userId,
@@ -94,7 +102,64 @@ exports.submitContentReport = async (req, res) => {
   contentReport.create(data)
     .then(data => {
       audit_log.saveAuditLog(req.header(process.env.UKEY_HEADER || "x-api-key"), 'add', 'content_report', data.content_report_id, data.dataValues);
-      if (contentReportCategorydetail.content_report_cat_autotakedown == 0 && contentReportCategorydetail.content_report_cat_usr_hide == 1) {
+      if (contentReportCategorydetail.content_report_cat_autotakedown == 1) {
+        if (body["Content Report Type"] == 'User') {
+          db.users.update({is_autotakedown:1}, {
+            where: {
+              u_id: body["Content Report Type Id"]
+            }
+          });
+        }
+        if (body["Content Report Type"] == 'Task') {
+          db.tasks.update({is_autotakedown:1}, {
+            where: {
+              ta_task_id: body["Content Report Type Id"]
+            }
+          });
+        }
+        if (body["Content Report Type"] == 'Contest') {
+          db.contest_task.update({is_autotakedown:1}, {
+            where: {
+              ct_id: body["Content Report Type Id"]
+            }
+          });
+        }
+        if (body["Content Report Type"] == 'Brand') {
+          db.brands.update({is_autotakedown:1}, {
+            where: {
+              cr_co_id: body["Content Report Type Id"]
+            }
+          });
+        }
+        if (body["Content Report Type"] == 'Campaign') {
+          db.campaigns.update({is_autotakedown:1}, {
+            where: {
+              cp_campaign_id: body["Content Report Type Id"]
+            }
+          });
+        }
+        if (body["Content Report Type"] == 'User Task Post') {
+          db.user_content_post.update({is_autotakedown:1}, {
+            where: {
+              ucpl_id: body["Content Report Type Id"]
+            }
+          });
+        }
+        if (body["Content Report Type"] == 'Comment') {
+          db.post_comment.update({is_autotakedown:1}, {
+            where: {
+              pc_post_id: body["Content Report Type Id"]
+            }
+          });
+        }
+        if (body["Content Report Type"] == 'Post Report') {
+          db.post_report.update({is_autotakedown:1}, {
+            where: {
+              pr_id: body["Content Report Type Id"]
+            }
+          });
+        }
+      } else if (contentReportCategorydetail.content_report_cat_autotakedown == 0 && contentReportCategorydetail.content_report_cat_usr_hide == 1) {
         const contentUserData = {
           "content_report_uid": body.hasOwnProperty("Content Report Reporter Id") ? req.body["Content Report Reporter Id"] : userId,
           "content_report_cat_id": body["Content Report Cat Id"],
@@ -132,7 +197,7 @@ exports.submitContentReport = async (req, res) => {
  * @return {Promise}
  */
 exports.contentReportListing = async (req, res) => {
-  const pageSize = parseInt(req.query.pageSize || 10);
+  const pageSize = parseInt(req.query.pageSize || 100);
   const pageNumber = parseInt(req.query.pageNumber || 1);
   const skipCount = (pageNumber - 1) * pageSize;
   const sortBy = req.query.sortBy || 'content_report_id'
@@ -141,6 +206,7 @@ exports.contentReportListing = async (req, res) => {
   var options = {
     limit: pageSize,
     offset: skipCount,
+    
     order: [
       [sortBy, sortOrder]
     ],
@@ -171,8 +237,172 @@ exports.contentReportListing = async (req, res) => {
     where: options['where']
   });
   const contentreport_list = await contentReport.findAll(options);
+  let userIds = [];
+  let brandIds = [];
+  let campaignIds = [];
+  let taskIds = [];
+   let contestIds = [];
+   let userTaskPostIds = [];
+   let commentIds = [];
+   let postReportIds = [];
+  if (contentreport_list.length) {
+    for (const contentreport_data in contentreport_list) {
+        if (contentreport_list[contentreport_data].content_report_type == 'User') {
+          userIds.push(contentreport_list[contentreport_data].content_report_type_id);
+        }
+        if (contentreport_list[contentreport_data].content_report_type == 'Brand') {
+          brandIds.push(contentreport_list[contentreport_data].content_report_type_id);
+        }
+        if (contentreport_list[contentreport_data].content_report_type == 'Campaign') {
+          campaignIds.push(contentreport_list[contentreport_data].content_report_type_id);
+        }
+        if (contentreport_list[contentreport_data].content_report_type == 'Task') {
+          taskIds.push(contentreport_list[contentreport_data].content_report_type_id);
+        }
+        if (contentreport_list[contentreport_data].content_report_type == 'Contest') {
+          contestIds.push(contentreport_list[contentreport_data].content_report_type_id);
+        }
+        if (contentreport_list[contentreport_data].content_report_type == 'User Task Post') {
+          userTaskPostIds.push(contentreport_list[contentreport_data].content_report_type_id);
+        }
+        if (contentreport_list[contentreport_data].content_report_type == 'Comment') {
+          commentIds.push(contentreport_list[contentreport_data].content_report_type_id);
+        }
+        if (contentreport_list[contentreport_data].content_report_type == 'Post Report') {
+          postReportIds.push(contentreport_list[contentreport_data].content_report_type_id);
+        }
+      }
+    }
+  
+  var campaignData = {};
+  var userData = {};
+  var brandData = {};
+  var taskData = {};
+  var contestData = {};
+  var postReportData = {};
+  var userTaskPostData = {};
+  var commentData = {};
+  if (userIds.length) {
+    var userOptions = {
+      attributes: ['u_id','u_email', 'u_login'],
+      where: {u_id: userIds}
+    }
+    const userList = await db.users.findAll(userOptions);
+    for (const userDetail in userList) {
+      userData[userList[userDetail].u_id] = userList[userDetail];
+    }
+  }
+  if (brandIds.length) {
+    var brandOptions = {
+      attributes: ['cr_co_id','cr_co_name'],
+      where: {cr_co_id: brandIds}
+    }
+    const brandList = await db.brands.findAll(brandOptions);
+    for (const brandDetail in brandList) {
+      brandData[brandList[brandDetail].cr_co_id] = brandList[brandDetail];
+    }
+  }
+  if (commentIds.length) {
+    var commentOptions = {
+      attributes: ['pc_post_id','pc_comments'],
+      where: {pc_post_id: commentIds}
+    }
+    const commentList = await db.post_comment.findAll(commentOptions);
+    for (const commentDetail in commentList) {
+      commentData[commentList[commentDetail].pc_post_id] = commentList[commentDetail];
+    }
+  }
+  if (postReportIds.length) {
+    var postReportOptions = {
+      attributes: ['pr_id','pr_report'],
+      where: {pr_id: postReportIds}
+    }
+    const postReportList = await db.post_report.findAll(postReportOptions);
+    for (const postReportDetail in postReportList) {
+      postReportData[postReportList[postReportDetail].pr_id] = postReportList[postReportDetail];
+    }
+  }
+  if (contestIds.length) {
+    var contestOptions = {
+      attributes: ['ct_id','ct_name'],
+      where: {ct_id: contestIds}
+    }
+    const contestList = await db.contest_task.findAll(contestOptions);
+    for (const contestDetail in contestList) {
+      contestData[contestList[contestDetail].ct_id] = contestList[contestDetail];
+    }
+  }
+  if (userTaskPostIds.length) {
+    var userTaskPostOptions = {
+      attributes: ['ucpl_id','ucpl_content_data'],
+      where: {ucpl_id: userTaskPostIds}
+    }
+    const userTaskPostList = await db.user_content_post.findAll(userTaskPostOptions);
+    for (const userTaskPostDetail in userTaskPostList) {
+      userTaskPostData[userTaskPostList[userTaskPostDetail].ucpl_id] = userTaskPostList[userTaskPostDetail];
+    }
+  }
+  if (taskIds.length) {
+    var taskOptions = {
+      attributes: ['ta_task_id', 'ta_name'],
+      where: {ta_task_id: taskIds}
+    }
+    const taskList = await db.tasks.findAll(taskOptions);
+    for (const taskDetail in taskList) {
+      taskData[taskList[taskDetail].ta_task_id] = taskList[taskDetail];
+    }
+  }
+
+  if (campaignIds.length) {
+    var campaignOptions = {
+      attributes: ['cp_campaign_id', 'cp_campaign_name'],
+      where: {cp_campaign_id: campaignIds}
+    }
+    const campaignList = await db.campaigns.findAll(campaignOptions);
+    for (const campaigndetail in campaignList) {
+      campaignData[campaignList[campaigndetail].cp_campaign_id] = campaignList[campaigndetail];
+    }
+  }
+  content_report_data = [];
+  for (const contentreport_data in contentreport_list) {
+    const Content_data = {
+      "content_report_id": contentreport_list[contentreport_data].content_report_id,
+      "content_report_cat_id": contentreport_list[contentreport_data].content_report_cat_id,
+      "content_report_name": contentreport_list[contentreport_data].content_report_name,
+      "content_report_type": contentreport_list[contentreport_data].content_report_type,
+      "content_report_type_id": contentreport_list[contentreport_data].content_report_type_id,
+      "content_report_owner_id": contentreport_list[contentreport_data].content_report_owner_id
+    };
+  
+    if (contentreport_list[contentreport_data].content_report_type == 'Brand') {
+      Content_data['Brand Name'] = brandData[contentreport_list[contentreport_data].content_report_type_id].cr_co_name;
+    }
+    if (contentreport_list[contentreport_data].content_report_type == 'Campaign') {
+      Content_data['Campaign Name'] = campaignData[contentreport_list[contentreport_data].content_report_type_id].cp_campaign_name;
+    }
+    if (contentreport_list[contentreport_data].content_report_type == 'User' && userData[contentreport_list[contentreport_data].content_report_type_id] != undefined) {
+      Content_data['User Name'] = userData[contentreport_list[contentreport_data].content_report_type_id].u_login;
+      Content_data['User Email'] = userData[contentreport_list[contentreport_data].content_report_type_id].u_email;
+    }
+    if (contentreport_list[contentreport_data].content_report_type == 'Task' && taskData[contentreport_list[contentreport_data].content_report_type_id] != undefined) {
+      Content_data['Task Name'] = taskData[contentreport_list[contentreport_data].content_report_type_id].ta_name;
+    }
+    if (contentreport_list[contentreport_data].content_report_type == 'User Task Post' && userTaskPostData[contentreport_list[contentreport_data].content_report_type_id] != undefined) {
+      Content_data['User Content Post Data'] = userTaskPostData[contentreport_list[contentreport_data].content_report_type_id].ucpl_content_data;
+    }
+    if (contentreport_list[contentreport_data].content_report_type == 'Contest' && contestData[contentreport_list[contentreport_data].content_report_type_id] != undefined) {
+      Content_data['Contest task Name'] = contestData[contentreport_list[contentreport_data].content_report_type_id].ct_name;
+    }
+    if (contentreport_list[contentreport_data].content_report_type == 'Post Report' && postReportData[contentreport_list[contentreport_data].content_report_type_id] != undefined) {
+      Content_data['Post Report'] = postReportData[contentreport_list[contentreport_data].content_report_type_id].pr_report;
+    }
+    if (contentreport_list[contentreport_data].content_report_type == 'Comment' && commentData[contentreport_list[contentreport_data].content_report_type_id] != undefined) {
+      Content_data['Post Comments'] = commentData[contentreport_list[contentreport_data].content_report_type_id].pc_comments;
+    }
+    content_report_data.push(Content_data);
+  }
   res.status(200).send({
-    data: contentreport_list,
+    brandIds: content_report_data,
     totalRecords: total
   });
 };

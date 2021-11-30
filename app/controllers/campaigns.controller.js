@@ -105,14 +105,37 @@ exports.campaignListing = async(req, res) => {
 	const sortBy = req.query.sortBy || 'cp_campaign_id'
 	const sortOrder = req.query.sortOrder || 'DESC'
     const sortVal = req.query.sortVal;
+    var UserId= req.header(process.env.UKEY_HEADER || "x-api-key");
+    var reportOptions = { 
+        attributes:["content_report_type_id", "content_report_type"],
+        where: {
+            content_report_type : ['Campaign', 'Brand'],
+            content_report_uid : UserId
+        }
+    };
     
+    const contentUserTaskIds = await db.content_report_user.findAll(reportOptions);
+    
+    let CampaignIdsValues = [];
+    let brandIdsValues = [];
+    if (contentUserTaskIds.length) {
+        contentUserTaskIds.forEach(element => {
+            if (element.content_report_type == 'Brand') {
+                brandIdsValues.push(element.content_report_type_id);
+            }
+            if (element.content_report_type == 'Campaign') {
+                CampaignIdsValues.push(element.content_report_type_id);
+            }
+          });
+    }
     var options = {
         include: [
             {
                 model: db.brands,
                 attributes: [
                     ["cr_co_name", "Brand Name"]
-                ]
+                ],
+                where:{is_autotakedown:0}
             }
         ],
         limit: pageSize,
@@ -133,6 +156,17 @@ exports.campaignListing = async(req, res) => {
             ]
         } : null;			
     }
+    if (CampaignIdsValues.length) {
+        options['where']['cp_campaign_id'] = {
+                [Op.not]: CampaignIdsValues
+            }
+    }
+    if (brandIdsValues.length) {
+        options['where']['cr_co_id'] = {
+                [Op.not]: brandIdsValues
+            }
+    }
+    options['where']['is_autotakedown'] = 0;
     var total = await Campaign.count({
         where: options['where']
     });

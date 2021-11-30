@@ -186,6 +186,18 @@ exports.listing = async (req, res) => {
     const sortBy = req.query.sortBy || 'u_id'
     const sortOrder = req.query.sortOrder || 'DESC'
     const sortVal = req.query.sortVal;
+    var UserId= req.header(process.env.UKEY_HEADER || "x-api-key");
+    var reportOptions = { 
+        attributes:["content_report_type_id"],
+        where: {
+			content_report_type : 'User',
+			content_report_uid : UserId
+		}
+    };
+    const contentUserIds = await db.content_report_user.findAll(reportOptions);
+    const contentUserIdsValues = contentUserIds.map(function (item) {
+        return item.content_report_type_id
+      });
     var options = { 
         include: [{
             model: db.user_profile
@@ -217,6 +229,13 @@ exports.listing = async (req, res) => {
             }
         }
     }
+    /* do not get users which are reported by someone */
+    if (contentUserIdsValues.length) {
+        options['where']['u_id'] = {
+                [Op.not]: contentUserIdsValues
+            }
+    }
+    options['where']['is_autotakedown'] = 0;
     var total = await Users.count({
         where: options['where']
     });

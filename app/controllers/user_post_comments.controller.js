@@ -93,7 +93,8 @@ exports.listing = async (req, res) => {
     const sortBy = req.query.sortBy || 'pc_post_id'
     const sortOrder = req.query.sortOrder || 'DESC'
     const sortVal = req.query.sortVal;
-
+    var uid = req.header(process.env.UKEY_HEADER || "x-api-key");
+    
     var options = {
         attributes: [["pc_comments", "comment_message"],
         ["pc_comment_likes", "comment_likes"],
@@ -113,6 +114,26 @@ exports.listing = async (req, res) => {
             [sortBy]: `%${sortValue}%`
         } : null;
     }
+    var reportOptions = { 
+        attributes:["content_report_type_id"],
+        where: {
+			content_report_type : 'Comment',
+			content_report_uid : uid
+		}
+    };
+    const contentUserIds = await db.content_report_user.findAll(reportOptions);
+    let contentUserIdsValues = [];
+    if (contentUserIds.length) {
+        contentUserIdsValues = contentUserIds.map(function (item) {
+            return item.content_report_type_id
+          });
+    }
+    if (contentUserIdsValues.length) {
+        options['where']['pc_post_id'] = {
+                [Op.not]: contentUserIdsValues
+            }
+    }
+    options['where']['is_autotakedown'] = 0;
     var total = await Comment.count({
         where: options['where']
     });
@@ -170,11 +191,34 @@ exports.postCommentslisting = async (req, res) => {
             [sortBy]: `%${sortValue}%`
         } : null;
     }
-    var allComments = await Comment.count({
+    const whereTotalCountOption = {
         where: {
-			ucpl_id:postId
+			ucpl_id:postId,
+			is_autotakedown:0
 		}
-    });
+    };
+    var reportOptions = { 
+        attributes:["content_report_type_id"],
+        where: {
+			content_report_type : 'Comment',
+			content_report_uid : UserId
+		}
+    };
+    const contentUserIds = await db.content_report_user.findAll(reportOptions);
+    let contentUserIdsValues = [];
+    if (contentUserIds.length) {
+        contentUserIdsValues = contentUserIds.map(function (item) {
+            return item.content_report_type_id
+          });
+    }
+    if (contentUserIdsValues.length) {
+        whereTotalCountOption['where']['pc_post_id'] = options['where']['pc_post_id'] = {
+                [Op.not]: contentUserIdsValues
+            }
+    }
+    options['where']['is_autotakedown'] = 0;
+    
+    var allComments = await Comment.count(whereTotalCountOption);
 	var total = await Comment.count({
         where: options['where']
     });
@@ -229,6 +273,26 @@ exports.Commentslisting = async (req, res) => {
             [sortBy]: `%${sortValue}%`
         } : null;
     }
+    var reportOptions = { 
+        attributes:["content_report_type_id"],
+        where: {
+			content_report_type : 'Comment',
+			content_report_uid : UserId
+		}
+    };
+    const contentUserIds = await db.content_report_user.findAll(reportOptions);
+    let contentUserIdsValues = [];
+    if (contentUserIds.length) {
+        contentUserIdsValues = contentUserIds.map(function (item) {
+            return item.content_report_type_id
+          });
+    }
+    if (contentUserIdsValues.length) {
+        options['where']['pc_post_id'] = {
+                [Op.not]: contentUserIdsValues
+            }
+    }
+    options['where']['is_autotakedown'] = 0;
     var total = await Comment.count({
         where: options['where']
     });
