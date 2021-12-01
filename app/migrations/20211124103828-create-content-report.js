@@ -39,6 +39,9 @@ module.exports = {
         allowNull: false,
         type: Sequelize.STRING(255)
       },
+      content_report_autotakedown: {
+        type: Sequelize.INTEGER
+      },
       content_created_at: {
         allowNull: false,
         type: Sequelize.DATE
