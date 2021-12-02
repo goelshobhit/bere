@@ -117,15 +117,8 @@ exports.listing = async (req, res) => {
             [sortBy]: `${sortValue}`
         } : null;
     }
-    var reportOptions = { 
-        attributes:["content_report_type_id"],
-        where: {
-			content_report_type : 'Post Report',
-			content_report_uid : UserId
-		}
-    };
-    
-    const contentUserIds = await db.content_report_user.findAll(reportOptions);
+    const contentUserIds = await common.getContentReportUser(['Post Report'], UserId);
+
     let contentUserIdsValues = [];
     if (contentUserIds.length) {
         contentUserIdsValues = contentUserIds.map(function (item) {

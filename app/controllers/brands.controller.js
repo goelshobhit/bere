@@ -100,16 +100,7 @@ exports.listing = async(req, res) => {
 	const sortOrder = req.query.sortOrder || 'DESC'
     const sortVal = req.query.sortVal;
     var UserId = req.header(process.env.UKEY_HEADER || "x-api-key");
-    var reportOptions = { 
-        attributes:["content_report_type_id", "content_report_type"],
-        where: {
-            content_report_type : ['Brand', 'Campaign'],
-            content_report_uid : UserId
-        }
-    };
-    
-    const contentUserTaskIds = await db.content_report_user.findAll(reportOptions);
-    
+    const contentUserTaskIds = await common.getContentReportUser(['Brand', 'Campaign'], UserId);
     let brandIdsValues = [];
     let CampaignIdsValues = [];
     if (contentUserTaskIds.length) {
@@ -182,15 +173,7 @@ exports.listing = async(req, res) => {
 exports.brandDetail = async(req, res) => {  
     const brandID = req.params.brandID;
     var UserId = req.header(process.env.UKEY_HEADER || "x-api-key");
-    var reportOptions = { 
-        attributes:["content_report_type_id", "content_report_type"],
-        where: {
-            content_report_type : ['Brand', 'Campaign'],
-            content_report_uid : UserId
-        }
-    };
-    
-    const contentUserTaskIds = await db.content_report_user.findAll(reportOptions);
+    const contentUserTaskIds = await common.getContentReportUser(['Brand', 'Campaign'], UserId);
     
     let brandIdsValues = [];
     let CampaignIdsValues = [];
@@ -257,6 +240,7 @@ exports.brandDetail = async(req, res) => {
  * @return {Promise}
  */
 exports.brandDetailWithJsonTask = async(req, res) => {
+    var UserId= req.header(process.env.UKEY_HEADER || "x-api-key");
     const brandID = req.params.brandID;
 	const pageSize = parseInt(req.query.pageSize || 10);
     const pageNumber = parseInt(req.query.pageNumber || 1);
@@ -275,6 +259,13 @@ exports.brandDetailWithJsonTask = async(req, res) => {
         });
         return
     }
+    const contentUserTaskIds = await common.getContentReportUser(['Task'], UserId);
+    let taskIdsValues = [];
+    if (contentUserTaskIds.length) {
+        contentUserTaskIds.forEach(element => {
+             taskIdsValues.push('' + element.content_report_type_id + '');
+          });
+    }
 	var options = {
         limit: pageSize,
         offset: skipCount,
@@ -289,7 +280,11 @@ exports.brandDetailWithJsonTask = async(req, res) => {
 				  brand_id: brandID
 			  }
 			 }
-			}		 
+			},
+            tj_task_id: {
+                [Op.not]: taskIdsValues
+            },
+            is_autotakedown : 0		 
 		}		
     };
     var total = await taskJson.count({
@@ -353,14 +348,7 @@ exports.Brandslisting = async(req, res) => {
     var UserId= req.header(process.env.UKEY_HEADER || "x-api-key");
     const sortVal = req.query.sortVal;    
     /* do not get users which are reported by someone */
-    var reportOptions = { 
-        attributes:["content_report_type_id"],
-        where: {
-			content_report_type : 'Brand',
-			content_report_uid : UserId
-		}
-    };
-    const contentUserIds = await db.content_report_user.findAll(reportOptions);
+    const contentUserIds = await common.getContentReportUser(['Brand'], UserId);
     let contentUserIdsValues = [];
     if (contentUserIds.length) {
         contentUserIdsValues = contentUserIds.map(function (item) {

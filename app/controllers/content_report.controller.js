@@ -140,62 +140,28 @@ exports.submitContentReport = async (req, res) => {
     });
 }
 
+/**
+ * Function to update autotakedown column 
+ * @param  {string}  contentReportType
+ * @param  {string}  contentReportTypeId
+ * @param  {interger}  update_autotakedown
+ * @return {void}
+ */
 function updateContentReportAutoTakeDown(contentReportType, contentReportTypeId, update_autotakedown) {
-  if (contentReportType == 'User') {
-    db.users.update(update_autotakedown, {
-      where: {
-        u_id: contentReportTypeId
+  var contentreportTypes = common.contentReportTypes();
+  for (const contentReportDataIndex in contentreportTypes) {
+    for (const contentReportData in contentreportTypes[contentReportDataIndex]) {
+      let whereData = {};
+      whereData[contentreportTypes[contentReportDataIndex][contentReportData]['id']] = contentReportTypeId;
+      const dbName = contentreportTypes[contentReportDataIndex][contentReportData]['db'];
+      var contentReportNewType = contentReportType.replace(/ /g, "_");
+      if (contentReportNewType == contentReportDataIndex) {
+        dbName.update(update_autotakedown, {
+          where: whereData
+        });
       }
-    });
-  }
-  if (contentReportType == 'Task') {
-    db.tasks.update(update_autotakedown, {
-      where: {
-        ta_task_id: contentReportTypeId
-      }
-    });
-  }
-  if (contentReportType == 'Contest') {
-    db.contest_task.update(update_autotakedown, {
-      where: {
-        ct_id: contentReportTypeId
-      }
-    });
-  }
-  if (contentReportType == 'Brand') {
-    db.brands.update(update_autotakedown, {
-      where: {
-        cr_co_id: contentReportTypeId
-      }
-    });
-  }
-  if (contentReportType == 'Campaign') {
-    db.campaigns.update(update_autotakedown, {
-      where: {
-        cp_campaign_id: contentReportTypeId
-      }
-    });
-  }
-  if (contentReportType == 'User Task Post') {
-    db.user_content_post.update(update_autotakedown, {
-      where: {
-        ucpl_id: contentReportTypeId
-      }
-    });
-  }
-  if (contentReportType == 'Comment') {
-    db.post_comment.update(update_autotakedown, {
-      where: {
-        pc_post_id: contentReportTypeId
-      }
-    });
-  }
-  if (contentReportType == 'Post Report') {
-    db.post_report.update(update_autotakedown, {
-      where: {
-        pr_id: contentReportTypeId
-      }
-    });
+    }
+    
   }
 }
 
@@ -543,7 +509,7 @@ exports.deleteContentReportCategory = async (req, res) => {
 }
 
 /**
-* Function to submit content report
+* Function to take action for content report
 * @param  {object}  req expressJs request object
 * @param  {object}  res expressJs response object
 * @return {Promise}
@@ -560,11 +526,10 @@ exports.contentReportAction = async (req, res) => {
   if (!body["Content Report Autotakedown"] && !body["Content Report Hide From User"]) {
     res.status(400).send({
       msg:
-        "Content Report Autotakedown or  Content Report Hide From User is required"
+        "Content Report Autotakedown or Content Report Hide From User is required"
     });
     return;
   }
-  var userId = req.header(process.env.UKEY_HEADER || "x-api-key");
   var options = {
     where: {
       content_report_id: body["Content Report Id"]
@@ -595,10 +560,10 @@ exports.contentReportAction = async (req, res) => {
         audit_log.saveAuditLog(req.header(process.env.UKEY_HEADER || "x-api-key"), 'add', 'content_report_moderate', data.crm_id, data.dataValues);
       })
       .catch(err => {
-        logger.log("error", "Some error occurred while submitting the content report=" + err);
+        logger.log("error", "Some error occurred while taking action for content report=" + err);
         res.status(500).send({
           message:
-            err.message || "Some error occurred while submitting the content report."
+            err.message || "Some error occurred while taking action for content report."
         });
       });
   } else {
@@ -621,7 +586,7 @@ exports.contentReportAction = async (req, res) => {
     update_autotakedown["is_autotakedown"] = 0;
   }
   if (update_autotakedown["is_autotakedown"] != undefined) {
-    updateContentReportAutoTakeDown(contentReportdetail.content_report_type,contentReportdetail.content_report_type_id, update_autotakedown);
+    updateContentReportAutoTakeDown(contentReportdetail.content_report_type, contentReportdetail.content_report_type_id, update_autotakedown);
   }
 
   var contentUseroptions = {

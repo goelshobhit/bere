@@ -290,38 +290,43 @@ const sortOrder = req.query.sortOrder || 'asc'
 const sortVal = req.query.sortVal;
 const Uid=req.header(process.env.UKEY_HEADER || "x-api-key");
 
-var reportOptions = { 
-    attributes:["content_report_type_id", "content_report_type"],
-    where: {
-        content_report_type : ['Task', 'Contest', 'User Task Post'],
-        content_report_uid : Uid
-    }
-};
+const contentUserTaskIds = await common.getContentReportUser(['Task', 'Contest', 'User Task Post', 'User'], Uid);
 
-const contentUserTaskIds = await db.content_report_user.findAll(reportOptions);
-
+//let contentreportIds = {};
 let taskIdsValues = [];
+let userIdsValues = [];
 let ConsentIdsValues = [];
 let userTaskPostIdsValues = [];
 if (contentUserTaskIds.length) {
     contentUserTaskIds.forEach(element => {
         if (element.content_report_type == 'Task') {
             taskIdsValues.push(element.content_report_type_id);
+            //contentreportIds['Task'].push(element.content_report_type_id);
+        }
+        if (element.content_report_type == 'User') {
+            userIdsValues.push(element.content_report_type_id);
+          //  contentreportIds['User'].push(element.content_report_type_id);
         }
         if (element.content_report_type == 'Contest') {
             ConsentIdsValues.push(element.content_report_type_id);
+           // contentreportIds['Contest'].push(element.content_report_type_id);
         }
         if (element.content_report_type == 'User Task Post') {
             userTaskPostIdsValues.push(element.content_report_type_id);
+          //  contentreportIds['User_Task_Post'].push(element.content_report_type_id);
         }
       });
 }
+console.log(userIdsValues);
 var options = {
     include: [    
     {
         model: db.user_profile,
         attributes: ["u_id",["u_display_name", "post_username"],["u_prof_img_path", "post_user_imgpath"]],
-        required:false
+        required:false,
+        where:{is_autotakedown:0, u_id:{
+            [Op.not]: userIdsValues
+        }}
     },
 	{
         model: db.tasks,
@@ -415,24 +420,19 @@ const sortOrder = req.query.sortOrder || 'asc'
 const userId = req.query.userId;
 const sortId = req.query.sortId;
 const Uid=req.header(process.env.UKEY_HEADER || "x-api-key");
-
-var reportOptions = { 
-    attributes:["content_report_type_id", "content_report_type"],
-    where: {
-        content_report_type : ['Task', 'Contest', 'User Task Post'],
-        content_report_uid : Uid
-    }
-};
-
-const contentUserTaskIds = await db.content_report_user.findAll(reportOptions);
+const contentUserTaskIds = await common.getContentReportUser(['Task', 'Contest', 'User Task Post', 'User'], Uid);
 
 let taskIdsValues = [];
+let userIdsValues = [];
 let ConsentIdsValues = [];
 let userTaskPostIdsValues = [];
 if (contentUserTaskIds.length) {
     contentUserTaskIds.forEach(element => {
         if (element.content_report_type == 'Task') {
             taskIdsValues.push(element.content_report_type_id);
+        }
+        if (element.content_report_type == 'User') {
+            userIdsValues.push(element.content_report_type_id);
         }
         if (element.content_report_type == 'Contest') {
             ConsentIdsValues.push(element.content_report_type_id);
@@ -448,7 +448,10 @@ var options = {
     {
         model: db.user_profile,
         attributes: ["u_id",["u_display_name", "post_username"],["u_prof_img_path", "post_user_imgpath"]],
-        required:false
+        required:false,
+        where:{is_autotakedown:0, u_id:{
+            [Op.not]: userIdsValues
+        }}
     },
 	{
         model: db.tasks,
@@ -534,24 +537,19 @@ const sortOrder = req.query.sortOrder || 'asc'
 const taskId = req.query.taskId;
 const sortId = req.query.sortId;
 const Uid=req.header(process.env.UKEY_HEADER || "x-api-key");
-
-var reportOptions = { 
-    attributes:["content_report_type_id", "content_report_type"],
-    where: {
-        content_report_type : ['Task', 'Contest', 'User Task Post'],
-        content_report_uid : Uid
-    }
-};
-
-const contentUserTaskIds = await db.content_report_user.findAll(reportOptions);
+const contentUserTaskIds = await common.getContentReportUser(['Task', 'Contest', 'User Task Post', 'User'], Uid);
 
 let taskIdsValues = [];
+let userIdsValues = [];
 let ConsentIdsValues = [];
 let userTaskPostIdsValues = [];
 if (contentUserTaskIds.length) {
     contentUserTaskIds.forEach(element => {
         if (element.content_report_type == 'Task') {
             taskIdsValues.push(element.content_report_type_id);
+        }
+        if (element.content_report_type == 'User') {
+            userIdsValues.push(element.content_report_type_id);
         }
         if (element.content_report_type == 'Contest') {
             ConsentIdsValues.push(element.content_report_type_id);
@@ -567,7 +565,10 @@ var options = {
     {
         model: db.user_profile,
         attributes: ["u_id",["u_display_name", "post_username"],["u_prof_img_path", "post_user_imgpath"]],
-        required:false
+        required:false,
+        where:{is_autotakedown:0, u_id:{
+            [Op.not]: userIdsValues
+        }}
     },
 	{
         model: db.tasks,
@@ -657,15 +658,7 @@ const sortVal = req.query.sortVal;
 const content_id = req.query.content_id;
 const task_id = req.query.task_id;
 const Uid=req.header(process.env.UKEY_HEADER || "x-api-key");
-var reportOptions = { 
-    attributes:["content_report_type_id", "content_report_type"],
-    where: {
-        content_report_type : ['Task', 'Contest', 'User Task Post'],
-        content_report_uid : Uid
-    }
-};
-
-const contentUserTaskIds = await db.content_report_user.findAll(reportOptions);
+const contentUserTaskIds = await common.getContentReportUser(['Task', 'Contest', 'User Task Post'], Uid);
 
 let taskIdsValues = [];
 let ConsentIdsValues = [];

@@ -114,14 +114,8 @@ exports.listing = async (req, res) => {
             [sortBy]: `%${sortValue}%`
         } : null;
     }
-    var reportOptions = { 
-        attributes:["content_report_type_id"],
-        where: {
-			content_report_type : 'Comment',
-			content_report_uid : uid
-		}
-    };
-    const contentUserIds = await db.content_report_user.findAll(reportOptions);
+    const contentUserIds = await common.getContentReportUser(['Comment'], uid);
+    
     let contentUserIdsValues = [];
     if (contentUserIds.length) {
         contentUserIdsValues = contentUserIds.map(function (item) {
@@ -197,14 +191,8 @@ exports.postCommentslisting = async (req, res) => {
 			is_autotakedown:0
 		}
     };
-    var reportOptions = { 
-        attributes:["content_report_type_id"],
-        where: {
-			content_report_type : 'Comment',
-			content_report_uid : UserId
-		}
-    };
-    const contentUserIds = await db.content_report_user.findAll(reportOptions);
+    const contentUserIds = await common.getContentReportUser(['Comment'], UserId);
+    
     let contentUserIdsValues = [];
     if (contentUserIds.length) {
         contentUserIdsValues = contentUserIds.map(function (item) {
@@ -273,14 +261,7 @@ exports.Commentslisting = async (req, res) => {
             [sortBy]: `%${sortValue}%`
         } : null;
     }
-    var reportOptions = { 
-        attributes:["content_report_type_id"],
-        where: {
-			content_report_type : 'Comment',
-			content_report_uid : UserId
-		}
-    };
-    const contentUserIds = await db.content_report_user.findAll(reportOptions);
+    const contentUserIds = await common.getContentReportUser(['Comment'], UserId);
     let contentUserIdsValues = [];
     if (contentUserIds.length) {
         contentUserIdsValues = contentUserIds.map(function (item) {

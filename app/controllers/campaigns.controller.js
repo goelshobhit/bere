@@ -4,6 +4,7 @@ const Op = db.Sequelize.Op;
 const Brand = db.brands;
 const audit_log = db.audit_log
 const logger = require("../middleware/logger");
+const common = require("../common");
 const {
     validationResult
 } = require("express-validator");
@@ -106,15 +107,7 @@ exports.campaignListing = async(req, res) => {
 	const sortOrder = req.query.sortOrder || 'DESC'
     const sortVal = req.query.sortVal;
     var UserId= req.header(process.env.UKEY_HEADER || "x-api-key");
-    var reportOptions = { 
-        attributes:["content_report_type_id", "content_report_type"],
-        where: {
-            content_report_type : ['Campaign', 'Brand'],
-            content_report_uid : UserId
-        }
-    };
-    
-    const contentUserTaskIds = await db.content_report_user.findAll(reportOptions);
+    const contentUserTaskIds = await common.getContentReportUser(['Brand', 'Campaign'], UserId);
     
     let CampaignIdsValues = [];
     let brandIdsValues = [];

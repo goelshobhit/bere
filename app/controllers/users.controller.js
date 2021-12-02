@@ -187,14 +187,7 @@ exports.listing = async (req, res) => {
     const sortOrder = req.query.sortOrder || 'DESC'
     const sortVal = req.query.sortVal;
     var UserId= req.header(process.env.UKEY_HEADER || "x-api-key");
-    var reportOptions = { 
-        attributes:["content_report_type_id"],
-        where: {
-			content_report_type : 'User',
-			content_report_uid : UserId
-		}
-    };
-    const contentUserIds = await db.content_report_user.findAll(reportOptions);
+    const contentUserIds = await common.getContentReportUser(['User'], UserId);
     const contentUserIdsValues = contentUserIds.map(function (item) {
         return item.content_report_type_id
       });
