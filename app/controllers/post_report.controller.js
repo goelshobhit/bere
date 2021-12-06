@@ -96,7 +96,8 @@ exports.listing = async (req, res) => {
     const sortVal = req.query.sortVal;
     const body = req.body;
     var postId=req.params.postId;
-	var report_type=req.query.report_type;
+    var report_type=req.query.report_type;
+    var UserId= req.header(process.env.UKEY_HEADER || "x-api-key");
 	console.log(req.query);
 	console.log(req.params);
     var options = {
@@ -116,6 +117,20 @@ exports.listing = async (req, res) => {
             [sortBy]: `${sortValue}`
         } : null;
     }
+    const contentUserIds = await common.getContentReportUser(['Post Report'], UserId);
+
+    let contentUserIdsValues = [];
+    if (contentUserIds.length) {
+        contentUserIdsValues = contentUserIds.map(function (item) {
+            return item.content_report_type_id
+          });
+    }
+    if (contentUserIdsValues.length) {
+        options['where']['pr_id'] = {
+                [Op.not]: contentUserIdsValues
+            }
+    }
+    options['where']['is_autotakedown'] = 0;
     var total = await postReport.count({
         where: options['where']
     });

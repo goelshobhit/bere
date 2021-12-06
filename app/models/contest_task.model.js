@@ -93,6 +93,10 @@ module.exports = (sequelize, Sequelize) => {
         },
 		ct_winner_token:{
             type: Sequelize.STRING(50)
+        },
+		is_autotakedown:{
+            type: Sequelize.INTEGER,
+			default: 0
         }
     }, {
         createdAt: 'ct_created_at',

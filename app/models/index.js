@@ -101,6 +101,7 @@ db.survey_user_complete = require("./survey_user_complete.model")(sequelize, Seq
 db.content_report = require("./content_report.model")(sequelize, Sequelize);
 db.content_report_category = require("./content_report_category.model")(sequelize, Sequelize);
 db.content_report_user = require("./content_report_user.model")(sequelize, Sequelize);
+db.content_report_moderate = require("./content_report_moderate.model")(sequelize, Sequelize);
 
 //Relations
 db.brands.hasMany(db.video_ads, {foreignKey: 'cr_co_id', targetKey: 'cr_co_id'});
@@ -147,6 +148,9 @@ db.content_report.hasMany(db.content_report_user, {foreignKey: 'content_report_i
 
 db.content_report_user.belongsTo(db.content_report_category, {foreignKey: 'content_report_cat_id', targetKey: 'content_report_cat_id'});
 db.content_report_category.hasMany(db.content_report_user, {foreignKey: 'content_report_cat_id', targetKey: 'content_report_cat_id'});
+
+db.content_report.hasOne(db.content_report_moderate, {foreignKey: 'content_report_id', targetKey: 'content_report_id'});
+db.content_report_moderate.belongsTo(db.content_report, {foreignKey: 'content_report_id', targetKey: 'content_report_id'});
 
 db.user_profile.hasMany(db.post_comment, {foreignKey: 'pc_commenter_uid', targetKey: 'u_id'});
 db.post_comment.belongsTo(db.user_profile, {foreignKey: 'pc_commenter_uid', targetKey: 'u_id'});

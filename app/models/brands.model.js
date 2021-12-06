@@ -91,6 +91,10 @@ module.exports = (sequelize, Sequelize) => {
         },
 		cr_co_alias: {
             type: Sequelize.STRING(10) //0 offline 1 online
+        },
+		is_autotakedown:{
+            type: Sequelize.INTEGER,
+			default: 0
         }
     }, {
         createdAt: 'cr_co_created_at',

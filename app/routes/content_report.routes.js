@@ -15,15 +15,15 @@ module.exports = app => {
      *                    type: object
      *                    properties:
      *                        Content Content Report Cat Autotakedown:
-     *                            type: interger
+     *                            type: integer
      *                            required: true
      *                        Content Report Cat Name:
      *                            type: string
      *                        Content Report Cat Hide:
-     *                            type: interger
+     *                            type: integer
      *                            required: true
      *                        Content Report Cat Usr Hide:
-     *                            type: interger
+     *                            type: integer
      *                            required: true
      *     tags:
      *       - Content Report
@@ -193,18 +193,18 @@ module.exports = app => {
      *                    type: object
      *                    properties:
      *                        Content Report Cat Id:
-     *                            type: interger
+     *                            type: integer
      *                            required: true
      *                        Content Report Name:
      *                            type: string
      *                        Content Report Type:
-     *                            type: interger
+     *                            type: integer
      *                            required: true
      *                        Content Report Type Id:
-     *                            type: interger
+     *                            type: integer
      *                            required: true
      *                        Content Report Owner Id:
-     *                            type: interger
+     *                            type: integer
      *                            required: true
      *                        Content Report Reason:
      *                            type: string
@@ -248,7 +248,7 @@ module.exports = app => {
      *            required: false
      *            schema:
      *                type: string
-     *                example: content_report_cat_id,content_report_cat_name,content_report_cat_hide,content_report_cat_usr_hide
+     *                example: content_report_id,content_report_cat_id,content_report_name,content_report_type,content_report_cat_type_id,content_report_cat_owner_id,content_report_cat_reporter_id
      *          - name: sortOrder
      *            in: query
      *            required: false
@@ -279,6 +279,50 @@ module.exports = app => {
      *                                  type: string
      *                                  example: Authorisation Required
     */
-   router.get('/contentreport',auth, Contentreport.contentReportListing)
+   router.get('/contentreport',auth, Contentreport.contentReportListing);
+   /**
+     * @swagger
+     * /api/contentreport_action:
+     *   post:
+     *     requestBody:
+     *        required: false
+     *        content:
+     *            application/json:
+     *                schema:
+     *                    type: object
+     *                    properties:
+     *                        Content Report Id:
+     *                            type: integer
+     *                            required: true
+     *                        Content Report Autotakedown:
+     *                            type: integer
+     *                        Content Report Hide From User:
+     *                            type: integer
+     *                        Content Report Desc:
+     *                            type: string
+     *     tags:
+     *       - Content Report
+     *     description: Take Content Report Action
+     *     produces:
+     *       - application/json
+     *     responses:
+     *       201:
+     *         description: Take Content Report Action
+     *       422:
+     *         description: validation errors
+     *       500:
+     *         description: Internal server error
+     *       401:
+     *          description: Unauthorized
+     *          content:
+     *              application/json:
+     *                  schema:
+     *                      type: object
+     *                      properties:
+     *                          message:
+     *                              type: string
+     *                              example: Authorisation Required
+     */
+    router.post("/contentreport_action", auth, Contentreport.contentReportAction);
     app.use("/api", router);
 };
