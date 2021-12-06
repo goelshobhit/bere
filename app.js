@@ -242,6 +242,7 @@ require("./app/routes/video_ads_submit.routes")(app);
 require("./app/routes/socket_server.routes")({app, io});
 require("./app/routes/survey.routes")(app);
 require("./app/routes/content_report.routes")(app);
+require("./app/routes/bonus.routes")(app);
 server.listen(PORT, function () {
   console.log(`Server is running on port ${PORT}.`)
 });

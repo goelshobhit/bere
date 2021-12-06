@@ -98,7 +98,6 @@ exports.listing = async(req, res) => {
 	const skipCount = (pageNumber - 1) * pageSize;
 	const sortBy = req.query.sortBy || 'cr_co_id'
 	const sortOrder = req.query.sortOrder || 'DESC'
-    const sortVal = req.query.sortVal;
     var UserId = req.header(process.env.UKEY_HEADER || "x-api-key");
     const contentUserTaskIds = await common.getContentReportUser(['Brand', 'Campaign'], UserId);
     let brandIdsValues = [];
@@ -346,7 +345,6 @@ exports.Brandslisting = async(req, res) => {
 	const sortBy = req.query.sortBy || 'cr_co_id'
     const sortOrder = req.query.sortOrder || 'DESC'
     var UserId= req.header(process.env.UKEY_HEADER || "x-api-key");
-    const sortVal = req.query.sortVal;    
     /* do not get users which are reported by someone */
     const contentUserIds = await common.getContentReportUser(['Brand'], UserId);
     let contentUserIdsValues = [];
