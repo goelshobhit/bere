@@ -449,10 +449,6 @@ exports.surveyStatsListing = async (req, res) => {
         where: options['where']
     });
     const surveyStatsList = await SurveyStats.findAll(options);
-    // res.status(200).send({
-    //     data: surveyStatsList,
-    //     totalRecords: total
-    // });
     const questionAnswerCount = [];
     var QuestionCountObj = {};
     for (const surveyStats in surveyStatsList) {
@@ -467,17 +463,7 @@ exports.surveyStatsListing = async (req, res) => {
     const SurveyStatResult = [];
     for (const surveyStats in surveyStatsList) {
        answer_percentage = parseFloat(surveyStatsList[surveyStats].srq_answer_count*100/questionAnswerCount[0][surveyStatsList[surveyStats].srq_id]);
-    //    res.status(200).send({
-    //     survey: surveyStatsList[surveyStats].survey.brand.cr_co_name
-    // });
-    // return;
-    // console.log("survey======="+surveyStatsList[surveyStats].survey.sr_title);
-    // console.log("cr_co_name======="+surveyStatsList[surveyStats].survey.brand.cr_co_name);
-    // var surveyName = surveyStatsList[surveyStats].survey.sr_title;
-    // var brandName = surveyStatsList[surveyStats].survey.brand.cr_co_name;
        SurveyStatResult.push({
-            //"Survey Name": surveyName,
-            //"Brand Name": brandName,
             "Survey": surveyStatsList[surveyStats].survey,
             "Survey Id": surveyStatsList[surveyStats].sr_id,
             "Survey Question id": surveyStatsList[surveyStats].srq_id,

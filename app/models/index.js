@@ -106,6 +106,7 @@ db.bonus_usr = require("./bonus_usr.model")(sequelize, Sequelize);
 db.bonus_sm_share = require("./bonus_sm_share.model")(sequelize, Sequelize);
 db.bonus_item = require("./bonus_item.model")(sequelize, Sequelize);
 db.bonus_set = require("./bonus_set.model")(sequelize, Sequelize);
+db.bonus_summary = require("./bonus_summary.model")(sequelize, Sequelize);
 
 //Relations
 db.brands.hasMany(db.video_ads, {foreignKey: 'cr_co_id', targetKey: 'cr_co_id'});
@@ -155,9 +156,14 @@ db.content_report_category.hasMany(db.content_report_user, {foreignKey: 'content
 
 db.content_report.hasOne(db.content_report_moderate, {foreignKey: 'content_report_id', targetKey: 'content_report_id'});
 db.content_report_moderate.belongsTo(db.content_report, {foreignKey: 'content_report_id', targetKey: 'content_report_id'});
-db.user_profile.belongsTo(db.bonus_usr, {foreignKey: 'u_id', targetKey: 'bonus_usr_id'});
-db.bonus_usr.hasOne(db.user_profile, {foreignKey: 'u_id', targetKey: 'bonus_usr_id'});
 
+db.bonus_usr.belongsTo(db.user_profile, {foreignKey: 'bonus_usr_id', targetKey: 'u_id'});
+
+db.bonus_summary.belongsTo(db.bonus_item, {foreignKey: 'bonus_item_id', targetKey: 'bonus_item_id'});
+db.bonus_summary.belongsTo(db.bonus_set, {foreignKey: 'bonus_summary_set_id', targetKey: 'bonus_set_id'});
+
+db.user_profile.hasMany(db.bonus_sm_share, {foreignKey: 'bonus_sm_share_user_id', targetKey: 'u_id'});
+db.bonus_sm_share.belongsTo(db.user_profile, {foreignKey: 'bonus_sm_share_user_id', targetKey: 'u_id'});
 
 db.user_profile.hasMany(db.post_comment, {foreignKey: 'pc_commenter_uid', targetKey: 'u_id'});
 db.post_comment.belongsTo(db.user_profile, {foreignKey: 'pc_commenter_uid', targetKey: 'u_id'});
