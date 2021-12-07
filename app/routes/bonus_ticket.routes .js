@@ -17,10 +17,10 @@ module.exports = app => {
    *                        Bonus Summary:
    *                            type: integer
    *                        Entry Timestamp:
-   *                             format: date-time
+   *                            format: date-time
    *                            example: 2020-09-30
    *                        Start Timestamp:
-   *                             format: date-time
+   *                            format: date-time
    *                            example: 2020-09-30
    *                        End Timestamp:
    *                            format: date-time
@@ -75,10 +75,10 @@ module.exports = app => {
    *                        Bonus Summary:
    *                            type: integer
    *                        Entry Timestamp:
-   *                             format: date-time
+   *                            format: date-time
    *                            example: 2020-09-30
    *                        Start Timestamp:
-   *                             format: date-time
+   *                            format: date-time
    *                            example: 2020-09-30
    *                        End Timestamp:
    *                            format: date-time

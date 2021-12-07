@@ -6,10 +6,6 @@ module.exports = (sequelize, Sequelize) => {
       primaryKey: true,
       type: Sequelize.INTEGER
     },
-    bonus_tickets_rules_id: {
-      allowNull: false,
-      type: Sequelize.INTEGER
-    },
     bonus_tickets_rules: {
       type: Sequelize.STRING(255)
     },

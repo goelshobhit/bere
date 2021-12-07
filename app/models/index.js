@@ -76,6 +76,13 @@ db.post_report = require("./post_report.model")(sequelize, Sequelize);
 db.post_report = require("./post_report.model")(sequelize, Sequelize);
 db.user_fan_following = require("./user_fan_following.model")(sequelize, Sequelize);
 db.budget_history=require("./budget_history.model")(sequelize,Sequelize);
+db.bonus_ticket = require("./bonus_ticket.model")(sequelize, Sequelize);
+db.bonus_ticket_rules = require("./bonus_ticket_rules.model")(sequelize, Sequelize);
+db.bonus_task = require("./bonus_task.model")(sequelize, Sequelize);
+db.bonus_rewards = require("./bonus_rewards.model")(sequelize, Sequelize);
+db.users.hasMany(db.bonus_ticket, {foreignKey: 'u_id', targetKey: 'bonus_ticket_usrid'});
+db.bonus_ticket.belongsTo(db.users, {foreignKey: 'bonus_ticket_usrid', targetKey: 'u_id'});
+
 //notification templates
 db.notify_grp = require("./notify_grp.model")(sequelize, Sequelize);
 db.notify_event = require("./notify_event.model")(sequelize, Sequelize);
