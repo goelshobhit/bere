@@ -242,7 +242,11 @@ require("./app/routes/video_ads_submit.routes")(app);
 require("./app/routes/socket_server.routes")({app, io});
 require("./app/routes/survey.routes")(app);
 require("./app/routes/content_report.routes")(app);
-require("./app/routes/bonus.routes")(app);
+require("./app/routes/bonus/bonus_user.routes")(app);
+require("./app/routes/bonus/bonus_sm_share.routes")(app);
+require("./app/routes/bonus/bonus_item.routes")(app);
+require("./app/routes/bonus/bonus_item_set.routes")(app);
+require("./app/routes/bonus/bonus_summary.routes")(app);
 server.listen(PORT, function () {
   console.log(`Server is running on port ${PORT}.`)
 });

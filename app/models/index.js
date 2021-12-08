@@ -109,11 +109,11 @@ db.content_report = require("./content_report.model")(sequelize, Sequelize);
 db.content_report_category = require("./content_report_category.model")(sequelize, Sequelize);
 db.content_report_user = require("./content_report_user.model")(sequelize, Sequelize);
 db.content_report_moderate = require("./content_report_moderate.model")(sequelize, Sequelize);
-db.bonus_usr = require("./bonus_usr.model")(sequelize, Sequelize);
-db.bonus_sm_share = require("./bonus_sm_share.model")(sequelize, Sequelize);
-db.bonus_item = require("./bonus_item.model")(sequelize, Sequelize);
-db.bonus_set = require("./bonus_set.model")(sequelize, Sequelize);
-db.bonus_summary = require("./bonus_summary.model")(sequelize, Sequelize);
+db.bonus_usr = require("./bonus/bonus_usr.model")(sequelize, Sequelize);
+db.bonus_sm_share = require("./bonus/bonus_sm_share.model")(sequelize, Sequelize);
+db.bonus_item = require("./bonus/bonus_item.model")(sequelize, Sequelize);
+db.bonus_set = require("./bonus/bonus_set.model")(sequelize, Sequelize);
+db.bonus_summary = require("./bonus/bonus_summary.model")(sequelize, Sequelize);
 
 //Relations
 db.brands.hasMany(db.video_ads, {foreignKey: 'cr_co_id', targetKey: 'cr_co_id'});
