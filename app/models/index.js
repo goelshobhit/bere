@@ -80,9 +80,6 @@ db.bonus_ticket = require("./bonus_ticket.model")(sequelize, Sequelize);
 db.bonus_ticket_rules = require("./bonus_ticket_rules.model")(sequelize, Sequelize);
 db.bonus_task = require("./bonus_task.model")(sequelize, Sequelize);
 db.bonus_rewards = require("./bonus_rewards.model")(sequelize, Sequelize);
-db.users.hasMany(db.bonus_ticket, {foreignKey: 'u_id', targetKey: 'bonus_ticket_usrid'});
-db.bonus_ticket.belongsTo(db.users, {foreignKey: 'bonus_ticket_usrid', targetKey: 'u_id'});
-
 //notification templates
 db.notify_grp = require("./notify_grp.model")(sequelize, Sequelize);
 db.notify_event = require("./notify_event.model")(sequelize, Sequelize);
@@ -116,6 +113,16 @@ db.bonus_set = require("./bonus/bonus_set.model")(sequelize, Sequelize);
 db.bonus_summary = require("./bonus/bonus_summary.model")(sequelize, Sequelize);
 
 //Relations
+db.users.hasMany(db.bonus_ticket, {foreignKey: 'u_id', targetKey: 'bonus_ticket_usrid'});
+db.bonus_ticket.belongsTo(db.users, {foreignKey: 'bonus_ticket_usrid', targetKey: 'u_id'});
+db.bonus_summary.hasMany(db.bonus_ticket, {foreignKey: 'bonus_summary_id', targetKey: 'bonus_summary_id'});
+db.bonus_ticket.belongsTo(db.bonus_summary, {foreignKey: 'bonus_summary_id', targetKey: 'bonus_summary_id'});
+db.bonus_summary.hasMany(db.bonus_rewards, {foreignKey: 'bonus_summary_id', targetKey: 'bonus_summary_id'});
+db.bonus_rewards.belongsTo(db.bonus_summary, {foreignKey: 'bonus_summary_id', targetKey: 'bonus_summary_id'});
+db.brands.hasMany(db.bonus_task, {foreignKey: 'cr_co_id', targetKey: 'bonus_task_brand_id'});
+db.bonus_task.belongsTo(db.brands, {foreignKey: 'bonus_task_brand_id', targetKey: 'cr_co_id'});
+db.users.hasMany(db.bonus_task, {foreignKey: 'u_id', targetKey: 'bonus_task_usr_id'});
+db.bonus_task.belongsTo(db.users, {foreignKey: 'bonus_task_usr_id', targetKey: 'u_id'});
 db.brands.hasMany(db.video_ads, {foreignKey: 'cr_co_id', targetKey: 'cr_co_id'});
 db.video_ads.belongsTo(db.brands, {foreignKey: 'cr_co_id', targetKey: 'cr_co_id'});
 db.notify_trig.hasMany(db.notify_trig_sent, {foreignKey: 'notify_trig_id', targetKey: 'notify_trig_id'});

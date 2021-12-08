@@ -1,12 +1,12 @@
 module.exports = (sequelize, Sequelize) => {
   const bonus_rewards = sequelize.define("bonus_rewards", {
-    bonus_summary_id: {
-      allowNull: false,
+    bonus_rewards_id: {
       autoIncrement: true,
       primaryKey: true,
+      allowNull: false,
       type: Sequelize.INTEGER
     },
-    bonus_rewards_id: {
+    bonus_summary_id: {
       allowNull: false,
       type: Sequelize.INTEGER
     },
