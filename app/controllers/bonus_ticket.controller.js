@@ -1,6 +1,5 @@
 const db = require("../models");
 const BonusTicket = db.bonus_ticket;
-const Op = db.Sequelize.Op;
 const audit_log = db.audit_log
 const logger = require("../middleware/logger");
 const {
@@ -140,7 +139,7 @@ exports.updateBonusTicket = async(req, res) => {
         }
     }).then(function([ num, [result] ]) {
         if (num == 1) {
-            audit_log.saveAuditLog(req.header(process.env.UKEY_HEADER || "x-api-key"),'update','bonusTicket',id,result.dataValues,BonusTicketDetails);
+            audit_log.saveAuditLog(req.header(process.env.UKEY_HEADER || "x-api-key"),'update','BonusTicket',id,result.dataValues,BonusTicketDetails);
             res.status(200).send({
                 message: "Bonus Ticket updated successfully."
             });
