@@ -87,7 +87,7 @@ module.exports = app => {
    *           in: path
    *           required: true
    *           schema:
-   *              type: string
+   *              type: integer
    *     tags:
    *       - Notify Events
    *     description: Update Notify Events
@@ -168,7 +168,7 @@ module.exports = app => {
    *           in: path
    *           required: true
    *           schema:
-   *              type: string
+   *              type: integer
    *         - name: pageSize
    *           in: query
    *           required: false

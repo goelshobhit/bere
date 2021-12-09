@@ -1,7 +1,7 @@
-const db = require("../models");
+const db = require("../../models");
 const BonusRewards = db.bonus_rewards;
 const audit_log = db.audit_log
-const logger = require("../middleware/logger");
+const logger = require("../../middleware/logger");
 const {
     validationResult
 } = require("express-validator");
@@ -22,7 +22,6 @@ exports.createBonusRewards = async(req, res) => {
     }
     const bonusRewards = {
         "bonus_summary_id": body.hasOwnProperty("Bonus Summary") ? body["Bonus Summary"] : 0,
-        "bonus_rewards_id": body.hasOwnProperty("Bonus Rewards Id") ? body["How It Works"] : 0,
         "bonus_rewards_bonus_setid": body.hasOwnProperty("Bonus Set Id") ? body["Bonus Set Id"] : 0,
         "bonus_rewards_usrid": body.hasOwnProperty("User Id") ? body["User Id"] : 0,
         "bonus_rewards_item_id": body.hasOwnProperty("Item Id") ? body["Item Id"] : 0,
@@ -39,9 +38,9 @@ exports.createBonusRewards = async(req, res) => {
             bonusRewardsId: data.bonus_rewards_id
         });
     }).catch(err => {
-        logger.log("error", "Some error occurred while creating the Bonus Ticket Rules=" + err);
+        logger.log("error", "Some error occurred while creating the Bonus Reward =" + err);
         res.status(500).send({
-            message: err.message || "Some error occurred while creating the Bonus Ticket Rules."
+            message: err.message || "Some error occurred while creating the Bonus Reward  Rules."
         });
     })
 };
@@ -89,21 +88,21 @@ exports.bonusRewardsListing = async(req, res) => {
  * @return {Promise}
  */
 exports.bonusRewardsDetails = async(req, res) => {
-    const bonusTicketRulesId = req.params.bonusTicketRulesId;
+    const bonusRewardsId = req.params.bonusRewardsId;
     var options = {
         where: {
-            bonus_tickets_rules_id: bonusTicketRulesId
+            bonus_rewards_id: bonusRewardsId
         }
     };
-    const bonusTicketRules = await BonusTicketRules.findOne(options);
-    if(!bonusTicketRules){
+    const bonusRewards = await BonusRewards.findOne(options);
+    if(!bonusRewards){
         res.status(500).send({
             message: "Bonus Rewards not found"
         });
         return
     }
     res.status(200).send({
-        data: bonusTicketRules
+        data: bonusRewards
     });
 };
 /**
@@ -122,7 +121,6 @@ exports.updateBonusRewards = async(req, res) => {
     });
     const bonusRewards = {
         "bonus_summary_id": body.hasOwnProperty("Bonus Summary") ? body["Bonus Summary"] : 0,
-        "bonus_rewards_id": body.hasOwnProperty("Bonus Rewards Id") ? body["How It Works"] : 0,
         "bonus_rewards_bonus_setid": body.hasOwnProperty("Bonus Set Id") ? body["Bonus Set Id"] : 0,
         "bonus_rewards_usrid": body.hasOwnProperty("User Id") ? body["User Id"] : 0,
         "bonus_rewards_item_id": body.hasOwnProperty("Item Id") ? body["Item Id"] : 0,
@@ -145,7 +143,7 @@ exports.updateBonusRewards = async(req, res) => {
             });
         } else {
             res.status(400).send({
-                message: `Cannot update Bonus Rewards Details with id=${id}. Maybe Bonus Ticket Rules was not found or req.body is empty!`
+                message: `Cannot update Bonus Rewards Details with id=${id}. Maybe Bonus Reward was not found or req.body is empty!`
             });
         }
     }).catch(err => {
