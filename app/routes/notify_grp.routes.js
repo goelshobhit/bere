@@ -69,7 +69,7 @@ module.exports = app => {
    *           in: path
    *           required: true
    *           schema:
-   *              type: string
+   *              type: integer
    *     tags:
    *       - Notify Groups
    *     description: Update Notify Groups
@@ -150,7 +150,7 @@ module.exports = app => {
    *           in: path
    *           required: true
    *           schema:
-   *              type: string
+   *              type: integer
    *         - name: pageSize
    *           in: query
    *           required: false

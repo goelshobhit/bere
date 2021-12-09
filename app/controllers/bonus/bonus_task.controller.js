@@ -1,7 +1,7 @@
-const db = require("../models");
+const db = require("../../models");
 const BonusTask = db.bonus_task;
 const audit_log = db.audit_log
-const logger = require("../middleware/logger");
+const logger = require("../../middleware/logger");
 const {
     validationResult
 } = require("express-validator");

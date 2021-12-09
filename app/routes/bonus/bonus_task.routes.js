@@ -1,10 +1,10 @@
 module.exports = app => {
-    const BonusReward = require("../controllers/bonus_reward.controller.js");
+    const BonusTask = require("../../controllers/bonus/bonus_task.controller.js");
     var router = require("express").Router();
-    const auth = require("../middleware/auth");
+    const auth = require("../../middleware/auth");
   /**
    * @swagger
-   * /api/bonus_reward:
+   * /api/bonus_task:
    *   post:
    *     requestBody:
    *        required: false
@@ -13,38 +13,40 @@ module.exports = app => {
    *                schema:
    *                    type: object
    *                    properties:
-   *                        Bonus Summary:
-   *                            type: integer
-   *                        Bonus Rewards Id:
-   *                            type: integer
-   *                        Bonus Set Id:
+   *                        Brand Id:
    *                            type: integer
    *                        User Id:
    *                            type: integer
-   *                        Item Id:
-   *                            type: integer
-   *                        Item Name:
+   *                        Caption 1:
    *                            type: string
-   *                        Item Qty:
-   *                            type: integer
-   *                        Delivery Date:
+   *                        Caption 2:
    *                            type: string
-   *                        Confirmation Date:
+   *                        Caption 3:
+   *                            type: string
+   *                        Own Caption:
+   *                            type: string
+   *                        Task Title:
+   *                            type: string
+   *                        Summary Content:
+   *                            type: string
+   *                        Image Url:
    *                            type: string
    *                        Video Url:
-   *                            type: integer
+   *                            type: string
    *                        Completion Date:
-   *                            type: integer
-   *                        Additional Task Id:
-   *                            type: integer
+   *                            type: string
+   *                        Entry Date:
+   *                            type: string
+   *                        Hashtag:
+   *                            type: string
    *     tags:
-   *       - Bonus Reward
-   *     description: Add new Bonus Reward
+   *       - Bonus Task
+   *     description: Add new Bonus Task
    *     produces:
    *       - application/json
    *     responses:
    *       201:
-   *         description: Add new Bonus Reward
+   *         description: Add new Bonus Task
    *       422:
    *         description: validation errors
    *       500:
@@ -60,10 +62,10 @@ module.exports = app => {
    *                              type: string
    *                              example: Authorisation Required
    */
-	router.post("/bonus_reward",auth, BonusTask.createBonusTask);
+	router.post("/bonus_task",auth, BonusTask.createBonusTask);
   /**
    * @swagger
-   * /api/bonus_reward/{bonusRewardsId}:
+   * /api/bonus_task/{bonusTaskId}:
    *   put:
    *     requestBody:
    *        required: false
@@ -72,44 +74,46 @@ module.exports = app => {
    *                schema:
    *                    type: object
    *                    properties:
-   *                        Bonus Summary:
-   *                            type: integer
-   *                        Bonus Rewards Id:
-   *                            type: integer
-   *                        Bonus Set Id:
+   *                        Brand Id:
    *                            type: integer
    *                        User Id:
    *                            type: integer
-   *                        Item Id:
-   *                            type: integer
-   *                        Item Name:
+   *                        Caption 1:
    *                            type: string
-   *                        Item Qty:
-   *                            type: integer
-   *                        Delivery Date:
+   *                        Caption 2:
    *                            type: string
-   *                        Confirmation Date:
+   *                        Caption 3:
+   *                            type: string
+   *                        Own Caption:
+   *                            type: string
+   *                        Task Title:
+   *                            type: string
+   *                        Summary Content:
+   *                            type: string
+   *                        Image Url:
    *                            type: string
    *                        Video Url:
-   *                            type: integer
+   *                            type: string
    *                        Completion Date:
-   *                            type: integer
-   *                        Additional Task Id:
-   *                            type: integer
+   *                            type: string
+   *                        Entry Date:
+   *                            type: string
+   *                        Hashtag:
+   *                            type: string
    *     parameters:
-   *         - name: bonusRewardsId
+   *         - name: bonusTaskId
    *           in: path
    *           required: true
    *           schema:
-   *              type: string
+   *              type: integer
    *     tags:
-   *       - Bonus Reward
-   *     description: Update Bonus Reward
+   *       - Bonus Task
+   *     description: Update Bonus Task
    *     produces:
    *       - application/json
    *     responses:
    *       201:
-   *         description: Bonus Reward updated
+   *         description: Bonus Task updated
    *       422:
    *         description: validation errors
    *       500:
@@ -125,10 +129,10 @@ module.exports = app => {
    *                              type: string
    *                              example: Authorisation Required
    */
-  router.put("/bonus_reward/:bonusRewardsId",auth, BonusTask.updateBonusTask);
+  router.put("/bonus_task/:bonusTaskId",auth, BonusTask.updateBonusTask);
   /**
    * @swagger
-   * /api/bonus_reward:
+   * /api/bonus_task:
    *   get:
    *     parameters:
    *         - name: pageNumber
@@ -141,7 +145,7 @@ module.exports = app => {
    *           required: false
    *           schema:
    *              type: string
-   *              example: bonus_summary_id,bonus_rewards_bonus_setid,bonus_rewards_usrid,bonus_rewards_item_id,bonus_rewards_item_name,bonus_rewards_item_qty,bonus_rewards_item_delivery_date, bonus_rewards_item_confirmation_date,bonus_rewards_additional_task_id # Example of a parameter value
+   *              example: bonus_task_brand_id,bonus_task_usr_id,bonus_task_caption1,bonus_task_caption2,bonus_task_caption3,bonus_task_own_caption,bonus_task_title,bonus_task_summary_content,bonus_task_image_url,bonus_task_video_url,bonus_task_completion_date,bonus_task_entry_date,bonus_task_hashtag # Example of a parameter value
    *         - name: sortOrder
    *           in: query
    *           required: false
@@ -154,13 +158,13 @@ module.exports = app => {
    *           schema:
    *              type: string
    *     tags:
-   *       - Bonus Reward
-   *     description: Returns all Bonus Reward
+   *       - Bonus Task
+   *     description: Returns all Bonus Task
    *     produces:
    *       - application/json
    *     responses:
    *       200:
-   *         description: A list of Bonus Reward
+   *         description: A list of Bonus Task
    *       401:
    *          description: Unauthorized
    *          content:
@@ -172,17 +176,17 @@ module.exports = app => {
    *                              type: string
    *                              example: Authorisation Required
    */
-    router.get('/bonus_reward',auth, BonusTask.bonusTaskListing)
+    router.get('/bonus_task',auth, BonusTask.bonusTaskListing)
   /**
    * @swagger
-   * /api/bonus_reward/{bonusRewardsId}:
+   * /api/bonus_task/{bonusTaskId}:
    *   get:
    *     parameters:
-   *         - name: bonusRewardsId
+   *         - name: bonusTaskId
    *           in: path
    *           required: true
    *           schema:
-   *              type: string
+   *              type: integer
    *         - name: pageSize
    *           in: query
    *           required: false
@@ -194,13 +198,13 @@ module.exports = app => {
    *           schema:
    *              type: integer
    *     tags:
-   *       - Bonus Reward
-   *     description: Retrieve a single Bonus Reward with BonusTaskId
+   *       - Bonus Task
+   *     description: Retrieve a single Bonus Task with BonusTaskId
    *     produces:
    *       - application/json
    *     responses:
    *       200:
-   *         description: Details of a Bonus Reward
+   *         description: Details of a Bonus Task
    *       401:
    *          description: Unauthorized
    *          content:
@@ -212,10 +216,10 @@ module.exports = app => {
    *                              type: string
    *                              example: Authorisation Required
    */
-    router.get("/bonus_reward/:bonusRewardsId",auth, BonusTask.bonusTaskDetails);
+    router.get("/bonus_task/:bonusTaskId",auth, BonusTask.bonusTaskDetails);
    /**
    * @swagger
-   * /api/bonus_reward/{bonusRewardsId}:
+   * /api/bonus_task/{bonusTaskId}:
    *   delete:
    *     parameters:
    *         - name: bonusTaskId
@@ -224,13 +228,13 @@ module.exports = app => {
    *           schema:
    *              type: integer
    *     tags:
-   *       - Bonus Reward
-   *     description: Delete a Bonus Reward with id
+   *       - Bonus Task
+   *     description: Delete a Bonus Task with id
    *     produces:
    *       - application/json
    *     responses:
    *       200:
-   *         description: Delete a Bonus Reward
+   *         description: Delete a Bonus Task
    *       401:
    *          description: Unauthorized
    *          content:
@@ -242,7 +246,7 @@ module.exports = app => {
    *                              type: string
    *                              example: Authorisation Required
    */
-    router.delete("/bonus_reward/:bonusRewardsId", auth, BonusReward.deleteBonusTask); 
+    router.delete("/bonus_task/:bonusTaskId", auth, BonusTask.deleteBonusTask); 
     app.use("/api", router);
 };
   

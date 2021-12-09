@@ -76,10 +76,10 @@ db.post_report = require("./post_report.model")(sequelize, Sequelize);
 db.post_report = require("./post_report.model")(sequelize, Sequelize);
 db.user_fan_following = require("./user_fan_following.model")(sequelize, Sequelize);
 db.budget_history=require("./budget_history.model")(sequelize,Sequelize);
-db.bonus_ticket = require("./bonus_ticket.model")(sequelize, Sequelize);
-db.bonus_ticket_rules = require("./bonus_ticket_rules.model")(sequelize, Sequelize);
-db.bonus_task = require("./bonus_task.model")(sequelize, Sequelize);
-db.bonus_rewards = require("./bonus_rewards.model")(sequelize, Sequelize);
+db.bonus_ticket = require("./bonus/bonus_ticket.model")(sequelize, Sequelize);
+db.bonus_ticket_rules = require("./bonus/bonus_ticket_rules.model")(sequelize, Sequelize);
+db.bonus_task = require("./bonus/bonus_task.model")(sequelize, Sequelize);
+db.bonus_rewards = require("./bonus/bonus_rewards.model")(sequelize, Sequelize);
 //notification templates
 db.notify_grp = require("./notify_grp.model")(sequelize, Sequelize);
 db.notify_event = require("./notify_event.model")(sequelize, Sequelize);
@@ -141,6 +141,10 @@ db.campaigns.hasMany(db.tasks, {foreignKey: 'cp_campaign_id', targetKey: 'cp_cam
 db.tasks.belongsTo(db.campaigns, {foreignKey: 'cp_campaign_id', targetKey: 'cp_campaign_id'});
 db.campaigns.hasMany(db.contest_task, {foreignKey: 'cp_campaign_id', targetKey: 'cp_campaign_id'});
 db.contest_task.belongsTo(db.campaigns, {foreignKey: 'cp_campaign_id', targetKey: 'cp_campaign_id'});
+db.bonus_set.hasMany(db.bonus_rewards, {foreignKey: 'bonus_set_id', targetKey: 'bonus_rewards_bonus_setid'});
+db.bonus_rewards.belongsTo(db.bonus_set, {foreignKey: 'bonus_rewards_bonus_setid', targetKey: 'bonus_set_id'});
+db.bonus_item.hasMany(db.bonus_rewards, {foreignKey: 'bonus_item_id', targetKey: 'bonus_rewards_item_id'});
+db.bonus_rewards.belongsTo(db.bonus_item, {foreignKey: 'bonus_rewards_item_id', targetKey: 'bonus_item_id'});
 /*db.hashtags.belongsTo(db.tasks, {foreignKey: 'ta_task_id', targetKey: 'ta_task_id'});
 db.tasks.hasOne(db.hashtags, {foreignKey: 'ta_task_id', targetKey: 'ta_task_id'});*/
 db.admin_users.belongsTo(db.admin_roles, {foreignKey: 'ar_role_id', targetKey: 'ar_role_id'});

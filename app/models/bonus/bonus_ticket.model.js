@@ -1,6 +1,7 @@
 module.exports = (sequelize, Sequelize) => {
   const bonus_ticket = sequelize.define("bonus_ticket", {
     bonus_ticket_id: {
+      autoIncrement: true,
       allowNull: false,
       primaryKey: true,
       type: Sequelize.INTEGER

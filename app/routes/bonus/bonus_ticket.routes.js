@@ -1,8 +1,7 @@
 module.exports = app => {
-    const BonusTicket = require("../controllers/bonus_ticket.controller.js");
+    const BonusTicket = require("../../controllers/bonus/bonus_ticket.controller.js");
     var router = require("express").Router();
-    const auth = require("../middleware/auth");
-       
+    const auth = require("../../middleware/auth");
   /**
    * @swagger
    * /api/bonus_tickets:
@@ -100,7 +99,7 @@ module.exports = app => {
    *           in: path
    *           required: true
    *           schema:
-   *              type: string
+   *              type: integer
    *     tags:
    *       - Bonus Tickets
    *     description: Update Bonus Ticket
@@ -181,7 +180,7 @@ module.exports = app => {
    *           in: path
    *           required: true
    *           schema:
-   *              type: string
+   *              type: integer
    *         - name: pageSize
    *           in: query
    *           required: false

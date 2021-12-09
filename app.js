@@ -112,7 +112,8 @@ const swaggerOptions = {
       }
     ]
   },
-  apis: [__dirname + "/app/routes/*.js"]
+  apis: [__dirname + "/app/routes/*.js",
+   __dirname + "/app/routes/bonus/*.js"]
 };
 const swaggerDocs = swaggerJsDoc(swaggerOptions);
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
@@ -247,6 +248,10 @@ require("./app/routes/bonus/bonus_sm_share.routes")(app);
 require("./app/routes/bonus/bonus_item.routes")(app);
 require("./app/routes/bonus/bonus_item_set.routes")(app);
 require("./app/routes/bonus/bonus_summary.routes")(app);
+require("./app/routes/bonus/bonus_ticket_rules.routes")(app);
+require("./app/routes/bonus/bonus_ticket.routes")(app);
+require("./app/routes/bonus/bonus_task.routes")(app);
+require("./app/routes/bonus/bonus_reward.routes")(app);
 server.listen(PORT, function () {
   console.log(`Server is running on port ${PORT}.`)
 });
