@@ -13,14 +13,18 @@ module.exports = app => {
      *                schema:
      *                    type: object
      *                    properties:
-     *                        Bonus Item Brand Id:
+     *                        Bonus Set Brand Id:
      *                            type: integer
-     *                        Bonus Item Name:
-     *                            type: string
-     *                        Bonus Item Remaining Qty:
+     *                        Bonus Item id:
      *                            type: integer
-     *                        Bonus item Timestamp:
+     *                        Bonus Set Item Name:
      *                            type: string
+     *                        Bonus Set Item Qty:
+     *                            type: integer
+     *                        Bonus Set Item Timestamp:
+     *                            type: string
+     *                        Bonus Set Status:
+     *                            type: integer
      *     tags:
      *       - Bonus Item Set
      *     description: Add bonus Item Set

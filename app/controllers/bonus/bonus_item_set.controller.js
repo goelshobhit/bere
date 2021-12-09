@@ -71,8 +71,9 @@ exports.createBonusItemSet = async (req, res) => {
     "bonus_set_brand_id": body.hasOwnProperty("Bonus Set Brand Id") ? body["Bonus Set Brand Id"] : "0",
     "bonus_item_id": body.hasOwnProperty("Bonus Item id") ? body["Bonus Item id"] : "0",
     "bonus_set_item_name": body.hasOwnProperty("Bonus Set Item Name") ? body["Bonus Set Item Name"] : "0",
-    "bonus_set_item_qty": body.hasOwnProperty("Bonus Set Item Qty") ? body["Bonus Set Item Qty"] : new Date().getTime(),
-    "bonus_set_item_timestamp": (body.hasOwnProperty("Bonus Set Item Timestamp") && body["Bonus Set Item Timestamp"]) ? body["Bonus Set Item Timestamp"] : new Date().getTime()
+    "bonus_set_item_qty": body.hasOwnProperty("Bonus Set Item Qty") ? body["Bonus Set Item Qty"] : 0,
+    "bonus_set_item_timestamp": (body.hasOwnProperty("Bonus Set Item Timestamp") && body["Bonus Set Item Timestamp"]) ? body["Bonus Set Item Timestamp"] : new Date().getTime(),
+    "bonus_set_status": body.hasOwnProperty("Bonus Set Status") ? body["Bonus Set Status"] : 0
   }
   bonus_set.create(data)
     .then(data => {
