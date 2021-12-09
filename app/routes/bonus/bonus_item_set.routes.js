@@ -50,7 +50,7 @@ module.exports = app => {
      */
     router.post("/bonus_set", BonusItemSet.createBonusItemSet);
     
-    /**
+   /**
      * @swagger
      * /api/bonus_set/{BonusSetId}:
      *   put:
@@ -61,22 +61,26 @@ module.exports = app => {
      *                schema:
      *                    type: object
      *                    properties:
-     *                        Bonus Item Brand Id:
+     *                        Bonus Set Brand Id:
      *                            type: integer
-     *                        Bonus Item Name:
-     *                            type: string
-     *                        Bonus Item Remaining Qty:
+     *                        Bonus Item id:
      *                            type: integer
-     *                        Bonus item Timestamp:
+     *                        Bonus Set Item Name:
      *                            type: string
+     *                        Bonus Set Item Qty:
+     *                            type: integer
+     *                        Bonus Set Item Timestamp:
+     *                            type: string
+     *                        Bonus Set Status:
+     *                            type: integer
      *     tags:
      *       - Bonus Item Set
-     *     description: update bonus Item Set
+     *     description: Update bonus Item Set
      *     produces:
      *       - application/json
      *     responses:
      *       201:
-     *         description: update bonus Item Set
+     *         description: Update bonus Item Item
      *       422:
      *         description: validation errors
      *       500:
