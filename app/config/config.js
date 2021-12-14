@@ -14,12 +14,7 @@ module.exports = {
     HOST: process.env.PGHOST,
     PORT: process.env.PGPORT,
     dialect: process.env.DIALECT,
-    dialectOptions: {
-      ssl: {
-        require: true,
-        rejectUnauthorized: false
-      }
-    },
+    dialectOptions:  {},
     pool: {
       max: 5,
       min: 0,
@@ -38,12 +33,7 @@ module.exports = {
     HOST: process.env.PGHOST || "localhost",
     PORT: process.env.PGPORT || 5432,
     dialect: process.env.DIALECT || "postgres",
-    dialectOptions: {
-      ssl: {
-        require: true,
-        rejectUnauthorized: false
-      }
-    },
+    dialectOptions:  {},
     pool: {
       max: 5,
       min: 0,
@@ -62,12 +52,7 @@ module.exports = {
     HOST: process.env.PGHOST || "localhost",
     PORT: process.env.PGPORT || 5432,
     dialect: process.env.DIALECT || "postgres",
-    dialectOptions: {
-      ssl: {
-        require: true,
-        rejectUnauthorized: false
-      }
-    },
+    dialectOptions: {},
     pool: {
       max: 5,
       min: 0,

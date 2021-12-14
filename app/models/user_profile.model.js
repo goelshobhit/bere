@@ -84,7 +84,11 @@ module.exports = (sequelize, Sequelize) => {
 		},
         u_website:{
 			 type: Sequelize.STRING(150)
-		}		
+        },
+        is_autotakedown:{
+            type: Sequelize.INTEGER,
+			default: 0
+        }		
     }, {
         createdAt: 'u_created_at',
         updatedAt: 'u_updated_at',

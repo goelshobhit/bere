@@ -64,6 +64,10 @@ module.exports = (sequelize, Sequelize) => {
 		cp_campaign_banner: {
             type: Sequelize.STRING(50),
 			defaultValue: 'OFF'
+        },
+		is_autotakedown:{
+            type: Sequelize.INTEGER,
+			default: 0
         }
     }, {
         createdAt: 'cp_created_at',

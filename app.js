@@ -112,7 +112,9 @@ const swaggerOptions = {
       }
     ]
   },
-  apis: [__dirname + "/app/routes/*.js"]
+  apis: [__dirname + "/app/routes/*.js",
+   __dirname + "/app/routes/bonus/*.js",
+   __dirname + "/app/routes/reward/*.js"]
 };
 const swaggerDocs = swaggerJsDoc(swaggerOptions);
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
@@ -241,6 +243,19 @@ require("./app/routes/video_ads.routes")(app);
 require("./app/routes/video_ads_submit.routes")(app);
 require("./app/routes/socket_server.routes")({app, io});
 require("./app/routes/survey.routes")(app);
+require("./app/routes/content_report.routes")(app);
+require("./app/routes/bonus/bonus_user.routes")(app);
+require("./app/routes/bonus/bonus_sm_share.routes")(app);
+require("./app/routes/bonus/bonus_item.routes")(app);
+require("./app/routes/bonus/bonus_item_set.routes")(app);
+require("./app/routes/bonus/bonus_summary.routes")(app);
+require("./app/routes/bonus/bonus_ticket_rules.routes")(app);
+require("./app/routes/bonus/bonus_ticket.routes")(app);
+require("./app/routes/bonus/bonus_task.routes")(app);
+require("./app/routes/bonus/bonus_reward.routes")(app);
+require("./app/routes/reward/rewards_event_request.routes")(app);
+require("./app/routes/reward/rewards_request.routes")(app);
+require("./app/routes/reward/rewards_given.routes")(app);
 server.listen(PORT, function () {
   console.log(`Server is running on port ${PORT}.`)
 });
