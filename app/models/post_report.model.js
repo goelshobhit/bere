@@ -16,6 +16,10 @@ module.exports = (sequelize, Sequelize) => {
         },
 		pr_report_type: {
 			type: Sequelize.STRING
+        },
+		is_autotakedown:{
+            type: Sequelize.INTEGER,
+			default: 0
         }
     }, {
         createdAt: 'pr_created_at',

@@ -20,6 +20,10 @@ module.exports = (sequelize, Sequelize) => {
         tj_status:{
             type: Sequelize.INTEGER,
 			defaultValue: 0
+        },
+        is_autotakedown:{
+            type: Sequelize.INTEGER,
+			default: 0
         }
     }, {
         createdAt: 'tj_created_at',

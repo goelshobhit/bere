@@ -30,6 +30,10 @@ module.exports = (sequelize, Sequelize) => {
         },
         pc_comment_mid: {
 			type: Sequelize.INTEGER
+        },
+		is_autotakedown:{
+            type: Sequelize.INTEGER,
+			default: 0
         }
     }, {
         createdAt: 'pc_created_at',

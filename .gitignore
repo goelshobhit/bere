@@ -49,3 +49,6 @@ Thumbs.db
 *.mov
 *.wmv
 
+security/req.cnf
+security/server.cert
+security/server.key
