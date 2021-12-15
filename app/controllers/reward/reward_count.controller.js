@@ -1,6 +1,5 @@
 const db = require("../../models");
 const RewardCount = db.reward_count;
-const Op = db.Sequelize.Op;
 const audit_log = db.audit_log
 const logger = require("../../middleware/logger");
 const {
@@ -21,7 +20,7 @@ exports.createRewardCount = async(req, res) => {
         });
         return;
     }
-    const RewardCount = {
+    const data = {
         "reward_count_dist_id": body.hasOwnProperty("Dist Id") ? body["Dist Id"] : 0,
         "reward_count_dist_name": body.hasOwnProperty("Dist Name") ? body["Dist Name"] : "",
         "reward_count_timestamp": body.hasOwnProperty("Timestamp") ? body["Timestamp"] : new Date(),
@@ -29,7 +28,7 @@ exports.createRewardCount = async(req, res) => {
         "reward_count_no_of_rewards": body.hasOwnProperty("Number Of Rewards") ? body["Number Of Rewards"] : 0,
         "reward_count_summary_url": body.hasOwnProperty("Summary Url") ? body["Summary Url"] : "",
     }
-    RewardCount.create(RewardCount).then(data => {
+    RewardCount.create(data).then(data => {
             audit_log.saveAuditLog(req.header(process.env.UKEY_HEADER || "x-api-key"),'add','todayTimeStamp',data.reward_count_id,data.dataValues);
         res.status(201).send({			
             msg: "Reward Count Created Successfully",
@@ -92,7 +91,7 @@ exports.rewardCountDetails = async(req, res) => {
             reward_count_id: rewardCountId
         }
     };
-    const RewardCount = await RewardCount.findOne(options);
+    const data = await RewardCount.findOne(options);
     if(!RewardCount){
         res.status(500).send({
             message: "Reward Count not found"
@@ -100,7 +99,7 @@ exports.rewardCountDetails = async(req, res) => {
         return
     }
     res.status(200).send({
-        data: RewardCount
+        data: data
     });
 };
 /**
@@ -117,7 +116,7 @@ exports.updateRewardCount = async(req, res) => {
             reward_count_id: id
         }
     });
-    const RewardCount = {
+    const data = {
         "reward_count_dist_id": body.hasOwnProperty("Dist Id") ? body["Dist Id"] : 0,
         "reward_count_dist_name": body.hasOwnProperty("Dist Name") ? body["Dist Name"] : "",
         "reward_count_timestamp": body.hasOwnProperty("Timestamp") ? body["Timestamp"] : new Date(),
@@ -125,7 +124,7 @@ exports.updateRewardCount = async(req, res) => {
         "reward_count_no_of_rewards": body.hasOwnProperty("Number Of Rewards") ? body["Number Of Rewards"] : 0,
         "reward_count_summary_url": body.hasOwnProperty("Summary Url") ? body["Summary Url"] : "",
     }
-    RewardCount.update(RewardCount, {
+    RewardCount.update(data, {
 		returning:true,
         where: {
             reward_count_id: id

@@ -112,15 +112,14 @@ db.bonus_item = require("./bonus/bonus_item.model")(sequelize, Sequelize);
 db.bonus_set = require("./bonus/bonus_set.model")(sequelize, Sequelize);
 db.bonus_summary = require("./bonus/bonus_summary.model")(sequelize, Sequelize);
 
-
+db.reward_center_dist = require("./reward/reward_center_dist.model")(sequelize, Sequelize);
+db.reward_center = require("./reward/reward_center.model")(sequelize, Sequelize);
+db.reward_count = require("./reward/reward_count.model")(sequelize, Sequelize);
 db.rewards_event_request = require("./reward/rewards_event_request.model")(sequelize, Sequelize);
 db.rewards_request = require("./reward/rewards_request.model")(sequelize, Sequelize);
 db.rewards_given = require("./reward/rewards_given.model")(sequelize, Sequelize);
 db.rewards_balance = require("./reward/rewards_balance.model")(sequelize, Sequelize);
 db.rewards_credit = require("./reward/rewards_credit.model")(sequelize, Sequelize);
-db.reward_center_dist = require("./reward/reward_center_dist.model")(sequelize, Sequelize);
-db.reward_center = require("./reward/reward_center.model")(sequelize, Sequelize);
-db.reward_count = require("./reward/reward_count.model")(sequelize, Sequelize);
 
 //Relations
 db.users.hasMany(db.bonus_ticket, {foreignKey: 'u_id', targetKey: 'bonus_ticket_usrid'});

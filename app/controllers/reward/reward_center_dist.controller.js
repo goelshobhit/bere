@@ -1,6 +1,5 @@
 const db = require("../../models");
 const RewardCenterDist = db.reward_center_dist;
-const Op = db.Sequelize.Op;
 const audit_log = db.audit_log
 const logger = require("../../middleware/logger");
 const {
@@ -22,11 +21,11 @@ exports.createRewardCenterDist = async(req, res) => {
         return;
     }
     
-    const RewardCenterDist = {
+    const data = {
         "reward_center_id": body.hasOwnProperty("Center Id") ? body["Center Id"] : 0,
         "reward_center_dist_status": body.hasOwnProperty("Dist Status") ? body["Dist Status"] : 0,
         "reward_center_name": body.hasOwnProperty("Center Name") ? body["Center Name"] : "",
-        "reward_center_dist_one_freq": body.hasOwnProperty("One Freq") ? body["One Freq"] : new Date(),
+        "reward_center_dist_one_freq": body.hasOwnProperty("One Freq") ? body["One Freq"] : 0,
         "reward_center_dist_one_total_token": body.hasOwnProperty("One Total Token") ? body["One Total Token"] : 0,
         "reward_center_dist_one_segment_id": body.hasOwnProperty("Segment Id") ? body["Segment Id"] : "",
         "reward_center_dist_one_name": body.hasOwnProperty("One Name") ? body["One Name"] : "",
@@ -36,6 +35,7 @@ exports.createRewardCenterDist = async(req, res) => {
         "reward_center_dist_one_coins": body.hasOwnProperty("One Coins") ? body["One Coins"] : 0,
         "reward_center_dist_one_coins_name": body.hasOwnProperty("Coins Name") ? body["Coins Name"] : "",
         "reward_center_dist_one_coins_to_token": body.hasOwnProperty("Coins To Token") ? body["Coins To Token"] : 0,
+        "reward_center_dist_one_keys": body.hasOwnProperty("One Keys") ? body["One Keys"] : "",
         "reward_center_dist_one_keys_name": body.hasOwnProperty("Keys Name") ? body["Keys Name"] : "",
         "reward_center_dist_one_keys_to_token": body.hasOwnProperty("Keys To Token") ? body["Keys To Token"] : 0,
         "reward_center_dist_one_booster": body.hasOwnProperty("One Booster") ? body["One Booster"] : 0,
@@ -67,7 +67,7 @@ exports.createRewardCenterDist = async(req, res) => {
         "reward_center_distr_one_puzzle1_value": body.hasOwnProperty("Puzzle 1 Value") ? body["Puzzle 1 Value"] : "",
         "reward_center_spin_reward_id": body.hasOwnProperty("Spin Reward Id") ? body["Spin Reward Id"] : 0,
     }
-    RewardCenterDist.create(RewardCenterDist).then(data => {
+    RewardCenterDist.create(data).then(data => {
             audit_log.saveAuditLog(req.header(process.env.UKEY_HEADER || "x-api-key"),'add','todayTimeStamp',data.reward_center_dist_id,data.dataValues);
         res.status(201).send({			
             msg: "Reward Center Dist Created Successfully",
@@ -130,7 +130,7 @@ exports.rewardCenterDistDetails = async(req, res) => {
             reward_center_dist_id: rewardCenterDistId
         }
     };
-    const RewardCenterDist = await RewardCenterDist.findOne(options);
+    const data = await RewardCenterDist.findOne(options);
     if(!RewardCenterDist){
         res.status(500).send({
             message: "Reward Center Dist not found"
@@ -138,7 +138,7 @@ exports.rewardCenterDistDetails = async(req, res) => {
         return
     }
     res.status(200).send({
-        data: RewardCenterDist
+        data: data
     });
 };
 /**
@@ -155,7 +155,7 @@ exports.updateRewardCenterDist = async(req, res) => {
             reward_center_dist_id: id
         }
     });
-    const RewardCenterDist = {
+    const data = {
         "reward_center_id": body.hasOwnProperty("Center Id") ? body["Center Id"] : 0,
         "reward_center_dist_status": body.hasOwnProperty("Dist Status") ? body["Dist Status"] : 0,
         "reward_center_name": body.hasOwnProperty("Center Name") ? body["Center Name"] : "",
@@ -200,7 +200,7 @@ exports.updateRewardCenterDist = async(req, res) => {
         "reward_center_distr_one_puzzle1_value": body.hasOwnProperty("Puzzle 1 Value") ? body["Puzzle 1 Value"] : "",
         "reward_center_spin_reward_id": body.hasOwnProperty("Spin Reward Id") ? body["Spin Reward Id"] : 0,
     }
-    RewardCenterDist.update(RewardCenterDist, {
+    RewardCenterDist.update(data, {
 		returning:true,
         where: {
             reward_center_dist_id: id

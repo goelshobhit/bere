@@ -1,5 +1,5 @@
 module.exports = app => {
-    const RewardCenterDist = require("../../controllers/reward/reward_center_dist_dist.controller.js");
+    const RewardCenterDist = require("../../controllers/reward/reward_center_dist.controller.js");
     var router = require("express").Router();
     const auth = require("../../middleware/auth");
   /**
@@ -20,8 +20,7 @@ module.exports = app => {
    *                        Center Name:
    *                            type: string
    *                        One Freq:
-   *                            format: date-time
-   *                            example: 2020-09-30
+   *                            type: integer
    *                        One Total Token:
    *                            type: integer
    *                        Segment Id:
@@ -39,6 +38,8 @@ module.exports = app => {
    *                        Coins Name:
    *                           type: string
    *                        Coins To Token:
+   *                           type: integer
+   *                        One Keys:
    *                           type: integer
    *                        Keys Name:
    *                           type: string
@@ -143,8 +144,7 @@ module.exports = app => {
    *                        Center Name:
    *                            type: string
    *                        One Freq:
-   *                            format: date-time
-   *                            example: 2020-09-30
+   *                            type: integer
    *                        One Total Token:
    *                            type: integer
    *                        Segment Id:
@@ -162,6 +162,8 @@ module.exports = app => {
    *                        Coins Name:
    *                           type: string
    *                        Coins To Token:
+   *                           type: integer
+   *                        One Keys:
    *                           type: integer
    *                        Keys Name:
    *                           type: string

@@ -14,14 +14,13 @@ module.exports = app => {
    *                    type: object
    *                    properties:
    *                        Center Name:
-   *                            type: integer
-   *                        Owner Id:
    *                            type: string
+   *                        Owner Id:
+   *                            type: integer
    *                        Location Id:
    *                            type: integer
    *                        Location Name:
-   *                            format: date-time
-   *                            example: 2020-09-30
+   *                            type: integer
    *                        Reward Type:
    *                            type: integer
    *                        Trigger Id:
@@ -62,14 +61,13 @@ module.exports = app => {
    *                    type: object
    *                    properties:
    *                        Center Name:
-   *                            type: integer
-   *                        Owner Id:
    *                            type: string
+   *                        Owner Id:
+   *                            type: integer
    *                        Location Id:
    *                            type: integer
    *                        Location Name:
-   *                            format: date-time
-   *                            example: 2020-09-30
+   *                            type: integer
    *                        Reward Type:
    *                            type: integer
    *                        Trigger Id:
@@ -161,7 +159,7 @@ module.exports = app => {
    *           in: path
    *           required: true
    *           schema:
-   *              type: string
+   *              type: integer
    *         - name: pageSize
    *           in: query
    *           required: false

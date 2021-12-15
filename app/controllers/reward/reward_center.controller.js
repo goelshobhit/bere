@@ -1,6 +1,5 @@
 const db = require("../../models");
 const RewardCenter = db.reward_center;
-const Op = db.Sequelize.Op;
 const audit_log = db.audit_log
 const logger = require("../../middleware/logger");
 const {
@@ -21,7 +20,7 @@ exports.createRewardCenter = async(req, res) => {
         });
         return;
     }
-    const RewardCenter = {
+    const data = {
         "reward_center_name": body.hasOwnProperty("Center Name") ? body["Center Name"] : 0,
         "reward_center_owner_id": body.hasOwnProperty("Owner Id") ? body["Owner Id"] : "",
         "reward_center_location_id": body.hasOwnProperty("Location Id") ? body["Location Id"] : 0,
@@ -29,7 +28,7 @@ exports.createRewardCenter = async(req, res) => {
         "reward_center_reward_type": body.hasOwnProperty("Reward Type") ? body["Reward Type"] : 0,
         "reward_center_reward_trigger_id": body.hasOwnProperty("Trigger Id") ? body["Trigger Id"] : 0,
     }
-    RewardCenter.create(RewardCenter).then(data => {
+    RewardCenter.create(data).then(data => {
             audit_log.saveAuditLog(req.header(process.env.UKEY_HEADER || "x-api-key"),'add','todayTimeStamp',data.reward_center_id,data.dataValues);
         res.status(201).send({			
             msg: "Reward Center Created Successfully",
@@ -92,7 +91,7 @@ exports.rewardCenterDetails = async(req, res) => {
             reward_center_id: rewardCenterId
         }
     };
-    const RewardCenter = await RewardCenter.findOne(options);
+    const data = await RewardCenter.findOne(options);
     if(!RewardCenter){
         res.status(500).send({
             message: "Reward Center not found"
@@ -100,7 +99,7 @@ exports.rewardCenterDetails = async(req, res) => {
         return
     }
     res.status(200).send({
-        data: RewardCenter
+        data: data
     });
 };
 /**
@@ -117,7 +116,7 @@ exports.updateRewardCenter = async(req, res) => {
             reward_center_id: id
         }
     });
-    const RewardCenter = {
+    const data = {
         "reward_center_name": body.hasOwnProperty("Center Name") ? body["Center Name"] : 0,
         "reward_center_owner_id": body.hasOwnProperty("Owner Id") ? body["Owner Id"] : "",
         "reward_center_location_id": body.hasOwnProperty("Location Id") ? body["Location Id"] : 0,
@@ -125,7 +124,7 @@ exports.updateRewardCenter = async(req, res) => {
         "reward_center_reward_type": body.hasOwnProperty("Reward Type") ? body["Reward Type"] : 0,
         "reward_center_reward_trigger_id": body.hasOwnProperty("Trigger Id") ? body["Trigger Id"] : 0,
     }
-    RewardCenter.update(RewardCenter, {
+    RewardCenter.update(data, {
 		returning:true,
         where: {
             reward_center_id: id

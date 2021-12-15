@@ -256,7 +256,7 @@ require("./app/routes/bonus/bonus_reward.routes")(app);
 require("./app/routes/reward/rewards_event_request.routes")(app);
 require("./app/routes/reward/rewards_request.routes")(app);
 require("./app/routes/reward/rewards_given.routes")(app);
-//require("./app/routes/reward/reward_center_dist.routes")(app);
+require("./app/routes/reward/reward_center_dist.routes")(app);
 require("./app/routes/reward/reward_center.routes")(app);
 require("./app/routes/reward/reward_count.routes")(app);
 server.listen(PORT, function () {
