@@ -112,6 +112,13 @@ db.bonus_item = require("./bonus/bonus_item.model")(sequelize, Sequelize);
 db.bonus_set = require("./bonus/bonus_set.model")(sequelize, Sequelize);
 db.bonus_summary = require("./bonus/bonus_summary.model")(sequelize, Sequelize);
 
+
+db.rewards_event_request = require("./reward/rewards_event_request.model")(sequelize, Sequelize);
+db.rewards_request = require("./reward/rewards_request.model")(sequelize, Sequelize);
+db.rewards_given = require("./reward/rewards_given.model")(sequelize, Sequelize);
+db.rewards_balance = require("./reward/rewards_balance.model")(sequelize, Sequelize);
+db.rewards_credit = require("./reward/rewards_credit.model")(sequelize, Sequelize);
+
 //Relations
 db.users.hasMany(db.bonus_ticket, {foreignKey: 'u_id', targetKey: 'bonus_ticket_usrid'});
 db.bonus_ticket.belongsTo(db.users, {foreignKey: 'bonus_ticket_usrid', targetKey: 'u_id'});
@@ -197,8 +204,18 @@ db.user_profile.hasMany(db.user_fan_following, {foreignKey: 'faf_by', targetKey:
 db.user_fan_following.belongsTo(db.user_profile, {as:'following',foreignKey: 'faf_to', targetKey: 'u_id'});
 db.user_fan_following.belongsTo(db.user_profile, { as:'follower',foreignKey: 'faf_by', targetKey: 'u_id'});
 
+db.rewards_event_request.belongsTo(db.user_profile, {foreignKey: 'user_id', targetKey: 'u_id'});
+db.rewards_request.belongsTo(db.user_profile, {foreignKey: 'rewards_user_id', targetKey: 'u_id'});
+//db.rewards_request.belongsTo(db.rewards_event_request, {foreignKey: 'rewards_event_id', targetKey: 'rewards_event_id'});
+db.rewards_given.belongsTo(db.user_profile, {foreignKey: 'rewards_award_user_id', targetKey: 'u_id'});
+db.rewards_request.hasOne(db.rewards_given, {foreignKey: 'rewards_request_id', targetKey: 'rewards_request_id'});
+db.rewards_given.belongsTo(db.rewards_request, {foreignKey: 'rewards_request_id', targetKey: 'rewards_request_id'});
 
+// db.rewards_event_request.hasMany(db.rewards_request, {foreignKey: 'rewards_event_id', targetKey: 'rewards_event_id'});
+// db.rewards_request.belongsTo(db.rewards_event_request, {foreignKey: 'rewards_event_id', targetKey: 'rewards_event_id'});
 
+db.rewards_credit.belongsTo(db.user_profile, {foreignKey: 'Rewards_credit_user_id', targetKey: 'u_id'});
+db.rewards_credit.belongsTo(db.ledger_transactions, {foreignKey: 'rewards_credit_transaction_id', targetKey: 'trx_id'});
 
 db.users.hasMany(db.user_content_post, {foreignKey: 'ucpl_u_id', targetKey: 'u_id'});
 db.users.hasMany(db.notify_trig_sent, {foreignKey: 'u_id', targetKey: 'u_id'});
