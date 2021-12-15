@@ -118,6 +118,9 @@ db.rewards_request = require("./reward/rewards_request.model")(sequelize, Sequel
 db.rewards_given = require("./reward/rewards_given.model")(sequelize, Sequelize);
 db.rewards_balance = require("./reward/rewards_balance.model")(sequelize, Sequelize);
 db.rewards_credit = require("./reward/rewards_credit.model")(sequelize, Sequelize);
+db.reward_center_dist = require("./reward/reward_center_dist.model")(sequelize, Sequelize);
+db.reward_center = require("./reward/reward_center.model")(sequelize, Sequelize);
+db.reward_count = require("./reward/reward_count.model")(sequelize, Sequelize);
 
 //Relations
 db.users.hasMany(db.bonus_ticket, {foreignKey: 'u_id', targetKey: 'bonus_ticket_usrid'});
@@ -229,6 +232,14 @@ db.brands.hasMany(db.bonus_item, {foreignKey: 'bonus_item_brand_id', targetKey: 
 db.bonus_item.belongsTo(db.brands, {foreignKey: 'bonus_item_brand_id', targetKey: 'cr_co_id'});
 db.brands.hasMany(db.bonus_set, {foreignKey: 'bonus_set_brand_id', targetKey: 'cr_co_id'});
 db.bonus_set.belongsTo(db.brands, {foreignKey: 'bonus_set_brand_id', targetKey: 'cr_co_id'});
+
+db.reward_center.hasMany(db.reward_center_dist, {foreignKey: 'reward_center_id', targetKey: 'reward_center_id'});
+db.reward_center_dist.belongsTo(db.reward_center, {foreignKey: 'reward_center_id', targetKey: 'reward_center_id'});
+db.users.hasMany(db.reward_count, {foreignKey: 'u_id', targetKey: 'reward_count_usr_id'});
+db.reward_count.belongsTo(db.users, {foreignKey: 'reward_count_usr_id', targetKey: 'u_id'});
+db.users.hasMany(db.reward_center, {foreignKey: 'u_id', targetKey: 'reward_center_owner_id'});
+db.reward_center.belongsTo(db.users, {foreignKey: 'reward_center_owner_id', targetKey: 'u_id'});
+
 db.migrator = migrator;
 db.seeder = seeder;
 module.exports = db;
