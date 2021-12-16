@@ -292,7 +292,6 @@ const Uid=req.header(process.env.UKEY_HEADER || "x-api-key");
 
 const contentUserTaskIds = await common.getContentReportUser(['Task', 'Contest', 'User Task Post', 'User'], Uid);
 
-//let contentreportIds = {};
 let taskIdsValues = [];
 let userIdsValues = [];
 let ConsentIdsValues = [];
@@ -301,23 +300,18 @@ if (contentUserTaskIds.length) {
     contentUserTaskIds.forEach(element => {
         if (element.content_report_type == 'Task') {
             taskIdsValues.push(element.content_report_type_id);
-            //contentreportIds['Task'].push(element.content_report_type_id);
         }
         if (element.content_report_type == 'User') {
             userIdsValues.push(element.content_report_type_id);
-          //  contentreportIds['User'].push(element.content_report_type_id);
         }
         if (element.content_report_type == 'Contest') {
             ConsentIdsValues.push(element.content_report_type_id);
-           // contentreportIds['Contest'].push(element.content_report_type_id);
         }
         if (element.content_report_type == 'User Task Post') {
             userTaskPostIdsValues.push(element.content_report_type_id);
-          //  contentreportIds['User_Task_Post'].push(element.content_report_type_id);
         }
       });
 }
-console.log(userIdsValues);
 var options = {
     include: [    
     {
