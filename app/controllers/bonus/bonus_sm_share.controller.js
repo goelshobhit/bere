@@ -121,7 +121,7 @@ exports.smSharelisting = async (req, res) => {
     include: [
       {
         model: db.user_profile,
-        attributes: ["u_id", ["u_display_name", "post_username"], ["u_prof_img_path", "post_user_imgpath"]],
+        attributes: ["u_id", ["u_display_name", "username"], ["u_prof_img_path", "user_imgpath"]],
         required: false,
         where: {
           is_autotakedown: 0, u_id: {
