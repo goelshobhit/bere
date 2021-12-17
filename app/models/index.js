@@ -112,7 +112,8 @@ db.bonus_item = require("./bonus/bonus_item.model")(sequelize, Sequelize);
 db.bonus_set = require("./bonus/bonus_set.model")(sequelize, Sequelize);
 db.bonus_summary = require("./bonus/bonus_summary.model")(sequelize, Sequelize);
 
-
+db.energy = require("./energy.model")(sequelize, Sequelize);
+db.energy_award = require("./energy_award.model")(sequelize, Sequelize);
 db.rewards_event_request = require("./reward/rewards_event_request.model")(sequelize, Sequelize);
 db.rewards_request = require("./reward/rewards_request.model")(sequelize, Sequelize);
 db.rewards_given = require("./reward/rewards_given.model")(sequelize, Sequelize);
@@ -206,13 +207,9 @@ db.user_fan_following.belongsTo(db.user_profile, { as:'follower',foreignKey: 'fa
 
 db.rewards_event_request.belongsTo(db.user_profile, {foreignKey: 'user_id', targetKey: 'u_id'});
 db.rewards_request.belongsTo(db.user_profile, {foreignKey: 'rewards_user_id', targetKey: 'u_id'});
-//db.rewards_request.belongsTo(db.rewards_event_request, {foreignKey: 'rewards_event_id', targetKey: 'rewards_event_id'});
 db.rewards_given.belongsTo(db.user_profile, {foreignKey: 'rewards_award_user_id', targetKey: 'u_id'});
 db.rewards_request.hasOne(db.rewards_given, {foreignKey: 'rewards_request_id', targetKey: 'rewards_request_id'});
 db.rewards_given.belongsTo(db.rewards_request, {foreignKey: 'rewards_request_id', targetKey: 'rewards_request_id'});
-
-// db.rewards_event_request.hasMany(db.rewards_request, {foreignKey: 'rewards_event_id', targetKey: 'rewards_event_id'});
-// db.rewards_request.belongsTo(db.rewards_event_request, {foreignKey: 'rewards_event_id', targetKey: 'rewards_event_id'});
 
 db.rewards_credit.belongsTo(db.user_profile, {foreignKey: 'Rewards_credit_user_id', targetKey: 'u_id'});
 db.rewards_credit.belongsTo(db.ledger_transactions, {foreignKey: 'rewards_credit_transaction_id', targetKey: 'trx_id'});
