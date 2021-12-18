@@ -113,7 +113,8 @@ const swaggerOptions = {
     ]
   },
   apis: [__dirname + "/app/routes/*.js",
-   __dirname + "/app/routes/bonus/*.js"]
+   __dirname + "/app/routes/bonus/*.js",
+   __dirname + "/app/routes/reward/*.js"]
 };
 const swaggerDocs = swaggerJsDoc(swaggerOptions);
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
