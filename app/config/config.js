@@ -6,6 +6,24 @@ const defaultUpload = path.join(
   path.dirname(require.main.filename) + "/uploads"
 );
 module.exports = {
+  localhost: {
+    // Database variables
+    USER: process.env.PGUSER,
+    PASSWORD: process.env.PGPASSWORD,
+    DB: process.env.PGDATABASE,
+    HOST: process.env.PGHOST,
+    PORT: process.env.PGPORT,
+    dialect: process.env.DIALECT,
+    pool: {
+      max: 5,
+      min: 0,
+      acquire: 30000,
+      idle: 10000
+    },
+	UKEY_HEADER: process.env.UKEY_HEADER || "x-api-key",
+    TOKEN_HEADER: process.env.TOKEN_HEADER || "x-auth-token",
+	FILE_UPLOAD_DIR: process.env.FILE_UPLOAD_DIR || defaultUpload
+  },
   development: {
     // Database variables
     USER: process.env.PGUSER,
