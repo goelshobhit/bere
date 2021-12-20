@@ -253,6 +253,8 @@ require("./app/routes/bonus/bonus_ticket_rules.routes")(app);
 require("./app/routes/bonus/bonus_ticket.routes")(app);
 require("./app/routes/bonus/bonus_task.routes")(app);
 require("./app/routes/bonus/bonus_reward.routes")(app);
+require("./app/routes/reward/reward_center.routes")(app);
+require("./app/routes/reward/reward_center_dist.routes")(app);
 require("./app/routes/reward/rewards_event_request.routes")(app);
 require("./app/routes/reward/rewards_request.routes")(app);
 require("./app/routes/reward/rewards_given.routes")(app);

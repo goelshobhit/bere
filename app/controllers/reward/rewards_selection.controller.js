@@ -1,11 +1,10 @@
 const db = require("../../models");
-const audit_log = db.audit_log
 const logger = require("../../middleware/logger");
-const rewardRequest = db.rewards_request;
 const users = db.users;
-const rewardEventRequest = db.rewards_event_request;
+const rewardRandomWinner = db.reward_random_winner;
 const Op = db.Sequelize.Op;
 const reward = require("../../reward");
+const RewardCenterDist = db.reward_center_dist;
 
 /**
  * Function to create update online status for user.
@@ -36,7 +35,7 @@ exports.updateOnlineUser = async (req, res) => {
 }
 
 /**
- * Function to select User to Give Reward
+ * Function to select Random User to Give Reward
  * @param  {object}  req expressJs request object
  * @param  {object}  res expressJs response object
  * @return {Promise}
@@ -67,75 +66,149 @@ exports.rewardUserSelection = async (req, res) => {
     userIds.push(usersOnlineData[usersOnlineDetail].u_id);
   }
   var uid = userIds[Math.floor(Math.random() * userIds.length)];
-  if (!body["Rewards Award Event Type"]) {
+  if (!body["Rewards Event Type"]) {
     res.status(400).send({
       msg:
-        "Rewards Award Event Type is required"
+        "Rewards Event Type is required."
     });
     return;
   }
-  if (!body["Rewards Award Event Name"]) {
+  if (!body["Rewards Event Id"]) {
     res.status(400).send({
       msg:
-        "Rewards Award Event Name is required"
+        "Rewards Event Id is required."
     });
     return;
   }
-  if (!body["Rewards Award Event Id"]) {
+  if (!body["Rewards Center Id"]) {
     res.status(400).send({
       msg:
-        "Rewards Award Event Id is required"
+        "Rewards Center Id is required."
     });
     return;
   }
-  var rewardGivendetail = {
-    "budgetPerUser": body["Rewards Award Coins"] ? body["Rewards Award Coins"] : 0,
-    "heartPerUser": body["Rewards Award Stars"] ? body["Rewards Award Stars"] : 0,
-    "tokenPerUser": body["Rewards Award Token"] ? body["Rewards Award Token"] : 0,
-    "energyPerUser": body["Rewards Award Energy"] ? body["Rewards Award Energy"] : 0,
-    "boosterPerUser": body["Rewards Award Booster"] ? body["Rewards Award Booster"] : 0,
-    "cardPerUser": body["Rewards Award Card"] ? body["Rewards Award Card"] : 0,
-    "uid": uid,
-    // "rewardName": rewardName ? rewardName : '' ,
-    "rewardName": '',
-    "reward_request_id": 0,
-    "event_id": body["Rewards Award Event Id"],
-    "rewards_event_type": body["Rewards Award Event Type"],
-  };
-  const givenResponse = await reward.giveRewardtoUser(rewardGivendetail);
-  if (givenResponse && givenResponse.error_message) {
+  /* get records from reward center dist table */
+  var rewardCenterDists = await RewardCenterDist.findAll({
+    include: [
+      {
+        model: db.reward_center,
+        attributes: [["reward_center_name", "reward_name"]]
+      }
+    ],
+    where: {
+      reward_center_id: body["Rewards Center Id"],
+      reward_center_dist_status : 1
+    }
+  });
+  if (!rewardCenterDists) {
     res.status(500).send({
-      message: givenResponse.error_message
-    });
-    return;
-  } else if (givenResponse && givenResponse.rewards_award_id) {
-    res.status(201).send({
-      msg: "Reward Given Successfully",
-      rewardsAwardId: givenResponse.rewards_award_id
+      msg: "Invalid Reward Center Id."
     });
     return;
   }
-  const data = {
-    "Random_winner_usrid": uid,
-    "Random_winner_event_name": body["Rewards Award Event Name"] ? body["Rewards Award Event Name"] : 0,
-    "Random_winner_selected": new Date().getTime(),
-    "Random_winner_event_id": body["Rewards Award Event Id"] ? body["Rewards Award Event Id"] : "0",
-    "Random_winner_admin_id": body["Rewards Admin Id"] ? body["Rewards Admin Id"] : '0',
-    "Randon_winner_ack": 1
+  /* get random segment[reward center dist record] for random frequency number. */
+  var distFreq = 0;
+  var minNumber = 0;
+  var maxNumber = 0;
+
+  let minMaxValues = {};
+  let rewardCenterDistData = {};
+  for (const rewardCenterDist in rewardCenterDists) {
+    if (rewardCenterDist == 0) {
+      minNumber = 0;
+      maxNumber = rewardCenterDists[rewardCenterDist].reward_center_dist_one_freq;
+    } else {
+      minNumber = maxNumber + 0.01;
+      maxNumber += rewardCenterDists[rewardCenterDist].reward_center_dist_one_freq;;
+    }
+    minMaxValues[rewardCenterDists[rewardCenterDist].reward_center_dist_id] = minNumber + '_' + maxNumber;
+    rewardCenterDistData[rewardCenterDists[rewardCenterDist].reward_center_dist_id] = rewardCenterDists[rewardCenterDist];
+    distFreq += rewardCenterDists[rewardCenterDist].reward_center_dist_one_freq;
   }
-  // rewardRequest.create(data)
-  //   .then(data => {
-  //     audit_log.saveAuditLog(uid, 'add', 'rewards_request', data.rewards_request_id, data.dataValues);
-  //     res.status(201).send({
-  //       RewardsRequestId: data.rewards_request_id,
-  //       message: "Reward Request Created Successfully"
-  //     });
-  //   })
-  //   .catch(err => {
-  //     logger.log("error", "Some error occurred while creating the reward request=" + err);
-  //     res.status(500).send({
-  //       message:
-  //         err.message || "Some error occurred while creating the reward request."
-  //     });
-  //   });
+
+  var min = 0;
+  var max = distFreq;
+  var randomNubmer = (Math.random() * (max - min) + min).toFixed(2);
+  var matchedId = 0;
+  for (const minMaxValue in minMaxValues) {
+    const minMaxData = minMaxValues[minMaxValue].split("_");
+    if (parseFloat(minMaxData[0]) <= parseFloat(randomNubmer) && parseFloat(minMaxData[1]) >= parseFloat(randomNubmer)) {
+      matchedId = minMaxValue;
+    }
+  }
+  if (rewardCenterDistData[matchedId]) {
+    const data = {
+      "random_winner_usrid": uid,
+      "random_winner_selected": new Date().getTime(),
+      "random_winner_reward_id": body["Rewards Center Id"] ? body["Rewards Center Id"] : 0,
+      "random_winner_reward_name": rewardCenterDists[0].dataValues.reward_center.dataValues.reward_name,
+      "random_winner_event_type": body["Rewards Event Type"] ? body["Rewards Event Type"] : 0,
+      "random_winner_event_id": body["Rewards Event Id"] ? body["Rewards Event Id"] : "0",
+      "random_winner_admin_id": body["Rewards Admin Id"] ? body["Rewards Admin Id"] : '0',
+      "randon_winner_ack": 0
+    }
+    var randomWinnerId = 0;
+    rewardRandomWinner.create(data).then(randomRewarddata => {
+      randomWinnerId = randomRewarddata.random_winner_id;
+    }).catch(err => {
+      logger.log("error", "Some error occurred while give random reward =" + err);
+      res.status(500).send({
+        message:
+          err.message || "Some error occurred while give random reward."
+      });
+      return;
+    });
+    var rewardGivendetail = {
+      "budgetPerUser": rewardCenterDistData[matchedId].reward_center_dist_one_coins,
+      "heartPerUser": rewardCenterDistData[matchedId].reward_center_dist_one_stars,
+      "tokenPerUser": rewardCenterDistData[matchedId].reward_center_dist_one_total_token,
+      "energyPerUser": 0,
+      "boosterPerUser": rewardCenterDistData[matchedId].reward_center_dist_one_booster,
+      "cardPerUser": 0,
+      "uid": uid,
+      "rewardName": rewardCenterDistData[matchedId].dataValues.reward_center.dataValues.reward_name,
+      "reward_request_id": 0,
+      "event_id": body["Rewards Event Id"],
+      "rewards_event_type": body["Rewards Event Type"],
+    };
+    const givenResponse = await reward.giveRewardtoUser(rewardGivendetail);
+    if (givenResponse && givenResponse.error_message) {
+      res.status(500).send({
+        message: givenResponse.error_message
+      });
+      return;
+    } else if (givenResponse && givenResponse.rewards_award_id) {
+      rewardRandomWinner.update({ "randon_winner_ack": 1 }, {
+        where: {
+          random_winner_id: randomWinnerId
+        }
+      }).then(num => {
+        if (num == 1) {
+          res.status(201).send({
+            message: "Random Reward Given Successfully."
+          });
+          return;
+        } else {
+          res.status(400).send({
+            message: "Error occurred while giving Random Reward To User"
+          });
+          return;
+        }
+      }).catch(err => {
+        logger.log("error", err + ": Error occurred while updating the u_heartbeat_timestamp for user:" + uid);
+      });
+      res.status(201).send({
+        msg: "Random Reward Given Successfully",
+        rewardsAwardId: givenResponse.rewards_award_id
+      });
+      return;
+    }
+  } else {
+    res.status(500).send({
+      msg: "Random Reward Not Found."
+    });
+    return;
+  }
+
+
 }

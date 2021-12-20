@@ -6,32 +6,37 @@ module.exports = (sequelize, Sequelize) => {
       primaryKey: true,
       type: Sequelize.INTEGER
     },
-    Random_winner_usrid: {
+    random_winner_usrid: {
       allowNull: false,
       type: Sequelize.INTEGER
     },
-    Random_winner_event_name: {
-      allowNull: false,
+    random_winner_reward_id: {
+      type: Sequelize.INTEGER
+    },
+    random_winner_reward_name: {
       type: Sequelize.STRING(100)
     },
-    Random_winner_selected: {
+    random_winner_event_id: {
+      type: Sequelize.INTEGER
+    },
+    random_winner_event_type: {
+      type: Sequelize.STRING(50)
+    },
+    random_winner_selected: {
       allowNull: false,
       type: Sequelize.STRING(50)
     },
-    Random_winner_event_id: {
+    random_winner_admin_id: {
       type: Sequelize.INTEGER
     },
-    Random_winner_admin_id: {
-      type: Sequelize.INTEGER
-    },
-    Randon_winner_ack: {
+    randon_winner_ack: {
       allowNull: false,
       defaultValue: 0,
       type: Sequelize.INTEGER
     }
   }, {
-      createdAt: 'created_at',
-      updatedAt: 'updated_at',
+      createdAt: 'random_winner_created_at',
+      updatedAt: 'random_winner_updated_at',
       freezeTableName: true,
       tableName: 'reward_random_winner',
       underscored: true
