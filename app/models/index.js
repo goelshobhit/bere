@@ -208,8 +208,8 @@ db.user_fan_following.belongsTo(db.user_profile, { as:'follower',foreignKey: 'fa
 db.rewards_event_request.belongsTo(db.user_profile, {foreignKey: 'user_id', targetKey: 'u_id'});
 db.rewards_request.belongsTo(db.user_profile, {foreignKey: 'rewards_user_id', targetKey: 'u_id'});
 db.rewards_given.belongsTo(db.user_profile, {foreignKey: 'rewards_award_user_id', targetKey: 'u_id'});
-db.rewards_request.hasOne(db.rewards_given, {foreignKey: 'rewards_request_id', targetKey: 'rewards_request_id'});
-db.rewards_given.belongsTo(db.rewards_request, {foreignKey: 'rewards_request_id', targetKey: 'rewards_request_id'});
+// db.rewards_request.hasOne(db.rewards_given, {foreignKey: 'rewards_request_id', targetKey: 'rewards_request_id'});
+// db.rewards_given.belongsTo(db.rewards_request, {foreignKey: 'rewards_request_id', targetKey: 'rewards_request_id'});
 
 db.rewards_credit.belongsTo(db.user_profile, {foreignKey: 'Rewards_credit_user_id', targetKey: 'u_id'});
 db.rewards_credit.belongsTo(db.ledger_transactions, {foreignKey: 'rewards_credit_transaction_id', targetKey: 'trx_id'});
