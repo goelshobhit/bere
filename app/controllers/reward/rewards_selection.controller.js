@@ -106,7 +106,7 @@ exports.rewardUserSelection = async (req, res) => {
     });
     return;
   }
-  /* get random segment[reward center dist record] for random frequency number. */
+  /* get segment[reward center dist record] for random frequency number. */
   var distFreq = 0;
   var minNumber = 0;
   var maxNumber = 0;
@@ -136,7 +136,7 @@ exports.rewardUserSelection = async (req, res) => {
       matchedId = minMaxValue;
     }
   }
-  if (rewardCenterDistData[matchedId]) {
+  if (matchedId && rewardCenterDistData[matchedId]) {
     const data = {
       "random_winner_usrid": uid,
       "random_winner_selected": new Date().getTime(),
@@ -211,4 +211,56 @@ exports.rewardUserSelection = async (req, res) => {
   }
 
 
+}
+
+/**
+ * Function to get Reward Given listing
+ * @param  {object}  req expressJs request object
+ * @param  {object}  res expressJs response object
+ * @return {Promise}
+ */
+exports.rewardRandomUserslisting = async (req, res) => {
+  const pageSize = parseInt(req.query.pageSize || 10);
+  const pageNumber = parseInt(req.query.pageNumber || 1);
+  const skipCount = (pageNumber - 1) * pageSize;
+  const sortBy = req.query.sortBy || 'random_winner_id'
+  const sortOrder = req.query.sortOrder || 'DESC'
+
+  var options = {
+    include: [
+      {
+        model: db.user_profile,
+        attributes: [["u_display_name", "rewarded_username"]],
+        required: false,
+        where: {
+          is_autotakedown: 0
+        }
+      }
+    ],
+    limit: pageSize,
+    offset: skipCount,
+    order: [
+      [sortBy, sortOrder]
+    ],
+    where: {}
+  };
+  if (req.query.sortVal) {
+    var sortValue = req.query.sortVal;
+    options.where = sortValue ? {
+      [sortBy]: `${sortValue}`
+    } : null;
+  }
+  if (req.query.randomWinnerId) {
+    options['where'] = {
+      random_winner_id: req.query.randomWinnerId
+    }
+  }
+  var total = await rewardRandomWinner.count({
+    where: options['where']
+  });
+  const rewardsRandomUserList = await rewardRandomWinner.findAll(options);
+  res.status(200).send({
+    data: rewardsRandomUserList,
+    totalRecords: total
+  });
 }

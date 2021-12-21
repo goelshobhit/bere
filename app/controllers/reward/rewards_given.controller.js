@@ -72,7 +72,6 @@ exports.giveReward = async (req, res) => {
     "rewards_event_type": rewards_event_type,
   };
   const givenResponse = await reward.giveRewardtoUser(rewardGivendetail);
-  console.log(givenResponse);
    if (givenResponse && givenResponse.error_message) {
     res.status(500).send({
       message: givenResponse.error_message

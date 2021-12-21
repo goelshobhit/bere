@@ -304,11 +304,12 @@ function Common() {
     if (userAccount) {
       if (trx_type === 'credit') {
         coins = userAccount.ac_balance + coins;
-        stars = userAccount.ac_balance_stars + stars;
+        stars = parseFloat(userAccount.ac_balance_stars) + parseFloat(stars);
       } else {
         coins = userAccount.ac_balance - coins;
         stars = userAccount.ac_balance_stars - stars;
       }
+      
       accountBalance.update({ ac_balance: coins, ac_balance_stars: stars }, {
         where: {
           ac_user_id: userId

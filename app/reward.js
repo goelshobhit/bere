@@ -180,6 +180,7 @@ function Reward() {
             logger.log("error", err + ": Error occurred while inserting in rewardCredit:" + event_id);
           });
         }).catch(err => {
+          errorMessage = err + ": Error occurred while ledgerTransactions for :" + uid;
           logger.log("error", err + ": Error occurred while ledgerTransactions for :" + uid);
         });
         common.manageUserAccount(uid, budgetPerUser, heartPerUser, 'credit');
@@ -189,14 +190,14 @@ function Reward() {
         logger.log("error", "Some error occurred while creating the reward request=" + err);
         errorMessage = err.message || "Some error occurred while give Reward.";
       });
-      if (rewardsAwardId) {
-        givenResponse.rewards_award_id = rewardsAwardId;
-        return givenResponse;
-      } else if (errorMessage){
-        givenResponse.error_message = errorMessage;
-      }
+    if (errorMessage) {
+      givenResponse.error_message = errorMessage;
+    } else if (rewardsAwardId && rewardsAwardId > 0) {
+      givenResponse.rewards_award_id = rewardsAwardId;
       return givenResponse;
-      
+    }
+    return givenResponse;
+
   }
 }
 
