@@ -2,49 +2,65 @@ module.exports = app => {
     const rewardRequest = require("../../controllers/reward/rewards_request.controller.js");
     var router = require("express").Router();
     const auth = require("../../middleware/auth");
-     /**
-     * @swagger
-     * /api/rewards-engine/request_rewards:
-     *   post:
-     *     requestBody:
-     *        required: false
-     *        content:
-     *            application/json:
-     *                schema:
-     *                    type: object
-     *                    properties:
-     *                        Rewards Id:
-     *                            type: integer
-     *                        Rewards Event Id:
-     *                            type: integer
-     *                        Rewards Event Request Id:
-     *                            type: string
-     *     tags:
-     *       - Rewards-Engine
-     *     description: Create Reward Request
-     *     produces:
-     *       - application/json
-     *     responses:
-     *       201:
-     *         description: Create Reward Request
-     *       422:
-     *         description: validation errors
-     *       500:
-     *         description: Internal server error
-     *       401:
-     *          description: Unauthorized
-     *          content:
-     *              application/json:
-     *                  schema:
-     *                      type: object
-     *                      properties:
-     *                          message:
-     *                              type: string
-     *                              example: Authorisation Required
-     */
+    /**
+    * @swagger
+    * /api/rewards-engine/request_rewards:
+    *   post:
+    *     requestBody:
+    *        required: false
+    *        content:
+    *            application/json:
+    *                schema:
+    *                    type: object
+    *                    properties:
+    *                        Rewards Id:
+    *                            type: integer
+    *                        Rewards Event Id:
+    *                            type: integer
+    *                        Rewards Event Request Id:
+    *                            type: string
+    *                        Rewards Timestamp:
+    *                            type: string
+    *                        Rewards Event Owner Id:
+    *                            type: integer
+    *                        Rewards Request Token:
+    *                            type: integer
+    *                        Rewards Request Stars:
+    *                            type: integer
+    *                        Rewards Request Energy:
+    *                            type: integer
+    *                        Rewards Request Coins:
+    *                            type: integer
+    *                        Rewards Request Booster:
+    *                            type: integer
+    *                        Rewards Request Card:
+    *                            type: integer
+    *     tags:
+    *       - Rewards-Engine
+    *     description: Create Reward Request
+    *     produces:
+    *       - application/json
+    *     responses:
+    *       201:
+    *         description: Create Reward Request
+    *       422:
+    *         description: validation errors
+    *       500:
+    *         description: Internal server error
+    *       401:
+    *          description: Unauthorized
+    *          content:
+    *              application/json:
+    *                  schema:
+    *                      type: object
+    *                      properties:
+    *                          message:
+    *                              type: string
+    *                              example: Authorisation Required
+    */
     router.post("/rewards-engine/request_rewards", rewardRequest.createRewardRequest);
 
-     // Retrieve all rewards request
+    // Retrieve all rewards request
     /**
      * @swagger
      * /api/rewards-engine/request_rewards:
@@ -65,7 +81,7 @@ module.exports = app => {
      *           required: false
      *           schema:
      *              type: string
-     *              example: rewards_request_id,rewards_id,rewards_timestamp,rewards_user_id,rewards_event_owner_id,rewards_event_id,rewards_event_request_id    # Example of a parameter value
+     *              example: rewards_request_id,rewards_id,rewards_timestamp,rewards_user_id,rewards_event_owner_id,rewards_event_id,rewards_event_type,rewards_event_request_id    # Example of a parameter value
      *         - name: sortOrder
      *           in: query
      *           required: false

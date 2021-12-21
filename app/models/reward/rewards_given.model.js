@@ -1,6 +1,6 @@
 module.exports = (sequelize, Sequelize) => {
   const rewards_given = sequelize.define("rewards_given", {
-    rewards_given_id: {
+    rewards_award_id: {
       allowNull: false,
       autoIncrement: true,
       primaryKey: true,
@@ -9,18 +9,10 @@ module.exports = (sequelize, Sequelize) => {
     rewards_request_id: {
       type: Sequelize.INTEGER
     },
-    rewards_event_id: {
+    rewards_award_event_id: {
       type: Sequelize.INTEGER
     },
-    rewards_event_type: {
-      type: Sequelize.STRING(50)
-    },
-    rewards_award_id: {
-      allowNull: false,
-      type: Sequelize.INTEGER
-    },
-    rewards_award_type: {
-      allowNull: false,
+    rewards_award_event_type: {
       type: Sequelize.STRING(50)
     },
     rewards_award_user_id: {

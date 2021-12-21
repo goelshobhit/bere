@@ -17,7 +17,7 @@ module.exports = app => {
      *                            type: integer
      *                        Rewards Event Type:
      *                            type: string
-     *                            example: "Single, Contest"
+     *                            example: "Single, Contest, Survey"
      *     tags:
      *       - Rewards-Engine
      *     description: Create Reward Request Id
@@ -41,6 +41,6 @@ module.exports = app => {
      *                              type: string
      *                              example: Authorisation Required
      */
-    router.post("/rewards-engine/request_id", rewardEventRequest.createRewardRequestId);
+    router.post("/rewards-engine/request_id", auth, rewardEventRequest.createRewardRequestId);
     app.use("/api", router);
 };

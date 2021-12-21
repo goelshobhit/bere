@@ -4,8 +4,6 @@ const logger = require("../../middleware/logger");
 const rewardRequest = db.rewards_request;
 const rewardEventRequest = db.rewards_event_request;
 
-const common = require("../../common");
-
 /**
  * Function to create Reward Request Id
  * @param  {object}  req expressJs request object
@@ -50,16 +48,21 @@ exports.createRewardRequest = async (req, res) => {
     "rewards_timestamp": body["Rewards Timestamp"] ? body["Rewards Timestamp"] : new Date().getTime(),
     "rewards_user_id": uid,
     "rewards_event_owner_id": body["Rewards Event Owner Id"] ? body["Rewards Event Owner Id"] : "0",
-    "rewards_user_token": body["Rewards User Token"] ? body["Rewards User Token"] : req.header(process.env.TOKEN_HEADER || "x-auth-token"),
+    "rewards_request_token": body["Rewards Request Token"] ? body["Rewards Request Token"] : 0,
+    "rewards_request_stars": body["Rewards Request Stars"] ? body["Rewards Request Stars"] : 0,
+    "rewards_request_energy": body["Rewards Request Energy"] ? body["Rewards Request Energy"] : 0,
+    "rewards_request_coins": body["Rewards Request Coins"] ? body["Rewards Request Coins"] : 0,
+    "rewards_request_booster": body["Rewards Request Booster"] ? body["Rewards Request Booster"] : 0,
+    "rewards_request_card": body["Rewards Request Card"] ? body["Rewards Request Card"] : 0,
     "rewards_event_id": event_id,
+    "rewards_event_type": rewardEventRequestDetail.rewards_event_type,
     "rewards_event_request_id": body["Rewards Event Request Id"]
   }
-  
   rewardRequest.create(data)
     .then(data => {
       audit_log.saveAuditLog(uid, 'add', 'rewards_request', data.rewards_request_id, data.dataValues);
       res.status(201).send({
-        RewardsRequestId : data.rewards_request_id,
+        RewardsRequestId: data.rewards_request_id,
         message: "Reward Request Created Successfully"
       });
     })
@@ -94,10 +97,6 @@ exports.rewardRequestlisting = async (req, res) => {
         where: {
           is_autotakedown: 0
         }
-      },
-      {
-        model: db.rewards_event_request,
-        attributes: ["rewards_event_type"]
       }
     ],
     limit: pageSize,
