@@ -41,7 +41,7 @@ exports.createRewardRequestId = async (req, res) => {
     return;
   }
   const data = {
-    "rewards_event_request_id": body["Rewards Event Id"]+"_"+uid+"_"+new Date().getTime(),
+    "rewards_event_request_id": body["Rewards Event Id"] + "_" + uid + "_" + new Date().getTime(),
     "user_id": uid,
     "rewards_event_id": body["Rewards Event Id"],
     "rewards_event_type": body["Rewards Event Type"],

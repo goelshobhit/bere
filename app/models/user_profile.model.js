@@ -81,7 +81,11 @@ module.exports = (sequelize, Sequelize) => {
 		},
         u_budget:{
 			 type: Sequelize.INTEGER
-		},
+        },
+        u_energy:{
+            type: Sequelize.INTEGER,
+            defaultValue: 4
+       },
         u_website:{
 			 type: Sequelize.STRING(150)
         },
