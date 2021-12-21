@@ -52,3 +52,6 @@ Thumbs.db
 security/req.cnf
 security/server.cert
 security/server.key
+security/req.cnf
+security/server.cert
+security/server.key

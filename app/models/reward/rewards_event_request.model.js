@@ -20,7 +20,7 @@ module.exports = (sequelize, Sequelize) => {
     },
     rewards_event_type: {
       allowNull: false,
-      type: Sequelize.INTEGER
+      type: Sequelize.STRING(50)
     },
     status: {
       allowNull: false,

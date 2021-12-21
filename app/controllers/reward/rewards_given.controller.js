@@ -23,24 +23,10 @@ const rewardRequest = db.rewards_request;
 
 exports.giveReward = async (req, res) => {
   const body = req.body;
-  if (!body["Rewards Request Id"]) {
+  if (!body["Rewards Request Id"] && (!body["Rewards Award Event Id"] || !body["Rewards Award Event Type"])) {
     res.status(400).send({
       msg:
-        "Rewards Request Id is required"
-    });
-    return;
-  }
-  if (!body["Rewards Award Id"]) {
-    res.status(400).send({
-      msg:
-        "Rewards Award Id is required"
-    });
-    return;
-  }
-  if (!body["Rewards Award Type"]) {
-    res.status(400).send({
-      msg:
-        "Rewards Award Type is required"
+        "Either Rewards Request Id is required or Rewards Award Event Id and Rewards Award Event Type is required."
     });
     return;
   }
@@ -51,25 +37,37 @@ exports.giveReward = async (req, res) => {
     });
     return;
   }
-  const rewardRequestDetail = await rewardRequest.findOne({
-    include: [{
-      model: db.rewards_event_request,
-      attributes: ["rewards_event_type"]
-    }],
-    where: {
-      rewards_request_id: body["Rewards Request Id"]
-    }
-  });
-  if (!rewardRequestDetail) {
-    res.status(400).send({
-      msg: "Invalid Rewards Request Id."
+  var event_id = 0;
+  var rewards_event_type = '';
+  let rewardRequestDetail = {};
+  if (body["Rewards Request Id"]) {
+    rewardRequestDetail = await rewardRequest.findOne({
+      where: {
+        rewards_request_id: body["Rewards Request Id"]
+      }
     });
-    return;
+    if (!rewardRequestDetail) {
+      res.status(400).send({
+        msg: "Invalid Rewards Request Id."
+      });
+      return;
+    }
+    event_id = rewardRequestDetail.rewards_event_id;
+    rewards_event_type = rewardRequestDetail.rewards_event_type;
+  } else {
+    event_id = body["Rewards Award Event Id"];
+    rewards_event_type = body["Rewards Award Event Type"];
   }
 
+
   var uid = body["Rewards Award UserId"];
-  var event_id = rewardRequestDetail.rewards_event_id;
-  var rewards_event_type = rewardRequestDetail.rewards_event_request.rewards_event_type;
+
+  var budgetPerUser = body["Rewards Award Coins"] ? body["Rewards Award Coins"] : (rewardRequestDetail.rewards_request_coins ? rewardRequestDetail.rewards_request_coins : 0);
+  var heartPerUser = body["Rewards Award Stars"] ? body["Rewards Award Stars"] : (rewardRequestDetail.rewards_request_stars ? rewardRequestDetail.rewards_request_stars : 0);
+  var tokenPerUser = body["Rewards Award Token"] ? body["Rewards Award Token"] : (rewardRequestDetail.rewards_request_token ? rewardRequestDetail.rewards_request_token : 0);
+  var energyPerUser = body["Rewards Award Energy"] ? body["Rewards Award Energy"] : (rewardRequestDetail.rewards_request_energy ? rewardRequestDetail.rewards_request_energy : 0);
+  var boosterPerUser = body["Rewards Award Booster"] ? body["Rewards Award Booster"] : (rewardRequestDetail.rewards_request_booster ? rewardRequestDetail.rewards_request_booster : 0);
+  var cardPerUser = body["Rewards Award Card"] ? body["Rewards Award Card"] : (rewardRequestDetail.rewards_request_card ? rewardRequestDetail.rewards_request_card : 0);
   let TaskDetails = {};
   let tj_type = '';
   if (rewards_event_type == 'Task') {
@@ -123,31 +121,26 @@ exports.giveReward = async (req, res) => {
   var userProfile = await User_profile.findOne({ attributes: ['u_hearts', 'u_budget'], where: { u_id: uid } });
 
   const data = {
-    "rewards_award_id": body["Rewards Award Id"] ? body["Rewards Award Id"] : 0,
     "rewards_request_id": body["Rewards Request Id"] ? body["Rewards Request Id"] : 0,
-    "rewards_event_id": event_id,
-    "rewards_event_type": rewards_event_type,
-    "rewards_award_type": body["Rewards Award Type"] ? body["Rewards Award Type"] : "0",
+    "rewards_award_event_id": event_id,
+    "rewards_award_event_type": rewards_event_type,
     "rewards_award_user_id": body["Rewards Award UserId"] ? body["Rewards Award UserId"] : "0",
     "rewards_award_name": body["Rewards Award Name"] ? body["Rewards Award Name"] : '',
-    "rewards_award_token": body["Rewards Award Token"] ? body["Rewards Award Token"] : "0",
-    "rewards_award_stars": body["Rewards Award Stars"] ? body["Rewards Award Stars"] : '0',
-    "rewards_award_energy": body["Rewards Award Energy"] ? body["Rewards Award Energy"] : '0',
-    "rewards_award_coins": body["Rewards Award Coins"] ? body["Rewards Award Coins"] : '0',
-    "rewards_award_booster": body["Rewards Award Booster"] ? body["Rewards Award Booster"] : '0',
-    "rewards_award_card": body["Rewards Award Card"] ? body["Rewards Award Card"] : '0'
+    "rewards_award_token": tokenPerUser,
+    "rewards_award_stars": heartPerUser,
+    "rewards_award_energy": energyPerUser,
+    "rewards_award_coins": budgetPerUser,
+    "rewards_award_booster": boosterPerUser,
+    "rewards_award_card": cardPerUser
   }
   rewardGiven.create(data)
     .then(rewardGivenData => {
-      audit_log.saveAuditLog(uid, 'add', 'rewards_given', rewardGivenData.rewards_given_id, rewardGivenData.dataValues);
+      audit_log.saveAuditLog(uid, 'add', 'rewards_given', rewardGivenData.rewards_award_id, rewardGivenData.dataValues);
       var brandView = {
         id: BrandDetails.cr_co_id,
         name: BrandDetails.cr_co_name,
         logo: BrandDetails.cr_co_logo_path
       };
-      var budgetPerUser = body["Rewards Award Coins"] ? body["Rewards Award Coins"] : '0';
-      var heartPerUser = body["Rewards Award Stars"] ? body["Rewards Award Stars"] : '0';
-      var tokenPerUser = body["Rewards Award Token"] ? body["Rewards Award Token"] : '0';
       const profileData = {
         u_hearts: userProfile.u_hearts ? parseInt(userProfile.u_hearts) + parseInt(heartPerUser) : heartPerUser,
         u_budget: userProfile.u_budget ? parseInt(userProfile.u_budget) + parseInt(budgetPerUser) : budgetPerUser
@@ -228,7 +221,7 @@ exports.giveReward = async (req, res) => {
       common.manageUserAccount(uid, budgetPerUser, heartPerUser, 'credit');
       res.status(201).send({
         msg: "Reward Given Successfully",
-        rewardsGivenId: rewardGivenData.rewards_given_id
+        rewardsAwardId: rewardGivenData.rewards_award_id
       });
     })
     .catch(err => {
@@ -277,9 +270,9 @@ exports.rewardGivenlisting = async (req, res) => {
       [sortBy]: `${sortValue}`
     } : null;
   }
-  if (req.query.rewardsGivenId) {
+  if (req.query.rewardsAwardId) {
     options['where'] = {
-      rewards_given_id: req.query.rewardsGivenId
+      rewards_award_id: req.query.rewardsAwardId
     }
   }
   var total = await rewardGiven.count({
