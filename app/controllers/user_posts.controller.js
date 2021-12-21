@@ -289,24 +289,56 @@ const sortBy = req.query.sortBy || 'ucpl_content_likes_count'
 const sortOrder = req.query.sortOrder || 'asc'
 const sortVal = req.query.sortVal;
 const Uid=req.header(process.env.UKEY_HEADER || "x-api-key");
+
+const contentUserTaskIds = await common.getContentReportUser(['Task', 'Contest', 'User Task Post', 'User'], Uid);
+
+let taskIdsValues = [];
+let userIdsValues = [];
+let ConsentIdsValues = [];
+let userTaskPostIdsValues = [];
+if (contentUserTaskIds.length) {
+    contentUserTaskIds.forEach(element => {
+        if (element.content_report_type == 'Task') {
+            taskIdsValues.push(element.content_report_type_id);
+        }
+        if (element.content_report_type == 'User') {
+            userIdsValues.push(element.content_report_type_id);
+        }
+        if (element.content_report_type == 'Contest') {
+            ConsentIdsValues.push(element.content_report_type_id);
+        }
+        if (element.content_report_type == 'User Task Post') {
+            userTaskPostIdsValues.push(element.content_report_type_id);
+        }
+      });
+}
 var options = {
     include: [    
     {
         model: db.user_profile,
         attributes: ["u_id",["u_display_name", "post_username"],["u_prof_img_path", "post_user_imgpath"]],
-        required:false
+        required:false,
+        where:{is_autotakedown:0, u_id:{
+            [Op.not]: userIdsValues
+        }}
     },
 	{
         model: db.tasks,
 		as:'taskPosts',
         attributes: ["ta_task_id","ta_name"],
-		required:false
+        required:false,
+        where:{is_autotakedown:0, ta_task_id:{
+            [Op.not]: taskIdsValues
+        }}
     },
 	{
         model: Contest,
 		as:'contestPosts',
         attributes: [["ct_id","ta_task_id"],["ct_name","ta_name"]],
-		required:false
+        required:false,
+        where:{is_autotakedown:0, ct_id:{
+            [Op.not]: ConsentIdsValues
+        }}
     },
     {
         model: db.post_user_reactions,
@@ -350,6 +382,13 @@ if(req.query.sortVal) {
         [sortBy]: `${sortValue}`
     } : null;
 }
+if (userTaskPostIdsValues.length) {
+    options['where']['ucpl_id'] = {
+            [Op.not]: userTaskPostIdsValues
+        }
+}
+options['where']['is_autotakedown'] = 0;
+
 var total = await Posts.count({
     where: options['where']
 });
@@ -375,25 +414,56 @@ const sortOrder = req.query.sortOrder || 'asc'
 const userId = req.query.userId;
 const sortId = req.query.sortId;
 const Uid=req.header(process.env.UKEY_HEADER || "x-api-key");
+const contentUserTaskIds = await common.getContentReportUser(['Task', 'Contest', 'User Task Post', 'User'], Uid);
+
+let taskIdsValues = [];
+let userIdsValues = [];
+let ConsentIdsValues = [];
+let userTaskPostIdsValues = [];
+if (contentUserTaskIds.length) {
+    contentUserTaskIds.forEach(element => {
+        if (element.content_report_type == 'Task') {
+            taskIdsValues.push(element.content_report_type_id);
+        }
+        if (element.content_report_type == 'User') {
+            userIdsValues.push(element.content_report_type_id);
+        }
+        if (element.content_report_type == 'Contest') {
+            ConsentIdsValues.push(element.content_report_type_id);
+        }
+        if (element.content_report_type == 'User Task Post') {
+            userTaskPostIdsValues.push(element.content_report_type_id);
+        }
+      });
+}
 
 var options = {
     include: [    
     {
         model: db.user_profile,
         attributes: ["u_id",["u_display_name", "post_username"],["u_prof_img_path", "post_user_imgpath"]],
-        required:false
+        required:false,
+        where:{is_autotakedown:0, u_id:{
+            [Op.not]: userIdsValues
+        }}
     },
 	{
         model: db.tasks,
 		as:'taskPosts',
         attributes: ["ta_task_id","ta_name"],
-		required:false
+		required:false,
+        where:{is_autotakedown:0, ta_task_id:{
+            [Op.not]: taskIdsValues
+        }}
     },
 	{
         model: Contest,
 		as:'contestPosts',
         attributes: [["ct_id","ta_task_id"],["ct_name","ta_name"]],
-		required:false
+		required:false,
+        where:{is_autotakedown:0, ct_id:{
+            [Op.not]: ConsentIdsValues
+        }}
     },
     {
         model: db.post_user_reactions,
@@ -430,6 +500,12 @@ var options = {
 		}
 	}
 };
+if (userTaskPostIdsValues.length) {
+    options['where']['ucpl_id'] = {
+            [Op.not]: userTaskPostIdsValues
+        }
+}
+options['where']['is_autotakedown'] = 0;
 var total = await Posts.count({
     where: options['where']
 });
@@ -455,24 +531,56 @@ const sortOrder = req.query.sortOrder || 'asc'
 const taskId = req.query.taskId;
 const sortId = req.query.sortId;
 const Uid=req.header(process.env.UKEY_HEADER || "x-api-key");
+const contentUserTaskIds = await common.getContentReportUser(['Task', 'Contest', 'User Task Post', 'User'], Uid);
+
+let taskIdsValues = [];
+let userIdsValues = [];
+let ConsentIdsValues = [];
+let userTaskPostIdsValues = [];
+if (contentUserTaskIds.length) {
+    contentUserTaskIds.forEach(element => {
+        if (element.content_report_type == 'Task') {
+            taskIdsValues.push(element.content_report_type_id);
+        }
+        if (element.content_report_type == 'User') {
+            userIdsValues.push(element.content_report_type_id);
+        }
+        if (element.content_report_type == 'Contest') {
+            ConsentIdsValues.push(element.content_report_type_id);
+        }
+        if (element.content_report_type == 'User Task Post') {
+            userTaskPostIdsValues.push(element.content_report_type_id);
+        }
+      });
+}
+
 var options = {
     include: [    
     {
         model: db.user_profile,
         attributes: ["u_id",["u_display_name", "post_username"],["u_prof_img_path", "post_user_imgpath"]],
-        required:false
+        required:false,
+        where:{is_autotakedown:0, u_id:{
+            [Op.not]: userIdsValues
+        }}
     },
 	{
         model: db.tasks,
 		as:'taskPosts',
         attributes: ["ta_task_id","ta_name"],
-		required:false
+		required:false,
+        where:{is_autotakedown:0, ta_task_id:{
+            [Op.not]: taskIdsValues
+        }}
     },
 	{
         model: Contest,
 		as:'contestPosts',
         attributes: [["ct_id","ta_task_id"],["ct_name","ta_name"]],
-		required:false
+		required:false,
+        where:{is_autotakedown:0, ct_id:{
+            [Op.not]: ConsentIdsValues
+        }}
     },
     {
         model: db.post_user_reactions,
@@ -509,6 +617,13 @@ var options = {
 		}
 	}
 };
+if (userTaskPostIdsValues.length) {
+    options['where']['ucpl_id'] = {
+            [Op.not]: userTaskPostIdsValues
+        }
+}
+
+options['where']['is_autotakedown'] = 0;
 var total = await Posts.count({
     where: options['where']
 });
@@ -536,20 +651,44 @@ const sortOrder = req.query.sortOrder || 'DESC'
 const sortVal = req.query.sortVal;
 const content_id = req.query.content_id;
 const task_id = req.query.task_id;
+const Uid=req.header(process.env.UKEY_HEADER || "x-api-key");
+const contentUserTaskIds = await common.getContentReportUser(['Task', 'Contest', 'User Task Post'], Uid);
 
+let taskIdsValues = [];
+let ConsentIdsValues = [];
+let userTaskPostIdsValues = [];
+if (contentUserTaskIds.length) {
+    contentUserTaskIds.forEach(element => {
+        if (element.content_report_type == 'Task') {
+            taskIdsValues.push(element.content_report_type_id);
+        }
+        if (element.content_report_type == 'Contest') {
+            ConsentIdsValues.push(element.content_report_type_id);
+        }
+        if (element.content_report_type == 'User Task Post') {
+            userTaskPostIdsValues.push(element.content_report_type_id);
+        }
+      });
+}
 var options = {
     include: [
 	{
         model: db.tasks,
 		as:'taskPosts',
         attributes: ["ta_task_id","ta_name"],
-		required:false
+		required:false,
+        where:{is_autotakedown:0, ta_task_id:{
+            [Op.not]: taskIdsValues
+        }}
     },
 	{
         model: Contest,
 		as:'contestPosts',
         attributes: [["ct_id","ta_task_id"],["ct_name","ta_name"]],
-		required:false
+		required:false,
+        where:{is_autotakedown:0, ct_id:{
+            [Op.not]: ConsentIdsValues
+        }}
     },
 	],
     limit: pageSize,
@@ -571,6 +710,13 @@ if(req.query.sortVal) {
         [sortBy]: `${sortValue}`
     } : null;
 }
+if (userTaskPostIdsValues.length) {
+    options['where']['ucpl_id'] = {
+            [Op.not]: userTaskPostIdsValues
+        }
+}
+
+options['where']['is_autotakedown'] = 0;
 var total = await Posts.count({
     where: options['where']
 });

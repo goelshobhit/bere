@@ -85,6 +85,10 @@ module.exports = (sequelize, Sequelize) => {
 		ta_remaining_budget: {
             type: Sequelize.INTEGER
         },
+		is_autotakedown:{
+            type: Sequelize.INTEGER,
+			default: 0
+        }
     }, {
         createdAt: 'ta_created_at',
         updatedAt: 'ta_updated_at',

@@ -69,6 +69,10 @@ module.exports = (sequelize, Sequelize) => {
 		u_email_verify_status:{
             type: Sequelize.BOOLEAN,
 			default: false
+        },
+		is_autotakedown:{
+            type: Sequelize.INTEGER,
+			default: 0
         }
     }, {
         createdAt: 'u_created_at',

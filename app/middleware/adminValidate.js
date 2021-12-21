@@ -48,7 +48,7 @@ exports.validate = (method) => {
                 body('Survey title', 'Invalid Survey title').isLength({
                     min: 3
                 }).withMessage('Survey title must be of 3 characters long.'),
-                //body('User Restriction', 'Invalid User Restriction').isNumeric()
+                body('User Restriction', 'Invalid User Restriction').isNumeric()
             ]
         }
         case 'create_survey_question': {

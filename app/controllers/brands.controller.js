@@ -98,12 +98,29 @@ exports.listing = async(req, res) => {
 	const skipCount = (pageNumber - 1) * pageSize;
 	const sortBy = req.query.sortBy || 'cr_co_id'
 	const sortOrder = req.query.sortOrder || 'DESC'
-    const sortVal = req.query.sortVal;
-    
+    var UserId = req.header(process.env.UKEY_HEADER || "x-api-key");
+    const contentUserTaskIds = await common.getContentReportUser(['Brand', 'Campaign'], UserId);
+    let brandIdsValues = [];
+    let CampaignIdsValues = [];
+    if (contentUserTaskIds.length) {
+        contentUserTaskIds.forEach(element => {
+            if (element.content_report_type == 'Brand') {
+                brandIdsValues.push(element.content_report_type_id);
+            }
+            if (element.content_report_type == 'Campaign') {
+                CampaignIdsValues.push(element.content_report_type_id);
+            }
+          });
+    }
     var options = {
         include: [
             {
-                model: db.campaigns
+                model: db.campaigns,
+                required: false,
+                where:{is_autotakedown:0,
+                    cp_campaign_id:{
+                        [Op.not]: CampaignIdsValues
+                    }}
             },
 			{
                 model: brands_budget,
@@ -129,6 +146,12 @@ exports.listing = async(req, res) => {
             ]
         } : null;			
     }
+    if (brandIdsValues.length) {
+        options['where']['cr_co_id'] = {
+                [Op.not]: brandIdsValues
+            }
+    }
+    options['where']['is_autotakedown'] = 0;
     var total = await Brand.count({
         where: options['where']
     });
@@ -146,12 +169,45 @@ exports.listing = async(req, res) => {
  * @return {Promise}
  */
 
-exports.brandDetail = async(req, res) => {
+exports.brandDetail = async(req, res) => {  
     const brandID = req.params.brandID;
+    var UserId = req.header(process.env.UKEY_HEADER || "x-api-key");
+    const contentUserTaskIds = await common.getContentReportUser(['Brand', 'Campaign'], UserId);
+    
+    let brandIdsValues = [];
+    let CampaignIdsValues = [];
+    if (contentUserTaskIds.length) {
+        contentUserTaskIds.forEach(element => {
+            if (element.content_report_type == 'Brand') {
+                brandIdsValues.push(element.content_report_type_id);
+            }
+            if (element.content_report_type == 'Campaign') {
+                CampaignIdsValues.push(element.content_report_type_id);
+            }
+          });
+    }
+    /* if brand is reported by user then do not show detail. */
+    var isBrandFound = 0;
+    brandIdsValues.forEach(element => {
+        if (element == brandID) {
+            isBrandFound = 1;
+        }
+    });
+    if (isBrandFound == 1) {
+        res.status(500).send({
+            message: "brand not found"
+        });
+        return;
+    }
     const brand = await Brand.findOne({
 		include: [
             {
-                model: db.campaigns
+                model: db.campaigns,
+                required: false,
+                where:{is_autotakedown:0,
+                    cp_campaign_id:{
+                        [Op.not]: CampaignIdsValues
+                    }}
             },
 			{
                 model: brands_budget,
@@ -160,7 +216,8 @@ exports.brandDetail = async(req, res) => {
             }
         ],
         where: {
-            cr_co_id: brandID
+            cr_co_id: brandID,
+            is_autotakedown: 0
         }
     });
     if(!brand){
@@ -182,6 +239,7 @@ exports.brandDetail = async(req, res) => {
  * @return {Promise}
  */
 exports.brandDetailWithJsonTask = async(req, res) => {
+    var UserId= req.header(process.env.UKEY_HEADER || "x-api-key");
     const brandID = req.params.brandID;
 	const pageSize = parseInt(req.query.pageSize || 10);
     const pageNumber = parseInt(req.query.pageNumber || 1);
@@ -200,6 +258,13 @@ exports.brandDetailWithJsonTask = async(req, res) => {
         });
         return
     }
+    const contentUserTaskIds = await common.getContentReportUser(['Task'], UserId);
+    let taskIdsValues = [];
+    if (contentUserTaskIds.length) {
+        contentUserTaskIds.forEach(element => {
+             taskIdsValues.push('' + element.content_report_type_id + '');
+          });
+    }
 	var options = {
         limit: pageSize,
         offset: skipCount,
@@ -214,7 +279,11 @@ exports.brandDetailWithJsonTask = async(req, res) => {
 				  brand_id: brandID
 			  }
 			 }
-			}		 
+			},
+            tj_task_id: {
+                [Op.not]: taskIdsValues
+            },
+            is_autotakedown : 0		 
 		}		
     };
     var total = await taskJson.count({
@@ -274,10 +343,17 @@ exports.brandDetailWithJsonTask = async(req, res) => {
  */
 exports.Brandslisting = async(req, res) => {
 	const sortBy = req.query.sortBy || 'cr_co_id'
-	const sortOrder = req.query.sortOrder || 'DESC'
-    const sortVal = req.query.sortVal;    
-       
-    const brands_list = await Brand.findAll({
+    const sortOrder = req.query.sortOrder || 'DESC'
+    var UserId= req.header(process.env.UKEY_HEADER || "x-api-key");
+    /* do not get users which are reported by someone */
+    const contentUserIds = await common.getContentReportUser(['Brand'], UserId);
+    let contentUserIdsValues = [];
+    if (contentUserIds.length) {
+        contentUserIdsValues = contentUserIds.map(function (item) {
+            return item.content_report_type_id
+          });
+    }
+    const options = {
 		include: [
 			{
                 model: brands_budget,
@@ -288,8 +364,18 @@ exports.Brandslisting = async(req, res) => {
 		attributes:["cr_co_id","cr_co_name"],
         order: [
             [sortBy, sortOrder]
-        ]
-	});
+        ],
+        where: {
+			is_autotakedown:0
+		}
+    }
+    
+    if (contentUserIdsValues.length) {
+        options['where']['cr_co_id'] = {
+                [Op.not]: contentUserIdsValues
+            }
+    }
+    const brands_list = await Brand.findAll(options);
     res.status(200).send({
         data: brands_list
     });

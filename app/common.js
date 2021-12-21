@@ -12,11 +12,11 @@ const db = require("./models");
 const tasks_json = db.tasks_json;
 const Contest = db.contest_task
 const Tasks = db.tasks
-const accountBalance=db.account_balance;
+const accountBalance = db.account_balance;
 const Op = db.Sequelize.Op;
 const searchUserCount = 8;
 function Common() {
-  Common.prototype.mkdirpath = function(dirPath) {
+  Common.prototype.mkdirpath = function (dirPath) {
     var dir = dirPath;
     if (!fs.existsSync(dir)) {
       fs.mkdirSync(dir);
@@ -24,47 +24,47 @@ function Common() {
       console.log("Upload directory " + dirPath + " already exist");
     }
   };
-  Common.prototype.taskStatusArr = function() {
+  Common.prototype.taskStatusArr = function () {
     var taskSts = {
-        0: "Waiting for approval",
-        1: "Approved",
-        2: "Published",
-        3: "Draft",
-        4: "Closed",
-      5: "Cancelled"
-      };
-      return taskSts;  
-    };
-  Common.prototype.taskStatusArr = function() {
-	var taskSts = {
       0: "Waiting for approval",
       1: "Approved",
       2: "Published",
       3: "Draft",
       4: "Closed",
-	  5: "Cancelled"
+      5: "Cancelled"
     };
-    return taskSts;  
+    return taskSts;
   };
-  Common.prototype.taskTypesArr = function() {
-	var taskTypes = {
+  Common.prototype.taskStatusArr = function () {
+    var taskSts = {
+      0: "Waiting for approval",
+      1: "Approved",
+      2: "Published",
+      3: "Draft",
+      4: "Closed",
+      5: "Cancelled"
+    };
+    return taskSts;
+  };
+  Common.prototype.taskTypesArr = function () {
+    var taskTypes = {
       1: "Questions/ instruction",
       2: "Reference Picture",
       3: "Reference video",
       4: "Reference audio"
     };
-    return taskTypes;  
+    return taskTypes;
   };
-  Common.prototype.campaignStatusArr = function() {
-	var campaignSts = {
+  Common.prototype.campaignStatusArr = function () {
+    var campaignSts = {
       0: "Waiting for approval",
       1: "Approved",
       2: "Published",
       3: "Draft",
       4: "Closed",
-	  5: "Cancelled"
+      5: "Cancelled"
     };
-    return campaignSts;  
+    return campaignSts;
   };
   // Common.prototype.notifyGrpDelivMethodArr = function() {
   //   var notifyGrpDelivMethods = {
@@ -74,27 +74,27 @@ function Common() {
   //     };
   //     return notifyGrpDelivMethods;  
   //   };
-  Common.prototype.reportQuestions = function() {
+  Common.prototype.reportQuestions = function () {
     var questions = {
-        1: "Dangerous people",
-        2: "Nudity or pornography",
-		3: "Harrassment or bullying",
-		4: "Hate Speech",
-		5: "Self-harm",
-		6: "Violence, physical abuse, threats",
-		8: "Sale or promotion of firearms",
-		9: "Sales or promotion of druge",
-		10: "Intellectual property infringement",
-		11: "Misleading Information",
-		12: "Spam"		
-      };
-      return questions;  
+      1: "Dangerous people",
+      2: "Nudity or pornography",
+      3: "Harrassment or bullying",
+      4: "Hate Speech",
+      5: "Self-harm",
+      6: "Violence, physical abuse, threats",
+      8: "Sale or promotion of firearms",
+      9: "Sales or promotion of druge",
+      10: "Intellectual property infringement",
+      11: "Misleading Information",
+      12: "Spam"
     };
-Common.prototype.reactionsEmoji = function() {
-      var questions = ["Happy.png","Crying.png","Love.png","Mad.png","Shocked.png","Heart.png","Heart-White.png"];
-      return questions;  
-};
-  Common.prototype.genrateToken = function(user_id) {
+    return questions;
+  };
+  Common.prototype.reactionsEmoji = function () {
+    var questions = ["Happy.png", "Crying.png", "Love.png", "Mad.png", "Shocked.png", "Heart.png", "Heart-White.png"];
+    return questions;
+  };
+  Common.prototype.genrateToken = function (user_id) {
     if (!user_id) {
       return res.status(401).end();
     }
@@ -110,7 +110,7 @@ Common.prototype.reactionsEmoji = function() {
     );
     return token;
   };
-  Common.prototype.userroleActions = function() {
+  Common.prototype.userroleActions = function () {
     var role_actions = {
       "User Rights": [
         {
@@ -128,7 +128,7 @@ Common.prototype.reactionsEmoji = function() {
             "user/update": "PUT/api/admin_users"
           }
         },
-		{
+        {
           "All Users": {
             "user/all": "GET/api/admin_users"
           }
@@ -165,7 +165,7 @@ Common.prototype.reactionsEmoji = function() {
             "role/delete": "DELETE/api/roles"
           }
         },
-		{
+        {
           "All Role": {
             "role/all": "GET/api/roles"
           }
@@ -192,7 +192,7 @@ Common.prototype.reactionsEmoji = function() {
             "brand/delete": "DELETE/api/brand"
           }
         },
-		{
+        {
           "All Brand": {
             "brand/all": "GET/api/brand"
           }
@@ -219,7 +219,7 @@ Common.prototype.reactionsEmoji = function() {
             "campaign/delete": "DELETE/api/campaign"
           }
         },
-		    {
+        {
           "All Campaign": {
             "campaign/all": "GET/api/campaign"
           }
@@ -231,34 +231,34 @@ Common.prototype.reactionsEmoji = function() {
             "task/view": "GET/api/tasks/1"
           }
         },
-		{
+        {
           "Add Tasks": {
             "task/add": "POST/api/tasks"
           }
         },
-		{
+        {
           "Update Tasks": {
             "task/update": "PUT/api/tasks"
           }
         },
-		{
+        {
           "Delete Tasks": {
             "task/delete": "DELETE/api/tasks"
           }
         },
-		{
+        {
           "All Tasks": {
             "task/all": "GET/api/tasks"
           }
         }
       ],
-	  "Admin Rights": [
-	    {
-		  "Update Tasks": {
+      "Admin Rights": [
+        {
+          "Update Tasks": {
             "setting/update": "PUT/api/admin_setting"
           }
         },
-		{
+        {
           "All Tasks": {
             "setting/all": "GET/api/admin_setting"
           }
@@ -267,7 +267,7 @@ Common.prototype.reactionsEmoji = function() {
     };
     return role_actions;
   };
-  Common.prototype.getKeys = function(obj, val) {
+  Common.prototype.getKeys = function (obj, val) {
     var objects = [];
     for (var i in obj) {
       if (!obj.hasOwnProperty(i)) continue;
@@ -279,7 +279,7 @@ Common.prototype.reactionsEmoji = function() {
     }
     return objects;
   };
-  Common.prototype.imageToken = function(action_id) {
+  Common.prototype.imageToken = function (action_id) {
     if (!action_id) {
       return res.status(401).end();
     }
@@ -295,235 +295,291 @@ Common.prototype.reactionsEmoji = function() {
     );
     return token;
   };
-  Common.prototype.manageUserAccount= async function(userId,coins,stars,trx_type){ //trx_type = credit,debit
-	    var  userAccount=await accountBalance.findOne({
-			where : {
-				ac_user_id:userId
-			}
-		});
-	    if(userAccount){
-			if(trx_type==='credit'){
-			coins=userAccount.ac_balance+coins;
-			stars=userAccount.ac_balance_stars+stars;			
-			}else{
-			coins=userAccount.ac_balance-coins;
-			stars=userAccount.ac_balance_stars-stars;	
-			}
-		accountBalance.update({ac_balance:coins,ac_balance_stars:stars}, {
-          where: {
-            ac_user_id: userId
-          }
-        });
-		return true;
-		}else{
-			accountBalance.create({ac_user_id:userId,ac_balance:coins,ac_balance_stars:stars,ac_account_no:''});
-			return true;
-		}
-  };
-  Common.prototype.jsonTask = function(id,type,actionType) {
-	  // Single Task
-    if(type==='Single'){
-      if(actionType==='add'){
-		Tasks.findOne({
-		  include: [
-            {
-                model: db.campaigns,
-				attributes:[["cp_campaign_name","campaign_name"]],
-				include: [{
-					model: db.brands,
-				    attributes:[["cr_co_id",'brand_id'],["cr_co_name",'brand_name'],["cr_co_logo_path",'brand_logo']],
-			    }]
-            },
-			{
-                model: db.user_content_post,
-				attributes:[["ucpl_id","post_id"],['ucpl_content_data','post_data']],
-				required:false,
-				where:{
-					ucpl_added_by: 0,
-					ucpl_status: 1
-				},
-				order: [
-				['ucpl_id', 'DESC']
-				]
-            }
-		  ],
-          where: {
-              ta_task_id: id
-          }
-        }).then(function(result){	
-		var add_data={
-		"tj_type":type,
-		"tj_task_id":id,
-		"tj_data":result,
-		"tj_status":result.dataValues.ta_status
-		};
-		tasks_json.create(add_data);
+  Common.prototype.manageUserAccount = async function (userId, coins, stars, trx_type) { //trx_type = credit,debit
+    var userAccount = await accountBalance.findOne({
+      where: {
+        ac_user_id: userId
+      }
+    });
+    if (userAccount) {
+      if (trx_type === 'credit') {
+        coins = userAccount.ac_balance + coins;
+        stars = userAccount.ac_balance_stars + stars;
+      } else {
+        coins = userAccount.ac_balance - coins;
+        stars = userAccount.ac_balance_stars - stars;
+      }
+      accountBalance.update({ ac_balance: coins, ac_balance_stars: stars }, {
+        where: {
+          ac_user_id: userId
+        }
       });
-      }else{
+      return true;
+    } else {
+      accountBalance.create({ ac_user_id: userId, ac_balance: coins, ac_balance_stars: stars, ac_account_no: '' });
+      return true;
+    }
+  };
+  Common.prototype.jsonTask = function (id, type, actionType) {
+    // Single Task
+    if (type === 'Single') {
+      if (actionType === 'add') {
         Tasks.findOne({
-		  include: [
+          include: [
             {
-                model: db.campaigns,
-				attributes:[["cp_campaign_name","campaign_name"]],
-				include: [{
-					model: db.brands,
-				    attributes:[["cr_co_id",'brand_id'],["cr_co_name",'brand_name'],["cr_co_logo_path",'brand_logo']],
-			    }]
+              model: db.campaigns,
+              attributes: [["cp_campaign_name", "campaign_name"]],
+              include: [{
+                model: db.brands,
+                attributes: [["cr_co_id", 'brand_id'], ["cr_co_name", 'brand_name'], ["cr_co_logo_path", 'brand_logo']],
+              }]
             },
-			{
-                model: db.user_content_post,
-				attributes:[["ucpl_id","post_id"],['ucpl_content_data','post_data']],
-				required:false,
-				where:{
-					ucpl_added_by: 0,
-					ucpl_status: 1
-				},
-				order: [
-				['ucpl_id', 'DESC']
-				]
+            {
+              model: db.user_content_post,
+              attributes: [["ucpl_id", "post_id"], ['ucpl_content_data', 'post_data']],
+              required: false,
+              where: {
+                ucpl_added_by: 0,
+                ucpl_status: 1
+              },
+              order: [
+                ['ucpl_id', 'DESC']
+              ]
             }
-		  ],
+          ],
           where: {
-              ta_task_id: id
+            ta_task_id: id
           }
-        }).then(function(result){		
-        var update_data={
-          "tj_data":result,
-          "tj_status":result.dataValues.ta_status
-        };
-        tasks_json.update(update_data, {
-          where: {
-            tj_task_id: id
-          }
+        }).then(function (result) {
+          var add_data = {
+            "tj_type": type,
+            "tj_task_id": id,
+            "tj_data": result,
+            "tj_status": result.dataValues.ta_status
+          };
+          tasks_json.create(add_data);
         });
-      });        
-      }      
+      } else {
+        Tasks.findOne({
+          include: [
+            {
+              model: db.campaigns,
+              attributes: [["cp_campaign_name", "campaign_name"]],
+              include: [{
+                model: db.brands,
+                attributes: [["cr_co_id", 'brand_id'], ["cr_co_name", 'brand_name'], ["cr_co_logo_path", 'brand_logo']],
+              }]
+            },
+            {
+              model: db.user_content_post,
+              attributes: [["ucpl_id", "post_id"], ['ucpl_content_data', 'post_data']],
+              required: false,
+              where: {
+                ucpl_added_by: 0,
+                ucpl_status: 1
+              },
+              order: [
+                ['ucpl_id', 'DESC']
+              ]
+            }
+          ],
+          where: {
+            ta_task_id: id
+          }
+        }).then(function (result) {
+          var update_data = {
+            "tj_data": result,
+            "tj_status": result.dataValues.ta_status
+          };
+          tasks_json.update(update_data, {
+            where: {
+              tj_task_id: id
+            }
+          });
+        });
+      }
     }
-	// end of Single Task 
+    // end of Single Task 
     // Contest Task
-    if(type==='Contest'){
-      if(actionType==='add'){
-		Contest.findOne({
-		  include: [
-            {
-                model: db.campaigns,
-				attributes:[["cp_campaign_name","campaign_name"]],
-				include: [{
-					model: db.brands,
-				    attributes:[["cr_co_id",'brand_id'],["cr_co_name",'brand_name'],["cr_co_logo_path",'brand_logo']],
-			    }]
-            },
-			{
-                model: db.user_content_post,
-				attributes:[["ucpl_id","post_id"],['ucpl_content_data','post_data']],
-				required:false,
-				where:{
-					ucpl_added_by: 0,
-					ucpl_status: 1
-				},
-				order: [
-				['ucpl_id', 'DESC']
-				]
-            }
-		  ],
-		  attributes:[
-    ["ct_do","ta_do"],["ct_desc","ta_desc"],["ct_name","ta_name"],["ct_type","ta_type"],["ct_sound","ta_sound"],
-	["ct_status","ta_status"],["ct_dont_do","ta_dont_do"],["ct_hashtag","ta_hashtag"],["ct_id","ta_task_id"],["ct_end_date","ta_end_date"],["ct_mentioned","ta_mentioned"],["ct_created_at","ta_created_at"],["ct_start_date","ta_start_date"],["ct_updated_at","ta_updated_at"],["cp_campaign_id","cp_campaign_id"],["ct_header_image","ta_header_image"],["ct_token_budget","ta_token_budget"],["ct_estimated_user","ta_estimated_user"],["ct_insta_question","ta_insta_question"],["ct_budget_per_user","ta_budget_per_user"],["ct_hearts_per_user","ta_hearts_per_user"],["ct_oneline_summary","ta_oneline_summary"],["ct_videos_required","ta_videos_required"],["ct_contiue_spend_budget","ta_contiue_spend_budget"],["ct_bonus_rewards_benefits","ta_bonus_rewards_benefits"],["ct_post_insp_image","ta_post_insp_image"],["ct_photos_required","ta_photos_required"],"ct_start_voting_date","ct_end_voting_date","ct_winner_date","ct_winner_token",["ct_total_available","ta_total_available"]
-		  ],
-          where: {
-              ct_id: id
-          }
-        }).then(function(result){	
-		var add_data={
-		"tj_type":type,
-		"tj_task_id":id,
-		"tj_data":result,
-		"tj_status":result.dataValues.ta_status
-		};
-		tasks_json.create(add_data);
-      });
-      }else{
+    if (type === 'Contest') {
+      if (actionType === 'add') {
         Contest.findOne({
-		  include: [
+          include: [
             {
-                model: db.campaigns,
-				attributes:[["cp_campaign_name","campaign_name"]],
-				include: [{
-					model: db.brands,
-				    attributes:[["cr_co_id",'brand_id'],["cr_co_name",'brand_name'],["cr_co_logo_path",'brand_logo']],
-			    }]
+              model: db.campaigns,
+              attributes: [["cp_campaign_name", "campaign_name"]],
+              include: [{
+                model: db.brands,
+                attributes: [["cr_co_id", 'brand_id'], ["cr_co_name", 'brand_name'], ["cr_co_logo_path", 'brand_logo']],
+              }]
             },
-			{
-                model: db.user_content_post,
-				attributes:[["ucpl_id","post_id"],['ucpl_content_data','post_data']],
-				required:false,
-				where:{
-					ucpl_added_by: 0,
-					ucpl_status: 1
-				},
-				order: [
-				['ucpl_id', 'DESC']
-				]
+            {
+              model: db.user_content_post,
+              attributes: [["ucpl_id", "post_id"], ['ucpl_content_data', 'post_data']],
+              required: false,
+              where: {
+                ucpl_added_by: 0,
+                ucpl_status: 1
+              },
+              order: [
+                ['ucpl_id', 'DESC']
+              ]
             }
-		  ],
-		  attributes:[
-    ["ct_do","ta_do"],["ct_desc","ta_desc"],["ct_name","ta_name"],["ct_type","ta_type"],["ct_sound","ta_sound"],
-	["ct_status","ta_status"],["ct_dont_do","ta_dont_do"],["ct_hashtag","ta_hashtag"],["ct_id","ta_task_id"],["ct_end_date","ta_end_date"],["ct_mentioned","ta_mentioned"],["ct_created_at","ta_created_at"],["ct_start_date","ta_start_date"],["ct_updated_at","ta_updated_at"],["cp_campaign_id","cp_campaign_id"],["ct_header_image","ta_header_image"],["ct_token_budget","ta_token_budget"],["ct_estimated_user","ta_estimated_user"],["ct_insta_question","ta_insta_question"],["ct_budget_per_user","ta_budget_per_user"],["ct_hearts_per_user","ta_hearts_per_user"],["ct_oneline_summary","ta_oneline_summary"],["ct_videos_required","ta_videos_required"],["ct_contiue_spend_budget","ta_contiue_spend_budget"],["ct_bonus_rewards_benefits","ta_bonus_rewards_benefits"],["ct_post_insp_image","ta_post_insp_image"],["ct_photos_required","ta_photos_required"],"ct_start_voting_date","ct_end_voting_date","ct_winner_date","ct_winner_token",["ct_total_available","ta_total_available"]
-		  ],
+          ],
+          attributes: [
+            ["ct_do", "ta_do"], ["ct_desc", "ta_desc"], ["ct_name", "ta_name"], ["ct_type", "ta_type"], ["ct_sound", "ta_sound"],
+            ["ct_status", "ta_status"], ["ct_dont_do", "ta_dont_do"], ["ct_hashtag", "ta_hashtag"], ["ct_id", "ta_task_id"], ["ct_end_date", "ta_end_date"], ["ct_mentioned", "ta_mentioned"], ["ct_created_at", "ta_created_at"], ["ct_start_date", "ta_start_date"], ["ct_updated_at", "ta_updated_at"], ["cp_campaign_id", "cp_campaign_id"], ["ct_header_image", "ta_header_image"], ["ct_token_budget", "ta_token_budget"], ["ct_estimated_user", "ta_estimated_user"], ["ct_insta_question", "ta_insta_question"], ["ct_budget_per_user", "ta_budget_per_user"], ["ct_hearts_per_user", "ta_hearts_per_user"], ["ct_oneline_summary", "ta_oneline_summary"], ["ct_videos_required", "ta_videos_required"], ["ct_contiue_spend_budget", "ta_contiue_spend_budget"], ["ct_bonus_rewards_benefits", "ta_bonus_rewards_benefits"], ["ct_post_insp_image", "ta_post_insp_image"], ["ct_photos_required", "ta_photos_required"], "ct_start_voting_date", "ct_end_voting_date", "ct_winner_date", "ct_winner_token", ["ct_total_available", "ta_total_available"]
+          ],
           where: {
-              ct_id: id
+            ct_id: id
           }
-        }).then(function(result){		
-        var update_data={
-          "tj_data":result,
-          "tj_status":result.dataValues.ta_status
-        };
-        tasks_json.update(update_data, {
-          where: {
-            tj_task_id: id
-          }
-        }).catch(err => {
-        console.log(err)
+        }).then(function (result) {
+          var add_data = {
+            "tj_type": type,
+            "tj_task_id": id,
+            "tj_data": result,
+            "tj_status": result.dataValues.ta_status
+          };
+          tasks_json.create(add_data);
         });
-      });        
-      }      
+      } else {
+        Contest.findOne({
+          include: [
+            {
+              model: db.campaigns,
+              attributes: [["cp_campaign_name", "campaign_name"]],
+              include: [{
+                model: db.brands,
+                attributes: [["cr_co_id", 'brand_id'], ["cr_co_name", 'brand_name'], ["cr_co_logo_path", 'brand_logo']],
+              }]
+            },
+            {
+              model: db.user_content_post,
+              attributes: [["ucpl_id", "post_id"], ['ucpl_content_data', 'post_data']],
+              required: false,
+              where: {
+                ucpl_added_by: 0,
+                ucpl_status: 1
+              },
+              order: [
+                ['ucpl_id', 'DESC']
+              ]
+            }
+          ],
+          attributes: [
+            ["ct_do", "ta_do"], ["ct_desc", "ta_desc"], ["ct_name", "ta_name"], ["ct_type", "ta_type"], ["ct_sound", "ta_sound"],
+            ["ct_status", "ta_status"], ["ct_dont_do", "ta_dont_do"], ["ct_hashtag", "ta_hashtag"], ["ct_id", "ta_task_id"], ["ct_end_date", "ta_end_date"], ["ct_mentioned", "ta_mentioned"], ["ct_created_at", "ta_created_at"], ["ct_start_date", "ta_start_date"], ["ct_updated_at", "ta_updated_at"], ["cp_campaign_id", "cp_campaign_id"], ["ct_header_image", "ta_header_image"], ["ct_token_budget", "ta_token_budget"], ["ct_estimated_user", "ta_estimated_user"], ["ct_insta_question", "ta_insta_question"], ["ct_budget_per_user", "ta_budget_per_user"], ["ct_hearts_per_user", "ta_hearts_per_user"], ["ct_oneline_summary", "ta_oneline_summary"], ["ct_videos_required", "ta_videos_required"], ["ct_contiue_spend_budget", "ta_contiue_spend_budget"], ["ct_bonus_rewards_benefits", "ta_bonus_rewards_benefits"], ["ct_post_insp_image", "ta_post_insp_image"], ["ct_photos_required", "ta_photos_required"], "ct_start_voting_date", "ct_end_voting_date", "ct_winner_date", "ct_winner_token", ["ct_total_available", "ta_total_available"]
+          ],
+          where: {
+            ct_id: id
+          }
+        }).then(function (result) {
+          var update_data = {
+            "tj_data": result,
+            "tj_status": result.dataValues.ta_status
+          };
+          tasks_json.update(update_data, {
+            where: {
+              tj_task_id: id
+            }
+          }).catch(err => {
+            console.log(err)
+          });
+        });
+      }
     }
-	// end of Single Task 
+    // end of Single Task 
   };
-Common.prototype.sendSMS =  function(phone, msg){
+  Common.prototype.sendSMS = function (phone, msg) {
     const accID = process.env.TWILIO_ACC_ID;
     const authToken = process.env.TWILIO_AUTH_TOKEN;
     const fromPhone = process.env.TWILIO_FROM;
-    console.log("Inside Send SMS Call: "+accID)
-    console.log("Inside Send SMS Call: "+authToken)
-    console.log("Inside Send SMS Call: "+fromPhone)
+    console.log("Inside Send SMS Call: " + accID)
+    console.log("Inside Send SMS Call: " + authToken)
+    console.log("Inside Send SMS Call: " + fromPhone)
     var client = new twilio(accID, authToken);
-	client.messages
+    client.messages
       .create({
-         body: msg,
-         from: fromPhone,
-         to: phone
-       })
-      .then(message => 
-	  console.log(message.sid)
-	  );
-	
+        body: msg,
+        from: fromPhone,
+        to: phone
+      })
+      .then(message =>
+        console.log(message.sid)
+      );
+
   };
-  Common.prototype.searchObject = function() {
+  Common.prototype.searchObject = function () {
     return {
-      "Profile":'profile',
-      "Comments":'comments',
-      "Tasks":'tasks',
-      "Survey":"survey",
-      "Quizes":"quizes",
-      "Contest":"contest",
-      "Brand":"brand",
-      "Hashtags":"hashtags"
-      }
+      "Profile": 'profile',
+      "Comments": 'comments',
+      "Tasks": 'tasks',
+      "Survey": "survey",
+      "Quizes": "quizes",
+      "Contest": "contest",
+      "Brand": "brand",
+      "Hashtags": "hashtags"
+    }
   };
 
-  Common.prototype.searchUserCount = function() {
+  Common.prototype.searchUserCount = function () {
     return 7;
   };
+  Common.prototype.getContentReportUser = async function (contentReportTypes, UserId) {
+    var reportOptions = {
+      attributes: ["content_report_type_id", "content_report_type"],
+      where: {
+        content_report_type: contentReportTypes,
+        content_report_uid: UserId,
+        cru_status: 1
+      }
+    };
+    return await db.content_report_user.findAll(reportOptions);
+  };
+
+  Common.prototype.contentReportTypes = function () {
+    return {
+      User: [{
+        id: 'u_id',
+        db: db.users
+      },
+      {
+        id: 'u_id',
+        db: db.user_profile
+      }],
+      Task: [{
+        id: 'ta_task_id',
+        db: db.tasks
+      },{
+        id: 'tj_task_id',
+        db: db.tasks_json
+      }],
+      Brand: [{
+        id: 'cr_co_id',
+        db: 'db.brands'
+      }],
+      Contest: [{
+        id: 'ct_id',
+        db: db.contest_task
+      }],
+      Campaign: [{
+        id: 'cp_campaign_id',
+        db: db.campaigns
+      }],
+      User_Task_Post: [{
+        id: 'ucpl_id',
+        db: db.user_content_post
+      }],
+      Comment: [{
+        id: 'pc_post_id',
+        db: db.post_comment
+      }],
+      Post_Report: [{
+        id: 'pr_id',
+        db: db.post_report
+      }]
+    }
+  };
+
 }
 module.exports = new Common();
