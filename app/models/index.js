@@ -124,6 +124,9 @@ db.rewards_balance = require("./reward/rewards_balance.model")(sequelize, Sequel
 db.rewards_credit = require("./reward/rewards_credit.model")(sequelize, Sequelize);
 db.reward_random_winner = require("./reward/reward_random_winner.model")(sequelize, Sequelize);
 
+db.brand_score = require("./brand_score.model")(sequelize, Sequelize);
+db.brandscore_task = require("./brandscore_task.model")(sequelize, Sequelize);
+
 //Relations
 db.users.hasMany(db.bonus_ticket, {foreignKey: 'u_id', targetKey: 'bonus_ticket_usrid'});
 db.bonus_ticket.belongsTo(db.users, {foreignKey: 'bonus_ticket_usrid', targetKey: 'u_id'});
@@ -188,6 +191,14 @@ db.content_report.hasOne(db.content_report_moderate, {foreignKey: 'content_repor
 db.content_report_moderate.belongsTo(db.content_report, {foreignKey: 'content_report_id', targetKey: 'content_report_id'});
 
 db.bonus_usr.belongsTo(db.user_profile, {foreignKey: 'bonus_usr_id', targetKey: 'u_id'});
+
+db.brand_score.belongsTo(db.user_profile, {foreignKey: 'brandscore_user_id', targetKey: 'u_id'});
+db.brand_score.belongsTo(db.tasks, {foreignKey: 'brandscore_task_id', targetKey: 'ta_task_id'});
+db.brand_score.belongsTo(db.brands, {foreignKey: 'brandscore_brand_id', targetKey: 'cr_co_id'});
+
+db.brandscore_task.belongsTo(db.user_profile, {foreignKey: 'brandscore_user_id', targetKey: 'u_id'});
+db.brandscore_task.belongsTo(db.tasks, {foreignKey: 'brandscore_task_id', targetKey: 'ta_task_id'});
+db.brandscore_task.belongsTo(db.brands, {foreignKey: 'brandscore_brand_id', targetKey: 'cr_co_id'});
 
 db.bonus_summary.belongsTo(db.bonus_item, {foreignKey: 'bonus_item_id', targetKey: 'bonus_item_id'});
 db.bonus_summary.belongsTo(db.bonus_set, {foreignKey: 'bonus_summary_set_id', targetKey: 'bonus_set_id'});
