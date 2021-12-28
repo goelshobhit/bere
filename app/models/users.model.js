@@ -70,6 +70,9 @@ module.exports = (sequelize, Sequelize) => {
             type: Sequelize.BOOLEAN,
 			default: false
         },
+        u_heartbeat_timestamp:{
+            type: Sequelize.STRING(50)
+        },
 		is_autotakedown:{
             type: Sequelize.INTEGER,
 			default: 0
