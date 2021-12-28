@@ -1,13 +1,13 @@
 "use strict";
-const tableName = "content_report_moderate";
-const columnName = "crm_desc";
+const tableName = "user_login";
+const columnName = "u_heartbeat_timestamp";
 
 module.exports = {
   up: (queryInterface, Sequelize) => {
     return queryInterface.describeTable(tableName).then(tableDefinition => {
       if (!tableDefinition[columnName]) {
         return queryInterface.addColumn(tableName, columnName, {
-          type: Sequelize.TEXT
+          type: Sequelize.STRING(50)
         });
       } else {
         return Promise.resolve();
