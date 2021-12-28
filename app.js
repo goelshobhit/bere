@@ -113,6 +113,7 @@ const swaggerOptions = {
     ]
   },
   apis: [__dirname + "/app/routes/*.js",
+   __dirname + "/app/routes/contentReport/*.js",
    __dirname + "/app/routes/bonus/*.js",
    __dirname + "/app/routes/reward/*.js"]
 };
@@ -243,7 +244,6 @@ require("./app/routes/video_ads.routes")(app);
 require("./app/routes/video_ads_submit.routes")(app);
 require("./app/routes/socket_server.routes")({app, io});
 require("./app/routes/survey.routes")(app);
-require("./app/routes/content_report.routes")(app);
 require("./app/routes/bonus/bonus_user.routes")(app);
 require("./app/routes/bonus/bonus_sm_share.routes")(app);
 require("./app/routes/bonus/bonus_item.routes")(app);
@@ -261,6 +261,8 @@ require("./app/routes/reward/rewards_given.routes")(app);
 require("./app/routes/reward/rewards_selection.routes")(app);
 require("./app/routes/energy.routes")(app);
 require("./app/routes/brand_score.routes")(app);
+require("./app/routes/contentReport/content_report_category.routes")(app);
+require("./app/routes/contentReport/content_report.routes")(app);
 server.listen(PORT, function () {
   console.log(`Server is running on port ${PORT}.`)
 });

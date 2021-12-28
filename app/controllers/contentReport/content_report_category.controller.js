@@ -1,14 +1,14 @@
-const db = require("../models");
+const db = require("../../models");
 const contentReport = db.content_report;
 const contentReportCategory = db.content_report_category;
 const contentReportUser = db.content_report_user;
 const contentReportModerate = db.content_report_moderate;
-const logger = require("../middleware/logger");
+const logger = require("../../middleware/logger");
 const Op = db.Sequelize.Op;
-const common = require("../common");
+const common = require("../../common");
 const audit_log = db.audit_log
 /**
- * Function to submit content report
+ * Function to create content report category
  * @param  {object}  req expressJs request object
  * @param  {object}  res expressJs response object
  * @return {Promise}
@@ -42,6 +42,147 @@ exports.createContentReportCategory = async (req, res) => {
         message:
           err.message || "Some error occurred while creating the content report category."
       });
+    });
+}
+
+/**
+ * Function to get all content report categories
+ * @param  {object}  req expressJs request object
+ * @param  {object}  res expressJs response object
+ * @return {Promise}
+ */
+exports.contentReportCategoriesListing = async (req, res) => {
+  const pageSize = parseInt(req.query.pageSize || 10);
+  const pageNumber = parseInt(req.query.pageNumber || 1);
+  const skipCount = (pageNumber - 1) * pageSize;
+  const sortBy = req.query.sortBy || 'content_report_cat_id'
+  const sortOrder = req.query.sortOrder || 'DESC';
+
+  var options = {
+    limit: pageSize,
+    offset: skipCount,
+    order: [
+      [sortBy, sortOrder]
+    ],
+    where: {}
+  };
+  if (req.query.sortVal) {
+    var sortValue = req.query.sortVal.trim();
+    options.where = sortValue ? {
+      [Op.or]: [{
+        content_report_cat_name: {
+          [Op.iLike]: `%${sortValue}%`
+        }
+      }
+      ]
+    } : null;
+  }
+  if (req.query.contentReportCatID) {
+    options['where'] = {
+      content_report_cat_id: req.query.contentReportCatID
+    }
+  }
+  if (req.query.contentReportCatName) {
+    options['where']['content_report_cat_name'] = {
+      [Op.iLike]: `%${req.query.contentReportCatName}%`
+    };
+  }
+  var total = await contentReportCategory.count({
+    where: options['where']
+  });
+  const categories_list = await contentReportCategory.findAll(options);
+  res.status(200).send({
+    data: categories_list,
+    totalRecords: total
+  });
+};
+
+/**
+ * Function to update single content report category
+ * @param  {object}  req expressJs request object
+ * @param  {object}  res expressJs response object
+ * @return {Promise}
+ */
+exports.updateContentReportCategory = async (req, res) => {
+  const id = req.params.contentReportCatID;
+  const body = req.body;
+  var contentReportCategoryDetails = await contentReportCategory.findOne({
+    where: {
+      content_report_cat_id: id
+    }
+  });
+  if (!contentReportCategoryDetails) {
+    res.status(500).send({
+      message: "Content Report Category not Found with id=" + id
+    });
+    return;
+  }
+  const contentCategoryData = {
+    "content_report_cat_autotakedown": body.hasOwnProperty("Content Report Cat Autotakedown") ? body["Content Report Cat Autotakedown"] : 0,
+    "content_report_cat_name": body["Content Report Cat Name"],
+    "content_report_cat_hide": body.hasOwnProperty("Content Report Cat Hide") ? body["Content Report Cat Hide"] : 0,
+    "content_report_cat_usr_hide": body.hasOwnProperty("Content Report Cat Usr Hide") ? req.body["Content Report Cat Usr Hide"] : "0"
+  }
+  contentReportCategory.update(contentCategoryData, {
+    returning: true,
+    where: {
+      content_report_cat_id: id
+    }
+  }).then(function ([num, [result]]) {
+    if (num == 1) {
+      audit_log.saveAuditLog(req.header(process.env.UKEY_HEADER || "x-api-key"), 'update', 'content report category ', id, result.dataValues, contentReportCategoryDetails);
+      res.status(200).send({
+        message: "Content Report Category updated successfully."
+      });
+    } else {
+      res.status(400).send({
+        message: `Cannot update Content Report Category with id=${id}. Maybe Content Report Category was not found or req.body is empty!`
+      });
+    }
+  }).catch(err => {
+    logger.log("error", err + ":Error updating Content Report Category with id=" + id);
+    console.log(err)
+    res.status(500).send({
+      message: "Error updating Content Report Category with id=" + id
+    });
+  });
+};
+
+/**
+ * Function to delete content report category
+ * @param  {object}  req expressJs request object
+ * @param  {object}  res expressJs response object
+ * @return {Promise}
+ */
+exports.deleteContentReportCategory = async (req, res) => {
+  const content_report_cat_id = req.params.contentReportCatID;
+  const contentReportCategoryDetails = await contentReportCategory.findOne({
+    where: {
+      content_report_cat_id: content_report_cat_id
+    }
+  });
+  if (!contentReportCategoryDetails) {
+    res.status(500).send({
+      message: "Could not delete Content Report Category with id=" + content_report_cat_id
+    });
+    return;
+  }
+  contentReportCategory.destroy({
+    where: {
+      content_report_cat_id: content_report_cat_id
+    }
+  })
+    .then(num => {
+      res.status(200).send({
+        message: "Content Report Category deleted successfully!"
+      });
+      return;
+    })
+    .catch(err => {
+      res.status(500).send({
+        message: "Could not delete Content Report Category with id=" + content_report_cat_id
+      });
+      return;
     });
 }
 
@@ -366,271 +507,3 @@ exports.contentReportListing = async (req, res) => {
     totalRecords: total
   });
 };
-
-/**
- * Function to get all content report categories
- * @param  {object}  req expressJs request object
- * @param  {object}  res expressJs response object
- * @return {Promise}
- */
-exports.contentReportCategoriesListing = async (req, res) => {
-  const pageSize = parseInt(req.query.pageSize || 10);
-  const pageNumber = parseInt(req.query.pageNumber || 1);
-  const skipCount = (pageNumber - 1) * pageSize;
-  const sortBy = req.query.sortBy || 'content_report_cat_id'
-  const sortOrder = req.query.sortOrder || 'DESC';
-
-  var options = {
-    limit: pageSize,
-    offset: skipCount,
-    order: [
-      [sortBy, sortOrder]
-    ],
-    where: {}
-  };
-  if (req.query.sortVal) {
-    var sortValue = req.query.sortVal.trim();
-    options.where = sortValue ? {
-      [Op.or]: [{
-        content_report_cat_name: {
-          [Op.iLike]: `%${sortValue}%`
-        }
-      }
-      ]
-    } : null;
-  }
-  if (req.query.contentReportCatID) {
-    options['where'] = {
-      content_report_cat_id: req.query.contentReportCatID
-    }
-  }
-  if (req.query.contentReportCatName) {
-    options['where']['content_report_cat_name'] = {
-      [Op.iLike]: `%${req.query.contentReportCatName}%`
-    };
-  }
-  var total = await contentReportCategory.count({
-    where: options['where']
-  });
-  const categories_list = await contentReportCategory.findAll(options);
-  res.status(200).send({
-    data: categories_list,
-    totalRecords: total
-  });
-};
-
-/**
- * Function to update single content report category
- * @param  {object}  req expressJs request object
- * @param  {object}  res expressJs response object
- * @return {Promise}
- */
-exports.updateContentReportCategory = async (req, res) => {
-  const id = req.params.contentReportCatID;
-  const body = req.body;
-  var contentReportCategoryDetails = await contentReportCategory.findOne({
-    where: {
-      content_report_cat_id: id
-    }
-  });
-  if (!contentReportCategoryDetails) {
-    res.status(500).send({
-      message: "Content Report Category not Found with id=" + id
-    });
-    return;
-  }
-  const contentCategoryData = {
-    "content_report_cat_autotakedown": body.hasOwnProperty("Content Report Cat Autotakedown") ? body["Content Report Cat Autotakedown"] : 0,
-    "content_report_cat_name": body["Content Report Cat Name"],
-    "content_report_cat_hide": body.hasOwnProperty("Content Report Cat Hide") ? body["Content Report Cat Hide"] : 0,
-    "content_report_cat_usr_hide": body.hasOwnProperty("Content Report Cat Usr Hide") ? req.body["Content Report Cat Usr Hide"] : "0"
-  }
-  contentReportCategory.update(contentCategoryData, {
-    returning: true,
-    where: {
-      content_report_cat_id: id
-    }
-  }).then(function ([num, [result]]) {
-    if (num == 1) {
-      audit_log.saveAuditLog(req.header(process.env.UKEY_HEADER || "x-api-key"), 'update', 'content report category ', id, result.dataValues, contentReportCategoryDetails);
-      res.status(200).send({
-        message: "Content Report Category updated successfully."
-      });
-    } else {
-      res.status(400).send({
-        message: `Cannot update Content Report Category with id=${id}. Maybe Content Report Category was not found or req.body is empty!`
-      });
-    }
-  }).catch(err => {
-    logger.log("error", err + ":Error updating Content Report Category with id=" + id);
-    console.log(err)
-    res.status(500).send({
-      message: "Error updating Content Report Category with id=" + id
-    });
-  });
-};
-
-/**
- * Function to delete content report category
- * @param  {object}  req expressJs request object
- * @param  {object}  res expressJs response object
- * @return {Promise}
- */
-exports.deleteContentReportCategory = async (req, res) => {
-  const content_report_cat_id = req.params.contentReportCatID;
-  const contentReportCategoryDetails = await contentReportCategory.findOne({
-    where: {
-      content_report_cat_id: content_report_cat_id
-    }
-  });
-  if (!contentReportCategoryDetails) {
-    res.status(500).send({
-      message: "Could not delete Content Report Category with id=" + content_report_cat_id
-    });
-    return;
-  }
-  contentReportCategory.destroy({
-    where: {
-      content_report_cat_id: content_report_cat_id
-    }
-  })
-    .then(num => {
-      res.status(200).send({
-        message: "Content Report Category deleted successfully!"
-      });
-      return;
-    })
-    .catch(err => {
-      res.status(500).send({
-        message: "Could not delete Content Report Category with id=" + content_report_cat_id
-      });
-      return;
-    });
-}
-
-/**
-* Function to take action for content report
-* @param  {object}  req expressJs request object
-* @param  {object}  res expressJs response object
-* @return {Promise}
-*/
-exports.contentReportAction = async (req, res) => {
-  const body = req.body;
-  if (!body["Content Report Id"]) {
-    res.status(400).send({
-      msg:
-        "Content Report Id is required"
-    });
-    return;
-  }
-  if (!body["Content Report Autotakedown"] && !body["Content Report Hide From User"]) {
-    res.status(400).send({
-      msg:
-        "Content Report Autotakedown or Content Report Hide From User is required"
-    });
-    return;
-  }
-  var options = {
-    where: {
-      content_report_id: body["Content Report Id"]
-    }
-  };
-  const contentReportdetail = await contentReport.findOne(options);
-  if (!contentReportdetail) {
-    res.status(500).send({
-      message: "Content Report not Found."
-    });
-    return;
-  }
-  var contentUserModerateoptions = {
-    where: {
-      content_report_id: contentReportdetail.content_report_id
-    }
-  };
-  const contentReportModeratedetail = await contentReportModerate.findOne(contentUserModerateoptions);
-  const data = {
-    "content_report_id": body["Content Report Id"],
-    "content_report_autotakedown": body.hasOwnProperty("Content Report Autotakedown") ? body["Content Report Autotakedown"] : null,
-    "content_report_hide_from_user": body.hasOwnProperty("Content Report Hide From User") ? body["Content Report Hide From User"] : null,
-    "crm_desc": body.hasOwnProperty("Content Report Desc") ? body["Content Report Desc"] : ""
-  }
-  if (!contentReportModeratedetail) {
-    contentReportModerate.create(data)
-      .then(data => {
-        audit_log.saveAuditLog(req.header(process.env.UKEY_HEADER || "x-api-key"), 'add', 'content_report_moderate', data.crm_id, data.dataValues);
-      })
-      .catch(err => {
-        logger.log("error", "Some error occurred while taking action for content report=" + err);
-        res.status(500).send({
-          message:
-            err.message || "Some error occurred while taking action for content report."
-        });
-      });
-  } else {
-    if (!body["Content Report Autotakedown"]) {
-      data['content_report_autotakedown'] = contentReportModeratedetail.content_report_autotakedown;
-    }
-    if (!body["Content Report Hide From User"]) {
-      data['content_report_hide_from_user'] = contentReportModeratedetail.content_report_hide_from_user;
-    }
-    contentReportModerate.update(data, {
-      where: {
-        content_report_id: contentReportModeratedetail.content_report_id
-      }
-    });
-  }
-  let update_autotakedown = {};
-  if (body.hasOwnProperty("Content Report Autotakedown") && body["Content Report Autotakedown"] == 1) {
-    update_autotakedown["is_autotakedown"] = 1;
-  } else if (body.hasOwnProperty("Content Report Autotakedown") && body["Content Report Autotakedown"] == 0) {
-    update_autotakedown["is_autotakedown"] = 0;
-  }
-  if (update_autotakedown["is_autotakedown"] != undefined) {
-    updateContentReportAutoTakeDown(contentReportdetail.content_report_type, contentReportdetail.content_report_type_id, update_autotakedown);
-  }
-
-  var contentUseroptions = {
-    where: {
-      content_report_id: contentReportdetail.content_report_id,
-      cru_status: 1,
-    }
-  };
-  const contentReportUserdetail = await contentReportUser.findOne(contentUseroptions);
-
-  if (body.hasOwnProperty("Content Report Hide From User") && body["Content Report Hide From User"] == "0" && contentReportUserdetail != null && contentReportUserdetail.content_report_user_id != undefined) {
-    contentReportUser.update({ cru_status: "0" }, {
-      where: {
-        content_report_id: contentReportdetail.content_report_id
-      }
-    });
-  }
-  if ((!body.hasOwnProperty("Content Report Autotakedown") || body["Content Report Autotakedown"] == 0) && body["Content Report Hide From User"] == 1) {
-    const contentUserData = {
-      "content_report_uid": contentReportdetail.content_report_reporter_id,
-      "content_report_cat_id": contentReportdetail.content_report_cat_id,
-      "content_report_id": contentReportdetail.content_report_id,
-      "content_report_type": contentReportdetail.content_report_type,
-      "content_report_type_id": contentReportdetail.content_report_type_id,
-      "cru_status": "1"
-    }
-    if (!contentReportUserdetail) {
-      contentReportUser.create(contentUserData)
-        .then(reportData => {
-          audit_log.saveAuditLog(req.header(process.env.UKEY_HEADER || "x-api-key"), 'add', 'content_report_user', reportData.content_report_user_id, reportData.dataValues);
-        })
-        .catch(err => {
-          logger.log("error", "Some error occurred while inserting data in content report user=" + err);
-        });
-    } else {
-      contentReportUser.update(contentUserData, {
-        where: {
-          content_report_id: contentReportdetail.content_report_id
-        }
-      });
-    }
-  }
-  res.status(200).send({
-    message: "Content Report Action updated successfully."
-  });
-  return;
-}

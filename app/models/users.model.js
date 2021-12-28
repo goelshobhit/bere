@@ -73,10 +73,6 @@ module.exports = (sequelize, Sequelize) => {
         u_heartbeat_timestamp:{
             type: Sequelize.STRING(50)
         },
-        u_online:{
-            type: Sequelize.INTEGER,
-			default: 0
-        },
 		is_autotakedown:{
             type: Sequelize.INTEGER,
 			default: 0

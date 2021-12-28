@@ -191,6 +191,9 @@ db.content_report.hasOne(db.content_report_moderate, {foreignKey: 'content_repor
 db.content_report_moderate.belongsTo(db.content_report, {foreignKey: 'content_report_id', targetKey: 'content_report_id'});
 
 db.bonus_usr.belongsTo(db.user_profile, {foreignKey: 'bonus_usr_id', targetKey: 'u_id'});
+db.energy.belongsTo(db.user_profile, {foreignKey: 'energy_userid', targetKey: 'u_id'});
+db.energy_award.belongsTo(db.user_profile, {foreignKey: 'energy_userid', targetKey: 'u_id'});
+
 
 db.brand_score.belongsTo(db.user_profile, {foreignKey: 'brandscore_user_id', targetKey: 'u_id'});
 db.brand_score.belongsTo(db.tasks, {foreignKey: 'brandscore_task_id', targetKey: 'ta_task_id'});

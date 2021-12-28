@@ -45,7 +45,7 @@ module.exports = app => {
    *                        Score Count:
    *                            type: integer
    *     tags:
-   *       - BrandScore
+   *       - Brand Score
    *     description: Add new Brand Score Task Detail
    *     produces:
    *       - application/json
@@ -71,7 +71,7 @@ module.exports = app => {
 
   	/**
    * @swagger
-   * /api/brandscore_task{brandScoreId}:
+   * /api/brandscore_task/{brandScoreId}:
    *   put:
    *     requestBody:
    *        required: false
@@ -111,7 +111,7 @@ module.exports = app => {
    *                        Score Count:
    *                            type: integer
    *     tags:
-   *       - BrandScore
+   *       - Brand Score
    *     description: Update new Brand Score Task Detail
    *     produces:
    *       - application/json
@@ -179,7 +179,7 @@ module.exports = app => {
      *           schema:
      *              type: string
      *     tags:
-     *       - BrandScore
+     *       - Brand Score
      *     description: Returns all BrandScore Task
      *     produces:
      *       - application/json
@@ -253,7 +253,7 @@ module.exports = app => {
    *                        Score Decrease Del Post:
    *                            type: integer
    *     tags:
-   *       - BrandScore
+   *       - Brand Score
    *     description: Add new Brand Score Detail
    *     produces:
    *       - application/json
@@ -331,7 +331,7 @@ module.exports = app => {
    *                        Score Decrease Del Post:
    *                            type: integer
    *     tags:
-   *       - BrandScore
+   *       - Brand Score
    *     description: Update new Brand Score
    *     produces:
    *       - application/json
@@ -399,7 +399,7 @@ module.exports = app => {
      *           schema:
      *              type: string
      *     tags:
-     *       - BrandScore
+     *       - Brand Score
      *     description: Returns all BrandScore Task
      *     produces:
      *       - application/json
@@ -430,7 +430,7 @@ module.exports = app => {
    *           schema:
    *              type: integer
    *     tags:
-   *       - Delete Brand Score Task 
+   *       - Brand Score 
    *     description: Delete Brand Score Task with id
    *     produces:
    *       - application/json
@@ -461,7 +461,7 @@ module.exports = app => {
    *           schema:
    *              type: integer
    *     tags:
-   *       - Delete Brand Score Task 
+   *       - Brand Score
    *     description: Delete Brand Score with id
    *     produces:
    *       - application/json

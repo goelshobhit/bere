@@ -24,10 +24,11 @@ exports.AddBrandScoreTask = async (req, res) => {
         return;
     }
     const body = req.body;
+    var userId = req.header(process.env.UKEY_HEADER || "x-api-key");
     const brandScoreTaskdata = {
         "brandscore_brand_id": body.hasOwnProperty("Brand Id") ? req.body["Brand Id"] : 0,
         "brandscore_task_id": body.hasOwnProperty("Task Id") ? req.body["Task Id"] : 0,
-        "brandscore_user_id": body.hasOwnProperty("User Id") ? req.body["User Id"] : 0,
+        "brandscore_user_id": body.hasOwnProperty("User Id") ? req.body["User Id"] : userId,
         "brandscore_task_reach_count": body.hasOwnProperty("Reach Count") ? req.body["Reach Count"] : 0,
         "brandscore_task_comments_count": body.hasOwnProperty("Comments Count") ? req.body["Comments Count"] : 0,
         "brandscore_task_pics_count": body.hasOwnProperty("Pics Count") ? req.body["Pics Count"] : 0,
@@ -192,11 +193,12 @@ exports.AddBrandScore = async (req, res) => {
         });
         return;
     }
+    var userId = req.header(process.env.UKEY_HEADER || "x-api-key");
     const body = req.body;
     const brandScoreData = {
         "brandscore_brand_id": body.hasOwnProperty("Brand Id") ? req.body["Brand Id"] : 0,
         "brandscore_task_id": body.hasOwnProperty("Task Id") ? req.body["Task Id"] : 0,
-        "brandscore_user_id": body.hasOwnProperty("User Id") ? req.body["User Id"] : 0,
+        "brandscore_user_id": body.hasOwnProperty("User Id") ? req.body["User Id"] : userId,
         "brandscore_task_reach_score": body.hasOwnProperty("Reach Score") ? req.body["Reach Score"] : 0,
         "brandscore_task_comments_score": body.hasOwnProperty("Comments Score") ? req.body["Comments Score"] : 0,
         "brandscore_task_pics_count_score": body.hasOwnProperty("Pics Count Score") ? req.body["Pics Count Score"] : 0,
@@ -246,6 +248,7 @@ exports.updateBrandScoreTask = async (req, res) => {
             brandscore_id: id
         }
     });
+    var userId = req.header(process.env.UKEY_HEADER || "x-api-key");
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         res.status(422).json({
@@ -256,7 +259,7 @@ exports.updateBrandScoreTask = async (req, res) => {
     const brandScoreTaskdata = {
         "brandscore_brand_id": body.hasOwnProperty("Brand Id") ? req.body["Brand Id"] : 0,
         "brandscore_task_id": body.hasOwnProperty("Task Id") ? req.body["Task Id"] : 0,
-        "brandscore_user_id": body.hasOwnProperty("User Id") ? req.body["User Id"] : 0,
+        "brandscore_user_id": body.hasOwnProperty("User Id") ? req.body["User Id"] : userId,
         "brandscore_task_reach_count": body.hasOwnProperty("Reach Count") ? req.body["Reach Count"] : 0,
         "brandscore_task_comments_count": body.hasOwnProperty("Comments Count") ? req.body["Comments Count"] : 0,
         "brandscore_task_pics_count": body.hasOwnProperty("Pics Count") ? req.body["Pics Count"] : 0,
@@ -305,6 +308,7 @@ exports.updateBrandScoreTask = async (req, res) => {
 exports.updateBrandScore = async (req, res) => {
     const body = req.body;
     const id = req.params.brandScoreId;
+    var userId = req.header(process.env.UKEY_HEADER || "x-api-key");
     var brandScoreDetails = await BrandScore.findOne({
         where: {
             brandscore_id: id
@@ -317,10 +321,11 @@ exports.updateBrandScore = async (req, res) => {
         });
         return;
     }
+    
     const brandScoreData = {
         "brandscore_brand_id": body.hasOwnProperty("Brand Id") ? req.body["Brand Id"] : 0,
         "brandscore_task_id": body.hasOwnProperty("Task Id") ? req.body["Task Id"] : 0,
-        "brandscore_user_id": body.hasOwnProperty("User Id") ? req.body["User Id"] : 0,
+        "brandscore_user_id": body.hasOwnProperty("User Id") ? req.body["User Id"] : userId,
         "brandscore_task_reach_score": body.hasOwnProperty("Reach Score") ? req.body["Reach Score"] : 0,
         "brandscore_task_comments_score": body.hasOwnProperty("Comments Score") ? req.body["Comments Score"] : 0,
         "brandscore_task_pics_count_score": body.hasOwnProperty("Pics Count Score") ? req.body["Pics Count Score"] : 0,
