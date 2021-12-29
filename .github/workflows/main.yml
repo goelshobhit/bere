@@ -123,6 +123,7 @@ jobs:
           SSH_AUTH_SOCK: /tmp/ssh_agent.sock
         run: |
           scp  -o StrictHostKeyChecking=no -r ./.env ./docker-compose.yml ${{ secrets.DROPLET_USER }}@${{ secrets.DROPLET_IP }}:/app
+          scp  -o StrictHostKeyChecking=no -r ./nginx.conf ${{ secrets.DROPLET_USER }}@${{ secrets.DROPLET_IP }}:/app/nginx-conf
           ssh -o StrictHostKeyChecking=no ${{ secrets.DROPLET_USER }}@${{ secrets.DROPLET_IP }} << 'ENDSSH'
             cd /app
             source .env
