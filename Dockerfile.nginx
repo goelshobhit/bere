@@ -7,7 +7,7 @@ WORKDIR $ROOT
 
 RUN mkdir log
 
-COPY docker/nginx-conf/default.conf /tmp/docker.nginx
+COPY nginx.conf /tmp/docker.nginx
 
 
 RUN envsubst '$ROOT' < /tmp/docker.nginx > /etc/nginx/conf.d/default.conf
