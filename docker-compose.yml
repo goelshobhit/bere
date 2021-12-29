@@ -2,20 +2,53 @@ version: "3.8"
 services:
   app:
     image: $DOCKER_NAMESPACE/social-app-api:$TAG
-    container_name: app
+    container_name: nodejs
+    restart: unless-stopped
     env_file: .env
     volumes:
-      - .:/app
       - node_modules:/app/node_modules
+    networks:
+      - app-network
 
-  nginx:
-    image: $DOCKER_NAMESPACE/social-app-nginx:$TAG
-    container_name: nginx
+  webserver:
+    image: nginx:mainline-alpine
+    container_name: webserver
     restart: always
+    volumes:
+      - web-root:/var/www/html
+      - ./docker/nginx-conf:/etc/nginx/conf.d
+      - certbot-etc:/etc/letsencrypt
+      - certbot-var:/var/lib/letsencrypt
     depends_on:
-      - app
+      - nodejs
     ports:
       - 80:80
+    networks:
+      - app-network
+  
+  certbot:
+    image: certbot/certbot
+    container_name: certbot
+    volumes:
+      - certbot-etc:/etc/letsencrypt
+      - certbot-var:/var/lib/letsencrypt
+      - web-root:/var/www/html
+    depends_on:
+      - webserver
+    command: certonly --webroot --webroot-path=/var/www/html --email socialbrands1@gmail.com --agree-tos --no-eff-email --staging -d api.riddim.com  -d www.api.riddim.com
+
 
 volumes:
   node_modules:
+  certbot-etc:
+  certbot-var:
+  web-root:
+    driver: local
+    driver_opts:
+      type: none
+      device: /home/deployer/node_project/views/
+      o: bind
+
+networks:
+  app-network:
+    driver: bridge
