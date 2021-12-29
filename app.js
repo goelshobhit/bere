@@ -261,6 +261,7 @@ require("./app/routes/reward/rewards_given.routes")(app);
 require("./app/routes/reward/rewards_selection.routes")(app);
 require("./app/routes/energy.routes")(app);
 require("./app/routes/brand_score.routes")(app);
+require("./app/routes/blacklisted.routes")(app);
 require("./app/routes/contentReport/content_report_category.routes")(app);
 require("./app/routes/contentReport/content_report.routes")(app);
 server.listen(PORT, function () {
