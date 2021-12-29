@@ -118,7 +118,7 @@ const swaggerOptions = {
    __dirname + "/app/routes/reward/*.js"]
 };
 const swaggerDocs = swaggerJsDoc(swaggerOptions);
-app.use("/", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
+// app.use("/", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 // simple route
 // app.get("/", (req, res) => {
