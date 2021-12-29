@@ -112,6 +112,7 @@ db.bonus_item = require("./bonus/bonus_item.model")(sequelize, Sequelize);
 db.bonus_set = require("./bonus/bonus_set.model")(sequelize, Sequelize);
 db.bonus_summary = require("./bonus/bonus_summary.model")(sequelize, Sequelize);
 
+db.blacklisted = require("./blacklisted.model")(sequelize, Sequelize);
 db.energy = require("./energy.model")(sequelize, Sequelize);
 db.energy_award = require("./energy_award.model")(sequelize, Sequelize);
 db.reward_center_dist = require("./reward/reward_center_dist.model")(sequelize, Sequelize);

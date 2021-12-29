@@ -2,6 +2,7 @@ const db = require("../models");
 const UserProfile = db.user_profile;
 const Task = db.tasks;
 const Brand = db.brands;
+const BlackListed = db.blacklisted;
 const Campaigns = db.campaigns;
 const ContestTask = db.contest_task;
 const Comment = db.post_comment;
@@ -102,6 +103,7 @@ exports.getSearchObject = async (req, res) => {
  * @return {Promise}
  */
 exports.searchRecords = async (req, res) => {
+  const BlackListedList = await BlackListed.findAll();
   const searchObjectConstant = common.searchObject();
   if (!req.query.keyWord) {
     res.status(400).send({
@@ -136,13 +138,28 @@ exports.searchRecords = async (req, res) => {
   for (var j = 0; j < searchObjectValues.length; j++) {
     var searchObjectValue = searchObjectValues[j].search_obj_category.toLowerCase();
     if (searchObjectValue == searchObjectConstant.Profile) {
-      var userOptions = {
+      const userBlackListedConditions = 
+        BlackListedList.filter(x=>x.table_name==="UserProfile")
+        .map(x => `%${x.keyword}%`);
+      const blackListedOption = 
+        userBlackListedConditions.length > 0 ? 
+        userBlackListedConditions : null;
+      var userOptions = blackListedOption ? 
+      {
         where: {
           u_display_name: {
-            [Op.iLike]: `%${keyWord}%`
+            [Op.iLike]: `%${keyWord}%`,
+            [Op.notILike]: { [Op.any]: blackListedOption }
           }
         }
-      };
+      } :  
+      {
+        where: {
+          u_display_name: {
+            [Op.iLike]: `%${keyWord}%`,
+          }
+        }
+      }
       const UserProfileDetails = await UserProfile.findAll(userOptions);
       if (UserProfileDetails.length) {
         var UserProfileDisplayDetails = [];
@@ -159,13 +176,29 @@ exports.searchRecords = async (req, res) => {
     }
 
     if (searchObjectValue == searchObjectConstant.Comments) {
-      var commentOptions = {
+      const commentBlackListedConditions = 
+        BlackListedList.filter(x=>x.table_name==="Comments")
+        .map(x => `%${x.keyword}%`);
+      const blackListedOption = 
+        commentBlackListedConditions.length > 0 ? 
+        commentBlackListedConditions : null;
+      var commentOptions = blackListedOption ?
+      {
+        where: {
+          pc_comments: {
+            [Op.iLike]: `%${keyWord}%`,
+            [Op.notILike]: { [Op.any]: blackListedOption }
+          }
+        }
+      } : 
+      {
         where: {
           pc_comments: {
             [Op.iLike]: `%${keyWord}%`
           }
         }
-      };
+      }
+      ;
       const CommentsDetails = await Comment.findAll(commentOptions);
       if (CommentsDetails.length) {
         var CommentsDisplayDetails = [];
@@ -179,14 +212,31 @@ exports.searchRecords = async (req, res) => {
       }
     }
     if (searchObjectValue == searchObjectConstant.Tasks) {
-      var taskOptions = {
+      const taskBlackListedConditions = 
+        BlackListedList.filter(x=>x.table_name==="Tasks")
+        .map(x => `%${x.keyword}%`);
+      const blackListedOption = 
+        taskBlackListedConditions.length > 0 ? 
+        taskBlackListedConditions : null;
+      var taskOptions = blackListedOption ? 
+      {
+        where: {
+          ta_name: {
+            [Op.iLike]: `%${keyWord}%`,
+            [Op.notILike]: { [Op.any]: blackListedOption }
+          },
+          ta_status: 2
+        }
+      } :
+      {
         where: {
           ta_name: {
             [Op.iLike]: `%${keyWord}%`
           },
           ta_status: 2
         }
-      };
+      }
+      ;
       const TaskDetails = await Task.findAll(taskOptions);
       if (TaskDetails.length) {
         const TaskDisplayDetails = [];
@@ -220,13 +270,33 @@ exports.searchRecords = async (req, res) => {
       }
     }
     if (searchObjectValue == searchObjectConstant.Contest) {
-      var contentOptions = {
+      const contentTaskBlackListedConditions = 
+        BlackListedList.filter(x=>x.table_name==="ContestTask")
+        .map(x => ({
+          ct_name: {
+            [Op.notLike]: `%${x.keyword}%`
+          }
+        }));
+      const blackListedOption = 
+        contentTaskBlackListedConditions.length > 0 ? 
+        contentTaskBlackListedConditions : null;
+      var contentOptions = blackListedOption ?
+      {
+        where: {
+          ct_name: {
+            [Op.iLike]: `%${keyWord}%`,
+            [Op.notILike]: { [Op.any]: blackListedOption }
+          }
+        }
+      } :
+      {
         where: {
           ct_name: {
             [Op.iLike]: `%${keyWord}%`
           }
         }
-      };
+      }
+      ;
       const ContestTaskDetails = await ContestTask.findAll(contentOptions);
       if (ContestTaskDetails.length) {
         const ContestTaskDisplayDetails = [];
@@ -247,7 +317,13 @@ exports.searchRecords = async (req, res) => {
       }
     }
     if (searchObjectValue == searchObjectConstant.Brand) {
-      var brandOptions = {
+      const brandBlackListedConditions = 
+        BlackListedList.filter(x=>x.table_name==="Brand")
+        .map(x => `%${x.keyword}%`);
+      const blackListedOption = 
+        brandBlackListedConditions.length > 0 ? 
+        brandBlackListedConditions : null;
+      var brandOptions = blackListedOption ? {
         /* check active task exist in brand, return param is_task_active 1 if active task exist. */
         include: [
           {
@@ -255,7 +331,36 @@ exports.searchRecords = async (req, res) => {
             required:false,
             attributes:['cp_campaign_id'],
             where : {
-              cp_campaign_status: 2
+              cp_campaign_status: 2,
+            },
+            include: [{
+              model: Task,
+              required:false,
+              where : {
+                ta_status: 2
+              },
+                attributes:['ta_name', 'ta_task_id'],
+              }]
+          }
+        ],
+        where: {
+          cr_co_name: {
+            [Op.iLike]: `%${keyWord}%`,
+            [Op.notILike]: { [Op.any]:blackListedOption }
+          },
+          cr_co_status:1
+        }
+      }
+      : 
+      {
+        /* check active task exist in brand, return param is_task_active 1 if active task exist. */
+        include: [
+          {
+            model: Campaigns,
+            required:false,
+            attributes:['cp_campaign_id'],
+            where : {
+              cp_campaign_status: 2,
             },
             include: [{
               model: Task,
@@ -273,7 +378,8 @@ exports.searchRecords = async (req, res) => {
           },
           cr_co_status:1
         }
-      };
+      }
+      ;
       const BrandTaskDetails = await Brand.findAll(brandOptions);
       if (BrandTaskDetails.length) {
         const BrandTaskDisplayDetails = [];
@@ -298,7 +404,27 @@ exports.searchRecords = async (req, res) => {
       }
     }
     if (searchObjectValue == searchObjectConstant.Hashtags) {
-      var hashtagOptions = {
+      const hashTagsBlackListedConditions = 
+        BlackListedList.filter(x=>x.table_name==="Hashtags")
+        .map(x => `%${x.keyword}%`);
+      const blackListedOption = 
+        hashTagsBlackListedConditions.length > 0 ? 
+        hashTagsBlackListedConditions : null;
+      var hashtagOptions = blackListedOption ?
+      {
+        where: {
+          th_hashtag_values: {
+            [Op.iLike]: `%${keyWord}%`,
+            [Op.notILike]: { [Op.any]:blackListedOption }
+          }
+        },
+        attributes: [
+          'th_hashtag_values',
+          [sequelize.fn('COUNT', sequelize.col('th_hashtag_values')), 'hashtag_count']
+        ],
+        group: ['th_hashtag_values']
+      } :
+      {
         where: {
           th_hashtag_values: {
             [Op.iLike]: `%${keyWord}%`
@@ -309,7 +435,8 @@ exports.searchRecords = async (req, res) => {
           [sequelize.fn('COUNT', sequelize.col('th_hashtag_values')), 'hashtag_count']
         ],
         group: ['th_hashtag_values']
-      };
+      }
+      ;
       const HashtagsDetails = await Hashtags.findAll(hashtagOptions);
       
       if (HashtagsDetails.length) {
