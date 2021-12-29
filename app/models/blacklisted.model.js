@@ -8,10 +8,6 @@ module.exports = (sequelize, Sequelize) => {
 		keyword:{
 			type: Sequelize.TEXT,
             allowNull: false,
-		},
-		table_name:{
-			type: Sequelize.TEXT,
-			allowNull: false,
 		}
     }, {
         createdAt: 'bl_created_at',
