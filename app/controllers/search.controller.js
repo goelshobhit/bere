@@ -103,368 +103,251 @@ exports.getSearchObject = async (req, res) => {
  * @return {Promise}
  */
 exports.searchRecords = async (req, res) => {
-  const BlackListedList = await BlackListed.findAll();
-  const searchObjectConstant = common.searchObject();
-  if (!req.query.keyWord) {
+  const blackListedList = 
+    await BlackListed.findAll();
+  const blackListedShorthanded = blackListedList.map(x => x.keyword);
+  const keyWord = req.query.keyWord;
+  if(!blackListedShorthanded.includes(keyWord)) {
+    const searchObjectConstant = common.searchObject();
+    if (!req.query.keyWord) {
+      res.status(400).send({
+        message: "Keyword is required parameters."
+      });
+      return;
+    }
+    const searchObjectValues = await SearchObjects.findAll({
+      where: {},
+      attributes: ['search_obj_category']
+    });
+    /* get Search result from search_results table */
+    const response_data = {};
+    var userId = req.header(process.env.UKEY_HEADER || "x-api-key");
+    var options = {
+      where: {
+        search_uid: userId
+      }
+    };
+    const Searchdata = await SearchResults.findAll(options);
+    var SearchUserCount = Searchdata.length;
+    if (Searchdata) {
+      for (var i = 0; i < SearchUserCount; i++) {
+        var FirstRecordId = Searchdata[0].id;
+        if (Searchdata[i].search_keyword == keyWord) {
+          res.status(200).send(Searchdata[i].search_results);
+          return;
+        }
+      }
+    }
+    for (var j = 0; j < searchObjectValues.length; j++) {
+      var searchObjectValue = searchObjectValues[j].search_obj_category.toLowerCase();
+      if (searchObjectValue == searchObjectConstant.Profile) {
+        var userOptions = {
+          where: {
+            u_display_name: {
+              [Op.iLike]: `%${keyWord}%`
+            }
+          }
+        };
+        const UserProfileDetails = await UserProfile.findAll(userOptions);
+        if (UserProfileDetails.length) {
+          var UserProfileDisplayDetails = [];
+          for (const UserProfileDetail in UserProfileDetails) {
+            UserProfileDisplayDetails.push({
+              "u_display_name": UserProfileDetails[UserProfileDetail].u_display_name,
+              "u_f_name": UserProfileDetails[UserProfileDetail].u_f_name,
+              "u_l_name": UserProfileDetails[UserProfileDetail].u_l_name,
+              "u_prof_img_path": UserProfileDetails[UserProfileDetail].u_prof_img_path
+            });
+          }
+          response_data.Profile = UserProfileDisplayDetails;
+        }
+      }
+
+      if (searchObjectValue == searchObjectConstant.Comments) {
+        var commentOptions = {
+          where: {
+            pc_comments: {
+              [Op.iLike]: `%${keyWord}%`
+            }
+          }
+        };
+        const CommentsDetails = await Comment.findAll(commentOptions);
+        if (CommentsDetails.length) {
+          var CommentsDisplayDetails = [];
+          for (const CommentsDetail in CommentsDetails) {
+            CommentsDisplayDetails.push({
+              "pc_comments": CommentsDetails[CommentsDetail].pc_comments,
+              "pc_comment_prof_img_url": CommentsDetails[CommentsDetail].pc_comment_prof_img_url
+            });
+          }
+          response_data.Comments = CommentsDisplayDetails;
+        }
+      }
+      if (searchObjectValue == searchObjectConstant.Tasks) {
+        var taskOptions = {
+          where: {
+            ta_name: {
+              [Op.iLike]: `%${keyWord}%`
+            },
+            ta_status: 2
+          }
+        };
+        const TaskDetails = await Task.findAll(taskOptions);
+        if (TaskDetails.length) {
+          const TaskDisplayDetails = [];
+          const TaskDisplayVideoDetails = [];
+          for (const TaskDetail in TaskDetails) {
+            const TaskData = {
+              "ta_name": TaskDetails[TaskDetail].ta_name,
+              "ta_desc": TaskDetails[TaskDetail].ta_desc,
+              "ta_oneline_summary": TaskDetails[TaskDetail].ta_oneline_summary,
+              "ta_post_insp_image": TaskDetails[TaskDetail].ta_post_insp_image,
+              "ta_header_image": TaskDetails[TaskDetail].ta_header_image,
+              "ta_do": TaskDetails[TaskDetail].ta_do,
+              "ta_dont_do": TaskDetails[TaskDetail].ta_dont_do,
+              "ta_insta_question": TaskDetails[TaskDetail].ta_insta_question,
+              "ta_type": TaskDetails[TaskDetail].ta_type,
+              "ta_start_date": TaskDetails[TaskDetail].ta_start_date,
+              "ta_end_date": TaskDetails[TaskDetail].ta_end_date
+            };
+            if (TaskDetails[TaskDetail].ta_type == 3) {
+              TaskDisplayVideoDetails.push(TaskData);
+            } else {
+              TaskDisplayDetails.push(TaskData);
+            }
+          }
+          if (TaskDisplayDetails.length) {
+            response_data.Tasks = TaskDisplayDetails;
+          }
+          if (TaskDisplayVideoDetails.length) {
+            response_data.Videos = TaskDisplayVideoDetails;
+          }
+        }
+      }
+      if (searchObjectValue == searchObjectConstant.Contest) {
+        var contentOptions = {
+          where: {
+            ct_name: {
+              [Op.iLike]: `%${keyWord}%`
+            }
+          }
+        };
+        const ContestTaskDetails = await ContestTask.findAll(contentOptions);
+        if (ContestTaskDetails.length) {
+          const ContestTaskDisplayDetails = [];
+          for (const ContestTaskDetail in ContestTaskDetails) {
+            ContestTaskDisplayDetails.push({
+              "ct_name": ContestTaskDetails[ContestTaskDetail].ct_name,
+              "ct_post_insp_image": ContestTaskDetails[ContestTaskDetail].ct_post_insp_image,
+              "ct_hashtag": ContestTaskDetails[ContestTaskDetail].ct_hashtag,
+              "ct_header_image": ContestTaskDetails[ContestTaskDetail].ct_header_image,
+              "ct_winner_token": ContestTaskDetails[ContestTaskDetail].ct_winner_token,
+              "ct_type": ContestTaskDetails[ContestTaskDetail].ct_type,
+              "ct_start_voting_date": ContestTaskDetails[ContestTaskDetail].ct_start_voting_date,
+              "ct_end_voting_date": ContestTaskDetails[ContestTaskDetail].ct_end_voting_date,
+              "ct_winner_date": ContestTaskDetails[ContestTaskDetail].ct_winner_date
+            });
+          }
+          response_data.Contest = ContestTaskDisplayDetails;
+        }
+      }
+      if (searchObjectValue == searchObjectConstant.Brand) {
+        var brandOptions = {
+          /* check active task exist in brand, return param is_task_active 1 if active task exist. */
+          include: [
+            {
+              model: Campaigns,
+              required:false,
+              attributes:['cp_campaign_id'],
+              where : {
+                cp_campaign_status: 2
+              },
+              include: [{
+                model: Task,
+                required:false,
+                where : {
+                  ta_status: 2
+                },
+                  attributes:['ta_name', 'ta_task_id'],
+                }]
+            }
+          ],
+          where: {
+            cr_co_name: {
+              [Op.iLike]: `%${keyWord}%`
+            },
+            cr_co_status:1
+          }
+        };
+        const BrandTaskDetails = await Brand.findAll(brandOptions);
+        if (BrandTaskDetails.length) {
+          const BrandTaskDisplayDetails = [];
+          for (const BrandTaskDetail in BrandTaskDetails) {
+            var isActiveTask = 0;
+            if (BrandTaskDetails[BrandTaskDetail].campaigns.length) {
+              const BrandCampaigns = BrandTaskDetails[BrandTaskDetail].campaigns;
+              for (const BrandCampaign in BrandCampaigns) {
+                if (BrandCampaigns[BrandCampaign].tasks.length) {
+                  isActiveTask = 1;
+                }
+              }
+            }
+            BrandTaskDisplayDetails.push({
+              "cr_co_name": BrandTaskDetails[BrandTaskDetail].cr_co_name,
+              "cr_co_logo_path": BrandTaskDetails[BrandTaskDetail].cr_co_logo_path,
+              "cr_co_cover_img_path": BrandTaskDetails[BrandTaskDetail].cr_co_cover_img_path,
+              "is_task_active": isActiveTask
+            });
+          }
+          response_data.Brand = BrandTaskDisplayDetails;
+        }
+      }
+      if (searchObjectValue == searchObjectConstant.Hashtags) {
+        var hashtagOptions = {
+          where: {
+            th_hashtag_values: {
+              [Op.iLike]: `%${keyWord}%`
+            }
+          },
+          attributes: [
+            'th_hashtag_values',
+            [sequelize.fn('COUNT', sequelize.col('th_hashtag_values')), 'hashtag_count']
+          ],
+          group: ['th_hashtag_values']
+        };
+        const HashtagsDetails = await Hashtags.findAll(hashtagOptions);
+        
+        if (HashtagsDetails.length) {
+          response_data.Hashtags = HashtagsDetails;
+        }
+      }
+    }
+    if (!Object.keys(response_data).length) {
+      res.status(500).send({
+        message: "Record not found"
+      });
+      return
+    }
+    const data = {
+      "search_uid": userId,
+      "search_date": new Date(),
+      "search_keyword": keyWord,
+      "search_results": response_data
+    }
+    if (FirstRecordId && SearchUserCount > common.searchUserCount()) {
+      SearchResults.destroy({
+        where: { id: FirstRecordId }
+      })
+    }
+    res.status(200).send(response_data);
+    SearchResults.create(data)
+      .catch(err => {
+        logger.log("error", "Some error occurred while creating the Campaign=" + err);
+      });
+  } else {
     res.status(400).send({
-      message: "Keyword is required parameters."
+      message: "Keyword has been blacklisted."
     });
     return;
   }
-  const searchObjectValues = await SearchObjects.findAll({
-    where: {},
-    attributes: ['search_obj_category']
-  });
-  const keyWord = req.query.keyWord;
-  /* get Search result from search_results table */
-  const response_data = {};
-  var userId = req.header(process.env.UKEY_HEADER || "x-api-key");
-  var options = {
-    where: {
-      search_uid: userId
-    }
-  };
-  const Searchdata = await SearchResults.findAll(options);
-  var SearchUserCount = Searchdata.length;
-  if (Searchdata) {
-    for (var i = 0; i < SearchUserCount; i++) {
-      var FirstRecordId = Searchdata[0].id;
-      if (Searchdata[i].search_keyword == keyWord) {
-        res.status(200).send(Searchdata[i].search_results);
-        return;
-      }
-    }
-  }
-  for (var j = 0; j < searchObjectValues.length; j++) {
-    var searchObjectValue = searchObjectValues[j].search_obj_category.toLowerCase();
-    if (searchObjectValue == searchObjectConstant.Profile) {
-      const userBlackListedConditions = 
-        BlackListedList.filter(x=>x.table_name==="UserProfile")
-        .map(x => `%${x.keyword}%`);
-      const blackListedOption = 
-        userBlackListedConditions.length > 0 ? 
-        userBlackListedConditions : null;
-      var userOptions = blackListedOption ? 
-      {
-        where: {
-          u_display_name: {
-            [Op.iLike]: `%${keyWord}%`,
-            [Op.notILike]: { [Op.any]: blackListedOption }
-          }
-        }
-      } :  
-      {
-        where: {
-          u_display_name: {
-            [Op.iLike]: `%${keyWord}%`,
-          }
-        }
-      }
-      const UserProfileDetails = await UserProfile.findAll(userOptions);
-      if (UserProfileDetails.length) {
-        var UserProfileDisplayDetails = [];
-        for (const UserProfileDetail in UserProfileDetails) {
-          UserProfileDisplayDetails.push({
-            "u_display_name": UserProfileDetails[UserProfileDetail].u_display_name,
-            "u_f_name": UserProfileDetails[UserProfileDetail].u_f_name,
-            "u_l_name": UserProfileDetails[UserProfileDetail].u_l_name,
-            "u_prof_img_path": UserProfileDetails[UserProfileDetail].u_prof_img_path
-          });
-        }
-        response_data.Profile = UserProfileDisplayDetails;
-      }
-    }
-
-    if (searchObjectValue == searchObjectConstant.Comments) {
-      const commentBlackListedConditions = 
-        BlackListedList.filter(x=>x.table_name==="Comments")
-        .map(x => `%${x.keyword}%`);
-      const blackListedOption = 
-        commentBlackListedConditions.length > 0 ? 
-        commentBlackListedConditions : null;
-      var commentOptions = blackListedOption ?
-      {
-        where: {
-          pc_comments: {
-            [Op.iLike]: `%${keyWord}%`,
-            [Op.notILike]: { [Op.any]: blackListedOption }
-          }
-        }
-      } : 
-      {
-        where: {
-          pc_comments: {
-            [Op.iLike]: `%${keyWord}%`
-          }
-        }
-      }
-      ;
-      const CommentsDetails = await Comment.findAll(commentOptions);
-      if (CommentsDetails.length) {
-        var CommentsDisplayDetails = [];
-        for (const CommentsDetail in CommentsDetails) {
-          CommentsDisplayDetails.push({
-            "pc_comments": CommentsDetails[CommentsDetail].pc_comments,
-            "pc_comment_prof_img_url": CommentsDetails[CommentsDetail].pc_comment_prof_img_url
-          });
-        }
-        response_data.Comments = CommentsDisplayDetails;
-      }
-    }
-    if (searchObjectValue == searchObjectConstant.Tasks) {
-      const taskBlackListedConditions = 
-        BlackListedList.filter(x=>x.table_name==="Tasks")
-        .map(x => `%${x.keyword}%`);
-      const blackListedOption = 
-        taskBlackListedConditions.length > 0 ? 
-        taskBlackListedConditions : null;
-      var taskOptions = blackListedOption ? 
-      {
-        where: {
-          ta_name: {
-            [Op.iLike]: `%${keyWord}%`,
-            [Op.notILike]: { [Op.any]: blackListedOption }
-          },
-          ta_status: 2
-        }
-      } :
-      {
-        where: {
-          ta_name: {
-            [Op.iLike]: `%${keyWord}%`
-          },
-          ta_status: 2
-        }
-      }
-      ;
-      const TaskDetails = await Task.findAll(taskOptions);
-      if (TaskDetails.length) {
-        const TaskDisplayDetails = [];
-        const TaskDisplayVideoDetails = [];
-        for (const TaskDetail in TaskDetails) {
-          const TaskData = {
-            "ta_name": TaskDetails[TaskDetail].ta_name,
-            "ta_desc": TaskDetails[TaskDetail].ta_desc,
-            "ta_oneline_summary": TaskDetails[TaskDetail].ta_oneline_summary,
-            "ta_post_insp_image": TaskDetails[TaskDetail].ta_post_insp_image,
-            "ta_header_image": TaskDetails[TaskDetail].ta_header_image,
-            "ta_do": TaskDetails[TaskDetail].ta_do,
-            "ta_dont_do": TaskDetails[TaskDetail].ta_dont_do,
-            "ta_insta_question": TaskDetails[TaskDetail].ta_insta_question,
-            "ta_type": TaskDetails[TaskDetail].ta_type,
-            "ta_start_date": TaskDetails[TaskDetail].ta_start_date,
-            "ta_end_date": TaskDetails[TaskDetail].ta_end_date
-          };
-          if (TaskDetails[TaskDetail].ta_type == 3) {
-            TaskDisplayVideoDetails.push(TaskData);
-          } else {
-            TaskDisplayDetails.push(TaskData);
-          }
-        }
-        if (TaskDisplayDetails.length) {
-          response_data.Tasks = TaskDisplayDetails;
-        }
-        if (TaskDisplayVideoDetails.length) {
-          response_data.Videos = TaskDisplayVideoDetails;
-        }
-      }
-    }
-    if (searchObjectValue == searchObjectConstant.Contest) {
-      const contentTaskBlackListedConditions = 
-        BlackListedList.filter(x=>x.table_name==="ContestTask")
-        .map(x => ({
-          ct_name: {
-            [Op.notLike]: `%${x.keyword}%`
-          }
-        }));
-      const blackListedOption = 
-        contentTaskBlackListedConditions.length > 0 ? 
-        contentTaskBlackListedConditions : null;
-      var contentOptions = blackListedOption ?
-      {
-        where: {
-          ct_name: {
-            [Op.iLike]: `%${keyWord}%`,
-            [Op.notILike]: { [Op.any]: blackListedOption }
-          }
-        }
-      } :
-      {
-        where: {
-          ct_name: {
-            [Op.iLike]: `%${keyWord}%`
-          }
-        }
-      }
-      ;
-      const ContestTaskDetails = await ContestTask.findAll(contentOptions);
-      if (ContestTaskDetails.length) {
-        const ContestTaskDisplayDetails = [];
-        for (const ContestTaskDetail in ContestTaskDetails) {
-          ContestTaskDisplayDetails.push({
-            "ct_name": ContestTaskDetails[ContestTaskDetail].ct_name,
-            "ct_post_insp_image": ContestTaskDetails[ContestTaskDetail].ct_post_insp_image,
-            "ct_hashtag": ContestTaskDetails[ContestTaskDetail].ct_hashtag,
-            "ct_header_image": ContestTaskDetails[ContestTaskDetail].ct_header_image,
-            "ct_winner_token": ContestTaskDetails[ContestTaskDetail].ct_winner_token,
-            "ct_type": ContestTaskDetails[ContestTaskDetail].ct_type,
-            "ct_start_voting_date": ContestTaskDetails[ContestTaskDetail].ct_start_voting_date,
-            "ct_end_voting_date": ContestTaskDetails[ContestTaskDetail].ct_end_voting_date,
-            "ct_winner_date": ContestTaskDetails[ContestTaskDetail].ct_winner_date
-          });
-        }
-        response_data.Contest = ContestTaskDisplayDetails;
-      }
-    }
-    if (searchObjectValue == searchObjectConstant.Brand) {
-      const brandBlackListedConditions = 
-        BlackListedList.filter(x=>x.table_name==="Brand")
-        .map(x => `%${x.keyword}%`);
-      const blackListedOption = 
-        brandBlackListedConditions.length > 0 ? 
-        brandBlackListedConditions : null;
-      var brandOptions = blackListedOption ? {
-        /* check active task exist in brand, return param is_task_active 1 if active task exist. */
-        include: [
-          {
-            model: Campaigns,
-            required:false,
-            attributes:['cp_campaign_id'],
-            where : {
-              cp_campaign_status: 2,
-            },
-            include: [{
-              model: Task,
-              required:false,
-              where : {
-                ta_status: 2
-              },
-                attributes:['ta_name', 'ta_task_id'],
-              }]
-          }
-        ],
-        where: {
-          cr_co_name: {
-            [Op.iLike]: `%${keyWord}%`,
-            [Op.notILike]: { [Op.any]:blackListedOption }
-          },
-          cr_co_status:1
-        }
-      }
-      : 
-      {
-        /* check active task exist in brand, return param is_task_active 1 if active task exist. */
-        include: [
-          {
-            model: Campaigns,
-            required:false,
-            attributes:['cp_campaign_id'],
-            where : {
-              cp_campaign_status: 2,
-            },
-            include: [{
-              model: Task,
-              required:false,
-              where : {
-                ta_status: 2
-              },
-                attributes:['ta_name', 'ta_task_id'],
-              }]
-          }
-        ],
-        where: {
-          cr_co_name: {
-            [Op.iLike]: `%${keyWord}%`
-          },
-          cr_co_status:1
-        }
-      }
-      ;
-      const BrandTaskDetails = await Brand.findAll(brandOptions);
-      if (BrandTaskDetails.length) {
-        const BrandTaskDisplayDetails = [];
-        for (const BrandTaskDetail in BrandTaskDetails) {
-          var isActiveTask = 0;
-          if (BrandTaskDetails[BrandTaskDetail].campaigns.length) {
-            const BrandCampaigns = BrandTaskDetails[BrandTaskDetail].campaigns;
-            for (const BrandCampaign in BrandCampaigns) {
-              if (BrandCampaigns[BrandCampaign].tasks.length) {
-                isActiveTask = 1;
-              }
-            }
-          }
-          BrandTaskDisplayDetails.push({
-            "cr_co_name": BrandTaskDetails[BrandTaskDetail].cr_co_name,
-            "cr_co_logo_path": BrandTaskDetails[BrandTaskDetail].cr_co_logo_path,
-            "cr_co_cover_img_path": BrandTaskDetails[BrandTaskDetail].cr_co_cover_img_path,
-            "is_task_active": isActiveTask
-          });
-        }
-        response_data.Brand = BrandTaskDisplayDetails;
-      }
-    }
-    if (searchObjectValue == searchObjectConstant.Hashtags) {
-      const hashTagsBlackListedConditions = 
-        BlackListedList.filter(x=>x.table_name==="Hashtags")
-        .map(x => `%${x.keyword}%`);
-      const blackListedOption = 
-        hashTagsBlackListedConditions.length > 0 ? 
-        hashTagsBlackListedConditions : null;
-      var hashtagOptions = blackListedOption ?
-      {
-        where: {
-          th_hashtag_values: {
-            [Op.iLike]: `%${keyWord}%`,
-            [Op.notILike]: { [Op.any]:blackListedOption }
-          }
-        },
-        attributes: [
-          'th_hashtag_values',
-          [sequelize.fn('COUNT', sequelize.col('th_hashtag_values')), 'hashtag_count']
-        ],
-        group: ['th_hashtag_values']
-      } :
-      {
-        where: {
-          th_hashtag_values: {
-            [Op.iLike]: `%${keyWord}%`
-          }
-        },
-        attributes: [
-          'th_hashtag_values',
-          [sequelize.fn('COUNT', sequelize.col('th_hashtag_values')), 'hashtag_count']
-        ],
-        group: ['th_hashtag_values']
-      }
-      ;
-      const HashtagsDetails = await Hashtags.findAll(hashtagOptions);
-      
-      if (HashtagsDetails.length) {
-        response_data.Hashtags = HashtagsDetails;
-      }
-    }
-  }
-  if (!Object.keys(response_data).length) {
-    res.status(500).send({
-      message: "Record not found"
-    });
-    return
-  }
-  const data = {
-    "search_uid": userId,
-    "search_date": new Date(),
-    "search_keyword": keyWord,
-    "search_results": response_data
-  }
-  if (FirstRecordId && SearchUserCount > common.searchUserCount()) {
-    SearchResults.destroy({
-      where: { id: FirstRecordId }
-    })
-  }
-  res.status(200).send(response_data);
-  SearchResults.create(data)
-    .catch(err => {
-      logger.log("error", "Some error occurred while creating the Campaign=" + err);
-    });
-
 }
