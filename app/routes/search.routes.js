@@ -59,7 +59,6 @@ module.exports = app => {
    *     parameters:
    *         - name: keyWord
    *           in: query
-   *           required: true
    *           schema:
    *              type: string
    *     tags:

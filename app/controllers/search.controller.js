@@ -124,7 +124,6 @@ exports.getSearchObject = async (req, res) => {
       }
     }
 }
-
 /**
  * Function to get search result
  * @param  {object}  req expressJs request object
@@ -136,20 +135,14 @@ exports.searchRecords = async (req, res) => {
     await BlackListed.findAll();
   const blackListedShorthanded = blackListedList.map(x => x.keyword);
   const keyWord = req.query.keyWord;
-  if(!blackListedShorthanded.includes(keyWord)) {
-    const searchObjectConstant = common.searchObject();
-    if (!req.query.keyWord) {
-      res.status(400).send({
-        message: "Keyword is required parameters."
-      });
-      return;
-    }
-    const searchObjectValues = await SearchObjects.findAll({
-      where: {},
-      attributes: ['search_obj_category']
-    });
+  const searchObjectValues = await SearchObjects.findAll({
+    where: {},
+    attributes: ['search_obj_category']
+  });
+  const searchObjectConstant = common.searchObject();
+  const response_data = {};
+  if(keyWord && !blackListedShorthanded.includes(keyWord)) {
     /* get Search result from search_results table */
-    const response_data = {};
     var userId = req.header(process.env.UKEY_HEADER || "x-api-key");
     var options = {
       where: {
@@ -374,9 +367,24 @@ exports.searchRecords = async (req, res) => {
         logger.log("error", "Some error occurred while creating the Campaign=" + err);
       });
   } else {
-    res.status(400).send({
-      message: "Keyword has been blacklisted."
-    });
-    return;
+    var userOptions = {
+      order: db.Sequelize.literal('random()'), limit: 8
+    };
+    const UserProfileDetails = await UserProfile.findAll(userOptions);
+    if (UserProfileDetails.length) {
+        var UserProfileDisplayDetails = [];
+        for (const UserProfileDetail in UserProfileDetails) {
+          UserProfileDisplayDetails.push({
+            "u_display_name": UserProfileDetails[UserProfileDetail].u_display_name,
+            "u_f_name": UserProfileDetails[UserProfileDetail].u_f_name,
+            "u_l_name": UserProfileDetails[UserProfileDetail].u_l_name,
+            "u_prof_img_path": UserProfileDetails[UserProfileDetail].u_prof_img_path
+          });
+        }
+        
+        response_data.Profile = UserProfileDisplayDetails;
+        res.status(200).send(response_data);
+        return;
+    }
   }
 }
