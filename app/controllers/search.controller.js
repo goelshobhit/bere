@@ -175,6 +175,7 @@ exports.searchRecords = async (req, res) => {
           var UserProfileDisplayDetails = [];
           for (const UserProfileDetail in UserProfileDetails) {
             UserProfileDisplayDetails.push({
+              "u_id": UserProfileDetails[UserProfileDetail].u_id,
               "u_display_name": UserProfileDetails[UserProfileDetail].u_display_name,
               "u_f_name": UserProfileDetails[UserProfileDetail].u_f_name,
               "u_l_name": UserProfileDetails[UserProfileDetail].u_l_name,
@@ -198,6 +199,7 @@ exports.searchRecords = async (req, res) => {
           var CommentsDisplayDetails = [];
           for (const CommentsDetail in CommentsDetails) {
             CommentsDisplayDetails.push({
+              "pc_post_id": CommentsDetails[CommentsDetail].pc_post_id,
               "pc_comments": CommentsDetails[CommentsDetail].pc_comments,
               "pc_comment_prof_img_url": CommentsDetails[CommentsDetail].pc_comment_prof_img_url
             });
@@ -220,6 +222,7 @@ exports.searchRecords = async (req, res) => {
           const TaskDisplayVideoDetails = [];
           for (const TaskDetail in TaskDetails) {
             const TaskData = {
+              "ta_task_id": TaskDetails[TaskDetail].ta_task_id,
               "ta_name": TaskDetails[TaskDetail].ta_name,
               "ta_desc": TaskDetails[TaskDetail].ta_desc,
               "ta_oneline_summary": TaskDetails[TaskDetail].ta_oneline_summary,
@@ -259,6 +262,7 @@ exports.searchRecords = async (req, res) => {
           const ContestTaskDisplayDetails = [];
           for (const ContestTaskDetail in ContestTaskDetails) {
             ContestTaskDisplayDetails.push({
+              "ct_id": ContestTaskDetails[ContestTaskDetail].ct_id,
               "ct_name": ContestTaskDetails[ContestTaskDetail].ct_name,
               "ct_post_insp_image": ContestTaskDetails[ContestTaskDetail].ct_post_insp_image,
               "ct_hashtag": ContestTaskDetails[ContestTaskDetail].ct_hashtag,
@@ -315,6 +319,7 @@ exports.searchRecords = async (req, res) => {
               }
             }
             BrandTaskDisplayDetails.push({
+              "cr_co_id": BrandTaskDetails[BrandTaskDetail].cr_co_id,
               "cr_co_name": BrandTaskDetails[BrandTaskDetail].cr_co_name,
               "cr_co_logo_path": BrandTaskDetails[BrandTaskDetail].cr_co_logo_path,
               "cr_co_cover_img_path": BrandTaskDetails[BrandTaskDetail].cr_co_cover_img_path,
@@ -332,10 +337,11 @@ exports.searchRecords = async (req, res) => {
             }
           },
           attributes: [
+            'th_hashtag_id',
             'th_hashtag_values',
             [sequelize.fn('COUNT', sequelize.col('th_hashtag_values')), 'hashtag_count']
           ],
-          group: ['th_hashtag_values']
+          group: ['th_hashtag_id', 'th_hashtag_values']
         };
         const HashtagsDetails = await Hashtags.findAll(hashtagOptions);
         
@@ -375,6 +381,7 @@ exports.searchRecords = async (req, res) => {
         var UserProfileDisplayDetails = [];
         for (const UserProfileDetail in UserProfileDetails) {
           UserProfileDisplayDetails.push({
+            "u_id": UserProfileDetails[UserProfileDetail].u_id,
             "u_display_name": UserProfileDetails[UserProfileDetail].u_display_name,
             "u_f_name": UserProfileDetails[UserProfileDetail].u_f_name,
             "u_l_name": UserProfileDetails[UserProfileDetail].u_l_name,
