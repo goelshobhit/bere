@@ -118,12 +118,12 @@ const swaggerOptions = {
    __dirname + "/app/routes/reward/*.js"]
 };
 const swaggerDocs = swaggerJsDoc(swaggerOptions);
-app.use("/", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
+// app.use("/", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 // simple route
-// app.get("/", (req, res) => {
-//   res.json({ message: "Welcome to Social App api application." });
-// });
+app.get("/", (req, res) => {
+  res.json({ message: "Welcome to Social App api application." });
+});
 // simple schedule for task 
 const Op = db.Sequelize.Op;
 const taskJson = db.tasks_json;
