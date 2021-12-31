@@ -56,3 +56,4 @@ security/req.cnf
 security/server.cert
 security/server.key
 uploads/combinedlog.log
+uploads/combinedlog.log
