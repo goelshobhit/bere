@@ -94,7 +94,36 @@ exports.getSearchObject = async (req, res) => {
   res.status(200).send(searchObjectResult);
 }
 
-
+/**
+ * Function to get recent search result
+ * @param  {object}  req expressJs request object
+ * @param  {object}  res expressJs response object
+ * @return {Promise}
+ */
+ exports.searchRecentRecords = async (req, res) => {
+    const blackListedList = 
+      await BlackListed.findAll();
+    const blackListedShorthanded = blackListedList.map(x => x.keyword);
+    var userId = req.header(process.env.UKEY_HEADER || "x-api-key");
+    var options = {
+      where: {
+        search_uid: userId
+      },
+      order: [ [ 'createdAt', 'DESC' ]]
+    };
+    const Searchdata = await SearchResults.findOne(options);
+    if (Searchdata) {
+      if(blackListedShorthanded.includes(Searchdata.search_keyword)) {
+        res.status(400).send({
+          message: "Keyword has been blacklisted."
+        });
+        return;
+      } else {
+        res.status(200).send(Searchdata);
+        return;
+      }
+    }
+}
 
 /**
  * Function to get search result

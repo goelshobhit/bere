@@ -30,6 +30,30 @@ module.exports = app => {
     router.get('/search/object',auth,  Search.getSearchObject);
     /**
    * @swagger
+   * /api/search/recent:
+   *   get:
+   *     tags:
+   *       - Search
+   *     description: Returns recent searched data
+   *     produces:
+   *       - application/json
+   *     responses:
+   *       200:
+   *         description: A list of recent search data
+   *       401:
+   *          description: Unauthorized
+   *          content:
+   *              application/json:
+   *                  schema:
+   *                      type: object
+   *                      properties:
+   *                          message:
+   *                              type: string
+   *                              example: Authorisation Required
+   */
+     router.get('/search/recent',auth,  Search.searchRecentRecords);
+    /**
+   * @swagger
    * /api/search:
    *   get:
    *     parameters:
