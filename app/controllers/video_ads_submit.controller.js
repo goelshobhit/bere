@@ -20,8 +20,10 @@ exports.createVideoAdsSubmit = async(req, res) => {
         });
         return;
     }
+    var userid = req.header(process.env.UKEY_HEADER || "x-api-key");
     const videoAdsSubmit = {
-        "u_id": body.hasOwnProperty("User Id") ? body["User Id"] : 0,
+        "u_id": body.hasOwnProperty("User Id") ? body["User Id"] : userid,
+        "video_ads_id": body.hasOwnProperty("Video Ads Id") ? body["Video Ads Id"] : 0,
         "video_ads_submit_watch_timestamp": body.hasOwnProperty("Watch Timestamp") ? body["Watch Timestamp"] : "",
         "video_ads_submit_watch_completion": body.hasOwnProperty("Watch Completion") ? body["Watch Completion"] : 0,
         "video_ads_submit_timestamp": body.hasOwnProperty("Submit Timestamp") ? body["Submit Timestamp"] : "",
@@ -115,8 +117,10 @@ exports.updateVideoAdsSubmit = async(req, res) => {
             video_ads_submit_id: id
         }
     });
+    var userid = req.header(process.env.UKEY_HEADER || "x-api-key");
     const videoAdsSubmit = {
-        "u_id": body.hasOwnProperty("User Id") ? body["User Id"] : 0,
+        "u_id": body.hasOwnProperty("User Id") ? body["User Id"] : userid,
+        "video_ads_id": body.hasOwnProperty("Video Ads Id") ? body["Video Ads Id"] : 0,
         "video_ads_submit_watch_timestamp": body.hasOwnProperty("Watch Timestamp") ? body["Watch Timestamp"] : "",
         "video_ads_submit_watch_completion": body.hasOwnProperty("Watch Completion") ? body["Watch Completion"] : 0,
         "video_ads_submit_timestamp": body.hasOwnProperty("Submit Timestamp") ? body["Submit Timestamp"] : "",
