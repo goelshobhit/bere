@@ -45,3 +45,6 @@
 {"level":"error","message":"SequelizeForeignKeyConstraintError: insert or update on table \"bonus_rewards\" violates foreign key constraint \"bonus_rewards_bonus_rewards_item_id_fkey\":Error updating Bonus Rewards Details with id=6"}
 {"level":"info","message":"Login Successfully with username: string , pass:string and login type:Normal"}
 {"level":"info","message":"Login Successfully with username: string , pass:string and login type:Normal"}
+{"level":"info","message":"Login Successfully with username: string , pass:string and login type:Normal"}
+{"level":"info","message":"Login Successfully with username: string , pass:string and login type:Normal"}
+{"level":"info","message":"Login Successfully with username: string , pass:string and login type:Normal"}
