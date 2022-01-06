@@ -5,6 +5,10 @@ module.exports = (sequelize, Sequelize) => {
             primaryKey: true,
             autoIncrement: true
         },
+        video_ads_id: {
+            type: Sequelize.INTEGER,
+            allowNull: false,
+        },
 		u_id: {
             type: Sequelize.INTEGER,
             allowNull: false,
