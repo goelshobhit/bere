@@ -63,11 +63,13 @@ router.post("/video_ads_submit",auth, VideoAdsSubmit.createVideoAdsSubmit);
  *                    type: object
  *                    properties:
  *                        video_ads_submit_watch_timestamp:
- *                            type: string
+ *                            format: date-time
+ *                            example: 2020-09-30
  *                        video_ads_submit_watch_completion:
  *                            type: integer
  *                        video_ads_submit_timestamp:
- *                            type: string
+ *                            format: date-time
+ *                            example: 2020-09-30
  *                        video_ads_submit_reward_ack:
  *                            type: integer
  *     parameters:
