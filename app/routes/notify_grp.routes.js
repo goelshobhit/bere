@@ -56,11 +56,11 @@ module.exports = app => {
    *                schema:
    *                    type: object
    *                    properties:
-   *                        Group Name:
+   *                        notify_grp_name:
    *                            type: integer
-   *                        Delivery Method:
+   *                        notify_grp_deliv_method:
    *                            type: integer
-   *                        Sent Date:
+   *                        notify_trig_grp_sentdate:
    *                            type: string
    *                            format: date-time
    *                            example: 2020-09-30
