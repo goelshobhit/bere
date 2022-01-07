@@ -23,7 +23,7 @@ module.exports = (sequelize, Sequelize) => {
         },
         video_ads_submit_timestamp: {
             type: Sequelize.STRING(255),
-            allowNull: false,
+            allowNull: true,
         },
         video_ads_submit_reward_ack: {
             type: Sequelize.INTEGER,
