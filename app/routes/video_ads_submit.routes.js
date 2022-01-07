@@ -18,16 +18,15 @@ module.exports = app => {
  *                        Video Ads Id:
  *                           type: integer
  *                        Watch Timestamp:
- *                            format: date-time
- *                            example: 2020-09-30
+ *                           format: date-time
+ *                           example: 2020-09-30
  *                        Watch Completion:
  *                           type: integer
  *                        Submit Timestamp:
- *                            format: date-time
- *                            example: 2020-09-30
+ *                           format: date-time
+ *                           example: 2020-09-30
  *                        Reward Ack:
  *                           type: integer
- * 
  *     tags:
  *       - Video Ads Submit
  *     description: Add new Video Ad
@@ -63,20 +62,16 @@ router.post("/video_ads_submit",auth, VideoAdsSubmit.createVideoAdsSubmit);
  *                schema:
  *                    type: object
  *                    properties:
- *                        User Id:
- *                           type: integer
- *                        Video Ads Id:
- *                           type: integer
- *                        Watch Timestamp:
+ *                        video_ads_submit_watch_timestamp:
  *                            format: date-time
  *                            example: 2020-09-30
- *                        Watch Completion:
- *                           type: integer
- *                        Submit Timestamp:
+ *                        video_ads_submit_watch_completion:
+ *                            type: integer
+ *                        video_ads_submit_timestamp:
  *                            format: date-time
  *                            example: 2020-09-30
- *                        Reward Ack:
- *                           type: integer
+ *                        video_ads_submit_reward_ack:
+ *                            type: integer
  *     parameters:
  *         - name: videoAdsSubmitId
  *           in: path
