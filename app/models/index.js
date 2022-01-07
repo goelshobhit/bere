@@ -141,8 +141,8 @@ db.users.hasMany(db.bonus_task, {foreignKey: 'u_id', targetKey: 'bonus_task_usr_
 db.bonus_task.belongsTo(db.users, {foreignKey: 'bonus_task_usr_id', targetKey: 'u_id'});
 db.brands.hasMany(db.video_ads, {foreignKey: 'cr_co_id', targetKey: 'cr_co_id'});
 db.video_ads.belongsTo(db.brands, {foreignKey: 'cr_co_id', targetKey: 'cr_co_id'});
-db.videos_ads.hasMany(db.video_ads_submit, {foreignKey: 'video_ads_id', targetKey: 'video_ads_id'});
-db.video_ads_submit.belongsTo(db.videos_ads, {foreignKey: 'video_ads_id', targetKey: 'video_ads_id'});
+db.video_ads.hasMany(db.video_ads_submit, {foreignKey: 'video_ads_id', targetKey: 'video_ads_id'});
+db.video_ads_submit.belongsTo(db.video_ads, {foreignKey: 'video_ads_id', targetKey: 'video_ads_id'});
 db.notify_trig.hasMany(db.notify_trig_sent, {foreignKey: 'notify_trig_id', targetKey: 'notify_trig_id'});
 db.notify_trig_sent.belongsTo(db.notify_trig, {foreignKey: 'notify_trig_id', targetKey: 'notify_trig_id'});
 db.brands.hasMany(db.notify_event, {foreignKey: 'cr_co_id', targetKey: 'cr_co_id'});
