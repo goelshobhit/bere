@@ -114,25 +114,12 @@ exports.bonusTicketDetails = async(req, res) => {
  */
 exports.updateBonusTicket = async(req, res) => {
     const id = req.params.bonusTicketId;
-    const body = req.body;
     var BonusTicketDetails = await BonusTicket.findOne({
         where: {
             bonus_ticket_id: id
         }
     });
-    const bonusTicket = {
-        "bonus_summary_id": body.hasOwnProperty("Bonus Summary") ? body["Bonus Summary"] : 0,
-        "bonus_ticket_entry_timestamp": body.hasOwnProperty("Entry Timestamp") ? body["Entry Timestamp"] : "",
-        "bonus_ticket_contest_start_timestamp": body.hasOwnProperty("Start Timestamp") ? body["Start Timestamp"] : "",
-        "bonus_ticket_contest_end_timestamp": body.hasOwnProperty("End Timestamp") ? body["End Timestamp"] : "",
-        "bonus_ticket_rules_id": body.hasOwnProperty("Rules Id") ? body["Rules Id"] : 0,
-        "bonus_ticket_rules": body.hasOwnProperty("Rules") ? body["Rules"] : "",
-        "bonus_ticket_usrid": body.hasOwnProperty("User Id") ? body["User Id"] : 0,
-        "bonus_ticket_entry1": body.hasOwnProperty("Entry1") ? body["Entry1"] : 0,
-        "bonus_ticket_winning": body.hasOwnProperty("Winning") ? body["Winning"] : 0,
-        "bonus_ticket_bonus_taskid": body.hasOwnProperty("Task Id") ? body["Task Id"] : 0,
-    }
-    BonusTicket.update(bonusTicket, {
+    BonusTicket.update(req.body, {
 		returning:true,
         where: {
             bonus_ticket_id: id

@@ -65,22 +65,22 @@ module.exports = app => {
    *                schema:
    *                    type: object
    *                    properties:
-  *                        Event Name:
+   *                        notify_event_name:
    *                            type: integer
-   *                        Event Type:
+   *                        notify_event_type:
    *                            type: integer
-   *                        Brand Id:
+   *                        cr_co_id:
    *                            type: integer
-   *                        Event Date:
+   *                        notify_event_date:
    *                            format: date-time
    *                            example: 2020-09-30
-   *                        Event Usrid:
+   *                        notify_event_usrid:
    *                            type: integer
-   *                        Event UsrOptin:
+   *                        notify_event_usrOptin:
    *                            type: integer
-   *                        Event UsrOptOut:
+   *                        notify_event_usrOptOut:
    *                            type: integer
-   *                        Event UsrOptOut Date:
+   *                        notify_event_usrOptOut_date:
    *                           type: integer
    *     parameters:
    *         - name: notifyEventId

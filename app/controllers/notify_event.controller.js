@@ -118,23 +118,12 @@ exports.notifyEventDetails = async(req, res) => {
  */
 exports.updateNotifyEvent = async(req, res) => {
     const id = req.params.notifyEventId;
-    const body = req.body;
     var NotifyEventDetails = await NotifyEvent.findOne({
         where: {
             notify_event_id: id
         }
     });
-    const notifyEvent = {
-        "notify_event_name": body.hasOwnProperty("Event Name") ? body["Event Name"] : 0,
-        "notify_event_type": body.hasOwnProperty("Event Type") ? body["Event Type"] : 0,
-        "cr_co_id": body.hasOwnProperty("Brand Id") ? body["Brand Id"] : 0,
-        "notify_event_date": body.hasOwnProperty("Event Date") ? body["Event Date"] : new Date(),
-        "notify_event_usrid": body.hasOwnProperty("Event Usrid") ? body["Event Usrid"] : 0,
-        "notify_event_usrOptin": body.hasOwnProperty("Event UsrOptin") ? body["Event UsrOptin"] : 0,
-        "notify_event_usrOptOut": body.hasOwnProperty("Event UsrOptOut") ? body["Event UsrOptOut"] : 0,
-        "notify_event_usrOptOut_date": body.hasOwnProperty("Event UsrOptOut Date") ? body["Event UsrOptOut Date"] : 0,
-    }
-    NotifyEvent.update(notifyEvent, {
+    NotifyEvent.update(req.body, {
 		returning:true,
         where: {
             notify_event_id: id

@@ -74,31 +74,31 @@ module.exports = app => {
    *                schema:
    *                    type: object
    *                    properties:
-   *                        Brand Id:
+   *                        bonus_task_brand_id:
    *                            type: integer
-   *                        User Id:
+   *                        bonus_task_usr_id:
    *                            type: integer
-   *                        Caption 1:
+   *                        bonus_task_caption1:
    *                            type: string
-   *                        Caption 2:
+   *                        bonus_task_caption2:
    *                            type: string
-   *                        Caption 3:
+   *                        bonus_task_caption3:
    *                            type: string
-   *                        Own Caption:
+   *                        bonus_task_own_caption:
    *                            type: string
-   *                        Task Title:
+   *                        bonus_task_title:
    *                            type: string
-   *                        Summary Content:
+   *                        bonus_task_summary_content:
    *                            type: string
-   *                        Image Url:
+   *                        bonus_task_image_url:
    *                            type: string
-   *                        Video Url:
+   *                        bonus_task_video_url:
    *                            type: string
-   *                        Completion Date:
+   *                        bonus_task_completion_date:
    *                            type: string
-   *                        Entry Date:
+   *                        bonus_task_entry_date:
    *                            type: string
-   *                        Hashtag:
+   *                        bonus_task_hashtag:
    *                            type: string
    *     parameters:
    *         - name: bonusTaskId

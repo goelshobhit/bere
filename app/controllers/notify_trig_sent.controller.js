@@ -156,30 +156,13 @@ exports.notifyTriggerDetails = async(req, res) => {
  * @return {Promise}
  */
 exports.updateNotifySent = async(req, res) => {
-    const body = req.body
     const id = req.params.notifySentTrigId;
     var NotifySentDetails = await NotifySent.findOne({
         where: {
             notify_sent_trig_id: id
         }
     });
-    const notifyTrig = {
-        "notify_trig_id": body.hasOwnProperty("Notify Trigger Id") ? body["Notify Trigger Id"] : 0,
-        "u_id": body.hasOwnProperty("User Id") ? body["User Id"] : 0,
-        "notify_event_id": body.hasOwnProperty("Event Id") ? body["Event Id"] : 0,
-        "notify_method": body.hasOwnProperty("Method") ? body["Method"] : "",
-        "notify_type": body.hasOwnProperty("Type") ? body["Type"] : "",
-        "notify_trig_pushalert": body.hasOwnProperty("Pushalert") ? body["Pushalert"] : "",
-        "notify_trig_msg": body.hasOwnProperty("Message") ? body["Message"] : "",
-        "notify_trig_grp_id": body.hasOwnProperty("Group Id") ? body["Group Id"] : 0,
-        "notify_group_name": body.hasOwnProperty("Group Name") ? body["Group Name"] : "",
-        "notify_send_date": body.hasOwnProperty("Send Date") ? body["Send Date"] : new Date(),
-        "notify_ack": body.hasOwnProperty("Ack") ? body["Ack"] : new Date(),
-        "notify_trig_status": body.hasOwnProperty("Trigger Status") ? body["Trigger Status"] : "",
-        "notify_trig_push_id": body.hasOwnProperty("Trigger Push Id") ? body["Trigger Push Id"] : 0,
-        "cr_co_id": body.hasOwnProperty("Brand Id") ? body["Brand Id"] : 0
-    }
-    NotifySent.update(notifyTrig, {
+    NotifySent.update(req.body, {
 		returning:true,
         where: {
             notify_trig_id: id
