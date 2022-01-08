@@ -110,7 +110,6 @@ exports.videoAdsSubmitDetails = async(req, res) => {
  * @return {Promise}
  */
 exports.updateVideoAdsSubmit = async(req, res) => {
-    const body = req.body
     const id = req.params.videoAdsSubmitId;
     var VideoAdsSubmitDetails = await VideoAdsSubmit.findOne({
         where: {
