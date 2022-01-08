@@ -113,24 +113,12 @@ exports.bonusRewardsDetails = async(req, res) => {
  */
 exports.updateBonusRewards = async(req, res) => {
     const id = req.params.bonusRewardsId;
-    const body = req.body;
     var BonusRewardsDetails = await BonusRewards.findOne({
         where: {
             bonus_rewards_id: id
         }
     });
-    const bonusRewards = {
-        "bonus_summary_id": body.hasOwnProperty("Bonus Summary") ? body["Bonus Summary"] : 0,
-        "bonus_rewards_bonus_setid": body.hasOwnProperty("Bonus Set Id") ? body["Bonus Set Id"] : 0,
-        "bonus_rewards_usrid": body.hasOwnProperty("User Id") ? body["User Id"] : 0,
-        "bonus_rewards_item_id": body.hasOwnProperty("Item Id") ? body["Item Id"] : 0,
-        "bonus_rewards_item_name": body.hasOwnProperty("Item Name") ? body["Item Name"] : "",
-        "bonus_rewards_item_qty": body.hasOwnProperty("Item Qty") ? body["Item Qty"] : 0,
-        "bonus_rewards_item_delivery_date": body.hasOwnProperty("Delivery Date") ? body["Delivery Date"] : "",
-        "bonus_rewards_item_confirmation_date": body.hasOwnProperty("Confirmation Date") ? body["Confirmation Date"] : "",
-        "bonus_rewards_additional_task_id": body.hasOwnProperty("Additional Task Id") ? body["Additional Task Id"] : 0,
-        }
-    BonusRewards.update(bonusRewards, {
+    BonusRewards.update(req.body, {
 		returning:true,
         where: {
             bonus_rewards_id: id

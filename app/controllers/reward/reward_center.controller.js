@@ -110,21 +110,12 @@ exports.rewardCenterDetails = async(req, res) => {
  */
 exports.updateRewardCenter = async(req, res) => {
     const id = req.params.rewardCenterId;
-    const body = req.body;
     var RewardCenterDetails = await RewardCenter.findOne({
         where: {
             reward_center_id: id
         }
     });
-    const data = {
-        "reward_center_name": body.hasOwnProperty("Center Name") ? body["Center Name"] : 0,
-        "reward_center_owner_id": body.hasOwnProperty("Owner Id") ? body["Owner Id"] : "",
-        "reward_center_location_id": body.hasOwnProperty("Location Id") ? body["Location Id"] : 0,
-        "reward_center_location_name": body.hasOwnProperty("Location Name") ? body["Location Name"] : 0,
-        "reward_center_reward_type": body.hasOwnProperty("Reward Type") ? body["Reward Type"] : 0,
-        "reward_center_reward_trigger_id": body.hasOwnProperty("Trigger Id") ? body["Trigger Id"] : 0,
-    }
-    RewardCenter.update(data, {
+    RewardCenter.update(req.body, {
 		returning:true,
         where: {
             reward_center_id: id

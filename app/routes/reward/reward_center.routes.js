@@ -60,17 +60,17 @@ module.exports = app => {
    *                schema:
    *                    type: object
    *                    properties:
-   *                        Center Name:
+   *                        reward_center_name:
    *                            type: string
-   *                        Owner Id:
+   *                        reward_center_owner_id:
    *                            type: integer
-   *                        Location Id:
+   *                        reward_center_location_id:
    *                            type: integer
-   *                        Location Name:
+   *                        reward_center_location_name:
    *                            type: integer
-   *                        Reward Type:
+   *                        reward_center_reward_type:
    *                            type: integer
-   *                        Trigger Id:
+   *                        reward_center_reward_trigger_id:
    *                            type: integer
    *     parameters:
    *         - name: rewardCenterId

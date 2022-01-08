@@ -117,28 +117,12 @@ exports.bonusTaskDetails = async(req, res) => {
  */
 exports.updateBonusTask = async(req, res) => {
     const id = req.params.bonusTaskId;
-    const body = req.body;
     var BonusTaskDetails = await BonusTask.findOne({
         where: {
             bonus_task_id: id
         }
     });
-    const bonusTask = {
-        "bonus_task_brand_id": body.hasOwnProperty("Brand Id") ? body["Brand Id"] : 0,
-        "bonus_task_usr_id": body.hasOwnProperty("User Id") ? body["User Id"] : 0,
-        "bonus_task_caption1": body.hasOwnProperty("Caption 1") ? body["Caption 1"] : "",
-        "bonus_task_caption2": body.hasOwnProperty("Caption 2") ? body["Caption 2"] : "",
-        "bonus_task_caption3": body.hasOwnProperty("Caption 3") ? body["Caption 3"] : "",
-        "bonus_task_own_caption": body.hasOwnProperty("Own Caption") ? body["Own Caption"] : "",
-        "bonus_task_title": body.hasOwnProperty("Task Title") ? body["Task Title"] : "",
-        "bonus_task_summary_content": body.hasOwnProperty("Summary Content") ? body["Summary Content"] : "",
-        "bonus_task_image_url": body.hasOwnProperty("Image Url") ? body["Image Url"] : "",
-        "bonus_task_video_url": body.hasOwnProperty("Video Url") ? body["Video Url"] : "",
-        "bonus_task_completion_date": body.hasOwnProperty("Completion Date") ? body["Completion Date"] : "",
-        "bonus_task_entry_date": body.hasOwnProperty("Entry Date") ? body["Entry Date"] : "",
-        "bonus_task_hashtag": body.hasOwnProperty("Hashtag") ? body["Hashtag"] : ""
-    }
-    BonusTask.update(bonusTask, {
+    BonusTask.update(req.body, {
 		returning:true,
         where: {
             bonus_task_id: id
