@@ -107,18 +107,12 @@ exports.bonusTicketRulesDetails = async(req, res) => {
  */
 exports.updateBonusTicketRules = async(req, res) => {
     const id = req.params.bonusTicketsRulesId;
-    const body = req.body;
     var BonusTicketRulesDetails = await BonusTicketRules.findOne({
         where: {
             bonus_tickets_rules_id: id
         }
-    });
-    const bonusTicketRules = {
-        "bonus_tickets_rules": body.hasOwnProperty("Bonus Ticket Rules") ? body["Bonus Ticket Rules"] : "",
-        "bonus_tickets_how_it_works": body.hasOwnProperty("How It Works") ? body["How It Works"] : "",
-        "bonus_tickets_cashout_rules": body.hasOwnProperty("Cashout Rules") ? body["Cashout Rules"] : "",
-       }
-    BonusTicketRules.update(bonusTicketRules, {
+    })
+    BonusTicketRules.update(req.body, {
 		returning:true,
         where: {
             bonus_tickets_rules_id: id

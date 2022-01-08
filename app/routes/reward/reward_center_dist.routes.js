@@ -137,93 +137,93 @@ module.exports = app => {
    *                schema:
    *                    type: object
    *                    properties:
-   *                        Center Id:
+   *                        reward_center_id:
    *                            type: integer
-   *                        Dist Status:
+   *                        reward_center_dist_status:
    *                            type: integer
-   *                        Center Name:
+   *                        reward_center_name:
    *                            type: string
-   *                        One Freq:
+   *                        reward_center_dist_one_freq:
    *                            type: integer
-   *                        One Total Token:
+   *                        reward_center_dist_one_total_token:
    *                            type: integer
-   *                        Segment Id:
+   *                        reward_center_dist_one_segment_id:
    *                            type: string
-   *                        One Name:
+   *                        reward_center_dist_one_name:
    *                            type: string
-   *                        One Stars:
+   *                        reward_center_dist_one_stars:
    *                           type: integer
-   *                        Stars Name:
+   *                        reward_center_dist_one_stars_name:
    *                           type: string
-   *                        Stars To Token:
+   *                        reward_center_dist_one_stars_to_token:
    *                           type: integer
-   *                        One Coins:
+   *                        reward_center_dist_one_coins:
    *                           type: integer
-   *                        Coins Name:
+   *                        reward_center_dist_one_coins_name:
    *                           type: string
-   *                        Coins To Token:
+   *                        reward_center_dist_one_coins_to_token:
    *                           type: integer
-   *                        One Keys:
+   *                        reward_center_dist_one_keys:
    *                           type: integer
-   *                        Keys Name:
+   *                        reward_center_dist_one_keys_name:
    *                           type: string
-   *                        Keys To Token:
+   *                        reward_center_dist_one_keys_to_token:
    *                           type: integer
-   *                        One Booster:
+   *                        reward_center_dist_one_booster:
    *                           type: integer
-   *                        Booster Name:
+   *                        reward_center_dist_one_booster_name:
    *                           type: string
-   *                        Boster To Token:
+   *                        reward_center_dist_one_boster_to_token:
    *                           type: integer
-   *                        Card 1 Id:
+   *                        reward_center_dist_one_card1_id:
    *                           type: integer
-   *                        Card 2 Id:
+   *                        reward_center_dist_one_card2_id:
    *                           type: integer
-   *                        Card 3 Id:
+   *                        reward_center_dist_one_card3_id:
    *                           type: integer
-   *                        Card 4 Id:
+   *                        reward_center_dist_one_card4_id:
    *                           type: integer
-   *                        Card 5 Id:
+   *                        reward_center_dist_one_card5_id:
    *                           type: integer
-   *                        Card 6 Id:
+   *                        reward_center_dist_one_card6_id:
    *                           type: integer
-   *                        Card 7 Id:
+   *                        reward_center_dist_one_card7_id:
    *                           type: integer
-   *                        Card 1 Name:
+   *                        reward_center_dist_one_card1_name:
    *                           type: string
-   *                        Card 2 Name:
+   *                        reward_center_dist_one_card2_name:
    *                           type: string
-   *                        Card 3 Name:
+   *                        reward_center_dist_one_card3_name:
    *                           type: string
-   *                        Card 4 Name:
+   *                        reward_center_dist_one_card4_name:
    *                           type: string
-   *                        Card 5 Name:
+   *                        reward_center_dist_one_card5_name:
    *                           type: string
-   *                        Card 6 Name:
+   *                        reward_center_dist_one_card6_name:
    *                           type: string
-   *                        Card 7 Name:
+   *                        reward_center_dist_one_card7_name:
    *                           type: string
-   *                        Card 1 Value:
+   *                        reward_center_dist_one_card1_value:
    *                           type: string
-   *                        Card 2 Value:
+   *                        reward_center_dist_one_card2_value:
    *                           type: string
-   *                        Card 3 Value:
+   *                        reward_center_dist_one_card3_value:
    *                           type: string
-   *                        Card 4 Value:
+   *                        reward_center_dist_one_card4_value:
    *                           type: string
-   *                        Card 5 Value:
+   *                        reward_center_dist_one_card5_value:
    *                           type: string
-   *                        Card 6 Value:
+   *                        reward_center_dist_one_card6_value:
    *                           type: string
-   *                        Card 7 Value:
+   *                        reward_center_dist_one_card7_value:
    *                           type: string
-   *                        Puzzle 1 Id:
+   *                        reward_center_dist_puzzle1_id:
    *                           type: integer
-   *                        Puzzle 1 Name:
+   *                        reward_center_distr_one_puzzle1_name:
    *                           type: string
-   *                        Puzzle 1 Value:
+   *                        reward_center_distr_one_puzzle1_value:
    *                           type: string
-   *                        Spin Reward Id:
+   *                        reward_center_spin_reward_id:
    *                           type: integer
    *     parameters:
    *         - name: rewardCenterDistId

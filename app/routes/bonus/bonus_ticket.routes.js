@@ -71,28 +71,28 @@ module.exports = app => {
    *                schema:
    *                    type: object
    *                    properties:
-   *                        Bonus Summary:
+   *                        bonus_summary_id:
    *                            type: integer
-   *                        Entry Timestamp:
+   *                        bonus_ticket_entry_timestamp:
    *                            format: date-time
    *                            example: 2020-09-30
-   *                        Start Timestamp:
+   *                        bonus_ticket_contest_start_timestamp:
    *                            format: date-time
    *                            example: 2020-09-30
-   *                        End Timestamp:
+   *                        bonus_ticket_contest_end_timestamp:
    *                            format: date-time
    *                            example: 2020-09-30
-   *                        Rules Id:
+   *                        bonus_ticket_rules_id:
    *                            type: integer
-   *                        Rules:
+   *                        bonus_ticket_rules:
    *                            type: string
-   *                        User Id:
+   *                        bonus_ticket_usrid:
    *                            type: integer
-   *                        Entry 1:
+   *                        bonus_ticket_entry1:
    *                           type: integer
-   *                        Winning:
+   *                        bonus_ticket_winning:
    *                           type: integer
-   *                        Task Id:
+   *                        bonus_ticket_bonus_taskid:
    *                           type: integer
    *     parameters:
    *         - name: bonusTicketId

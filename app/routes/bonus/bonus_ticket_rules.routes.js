@@ -54,11 +54,11 @@ module.exports = app => {
    *                schema:
    *                    type: object
    *                    properties:
-   *                        Bonus Ticket Rules:
+   *                        bonus_tickets_rules:
    *                            type: string
-   *                        How It Works:
+   *                        bonus_tickets_how_it_works:
    *                            type: string
-   *                        Cashout Rules:
+   *                        bonus_tickets_cashout_rules:
    *                            type: string
    *     parameters:
    *         - name: bonusTicketsRulesId
