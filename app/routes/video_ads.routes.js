@@ -223,7 +223,7 @@ module.exports = app => {
     router.get("/video_ads/:videoAdsId",auth, VideoAds.videoAdsDetails);
   /**
    * @swagger
-   * /api/video_ads/{crCoId}:
+   * /api/video_ads/brand/{crCoId}:
    *   get:
    *     parameters:
    *         - name: crCoId
@@ -260,7 +260,7 @@ module.exports = app => {
    *                              type: string
    *                              example: Authorisation Required
    */
-   router.get("/video_ads/:crCoId",auth, VideoAds.videoAdsDetailsUsingCrCoId);
+   router.get("/video_ads/brand/:crCoId",auth, VideoAds.videoAdsDetailsUsingCrCoId);
     /**
    * @swagger
    * /api/video_ads/{videoAdsId}:
