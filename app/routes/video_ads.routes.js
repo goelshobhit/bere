@@ -223,6 +223,46 @@ module.exports = app => {
     router.get("/video_ads/:videoAdsId",auth, VideoAds.videoAdsDetails);
   /**
    * @swagger
+   * /api/video_ads/{crCoId}:
+   *   get:
+   *     parameters:
+   *         - name: crCoId
+   *           in: path
+   *           required: true
+   *           schema:
+   *              type: string
+   *         - name: pageSize
+   *           in: query
+   *           required: false
+   *           schema:
+   *              type: integer
+   *         - name: pageNumber
+   *           in: query
+   *           required: false
+   *           schema:
+   *              type: integer
+   *     tags:
+   *       - Video Ads
+   *     description: Retrieve a single Video Ad with crCoId
+   *     produces:
+   *       - application/json
+   *     responses:
+   *       200:
+   *         description: Details of a Video Ad
+   *       401:
+   *          description: Unauthorized
+   *          content:
+   *              application/json:
+   *                  schema:
+   *                      type: object
+   *                      properties:
+   *                          message:
+   *                              type: string
+   *                              example: Authorisation Required
+   */
+   router.get("/video_ads/:crCoId",auth, VideoAds.videoAdsDetailsUsingCrCoId);
+    /**
+   * @swagger
    * /api/video_ads/{videoAdsId}:
    *   delete:
    *     parameters:

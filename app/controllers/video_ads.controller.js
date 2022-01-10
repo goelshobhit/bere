@@ -113,6 +113,30 @@ exports.videoAdsDetails = async(req, res) => {
     });
 };
 /**
+ * Function to get single Video Ads
+ * @param  {object}  req expressJs request object
+ * @param  {object}  res expressJs response object
+ * @return {Promise}
+ */
+ exports.videoAdsDetailsUsingCrCoId = async(req, res) => {
+    const crCoId = req.params.crCoId;
+    var options = {
+        where: {
+            cr_co_id: crCoId
+        }
+    };
+    const videoAds = await VideoAds.findOne(options);
+    if(!videoAds){
+        res.status(500).send({
+            message: "Video Ads not found"
+        });
+        return
+    }
+    res.status(200).send({
+        data: videoAds
+    });
+};
+/**
  * Function to update single Video Ads
  * @param  {object}  req expressJs request object
  * @param  {object}  res expressJs response object
