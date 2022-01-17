@@ -302,7 +302,21 @@ exports.submitSurvey = async (req, res) => {
     }
     var uid = req.header(process.env.UKEY_HEADER || "x-api-key");
 
-    
+    var options = {
+        where: {
+            sr_uid: uid,
+            sr_id: body["Survey ID"],
+            sr_completed: 1
+        }
+    };
+    const userSurvey = await SurveyUserComplete.findOne(options);
+
+    if (userSurvey) {
+        res.status(500).send({
+            message: "The user is not permitted to complete the same survey Again."
+        });
+        return;
+    }
     var surveyAnswer = body["Survey Answer"];
     const SurveySubmissionData = {
         "srs_sr_id": body["Survey ID"],
@@ -504,21 +518,6 @@ exports.surveyTracking = async (req, res) => {
         "sr_completed": body.hasOwnProperty("Survey Completed") ? body["Survey Completed"] : 0,
         "sr_completion_date": surveyCompletionDate,
         "sr_usr_restriction": survey.sr_usr_restriction
-    }
-    var options = {
-        where: {
-            sr_uid: uid,
-            sr_id: body["Survey ID"],
-            sr_completed: 1
-        }
-    };
-    const userSurvey = await SurveyUserComplete.findOne(options);
-
-    if (userSurvey) {
-        res.status(500).send({
-            message: "The user is not permitted to complete the same survey Again."
-        });
-        return;
     }
     SurveyUserComplete.create(SurveyTrackingData).then(data => {
         audit_log.saveAuditLog(uid, 'tracking', 'Survey tracking', data.su_id, data.dataValues);
