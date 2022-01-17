@@ -302,7 +302,6 @@ exports.submitSurvey = async (req, res) => {
     }
     var uid = req.header(process.env.UKEY_HEADER || "x-api-key");
 
-    
     var surveyAnswer = body["Survey Answer"];
     const SurveySubmissionData = {
         "srs_sr_id": body["Survey ID"],
