@@ -9,6 +9,7 @@ const Comment = db.post_comment;
 const Hashtags = db.hashtags;
 const SearchResults = db.search_results;
 const SearchObjects = db.search_objects;
+const taskJson = db.tasks_json
 const Op = db.Sequelize.Op;
 const logger = require("../middleware/logger");
 const common = require("../common");
@@ -247,6 +248,20 @@ exports.searchRecords = async (req, res) => {
           if (TaskDisplayVideoDetails.length) {
             response_data.Videos = TaskDisplayVideoDetails;
           }
+        }
+      }
+      if (searchObjectValue == searchObjectConstant.TasksJson) {
+        var taskOptions = {
+          where: {
+            ta_name: {
+              [Op.iLike]: `%${keyWord}%`
+            },
+            ta_status: 2
+          }
+        };
+        const TaskDetails = await taskJson.findAll(taskOptions);
+        if (TaskDetails.length) {
+          response_data.TasksJson = TaskDetails;
         }
       }
       if (searchObjectValue == searchObjectConstant.Contest) {
