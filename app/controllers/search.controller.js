@@ -136,6 +136,7 @@ exports.searchRecords = async (req, res) => {
     await BlackListed.findAll();
   const blackListedShorthanded = blackListedList.map(x => x.keyword);
   const keyWord = req.query.keyWord;
+  const Uid = req.header(process.env.UKEY_HEADER || "x-api-key");
   const searchObjectValues = await SearchObjects.findAll({
     where: {},
     attributes: ['search_obj_category']
@@ -269,7 +270,7 @@ exports.searchRecords = async (req, res) => {
             tj_task_id: {
                 [Op.not]: taskIdsValues
             },
-            ta_status: 2
+            is_autotakedown: 0
           }
         };
         const TaskDetails = await taskJson.findAll(taskOptions);
