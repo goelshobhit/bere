@@ -251,10 +251,23 @@ exports.searchRecords = async (req, res) => {
         }
       }
       if (searchObjectValue == searchObjectConstant.TasksJson) {
+        const contentUserTaskIds = await common.getContentReportUser(['Task'], Uid);
+        let taskIdsValues = [];
+        if (contentUserTaskIds.length) {
+            contentUserTaskIds.forEach(element => {
+                taskIdsValues.push('' + element.content_report_type_id + '');
+            });
+        }
         var taskOptions = {
+          attributes: [["tj_type", "task_type"], ["tj_task_id", "task_id"], ["tj_data", "task_data"], ["tj_status", "task_status"]],
           where: {
-            ta_name: {
-              [Op.iLike]: `%${keyWord}%`
+            tj_data: {
+              ta_name: {
+                [Op.iLike]: `%${keyWord}%`
+              }
+            },
+            tj_task_id: {
+                [Op.not]: taskIdsValues
             },
             ta_status: 2
           }
