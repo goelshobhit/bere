@@ -395,7 +395,7 @@ module.exports = app => {
      *                            type: integer
      *                        Question ID:
      *                            type: string
-     *                        Survey Answer:
+     *                        Survey Answer Ids:
      *                            type: string
      *                        Rewards Star:
      *                            type: integer
@@ -525,8 +525,6 @@ module.exports = app => {
      *                        Survey ID:
      *                            type: integer
      *                        Question ID:
-     *                            type: string
-     *                        Survey Answer:
      *                            type: string
      *                        Rewards Star:
      *                            type: integer

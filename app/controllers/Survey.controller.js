@@ -368,7 +368,7 @@ exports.submitSurvey = async (req, res) => {
     }
     if (!body.hasOwnProperty("Survey Answer Ids") || !body["Survey Answer Ids"]) {
         res.status(500).send({
-            message: "Survey Answer  Ids are required."
+            message: "Survey Answer Ids are required."
         });
         return;
     }
