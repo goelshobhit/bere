@@ -60,6 +60,15 @@ exports.validate = (method) => {
                 body('Question Status', 'Invalid Question Status').isNumeric()
             ]
         }
+        case 'create_survey_question_answer': {
+            return [
+                body('Survey ID', 'Invalid Survey').isNumeric(),
+                body('Survey Question Id', 'Invalid Survey').isNumeric(),
+                body('Question Answers', 'Invalid Survey Answer').isLength({
+                    min: 1
+                }).withMessage('Survey Answer must be Valid Array.')
+            ]
+        }
         case 'survey_submit': {
             return [
                 body('Survey ID', 'Invalid Survey').isNumeric(),

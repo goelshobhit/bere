@@ -283,12 +283,12 @@ module.exports = app => {
      *                type: string
      *      tags:
      *          - Survey
-     *      description: Return All Survey Questions
+     *      description: Return All Survey Questions and Answers
      *      produces:
      *          - application/json
      *      responses:
      *          200:
-     *              description: A list of Surveys
+     *              description: A list of Surveys Questions and Answers
      *          401:
      *              descpription: Unauthorized
      *              content:
@@ -332,6 +332,53 @@ module.exports = app => {
    *                              example: Authorisation Required
    */
   router.delete("/survey_questions/:surveyQuestionId", auth, Survey.deleteSurveyQuestion); 
+
+  /**
+     * @swagger
+     * /api/survey_question_answers:
+     *   post:
+     *     requestBody:
+     *        required: false
+     *        content:
+     *            application/json:
+     *                schema:
+     *                    type: object
+     *                    properties:
+     *                        Survey ID:
+     *                            type: integer
+     *                            required: true
+     *                        Survey Question Id:
+     *                            type: integer
+     *                            required: true
+     *                        Question Answers:
+     *                            type: array
+     *                            required: true
+     *                            items:
+     *                              type: string
+     *     tags:
+     *       - Survey
+     *     description: Add Survey Question Answers
+     *     produces:
+     *       - application/json
+     *     responses:
+     *       201:
+     *         description: Add Survey Question Answers
+     *       422:
+     *         description: validation errors
+     *       500:
+     *         description: Internal server error
+     *       401:
+     *          description: Unauthorized
+     *          content:
+     *              application/json:
+     *                  schema:
+     *                      type: object
+     *                      properties:
+     *                          message:
+     *                              type: string
+     *                              example: Authorisation Required
+     */
+    router.post("/survey_question_answers", auth, adminValidate.validate("create_survey_question_answer"), Survey.createSurveyQuestionAnswer);
 
    /**
      * @swagger

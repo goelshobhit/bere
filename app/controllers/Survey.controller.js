@@ -2,6 +2,7 @@ const db = require("../models");
 const Survey = db.survey;
 const Brand = db.brands;
 const SurveyQuestions = db.survey_questions;
+const surveyQuestionAnswers = db.survey_question_answers;
 const SurveySubmissions = db.survey_submissions;
 const SurveyStats = db.survey_stats;
 const SurveyUserComplete = db.survey_user_complete;
@@ -227,7 +228,7 @@ exports.createSurveyQuestions = async (req, res) => {
 }
 
 /**
- * Function to get all surveys
+ * Function to get all survey questions and answers
  * @param  {object}  req expressJs request object
  * @param  {object}  res expressJs response object
  * @return {Promise}
@@ -247,6 +248,20 @@ exports.surveyQuestionListing = async (req, res) => {
         ],
         where: {}
     };
+    options['include'] = [
+        {
+          model: Survey,
+          required:false,
+          attributes:['sr_title'],
+          where : {
+            sr_status: 1
+          }
+        },
+        {
+            model: surveyQuestionAnswers,
+            required:false
+          }
+      ]
     if (req.query.sortVal) {
         var sortValue = req.query.sortVal.trim();
         options.where = sortValue ? {
@@ -272,6 +287,48 @@ exports.surveyQuestionListing = async (req, res) => {
         totalRecords: total
     });
 };
+
+/**
+ * Function to create survey answer
+ * @param  {object}  req expressJs request object
+ * @param  {object}  res expressJs response object
+ * @return {Promise}
+ */
+exports.createSurveyQuestionAnswer = async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        res.status(422).json({
+            errors: errors.array()
+        });
+        return;
+    }
+    const body = req.body;
+    var questionAnswerData = [];
+    var questionAnswers = body["Question Answers"];
+    /* check survey Valid or not. */
+    for (const questionAnswer in questionAnswers) {
+        questionAnswerData.push({
+            "sr_id": req.body["Survey ID"],
+            "srq_id": req.body["Survey Question Id"],
+            "answer": questionAnswers[questionAnswer]
+          });
+    }
+    if (questionAnswerData.length) {
+        surveyQuestionAnswers.bulkCreate(questionAnswerData).catch(err => {
+          logger.log("error", "Some error occurred while creating the Search Objects=" + err);
+        });
+        res.status(201).send({
+            msg: "Question Answers added Successfully"
+          });
+      } else {
+        res.status(400).send({
+            msg:
+                "Survey Answer must be Valid Array."
+        });
+        return;
+      }
+      
+}
 
 /**
  * Function to submit survey
