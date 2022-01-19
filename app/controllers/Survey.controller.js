@@ -303,6 +303,21 @@ exports.createSurveyQuestionAnswer = async (req, res) => {
         return;
     }
     const body = req.body;
+     /* check survey Valid or not. */
+     var surveyOptions = {
+        where: {
+            sr_id: body["Survey ID"],
+            srq_id:  body["Survey Question Id"]
+        }
+    };
+    const surveyQuestionAnswer = await surveyQuestionAnswers.findOne(surveyOptions);
+    if (surveyQuestionAnswer) {
+        res.status(422).send({
+            message: "Survey Answers Already Added For This Question."
+        });
+        return;
+    }
+    
     var questionAnswerData = [];
     var questionAnswers = body["Question Answers"];
     /* check survey Valid or not. */
@@ -351,20 +366,20 @@ exports.submitSurvey = async (req, res) => {
         });
         return;
     }
-    if (!body.hasOwnProperty("Survey Answer") || !body["Survey Answer"]) {
+    if (!body.hasOwnProperty("Survey Answer Ids") || !body["Survey Answer Ids"]) {
         res.status(500).send({
-            message: "Survey Answer is required."
+            message: "Survey Answer  Ids are required."
         });
         return;
     }
     var uid = req.header(process.env.UKEY_HEADER || "x-api-key");
 
-    var surveyAnswer = body["Survey Answer"];
+    var surveyAnswerIds = body["Survey Answer Ids"];
     const SurveySubmissionData = {
         "srs_sr_id": body["Survey ID"],
         "srs_uid": uid,
         "srs_srq_id": body["Question ID"],
-        "srs_srq_answer": surveyAnswer,
+        "srs_srq_answer_id": surveyAnswerIds,
         "srs_rewards_star": body.hasOwnProperty("Rewards Star") ? body["Rewards Star"] : "",
         "srs_rewards_collection_date": body.hasOwnProperty("Rewards Collection Date") ? body["Rewards Collection Date"] : ""
     }
@@ -382,37 +397,49 @@ exports.submitSurvey = async (req, res) => {
         });
         return;
     }
-    var statOptions = {
-        where: {
-            srq_answer: surveyAnswer,
-            srq_id: body["Question ID"]
-        }
-    };
-    const surveyAnswerExist = await SurveyStats.findOne(statOptions);
+    const surveyAnswerExists = {};
+    for (const surveyAnswerId in surveyAnswerIds) {
+        var statOptions = {
+            where: {
+                srq_answer_id: surveyAnswerIds[surveyAnswerId],
+                srq_id: body["Question ID"]
+            }
+        };
+        surveyAnswerExists[surveyAnswerIds[surveyAnswerId]] = await SurveyStats.findOne(statOptions);
+    }  
+    // res.status(200).send({
+    //     message: surveyAnswerExists
+    // });
+    // return;
+   
     SurveySubmissions.create(SurveySubmissionData)
         .then(data => {
             audit_log.saveAuditLog(uid, 'add', 'Survey', data.srs_id, data.dataValues);
             /* insert or update surveyStat table for answer count */
-            if (typeof surveyAnswerExist !== 'undefined' && surveyAnswerExist) {
-                const total_answer_count = parseInt(surveyAnswerExist.srq_answer_count) + 1;
-                SurveyStats.update({
-                    "srq_answer_count": total_answer_count
-                }, {
-                    where: {
-                        st_id: surveyAnswerExist.st_id
+            for (const surveyAnswerId in surveyAnswerIds) {
+                var survey_answer_id = surveyAnswerIds[surveyAnswerId];
+                if (typeof surveyAnswerExists[survey_answer_id] !== 'undefined' && surveyAnswerExists[survey_answer_id]) {
+                    const total_answer_count = parseInt(surveyAnswerExists[survey_answer_id].srq_answer_count) + 1;
+                    SurveyStats.update({
+                        "srq_answer_count": total_answer_count
+                    }, {
+                        where: {
+                            st_id: surveyAnswerExists[survey_answer_id].st_id
+                        }
+                    });
+                } else {
+                    const SurveyStatData = {
+                        "sr_id": body["Survey ID"],
+                        "srq_id": body["Question ID"],
+                        "srq_answer_id": survey_answer_id,
+                        "srq_answer_count": 1
                     }
-                });
-            } else {
-                const SurveyStatData = {
-                    "sr_id": body["Survey ID"],
-                    "srq_id": body["Question ID"],
-                    "srq_answer": surveyAnswer,
-                    "srq_answer_count": 1
+                    SurveyStats.create(SurveyStatData).catch(err => {
+                        logger.log("error", "Some error occurred while inserting data in surveyStat=" + err);
+                    });
                 }
-                SurveyStats.create(SurveyStatData).catch(err => {
-                    logger.log("error", "Some error occurred while inserting data in surveyStat=" + err);
-                });
             }
+            
             res.status(201).send({
                 msg: "Survey Submission Done Successfully",
                 SurveySubmissionID: data.srs_id,
@@ -484,8 +511,8 @@ exports.surveyStatsListing = async (req, res) => {
             sr_id: req.query.surveyID
         }
     }
-    if (req.query.srq_answer) {
-        options['where']['srq_answer'] = req.query.srq_answer;
+    if (req.query.srq_answer_id) {
+        options['where']['srq_answer_id'] = req.query.srq_answer_id;
     }
     var total = await SurveyStats.count({
         where: options['where']
@@ -509,7 +536,7 @@ exports.surveyStatsListing = async (req, res) => {
             "Survey": surveyStatsList[surveyStats].survey,
             "Survey Id": surveyStatsList[surveyStats].sr_id,
             "Survey Question id": surveyStatsList[surveyStats].srq_id,
-            "Survey Answer": surveyStatsList[surveyStats].srq_answer,
+            "Survey Answer Id": surveyStatsList[surveyStats].srq_answer_id,
             "Answer Percentage": answer_percentage.toFixed(2)
           });
     }
@@ -605,6 +632,11 @@ exports.deleteSurveyQuestion = async (req, res) => {
           });
           return;
     }
+    surveyQuestionAnswers.destroy({
+        where: { 
+            srq_id: req.params.surveyQuestionId
+        }
+      })
     SurveyQuestions.destroy({
         where: { 
             srq_id: req.params.surveyQuestionId
@@ -642,11 +674,11 @@ exports.deleteSurveySubmission = async (req, res) => {
           });
           return;
     }
-    const surveyStatsDetail = await SurveyStats.findOne({
+    const surveyStatsDetails = await SurveyStats.findAll({
         where: {
             sr_id: surveySubmissionDetails.srs_sr_id,
             srq_id: surveySubmissionDetails.srs_srq_id,
-            srq_answer: surveySubmissionDetails.srs_srq_answer
+            srq_answer_id: surveySubmissionDetails.srs_srq_answer_id
         }
     });
     SurveySubmissions.destroy({
@@ -655,22 +687,24 @@ exports.deleteSurveySubmission = async (req, res) => {
         }
       })
         .then(num => {
-            if (typeof surveyStatsDetail !== 'undefined' && surveyStatsDetail) {
-                const total_answer_count = parseInt(surveyStatsDetail.srq_answer_count) - 1;
-                if (total_answer_count > 0) {
-                    SurveyStats.update({
-                        "srq_answer_count": total_answer_count
-                    }, {
-                        where: {
-                            st_id: surveyStatsDetail.st_id
-                        }
-                    });
-                } else {
-                    SurveyStats.destroy({
-                        where: { 
-                            st_id: surveyStatsDetail.st_id
-                        }
-                      });
+            if (surveyStatsDetails.length) {
+                for (const surveyStatsDetail in surveyStatsDetails) {
+                    const total_answer_count = parseInt(surveyStatsDetails[surveyStatsDetail].srq_answer_count) - 1;
+                    if (total_answer_count > 0) {
+                        SurveyStats.update({
+                            "srq_answer_count": total_answer_count
+                        }, {
+                            where: {
+                                st_id: surveyStatsDetails[surveyStatsDetail].st_id
+                            }
+                        });
+                    } else {
+                        SurveyStats.destroy({
+                            where: { 
+                                st_id: surveyStatsDetails[surveyStatsDetail].st_id
+                            }
+                        });
+                    }
                 }
             }
         res.status(200).send({

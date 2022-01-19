@@ -49,3 +49,7 @@
 {"level":"info","message":"Login Successfully with username: string , pass:string and login type:Normal"}
 {"level":"info","message":"Login Successfully with username: string , pass:string and login type:Normal"}
 {"level":"info","message":"Login Successfully with username: string , pass:string and login type:Normal"}
+{"level":"info","message":"Login Successfully with username: manpreet.kaur230@gmail.com , pass:123456 and login type:Normal"}
+{"level":"error","message":"Some error occurred while submitting the Survey=ReferenceError: surveyAnswer is not defined"}
+{"level":"info","message":"Login Successfully with username: manp3r5eet.kaur230@gmail.com , pass:123456 and login type:Normal"}
+{"level":"info","message":"Login Successfully with username: manpreet.kaur230@gmail.com , pass:123456 and login type:Normal"}

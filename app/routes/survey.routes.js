@@ -478,7 +478,7 @@ module.exports = app => {
      *            required: false
      *            schema:
      *                type: string
-     *                example: st_id,sr_id,srq_id,srq_answer,srq_answer_count
+     *                example: st_id,sr_id,srq_id,srq_answer_id,srq_answer_count
      *          - name: sortOrder
      *            in: query
      *            required: false
