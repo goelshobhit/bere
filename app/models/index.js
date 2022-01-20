@@ -188,6 +188,10 @@ db.survey.hasMany(db.survey_submissions, {foreignKey: 'srs_sr_id', targetKey: 's
 
 db.survey_stats.belongsTo(db.survey, {foreignKey: 'sr_id', targetKey: 'sr_id'});
 db.survey.hasMany(db.survey_stats, {foreignKey: 'sr_id', targetKey: 'sr_id'});
+
+db.survey_stats.belongsTo(db.survey_question_answers, {foreignKey: 'srq_answer_id', targetKey: 'srq_answer_id'});
+db.survey_question_answers.hasMany(db.survey_stats, {foreignKey: 'srq_answer_id', targetKey: 'srq_answer_id'});
+
 db.content_report.belongsTo(db.content_report_category, {foreignKey: 'content_report_cat_id', targetKey: 'content_report_cat_id'});
 db.content_report_category.hasMany(db.content_report, {foreignKey: 'content_report_cat_id', targetKey: 'content_report_cat_id'});
 

@@ -53,3 +53,8 @@
 {"level":"error","message":"Some error occurred while submitting the Survey=ReferenceError: surveyAnswer is not defined"}
 {"level":"info","message":"Login Successfully with username: manp3r5eet.kaur230@gmail.com , pass:123456 and login type:Normal"}
 {"level":"info","message":"Login Successfully with username: manpreet.kaur230@gmail.com , pass:123456 and login type:Normal"}
+{"level":"info","message":"Login Successfully with username: manpreet.kaur230@gmail.com , pass:123456 and login type:Normal"}
+{"level":"error","message":"Some error occurred while update data in survey tracking table=Error: WHERE parameter \"su_id\" has invalid \"undefined\" value"}
+{"level":"error","message":"Some error occurred while update data in survey tracking table=Error: WHERE parameter \"su_id\" has invalid \"undefined\" value"}
+{"level":"error","message":"Some error occurred while creating the Survey=SequelizeForeignKeyConstraintError: insert or update on table \"survey\" violates foreign key constraint \"survey_sr_brand_id_fkey\""}
+{"level":"info","message":"Login Successfully with username: manp3r5eet.kaur230@gmail.com , pass:123456 and login type:Normal"}

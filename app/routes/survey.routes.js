@@ -37,6 +37,8 @@ module.exports = app => {
      *                            example: 2021-12-22
      *                        Survey Status:
      *                            type: integer
+     *                        User Restriction:
+     *                            type: integer
      *     tags:
      *       - Survey
      *     description: Add new Survey
@@ -393,14 +395,20 @@ module.exports = app => {
      *                    properties:
      *                        Survey ID:
      *                            type: integer
+     *                            required: true
      *                        Question ID:
-     *                            type: string
+     *                            type: integer
+     *                            required: true
      *                        Survey Answer Ids:
-     *                            type: string
+     *                            type: array
+     *                            required: true
+     *                            items:
+     *                              type: integer
      *                        Rewards Star:
      *                            type: integer
      *                        Rewards Collection Date:
      *                            type: date
+     *                            example: 2022-01-20
      *     tags:
      *       - Survey
      *     description: Submit Survey
@@ -468,6 +476,16 @@ module.exports = app => {
      *            required: false
      *            schema:
      *                type: integer
+     *          - name: surveyQuestionId
+     *            in: query
+     *            required: false
+     *            schema:
+     *                type: integer
+     *          - name: surveyAnswerId
+     *            in: query
+     *            required: false
+     *            schema:
+     *                type: integer
      *          - name: pageNumber
      *            in: query
      *            required: false
@@ -524,20 +542,15 @@ module.exports = app => {
      *                    properties:
      *                        Survey ID:
      *                            type: integer
-     *                        Question ID:
-     *                            type: string
-     *                        Rewards Star:
-     *                            type: integer
-     *                        Rewards Collection Date:
-     *                            type: date
+     *                            required: true
      *     tags:
      *       - Survey
-     *     description: Submit Survey
+     *     description: Survey Tracking
      *     produces:
      *       - application/json
      *     responses:
      *       201:
-     *         description: Submit Survey
+     *         description: Survey Tracking
      *       422:
      *         description: validation errors
      *       500:
@@ -554,6 +567,46 @@ module.exports = app => {
      *                              example: Authorisation Required
      */
     router.post("/survey_tracking", auth, adminValidate.validate("survey_tracking"), Survey.surveyTracking);
-
+  
+   /**
+     * @swagger
+     * /api/survey_tracking:
+     *   put:
+     *     requestBody:
+     *        required: false
+     *        content:
+     *            application/json:
+     *                schema:
+     *                    type: object
+     *                    properties:
+     *                        Survey ID:
+     *                            type: integer
+     *                            required: true
+     *                        Survey Completed:
+     *                            type: integer
+     *     tags:
+     *       - Survey
+     *     description: Update Survey Tracking
+     *     produces:
+     *       - application/json
+     *     responses:
+     *       201:
+     *         description: Update Survey Tracking
+     *       422:
+     *         description: validation errors
+     *       500:
+     *         description: Internal server error
+     *       401:
+     *          description: Unauthorized
+     *          content:
+     *              application/json:
+     *                  schema:
+     *                      type: object
+     *                      properties:
+     *                          message:
+     *                              type: string
+     *                              example: Authorisation Required
+     */
+   router.put("/survey_tracking",auth, adminValidate.validate("survey_tracking"), Survey.updateSurveyTracking)
     app.use("/api", router);
 }

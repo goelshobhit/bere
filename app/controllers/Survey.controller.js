@@ -333,12 +333,12 @@ exports.createSurveyQuestionAnswer = async (req, res) => {
           logger.log("error", "Some error occurred while creating the Search Objects=" + err);
         });
         res.status(201).send({
-            msg: "Question Answers added Successfully"
+            msg: "Survey Answers added Successfully"
           });
       } else {
         res.status(400).send({
             msg:
-                "Survey Answer must be Valid Array."
+                "Survey Answers must be Valid Array."
         });
         return;
       }
@@ -397,6 +397,12 @@ exports.submitSurvey = async (req, res) => {
         });
         return;
     }
+    if (!surveyAnswerIds.length) {
+        res.status(400).send({
+            message: "Survey Answer Ids must be Valid Array."
+        });
+        return;
+    }
     const surveyAnswerExists = {};
     for (const surveyAnswerId in surveyAnswerIds) {
         var statOptions = {
@@ -406,11 +412,7 @@ exports.submitSurvey = async (req, res) => {
             }
         };
         surveyAnswerExists[surveyAnswerIds[surveyAnswerId]] = await SurveyStats.findOne(statOptions);
-    }  
-    // res.status(200).send({
-    //     message: surveyAnswerExists
-    // });
-    // return;
+    }
    
     SurveySubmissions.create(SurveySubmissionData)
         .then(data => {
@@ -503,7 +505,13 @@ exports.surveyStatsListing = async (req, res) => {
               cr_co_status: 1
             },
               attributes:['cr_co_name'],
-            }]
+            }
+        ]
+        },
+        {
+            model: surveyQuestionAnswers,
+            required:false,
+              attributes:['answer']
         }
       ]
     if (req.query.surveyID) {
@@ -511,8 +519,11 @@ exports.surveyStatsListing = async (req, res) => {
             sr_id: req.query.surveyID
         }
     }
-    if (req.query.srq_answer_id) {
-        options['where']['srq_answer_id'] = req.query.srq_answer_id;
+    if (req.query.surveyQuestionId) {
+        options['where']['srq_id'] = req.query.surveyQuestionId;
+    }
+    if (req.query.surveyAnswerId) {
+        options['where']['srq_answer_id'] = req.query.surveyAnswerId;
     }
     var total = await SurveyStats.count({
         where: options['where']
@@ -535,9 +546,11 @@ exports.surveyStatsListing = async (req, res) => {
        SurveyStatResult.push({
             "Survey": surveyStatsList[surveyStats].survey,
             "Survey Id": surveyStatsList[surveyStats].sr_id,
-            "Survey Question id": surveyStatsList[surveyStats].srq_id,
+            "Survey Question Id": surveyStatsList[surveyStats].srq_id,
             "Survey Answer Id": surveyStatsList[surveyStats].srq_answer_id,
+            "Survey Answer": surveyStatsList[surveyStats].survey_question_answer.answer,
             "Answer Percentage": answer_percentage.toFixed(2)
+            
           });
     }
     
@@ -576,30 +589,28 @@ exports.surveyTracking = async (req, res) => {
         });
         return;
     }
-    var surveyCompletionDate = null;
-    if (body.hasOwnProperty("Survey Completed") && body["Survey Completed"] == 1) {
-        surveyCompletionDate = body.hasOwnProperty("Survey Completion Date") ? body["Survey Completion Date"] : new Date();
-    }
     var uid = req.header(process.env.UKEY_HEADER || "x-api-key");
     const SurveyTrackingData = {
         "sr_id": body["Survey ID"],
         "sr_uid": uid,
-        "sr_completed": body.hasOwnProperty("Survey Completed") ? body["Survey Completed"] : 0,
-        "sr_completion_date": surveyCompletionDate,
+        "sr_completed": 0,
         "sr_usr_restriction": survey.sr_usr_restriction
     }
     var options = {
         where: {
             sr_uid: uid,
-            sr_id: body["Survey ID"],
-            sr_completed: 1
+            sr_id: body["Survey ID"]
         }
     };
     const userSurvey = await SurveyUserComplete.findOne(options);
-
-    if (userSurvey) {
+    if (userSurvey && userSurvey.sr_completed == 1) {
         res.status(500).send({
             message: "The user is not permitted to complete the same survey Again."
+        });
+        return;
+    } else if (userSurvey && userSurvey.sr_completed == 0) {
+        res.status(500).send({
+            message: "Already submitted survey tracking request for this survey."
         });
         return;
     }
@@ -607,10 +618,70 @@ exports.surveyTracking = async (req, res) => {
         audit_log.saveAuditLog(uid, 'tracking', 'Survey tracking', data.su_id, data.dataValues);
         res.status(201).send({
             msg: "Survey Tracking Record Added Successfully",
-            SurveyQuestionID: data.su_id
+            SurveyTrackingID: data.su_id
         });
     }).catch(err => {
         logger.log("error", "Some error occurred while inserting data in survey tracking table=" + err);
+    });
+}
+
+/**
+ * Function to update track survey for user
+ * @param  {object}  req expressJs request object
+ * @param  {object}  res expressJs response object
+ * @return {Promise}
+ */
+exports.updateSurveyTracking = async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        res.status(422).json({
+            errors: errors.array()
+        });
+        return;
+    }
+    const body = req.body;
+    var uid = req.header(process.env.UKEY_HEADER || "x-api-key");
+    var surveyTrackingOptions = {
+        where: {
+            sr_uid: uid,
+            sr_id: body["Survey ID"]
+        }
+    };
+    const SurveyUserCompleteData = await SurveyUserComplete.findOne(surveyTrackingOptions);
+    if (!SurveyUserCompleteData) {
+        res.status(500).send({
+            message: "Survey tracking record not found."
+        });
+        return;
+    }
+    
+    if (SurveyUserCompleteData.sr_completed == 1) {
+        res.status(500).send({
+            message: "The user is not permitted to complete the same survey Again."
+        });
+        return;
+    }
+    var surveyCompletionDate = null;
+    if (body.hasOwnProperty("Survey Completed") && body["Survey Completed"] == 1) {
+        surveyCompletionDate =  new Date();
+    }
+    const SurveyTrackingData = {
+        "sr_completed": body.hasOwnProperty("Survey Completed") ? body["Survey Completed"] : 1,
+        "sr_completion_date": surveyCompletionDate,
+    }
+    SurveyUserComplete.update(SurveyTrackingData, {
+        returning: true,
+        where: {
+            sr_id: body["Survey ID"],
+            sr_uid : uid
+        }
+    }).then(data => {
+        audit_log.saveAuditLog(uid, 'tracking', 'Survey tracking', data.su_id, data.dataValues);
+        res.status(201).send({
+            msg: "Survey Tracking Record updated Successfully"
+        });
+    }).catch(err => {
+        logger.log("error", "Some error occurred while update data in survey tracking table=" + err);
     });
 }
 
