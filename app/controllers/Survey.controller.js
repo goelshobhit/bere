@@ -543,12 +543,16 @@ exports.surveyStatsListing = async (req, res) => {
     const SurveyStatResult = [];
     for (const surveyStats in surveyStatsList) {
        answer_percentage = parseFloat(surveyStatsList[surveyStats].srq_answer_count*100/questionAnswerCount[0][surveyStatsList[surveyStats].srq_id]);
+       var questionAnswer = '';
+       if (surveyStatsList[surveyStats].survey_question_answer && surveyStatsList[surveyStats].survey_question_answer.answer) {
+        questionAnswer = surveyStatsList[surveyStats].survey_question_answer.answer;
+       }
        SurveyStatResult.push({
             "Survey": surveyStatsList[surveyStats].survey,
             "Survey Id": surveyStatsList[surveyStats].sr_id,
             "Survey Question Id": surveyStatsList[surveyStats].srq_id,
             "Survey Answer Id": surveyStatsList[surveyStats].srq_answer_id,
-            "Survey Answer": surveyStatsList[surveyStats].survey_question_answer.answer,
+            "Survey Answer": questionAnswer,
             "Answer Percentage": answer_percentage.toFixed(2)
             
           });
