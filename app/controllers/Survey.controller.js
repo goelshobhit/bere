@@ -494,7 +494,7 @@ exports.surveyStatsListing = async (req, res) => {
         {
           model: Survey,
           required:false,
-          attributes:['sr_title'],
+          attributes:['sr_title', 'sr_color'],
           where : {
             sr_status: 1
           },
