@@ -511,7 +511,13 @@ exports.surveyStatsListing = async (req, res) => {
         {
             model: surveyQuestionAnswers,
             required:false,
-              attributes:['answer']
+              attributes:['answer'],
+            include: [{
+                model: SurveyQuestions,
+                required:false,
+                attributes:['question'],
+                }
+            ]
         }
       ]
     if (req.query.surveyID) {
@@ -553,8 +559,8 @@ exports.surveyStatsListing = async (req, res) => {
             "Survey Question Id": surveyStatsList[surveyStats].srq_id,
             "Survey Answer Id": surveyStatsList[surveyStats].srq_answer_id,
             "Survey Answer": questionAnswer,
-            "Answer Percentage": answer_percentage.toFixed(2)
-            
+            "Answer Percentage": answer_percentage.toFixed(2),
+            "Survey Question": surveyStatsList[surveyStats].survey_question_answer.survey_question.question,
           });
     }
     
