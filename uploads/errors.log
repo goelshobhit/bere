@@ -37,3 +37,7 @@
 {"level":"error","message":"SequelizeForeignKeyConstraintError: insert or update on table \"bonus_rewards\" violates foreign key constraint \"bonus_rewards_bonus_rewards_bonus_setid_fkey\":Error updating Bonus Rewards Details with id=6"}
 {"level":"error","message":"SequelizeForeignKeyConstraintError: insert or update on table \"bonus_rewards\" violates foreign key constraint \"bonus_rewards_bonus_rewards_item_id_fkey\":Error updating Bonus Rewards Details with id=6"}
 {"level":"error","message":"SequelizeForeignKeyConstraintError: insert or update on table \"bonus_rewards\" violates foreign key constraint \"bonus_rewards_bonus_rewards_item_id_fkey\":Error updating Bonus Rewards Details with id=6"}
+{"level":"error","message":"Some error occurred while submitting the Survey=ReferenceError: surveyAnswer is not defined"}
+{"level":"error","message":"Some error occurred while update data in survey tracking table=Error: WHERE parameter \"su_id\" has invalid \"undefined\" value"}
+{"level":"error","message":"Some error occurred while update data in survey tracking table=Error: WHERE parameter \"su_id\" has invalid \"undefined\" value"}
+{"level":"error","message":"Some error occurred while creating the Survey=SequelizeForeignKeyConstraintError: insert or update on table \"survey\" violates foreign key constraint \"survey_sr_brand_id_fkey\""}

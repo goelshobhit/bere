@@ -9,6 +9,7 @@ const Comment = db.post_comment;
 const Hashtags = db.hashtags;
 const SearchResults = db.search_results;
 const SearchObjects = db.search_objects;
+const taskJson = db.tasks_json
 const Op = db.Sequelize.Op;
 const logger = require("../middleware/logger");
 const common = require("../common");
@@ -135,6 +136,7 @@ exports.searchRecords = async (req, res) => {
     await BlackListed.findAll();
   const blackListedShorthanded = blackListedList.map(x => x.keyword);
   const keyWord = req.query.keyWord;
+  const Uid = req.header(process.env.UKEY_HEADER || "x-api-key");
   const searchObjectValues = await SearchObjects.findAll({
     where: {},
     attributes: ['search_obj_category']
@@ -247,6 +249,33 @@ exports.searchRecords = async (req, res) => {
           if (TaskDisplayVideoDetails.length) {
             response_data.Videos = TaskDisplayVideoDetails;
           }
+        }
+      }
+      if (searchObjectValue == searchObjectConstant.TasksJson) {
+        const contentUserTaskIds = await common.getContentReportUser(['Task'], Uid);
+        let taskIdsValues = [];
+        if (contentUserTaskIds.length) {
+            contentUserTaskIds.forEach(element => {
+                taskIdsValues.push('' + element.content_report_type_id + '');
+            });
+        }
+        var taskOptions = {
+          attributes: [["tj_type", "task_type"], ["tj_task_id", "task_id"], ["tj_data", "task_data"], ["tj_status", "task_status"]],
+          where: {
+            tj_data: {
+              ta_name: {
+                [Op.iLike]: `%${keyWord}%`
+              }
+            },
+            tj_task_id: {
+                [Op.not]: taskIdsValues
+            },
+            is_autotakedown: 0
+          }
+        };
+        const TaskDetails = await taskJson.findAll(taskOptions);
+        if (TaskDetails.length) {
+          response_data.TasksJson = TaskDetails;
         }
       }
       if (searchObjectValue == searchObjectConstant.Contest) {

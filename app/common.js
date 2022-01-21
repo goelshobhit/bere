@@ -515,6 +515,7 @@ function Common() {
       "Profile": 'profile',
       "Comments": 'comments',
       "Tasks": 'tasks',
+      "TasksJson": 'tasksjson',
       "Survey": "survey",
       "Quizes": "quizes",
       "Contest": "contest",

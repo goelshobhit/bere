@@ -1,6 +1,6 @@
 module.exports = (sequelize, Sequelize) => {
-  const survey_stats = sequelize.define("survey_stats", {
-    st_id: {
+  const survey = sequelize.define("survey_question_answers", {
+    srq_answer_id: {
       allowNull: false,
       autoIncrement: true,
       primaryKey: true,
@@ -14,20 +14,16 @@ module.exports = (sequelize, Sequelize) => {
       allowNull: false,
       type: Sequelize.INTEGER
     },
-    srq_answer_id: {
+    answer: {
       allowNull: false,
-      type: Sequelize.INTEGER
-    },
-    srq_answer_count: {
-      allowNull: false,
-      type: Sequelize.INTEGER
+      type: Sequelize.TEXT
     }
   }, {
-      createdAt: 'st_created_at',
-      updatedAt: 'st_updated_at',
+      createdAt: 'srqa_created_at',
+      updatedAt: 'srqa_updated_at',
       freezeTableName: true,
-      tableName: 'survey_stats',
+      tableName: 'survey_question_answers',
       underscored: true
   });
-  return survey_stats;
+  return survey;
 }

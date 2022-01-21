@@ -99,6 +99,7 @@ db.search_results = require("./search_results.model")(sequelize, Sequelize);
 db.search_objects = require("./search_objects.model")(sequelize, Sequelize);
 db.survey = require("./survey.model")(sequelize, Sequelize);
 db.survey_questions = require("./survey_questions.model")(sequelize, Sequelize);
+db.survey_question_answers = require("./survey_question_answers.model")(sequelize, Sequelize);
 db.survey_submissions = require("./survey_submissions.model")(sequelize, Sequelize);
 db.survey_stats = require("./survey_stats.model")(sequelize, Sequelize);
 db.survey_user_complete = require("./survey_user_complete.model")(sequelize, Sequelize);
@@ -176,11 +177,21 @@ db.brands.hasMany(db.survey, {foreignKey: 'sr_brand_id', targetKey: 'cr_co_id'})
 db.survey_questions.belongsTo(db.survey, {foreignKey: 'sr_id', targetKey: 'sr_id'});
 db.survey.hasMany(db.survey_questions, {foreignKey: 'sr_id', targetKey: 'sr_id'});
 
+db.survey_question_answers.belongsTo(db.survey, {foreignKey: 'sr_id', targetKey: 'sr_id'});
+db.survey.hasMany(db.survey_question_answers, {foreignKey: 'sr_id', targetKey: 'sr_id'});
+
+db.survey_question_answers.belongsTo(db.survey_questions, {foreignKey: 'srq_id', targetKey: 'srq_id'});
+db.survey_questions.hasMany(db.survey_question_answers, {foreignKey: 'srq_id', targetKey: 'srq_id'});
+
 db.survey_submissions.belongsTo(db.survey, {foreignKey: 'srs_sr_id', targetKey: 'sr_id'});
 db.survey.hasMany(db.survey_submissions, {foreignKey: 'srs_sr_id', targetKey: 'sr_id'});
 
 db.survey_stats.belongsTo(db.survey, {foreignKey: 'sr_id', targetKey: 'sr_id'});
 db.survey.hasMany(db.survey_stats, {foreignKey: 'sr_id', targetKey: 'sr_id'});
+
+db.survey_stats.belongsTo(db.survey_question_answers, {foreignKey: 'srq_answer_id', targetKey: 'srq_answer_id'});
+db.survey_question_answers.hasMany(db.survey_stats, {foreignKey: 'srq_answer_id', targetKey: 'srq_answer_id'});
+
 db.content_report.belongsTo(db.content_report_category, {foreignKey: 'content_report_cat_id', targetKey: 'content_report_cat_id'});
 db.content_report_category.hasMany(db.content_report, {foreignKey: 'content_report_cat_id', targetKey: 'content_report_cat_id'});
 
