@@ -57,7 +57,9 @@ module.exports = app => {
    *                    type: object
    *                    properties:
    *                        notify_grp_name:
-   *                            type: integer
+   *                            type: string
+   *                        notify_grp_description:
+   *                            type: string
    *                        notify_grp_deliv_method:
    *                            type: integer
    *                        notify_trig_grp_sentdate:
@@ -109,7 +111,7 @@ module.exports = app => {
    *           required: false
    *           schema:
    *              type: string
-   *              example: notify_trig_grp_id,notify_grp_name,notify_grp_deliv_method,notify_trig_grp_sentdate   # Example of a parameter value
+   *              example: notify_trig_grp_id,notify_grp_name,notify_grp_description,notify_grp_deliv_method,notify_trig_grp_sentdate   # Example of a parameter value
    *         - name: sortOrder
    *           in: query
    *           required: false
