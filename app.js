@@ -237,6 +237,7 @@ require("./app/routes/post_report.routes")(app);
 require("./app/routes/audit_log.routes")(app);
 require("./app/routes/search.routes")(app);
 require("./app/routes/notify_grp.routes")(app);
+require("./app/routes/notify_cat.routes")(app);
 require("./app/routes/notify_event.routes")(app);
 require("./app/routes/notify_trig.routes")(app);
 require("./app/routes/notify_trig_sent.routes")(app);

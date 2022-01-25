@@ -1,10 +1,10 @@
 module.exports = app => {
-    const NotifyGrp = require("../controllers/notify_grp.controller.js");
+    const NotifyCat = require("../controllers/notify_cat.controller.js");
     var router = require("express").Router();
     const auth = require("../middleware/auth");
   /**
    * @swagger
-   * /api/notify/groups:
+   * /api/notify/categories:
    *   post:
    *     requestBody:
    *        required: false
@@ -13,26 +13,20 @@ module.exports = app => {
    *                schema:
    *                    type: object
    *                    properties:
-   *                        Group Name:
+   *                        Category Name:
    *                            type: string
-   *                        Group Description:
+   *                        Category Description:
    *                            type: string
-   *                        Category Id:
-   *                            type: integer
    *                        Delivery Method:
    *                            type: integer
-   *                        Sent Date:
-   *                            type: string
-   *                            format: date-time
-   *                            example: 2020-09-30
    *     tags:
-   *       - Notify Groups
-   *     description: Add new Notify Groups
+   *       - Notify categories
+   *     description: Add new Notify categories
    *     produces:
    *       - application/json
    *     responses:
    *       201:
-   *         description: Add new Groups
+   *         description: Add new categories
    *       422:
    *         description: validation errors
    *       500:
@@ -48,10 +42,10 @@ module.exports = app => {
    *                              type: string
    *                              example: Authorisation Required
    */
-	router.post("/notify/groups", auth, NotifyGrp.createNotifyGrp);
+	router.post("/notify/categories", auth, NotifyCat.createNotifyCat);
   /**
    * @swagger
-   * /api/notify/groups/{notifyTrigGrpId}:
+   * /api/notify/categories/{notifyTrigCatId}:
    *   put:
    *     requestBody:
    *        required: false
@@ -60,32 +54,26 @@ module.exports = app => {
    *                schema:
    *                    type: object
    *                    properties:
-   *                        notify_grp_name:
+   *                        notify_cat_name:
    *                            type: string
-   *                        notify_grp_description:
+   *                        notify_cat_description:
    *                            type: string
-   *                        notify_trig_cat_id:
+   *                        notify_cat_deliv_method:
    *                            type: integer
-   *                        notify_grp_deliv_method:
-   *                            type: integer
-   *                        notify_trig_grp_sentdate:
-   *                            type: string
-   *                            format: date-time
-   *                            example: 2020-09-30
    *     parameters:
-   *         - name: notifyTrigGrpId
+   *         - name: notifyTrigCatId
    *           in: path
    *           required: true
    *           schema:
    *              type: integer
    *     tags:
-   *       - Notify Groups
-   *     description: Update Notify Groups
+   *       - Notify categories
+   *     description: Update Notify categories
    *     produces:
    *       - application/json
    *     responses:
    *       201:
-   *         description: Notify Groups updated
+   *         description: Notify categories updated
    *       422:
    *         description: validation errors
    *       500:
@@ -101,10 +89,10 @@ module.exports = app => {
    *                              type: string
    *                              example: Authorisation Required
    */
-   router.put("/notify/groups/:notifyTrigGrpId", auth, NotifyGrp.updateNotifyGrp);
+   router.put("/notify/categories/:notifyTrigCatId", auth, NotifyCat.updateNotifyCat);
   /**
    * @swagger
-   * /api/notify/groups:
+   * /api/notify/categories:
    *   get:
    *     parameters:
    *         - name: pageNumber
@@ -117,7 +105,7 @@ module.exports = app => {
    *           required: false
    *           schema:
    *              type: string
-   *              example: notify_trig_grp_id,notify_grp_name,notify_grp_description,notify_grp_deliv_method,notify_trig_grp_sentdate   # Example of a parameter value
+   *              example: notify_trig_cat_id,notify_cat_name,notify_cat_description,notify_cat_deliv_method,notify_trig_grp_sentdate   # Example of a parameter value
    *         - name: sortOrder
    *           in: query
    *           required: false
@@ -130,13 +118,13 @@ module.exports = app => {
    *           schema:
    *              type: string
    *     tags:
-   *       - Notify Groups
-   *     description: Returns all Notify Groups
+   *       - Notify categories
+   *     description: Returns all Notify categories
    *     produces:
    *       - application/json
    *     responses:
    *       200:
-   *         description: A list of Notify Groups
+   *         description: A list of Notify categories
    *       401:
    *          description: Unauthorized
    *          content:
@@ -148,13 +136,13 @@ module.exports = app => {
    *                              type: string
    *                              example: Authorisation Required
    */
-    router.get('/notify/groups', auth, NotifyGrp.notifyGrpListing)
+    router.get('/notify/categories', auth, NotifyCat.NotifyCatListing)
   /**
    * @swagger
-   * /api/notify/groups/{notifyTrigGrpId}:
+   * /api/notify/categories/{notifyTrigCatId}:
    *   get:
    *     parameters:
-   *         - name: notifyTrigGrpId
+   *         - name: notifyTrigCatId
    *           in: path
    *           required: true
    *           schema:
@@ -170,8 +158,8 @@ module.exports = app => {
    *           schema:
    *              type: integer
    *     tags:
-   *       - Notify Groups
-   *     description: Retrieve a single Notify Group with notifyTrigGrpId
+   *       - Notify categories
+   *     description: Retrieve a single Notify Group with notifyTrigCatId
    *     produces:
    *       - application/json
    *     responses:
@@ -188,19 +176,19 @@ module.exports = app => {
    *                              type: string
    *                              example: Authorisation Required
    */
-    router.get("/notify/groups/:notifyTrigGrpId", auth, NotifyGrp.notifyGrpDetails);
+    router.get("/notify/categories/:notifyTrigCatId", auth, NotifyCat.NotifyCatDetails);
   /**
    * @swagger
-   * /api/notify/groups/{notifyTrigGrpId}:
+   * /api/notify/categories/{notifyTrigCatId}:
    *   delete:
    *     parameters:
-   *         - name: notifyTrigGrpId
+   *         - name: notifyTrigCatId
    *           in: path
    *           required: true
    *           schema:
    *              type: integer
    *     tags:
-   *       - Notify Groups
+   *       - Notify categories
    *     description: Delete a notify group with id
    *     produces:
    *       - application/json
@@ -218,7 +206,7 @@ module.exports = app => {
    *                              type: string
    *                              example: Authorisation Required
    */
-   router.delete("/notify/groups/:notifyTrigGrpId", auth, NotifyGrp.deleteNotifyGrp);   
+   router.delete("/notify/categories/:notifyTrigCatId", auth, NotifyCat.deleteNotifyCat);   
     app.use("/api", router);
 };
   

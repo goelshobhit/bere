@@ -81,6 +81,7 @@ db.bonus_ticket_rules = require("./bonus/bonus_ticket_rules.model")(sequelize, S
 db.bonus_task = require("./bonus/bonus_task.model")(sequelize, Sequelize);
 db.bonus_rewards = require("./bonus/bonus_rewards.model")(sequelize, Sequelize);
 //notification templates
+db.notify_cat = require("./notify_cat.model")(sequelize, Sequelize);
 db.notify_grp = require("./notify_grp.model")(sequelize, Sequelize);
 db.notify_event = require("./notify_event.model")(sequelize, Sequelize);
 db.notify_trig = require("./notify_trig.model")(sequelize, Sequelize);
@@ -152,6 +153,8 @@ db.brands.hasMany(db.notify_trig, {foreignKey: 'cr_co_id', targetKey: 'cr_co_id'
 db.notify_trig.belongsTo(db.brands, {foreignKey: 'cr_co_id', targetKey: 'cr_co_id'})
 db.notify_event.hasMany(db.notify_trig, {foreignKey: 'notify_event_id', targetKey: 'notify_event_id'});
 db.notify_trig.belongsTo(db.notify_event, {foreignKey: 'notify_event_id', targetKey: 'notify_event_id'});
+db.notify_cat.hasMany(db.notify_grp, {foreignKey: 'notify_trig_cat_id', targetKey: 'notify_trig_cat_id'});
+db.notify_grp.belongsTo(db.notify_cat, {foreignKey: 'notify_trig_cat_id', targetKey: 'notify_trig_cat_id'});
 db.notify_grp.hasMany(db.notify_trig, {foreignKey: 'notify_trig_grp_id', targetKey: 'notify_trig_grp_id'});
 db.notify_trig.belongsTo(db.notify_grp, {foreignKey: 'notify_trig_grp_id', targetKey: 'notify_trig_grp_id'});
 db.campaigns.belongsTo(db.brands, {foreignKey: 'cr_co_id', targetKey: 'cr_co_id'});
