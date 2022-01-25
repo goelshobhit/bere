@@ -27,10 +27,10 @@ exports.createNotifyCat = async(req, res) => {
         "notify_cat_deliv_method": body.hasOwnProperty("Delivery Method") ? body["Delivery Method"] : 0
     }
     NotifyCat.create(notifyCat).then(data => {
-            audit_log.saveAuditLog(req.header(process.env.UKEY_HEADER || "x-api-key"),'add','todayTimeStamp',data.notify_cat_grp_id,data.dataValues);
-        res.status(201).send({			
-            msg: "NotifyCat Created Successfully",
-            notifyCatGrpId: data.notify_cat_grp_id
+        audit_log.saveAuditLog(req.header(process.env.UKEY_HEADER || "x-api-key"),'add','todayTimeStamp',data.notify_trig_cat_id,data.dataValues);
+    res.status(201).send({			
+        msg: "NotifyCat Created Successfully",
+        notifyTrigCatId: data.notify_trig_cat_id
         });
     }).catch(err => {
         logger.log("error", "Some error occurred while creating the NotifyCat=" + err);
@@ -50,7 +50,7 @@ exports.NotifyCatListing = async(req, res) => {
     const pageSize = parseInt(req.query.pageSize || 10);
 	const pageNumber = parseInt(req.query.pageNumber || 1);
 	const skipCount = (pageNumber - 1) * pageSize;
-	const sortBy = req.query.sortBy || 'notify_cat_grp_id'
+	const sortBy = req.query.sortBy || 'notify_trig_cat_id'
 	const sortOrder = req.query.sortOrder || 'DESC'
     
     var options = {
@@ -88,10 +88,10 @@ exports.NotifyCatListing = async(req, res) => {
  * @return {Promise}
  */
 exports.NotifyCatDetails = async(req, res) => {
-    const notifyCatGrpId = req.params.notifyCatGrpId;
+    const notifyTrigCatId = req.params.notifyTrigCatId;
     var options = {
         where: {
-            notify_cat_grp_id: notifyCatGrpId
+            notify_trig_cat_id: notifyTrigCatId
         }
     };
     const notifyCat = await NotifyCat.findOne(options);
@@ -112,16 +112,16 @@ exports.NotifyCatDetails = async(req, res) => {
  * @return {Promise}
  */
 exports.updateNotifyCat = async(req, res) => {
-    const id = req.params.notifyCatGrpId;
+    const id = req.params.notifyTrigCatId;
     var NotifyCatDetails = await NotifyCat.findOne({
         where: {
-            notify_cat_grp_id: id
+            notify_trig_cat_id: id
         }
     });
     NotifyCat.update(req.body, {
 		returning:true,
         where: {
-            notify_cat_grp_id: id
+            notify_trig_cat_id: id
         }
     }).then(function([ num, [result] ]) {
         if (num == 1) {
@@ -152,18 +152,18 @@ exports.updateNotifyCat = async(req, res) => {
  exports.deleteNotifyCat = async (req, res) => {
     const NotifyCatDetails = await NotifyCat.findOne({
             where: {
-                notify_cat_grp_id: req.params.notifyCatGrpId
+                notify_trig_cat_id: req.params.notifyTrigCatId
             }
         });
     if(!NotifyCatDetails){
         res.status(500).send({
-            message: "Could not delete NotifyCat with id=" + req.params.notifyCatGrpId
+            message: "Could not delete NotifyCat with id=" + req.params.notifyTrigCatId
           });
           return;
     }
     NotifyCat.destroy({
         where: { 
-            notify_cat_grp_id: req.params.notifyCatGrpId
+            notify_trig_cat_id: req.params.notifyTrigCatId
         }
       })
         .then(num => {
@@ -174,7 +174,7 @@ exports.updateNotifyCat = async(req, res) => {
         })
         .catch(err => {
           res.status(500).send({
-            message: "Could not delete NotifyCat with id=" + req.params.notifyCatGrpId
+            message: "Could not delete NotifyCat with id=" + req.params.notifyTrigCatId
           });
           return;
         });
