@@ -22,7 +22,8 @@ exports.createNotifyGrp = async(req, res) => {
         return;
     }
     const notifyGrp = {
-        "notify_grp_name": body.hasOwnProperty("Group Name") ? body["Group Name"] : 0,
+        "notify_grp_name": body.hasOwnProperty("Group Name") ? body["Group Name"] : "",
+        "notify_grp_description": body.hasOwnProperty("Group Description") ? body["Group Description"] : "",
         "notify_grp_deliv_method": body.hasOwnProperty("Delivery Method") ? body["Delivery Method"] : 0,
         "notify_trig_grp_sentdate": body.hasOwnProperty("Sent Date") ? body["Sent Date"] : new Date(),
     }
