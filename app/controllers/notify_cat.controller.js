@@ -1,5 +1,6 @@
 const db = require("../models");
 const NotifyCat = db.notify_cat;
+const NotifyGrp = db.notify_grp;
 const Op = db.Sequelize.Op;
 const audit_log = db.audit_log
 const logger = require("../middleware/logger");
@@ -72,6 +73,12 @@ exports.NotifyCatListing = async(req, res) => {
             ]
         } : null;			
     }
+    options['include'] = [
+        {
+          model: NotifyGrp,
+          required:false
+        }
+    ]
     var total = await NotifyCat.count({
         where: options['where']
     });

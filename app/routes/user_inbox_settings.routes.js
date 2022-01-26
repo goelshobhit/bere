@@ -1,10 +1,10 @@
 module.exports = app => {
-    const NotifyCat = require("../controllers/notify_cat.controller.js");
+    const UserInboxSettings = require("../controllers/user_inbox_settings.controller.js");
     var router = require("express").Router();
     const auth = require("../middleware/auth");
   /**
    * @swagger
-   * /api/notify/categories:
+   * /api/notify/settings:
    *   post:
    *     requestBody:
    *        required: false
@@ -13,20 +13,18 @@ module.exports = app => {
    *                schema:
    *                    type: object
    *                    properties:
-   *                        Category Name:
-   *                            type: string
-   *                        Category Description:
-   *                            type: string
-   *                        Delivery Method:
+   *                        User Id:
    *                            type: integer
+   *                        Settings Data:
+   *                            type: string
    *     tags:
-   *       - Notify Categories
-   *     description: Add new Notify categories
+   *       - Notify Settings
+   *     description: Add new Notify Settings
    *     produces:
    *       - application/json
    *     responses:
    *       201:
-   *         description: Add new categories
+   *         description: Add new settings
    *       422:
    *         description: validation errors
    *       500:
@@ -42,10 +40,10 @@ module.exports = app => {
    *                              type: string
    *                              example: Authorisation Required
    */
-	router.post("/notify/categories", auth, NotifyCat.createNotifyCat);
+	router.post("/notify/settings", auth, UserInboxSettings.createUserInboxSettings);
   /**
    * @swagger
-   * /api/notify/categories/{notifyTrigCatId}:
+   * /api/notify/settings/{userInboxSettingsId}:
    *   put:
    *     requestBody:
    *        required: false
@@ -54,12 +52,10 @@ module.exports = app => {
    *                schema:
    *                    type: object
    *                    properties:
-   *                        notify_cat_name:
+   *                        u_id:
    *                            type: string
-   *                        notify_cat_description:
+   *                        settings_data:
    *                            type: string
-   *                        notify_cat_deliv_method:
-   *                            type: integer
    *     parameters:
    *         - name: notifyTrigCatId
    *           in: path
@@ -67,13 +63,13 @@ module.exports = app => {
    *           schema:
    *              type: integer
    *     tags:
-   *       - Notify Categories
-   *     description: Update Notify categories
+   *       - Notify Settings
+   *     description: Update Notify Settings
    *     produces:
    *       - application/json
    *     responses:
    *       201:
-   *         description: Notify categories updated
+   *         description: Notify Settings updated
    *       422:
    *         description: validation errors
    *       500:
@@ -89,10 +85,10 @@ module.exports = app => {
    *                              type: string
    *                              example: Authorisation Required
    */
-   router.put("/notify/categories/:notifyTrigCatId", auth, NotifyCat.updateNotifyCat);
+   router.put("/notify/settings/:userInboxSettingsId", auth, UserInboxSettings.updateUserInboxSettings);
   /**
    * @swagger
-   * /api/notify/categories:
+   * /api/notify/settings:
    *   get:
    *     parameters:
    *         - name: pageNumber
@@ -105,7 +101,7 @@ module.exports = app => {
    *           required: false
    *           schema:
    *              type: string
-   *              example: notify_trig_cat_id,notify_cat_name,notify_cat_description,notify_cat_deliv_method,notify_trig_grp_sentdate   # Example of a parameter value
+   *              example: user_inbox_settings_id,u_id,settings_data  # Example of a parameter value
    *         - name: sortOrder
    *           in: query
    *           required: false
@@ -118,13 +114,13 @@ module.exports = app => {
    *           schema:
    *              type: string
    *     tags:
-   *       - Notify Categories
-   *     description: Returns all Notify categories
+   *       - Notify Settings
+   *     description: Returns all Notify Settings
    *     produces:
    *       - application/json
    *     responses:
    *       200:
-   *         description: A list of Notify categories
+   *         description: A list of Notify Settings
    *       401:
    *          description: Unauthorized
    *          content:
@@ -136,13 +132,13 @@ module.exports = app => {
    *                              type: string
    *                              example: Authorisation Required
    */
-    router.get('/notify/categories', auth, NotifyCat.NotifyCatListing)
+    router.get('/notify/settings', auth, UserInboxSettings.UserInboxSettingsListing)
   /**
    * @swagger
-   * /api/notify/categories/{notifyTrigCatId}:
+   * /api/notify/settings/{userInboxSettingsId}:
    *   get:
    *     parameters:
-   *         - name: notifyTrigCatId
+   *         - name: userInboxSettingsId
    *           in: path
    *           required: true
    *           schema:
@@ -158,13 +154,13 @@ module.exports = app => {
    *           schema:
    *              type: integer
    *     tags:
-   *       - Notify Categories
-   *     description: Retrieve a single Notify Group with notifyTrigCatId
+   *       - Notify Settings
+   *     description: Retrieve a single notify setting with notifyTrigGrpId
    *     produces:
    *       - application/json
    *     responses:
    *       200:
-   *         description: Details of a Notify Group
+   *         description: Details of a notify setting
    *       401:
    *          description: Unauthorized
    *          content:
@@ -176,25 +172,25 @@ module.exports = app => {
    *                              type: string
    *                              example: Authorisation Required
    */
-    router.get("/notify/categories/:notifyTrigCatId", auth, NotifyCat.NotifyCatDetails);
+    router.get("/notify/settings/:userInboxSettingsId", auth, UserInboxSettings.UserInboxSettingsDetails);
   /**
    * @swagger
-   * /api/notify/categories/{notifyTrigCatId}:
+   * /api/notify/settings/{userInboxSettingsId}:
    *   delete:
    *     parameters:
-   *         - name: notifyTrigCatId
+   *         - name: userInboxSettingsId
    *           in: path
    *           required: true
    *           schema:
    *              type: integer
    *     tags:
-   *       - Notify Categories
-   *     description: Delete a notify group with id
+   *       - Notify Settings
+   *     description: Delete a notify setting with id
    *     produces:
    *       - application/json
    *     responses:
    *       200:
-   *         description: Delete a notify group
+   *         description: Delete a notify setting
    *       401:
    *          description: Unauthorized
    *          content:
@@ -206,7 +202,7 @@ module.exports = app => {
    *                              type: string
    *                              example: Authorisation Required
    */
-   router.delete("/notify/categories/:notifyTrigCatId", auth, NotifyCat.deleteNotifyCat);   
-    app.use("/api", router);
+   router.delete("/notify/settings/:userInboxSettingsId", auth, UserInboxSettings.deleteUserInboxSettings);   
+   app.use("/api", router);
 };
   

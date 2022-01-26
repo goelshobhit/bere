@@ -7,7 +7,7 @@ module.exports = (sequelize, Sequelize) => {
         },
         notify_trig_cat_id:{
             type: Sequelize.INTEGER,
-            allowNull: false,
+            allowNull: true,
 		},
 		notify_grp_name:{
             type: Sequelize.TEXT,
