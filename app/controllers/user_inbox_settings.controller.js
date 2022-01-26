@@ -112,22 +112,29 @@ exports.UserInboxSettingsDetails = async(req, res) => {
  * @return {Promise}
  */
  exports.UserInboxSettingsDetailsUserId = async(req, res) => {
-    var userId = req.header(process.env.UKEY_HEADER || "x-api-key");
-    var options = {
-        where: {
-            u_id: userId
+    try {
+        var userId = req.header(process.env.UKEY_HEADER || "x-api-key");
+        var options = {
+            where: {
+                u_id: userId
+            }
+        };
+        const userInboxSettings = await UserInboxSettings.findOne(options);
+        if(!userInboxSettings){
+            res.status(404).send({
+                message: "UserInboxSettings not found"
+            });
+            return
         }
-    };
-    const userInboxSettings = await UserInboxSettings.findOne(options);
-    if(!userInboxSettings){
-        res.status(404).send({
+        res.status(200).send({
+            data: userInboxSettings
+        });
+    } catch(err) {
+        res.status(500).send({
             message: "UserInboxSettings not found"
         });
         return
     }
-    res.status(200).send({
-        data: userInboxSettings
-    });
 };
 /**
  * Function to update single UserInboxSettings
