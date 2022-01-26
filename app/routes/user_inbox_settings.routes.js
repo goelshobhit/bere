@@ -175,14 +175,8 @@ module.exports = app => {
     router.get("/notify/settings/:userInboxSettingsId", auth, UserInboxSettings.UserInboxSettingsDetails);
   /**
    * @swagger
-   * /api/notify/settings/{userInboxSettingsId}:
+   * /api/notify/settings/user:
    *   get:
-   *     parameters:
-   *         - name: userInboxSettingsId
-   *           in: path
-   *           required: true
-   *           schema:
-   *              type: integer
    *         - name: pageSize
    *           in: query
    *           required: false
