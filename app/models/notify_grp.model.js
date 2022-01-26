@@ -6,7 +6,11 @@ module.exports = (sequelize, Sequelize) => {
             autoIncrement: true
         },
 		notify_grp_name:{
-			type: Sequelize.INTEGER,
+            type: Sequelize.TEXT,
+            allowNull: false,
+		},
+        notify_grp_description:{
+            type: Sequelize.TEXT,
             allowNull: false,
 		},
         notify_grp_deliv_method: {
