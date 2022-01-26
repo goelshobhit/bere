@@ -104,6 +104,31 @@ exports.UserInboxSettingsDetails = async(req, res) => {
         data: userInboxSettings
     });
 };
+
+/**
+ * Function to get single UserInboxSettings
+ * @param  {object}  req expressJs request object
+ * @param  {object}  res expressJs response object
+ * @return {Promise}
+ */
+ exports.UserInboxSettingsDetailsUserId = async(req, res) => {
+    var userId = req.header(process.env.UKEY_HEADER || "x-api-key");
+    var options = {
+        where: {
+            u_id: userId
+        }
+    };
+    const userInboxSettings = await UserInboxSettings.findOne(options);
+    if(!userInboxSettings){
+        res.status(500).send({
+            message: "UserInboxSettings not found"
+        });
+        return
+    }
+    res.status(200).send({
+        data: userInboxSettings
+    });
+};
 /**
  * Function to update single UserInboxSettings
  * @param  {object}  req expressJs request object

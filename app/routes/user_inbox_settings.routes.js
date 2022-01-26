@@ -176,6 +176,46 @@ module.exports = app => {
   /**
    * @swagger
    * /api/notify/settings/{userInboxSettingsId}:
+   *   get:
+   *     parameters:
+   *         - name: userInboxSettingsId
+   *           in: path
+   *           required: true
+   *           schema:
+   *              type: integer
+   *         - name: pageSize
+   *           in: query
+   *           required: false
+   *           schema:
+   *              type: integer
+   *         - name: pageNumber
+   *           in: query
+   *           required: false
+   *           schema:
+   *              type: integer
+   *     tags:
+   *       - Notify Settings
+   *     description: Retrieve a single notify setting with notifyTrigGrpId
+   *     produces:
+   *       - application/json
+   *     responses:
+   *       200:
+   *         description: Details of a notify setting
+   *       401:
+   *          description: Unauthorized
+   *          content:
+   *              application/json:
+   *                  schema:
+   *                      type: object
+   *                      properties:
+   *                          message:
+   *                              type: string
+   *                              example: Authorisation Required
+   */
+   router.get("/notify/settings/user", auth, UserInboxSettings.UserInboxSettingsDetailsUserId);
+  /**
+   * @swagger
+   * /api/notify/settings/{userInboxSettingsId}:
    *   delete:
    *     parameters:
    *         - name: userInboxSettingsId
