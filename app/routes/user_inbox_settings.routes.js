@@ -177,6 +177,7 @@ module.exports = app => {
    * @swagger
    * /api/notify/settings/user:
    *   get:
+   *     parameters:
    *         - name: pageSize
    *           in: query
    *           required: false
