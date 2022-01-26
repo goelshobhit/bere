@@ -120,7 +120,7 @@ exports.UserInboxSettingsDetails = async(req, res) => {
     };
     const userInboxSettings = await UserInboxSettings.findOne(options);
     if(!userInboxSettings){
-        res.status(500).send({
+        res.status(404).send({
             message: "UserInboxSettings not found"
         });
         return
