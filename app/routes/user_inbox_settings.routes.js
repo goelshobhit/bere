@@ -88,7 +88,7 @@ module.exports = app => {
    router.put("/notify/settings/:userInboxSettingsId", auth, UserInboxSettings.updateUserInboxSettings);
   /**
    * @swagger
-   * /api/notify/settings:
+   * /api/notify/setting:
    *   get:
    *     parameters:
    *         - name: pageNumber
@@ -132,7 +132,7 @@ module.exports = app => {
    *                              type: string
    *                              example: Authorisation Required
    */
-    router.get('/notify/settings', auth, UserInboxSettings.UserInboxSettingsListing)
+    router.get('/notify/setting', auth, UserInboxSettings.UserInboxSettingsListing)
   /**
    * @swagger
    * /api/notify/settings/{userInboxSettingsId}:
@@ -207,7 +207,7 @@ module.exports = app => {
    *                              type: string
    *                              example: Authorisation Required
    */
-   router.get("/notify/settings/user", auth, UserInboxSettings.UserInboxSettingsDetailsUserId);
+   router.get("/notify/settings", auth, UserInboxSettings.UserInboxSettingsDetailsUserId);
   /**
    * @swagger
    * /api/notify/settings/{userInboxSettingsId}:
