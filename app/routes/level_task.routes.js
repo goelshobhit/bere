@@ -48,7 +48,7 @@ module.exports = app => {
      *                              type: string
      *                              example: Authorisation Required
      */
-    router.post("/task_level/post_level_task", levelTask.postTaskLevel);
+    router.post("/task_level/post_level_task", auth, levelTask.postTaskLevel);
 
     // Retrieve all task level listing
     /**
@@ -182,7 +182,7 @@ module.exports = app => {
      *                              type: string
      *                              example: Authorisation Required
      */
-    router.post("/task_level/post_task_cta_response", levelTask.postUserTaskLevelAction);
+    router.post("/task_level/post_task_cta_response", auth, levelTask.postUserTaskLevelAction);
 
     // Retrieve all task level listing
     /**
@@ -282,7 +282,7 @@ module.exports = app => {
      *                              type: string
      *                              example: Authorisation Required
      */
-    router.post("/task_level/post_user_address", levelTask.postUserAddress);
+    router.post("/task_level/post_user_address", auth, levelTask.postUserAddress);
 
     // Retrieve all task level listing
     /**

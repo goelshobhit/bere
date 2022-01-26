@@ -233,7 +233,7 @@ exports.levelTaskSubmitListing = async (req, res) => {
 
 exports.postUserAddress = async (req, res) => {
     const body = req.body;
-    if (body['data'].length) {
+    if (body['data'] && body['data'].length) {
         var UserId = req.header(process.env.UKEY_HEADER || "x-api-key");
         var userDbAddress = await userShippingAddress.findAll({
             where: {
@@ -283,7 +283,7 @@ exports.postUserAddress = async (req, res) => {
         }
     } else {
         res.status(400).send({
-            msg: "Request is required"
+            msg: "Request is Invalid"
           });
         
     }
