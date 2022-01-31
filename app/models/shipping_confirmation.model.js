@@ -1,11 +1,11 @@
 module.exports = (sequelize, Sequelize) => {
-    const level_task = sequelize.define("level_task", {
-		level_task_id: {
+    const shipping_confirmation = sequelize.define("shipping_confirmation", {
+		sc_id: {
             primaryKey: true,
             autoIncrement: true,
             type: Sequelize.INTEGER,
         },
-        brand_id: {
+        user_id: {
             type: Sequelize.INTEGER,
             allowNull: false,
         },
@@ -13,26 +13,28 @@ module.exports = (sequelize, Sequelize) => {
             type: Sequelize.INTEGER,
             allowNull: false,
         },
-        task_level: {               //1 Default 2-l2, 3=L2 
+        shipping_stage: {               
             type: Sequelize.INTEGER,
-            allowNull: false,
-            defaultValue:1
+            allowNull: false
         },
-        task_price: {               
-            type: Sequelize.INTEGER
-        },
-        task_banner_img: {
+        shipping_stage_description: {
             type: Sequelize.STRING(255)
         },
-        task_details: {
+        shipping_stage_description_id: {
+            type: Sequelize.INTEGER
+        },
+        product_img: {
+            type: Sequelize.STRING(255)
+        },
+        free_text_descripton: {
             type: Sequelize.STRING(255)
         }
     }, {
-        createdAt: 'la_created_at',
-        updatedAt: 'la_updated_at',
+        createdAt: 'sc_created_at',
+        updatedAt: 'sc_updated_at',
         freezeTableName: true,
-        tableName: 'level_task',
+        tableName: 'shipping_confirmation',
         underscored: true
     });
-    return level_task;
+    return shipping_confirmation;
 };

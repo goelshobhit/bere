@@ -132,6 +132,7 @@ db.brandscore_task = require("./brandscore_task.model")(sequelize, Sequelize);
 db.level_task = require("./level_task.model")(sequelize, Sequelize);
 db.user_shipping_address = require("./user_shipping_address.model")(sequelize, Sequelize);
 db.user_level_task_action = require("./user_level_task_action.model")(sequelize, Sequelize);
+db.shipping_confirmation = require("./shipping_confirmation.model")(sequelize, Sequelize);
 
 //Relations
 db.users.hasMany(db.bonus_ticket, {foreignKey: 'u_id', targetKey: 'bonus_ticket_usrid'});
@@ -237,6 +238,9 @@ db.level_task.belongsTo(db.brands, {foreignKey: 'brand_id', targetKey: 'cr_co_id
 
 db.user_level_task_action.belongsTo(db.user_profile, {foreignKey: 'task_user_id', targetKey: 'u_id'});
 db.user_level_task_action.belongsTo(db.tasks, {foreignKey: 'task_id', targetKey: 'ta_task_id'});
+
+db.shipping_confirmation.belongsTo(db.user_profile, {foreignKey: 'user_id', targetKey: 'u_id'});
+db.shipping_confirmation.belongsTo(db.tasks, {foreignKey: 'task_id', targetKey: 'ta_task_id'});
 
 db.user_shipping_address.belongsTo(db.user_profile, {foreignKey: 'usr_id', targetKey: 'u_id'});
 

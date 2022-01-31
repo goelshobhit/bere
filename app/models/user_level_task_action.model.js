@@ -25,6 +25,18 @@ module.exports = (sequelize, Sequelize) => {
         task_user_id: {
             type: Sequelize.INTEGER,
             allowNull: false,
+        },
+        time_allowance: {
+            type: Sequelize.INTEGER
+        },
+        timer_countdown_start_time: {
+            type: Sequelize.DATE
+        },
+        usr_brandscore_penalty: {
+            type: Sequelize.INTEGER
+        },
+        task_status: {
+            type: Sequelize.INTEGER
         }
     }, {
         createdAt: 'created_at',

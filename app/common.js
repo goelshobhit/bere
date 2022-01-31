@@ -12,6 +12,7 @@ const db = require("./models");
 const tasks_json = db.tasks_json;
 const Contest = db.contest_task
 const Tasks = db.tasks
+const Survey = db.survey;
 const accountBalance = db.account_balance;
 const Op = db.Sequelize.Op;
 const searchUserCount = 8;
@@ -485,6 +486,49 @@ function Common() {
             }
           }).catch(err => {
             console.log(err)
+          });
+        });
+      }
+    }
+    // Single Task
+    if (type === 'Survey') {
+      type = 'Single';
+      if (actionType === 'add') {
+        Survey.findOne({
+          where: {
+            sr_id: id
+          }
+        }).then(function (result) {
+          result.dataValues.surveyId = result.dataValues.sr_id;
+          result.dataValues.ta_name = result.dataValues.sr_title;
+          result.dataValues.ta_type = 5;
+          var add_data = {
+            "tj_type": type,
+            "tj_task_id": id,
+            "tj_data": result,
+            "tj_status": result.dataValues.sr_status
+          };
+          tasks_json.create(add_data);
+        });
+      } else {
+        Survey.findOne({
+          where: {
+            sr_id: id
+          }
+        }).then(function (result) {
+          console.log('result=========');
+          console.log(result);
+          result.dataValues.surveyId = result.dataValues.sr_id;
+          result.dataValues.ta_type = 5;
+          result.dataValues.ta_name = result.dataValues.sr_title;
+          var update_data = {
+            "tj_data": result,
+            "tj_status": result.dataValues.sr_status
+          };
+          tasks_json.update(update_data, {
+            where: {
+              tj_task_id: id
+            }
           });
         });
       }

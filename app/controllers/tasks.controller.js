@@ -14,6 +14,7 @@ const sharp = require('sharp');
 const common = require("../common");
 var ffmpeg = require('fluent-ffmpeg');
 const User_profile = db.user_profile;
+const levelTask = db.level_task;
 const {
     validationResult
 } = require("express-validator");
@@ -705,6 +706,64 @@ exports.mediaUpload = async (req, res) => {
             });
             return res.status(200).send({
                 message: "file uploaded successfully"
+            });
+        }
+        if (req.body.tblAlias == "level_task") {
+            const levelTaskID = req.body.actionID;
+            const updateVals = {
+                [media_action]: req.files[0].filename
+            };
+            levelTask.update(updateVals, {
+                where: {
+                    level_task_id: levelTaskID
+                }
+            }).then(num => {
+                if (num == 1) {
+                    res.status(200).send({
+                        message: "task banner image uploaded successfully."
+                    });
+                    return;
+                } else {
+                    res.status(400).send({
+                        message: `Cannot update task banner image with id=${levelTaskID}. Maybe task level was not found or req.body is empty!`
+                    });
+                    return;
+                }
+            }).catch(err => {
+                logger.log("error", err + ":Error updating task banner image with id=" + levelTaskID);
+                res.status(500).send({
+                    message: err + " : task level id -" + levelTaskID
+                });
+                return;
+            });
+        }
+        if (req.body.tblAlias == "shipping_confirmation") {
+            const scId = req.body.actionID;
+            const updateVals = {
+                [media_action]: req.files[0].filename
+            };
+            levelTask.update(updateVals, {
+                where: {
+                    sc_id: scId
+                }
+            }).then(num => {
+                if (num == 1) {
+                    res.status(200).send({
+                        message: "shipping confirmation product image uploaded successfully."
+                    });
+                    return;
+                } else {
+                    res.status(400).send({
+                        message: `Cannot update shipping confirmation product image with id=${scId}. Maybe task level was not found or req.body is empty!`
+                    });
+                    return;
+                }
+            }).catch(err => {
+                logger.log("error", err + ":Error updating shipping confirmation product image with id=" + scId);
+                res.status(500).send({
+                    message: err + " : shipping confirmation id -" + scId
+                });
+                return;
             });
         }
         if (req.body.tblAlias == "user") {

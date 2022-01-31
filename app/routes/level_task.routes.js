@@ -2,7 +2,6 @@ module.exports = app => {
     const levelTask = require("../controllers/level_task.controller.js");
     var router = require("express").Router();
     const auth = require("../middleware/auth");
-    const access = require("../middleware/access");
 
     /**
      * @swagger
@@ -21,10 +20,10 @@ module.exports = app => {
      *                            type: integer
      *                        Task Level:
      *                            type: integer
-     *                        Task Banner Image:
-     *                            type: string
      *                        Task Details:
      *                            type: string
+     *                        Task Price:
+     *                            type: integer
      *     tags:
      *       - Task Level
      *     description: Add Task level
@@ -49,6 +48,60 @@ module.exports = app => {
      *                              example: Authorisation Required
      */
     router.post("/task_level/post_level_task", auth, levelTask.postTaskLevel);
+
+    // Update task level with id
+    /**
+     * @swagger
+     * /api/task_level/update_level_task/{levelTaskID}:
+     *   put:
+     *     requestBody:
+     *        required: false
+     *        content:
+     *            application/json:
+     *                schema:
+     *                    type: object
+     *                    properties:
+     *                        Brand Id:
+     *                            type: integer
+     *                        Task Id:
+     *                            type: integer
+     *                        Task Level:
+     *                            type: integer
+     *                        Task Details:
+     *                            type: string
+     *                        Task Price:
+     *                            type: integer
+     *     parameters:
+     *         - name: levelTaskID
+     *           in: path
+     *           required: true
+     *           schema:
+     *              type: string
+     *     tags:
+     *       - Task Level
+     *     description: Update  task level
+     *     produces:
+     *       - application/json
+     *     responses:
+     *       201:
+     *         description: Update  task level
+     *       422:
+     *         description: validation errors
+     *       500:
+     *         description: Internal server error
+     *       401:
+     *          description: Unauthorized
+     *          content:
+     *              application/json:
+     *                  schema:
+     *                      type: object
+     *                      properties:
+     *                          message:
+     *                              type: string
+     *                              example: Authorisation Required
+     */
+    router.put("/task_level/update_level_task/:levelTaskID", auth, levelTask.updateTaskLevel);
+
 
     // Retrieve all task level listing
     /**
@@ -159,6 +212,17 @@ module.exports = app => {
      *                            type: integer
      *                        User CTA Reasons:
      *                            type: integer
+     *                        Task User Id:
+     *                            type: integer
+     *                        Time Allowance:
+     *                            type: integer
+     *                        Timer Countdown Start Time:
+     *                            type: date
+     *                            example: 2022-02-10
+     *                        Usr Brandscore Penalty:
+     *                            type: integer
+     *                        Task Status:
+     *                            type: integer
      *     tags:
      *       - Task Level
      *     description: Add User Task level Action
@@ -183,6 +247,68 @@ module.exports = app => {
      *                              example: Authorisation Required
      */
     router.post("/task_level/post_task_cta_response", auth, levelTask.postUserTaskLevelAction);
+
+     // Update task level with id
+    /**
+     * @swagger
+     * /api/task_level/update_task_cta_response/{userlevelTaskActionID}:
+     *   put:
+     *     requestBody:
+     *        required: false
+     *        content:
+     *            application/json:
+     *                schema:
+     *                    type: object
+     *                    properties:
+      *                        Task Id:
+     *                            type: integer
+     *                        Task Type:
+     *                            type: integer
+     *                        User CTA Action:
+     *                            type: integer
+     *                        User CTA Reasons:
+     *                            type: integer
+     *                        Task User Id:
+     *                            type: integer
+     *                        Time Allowance:
+     *                            type: integer
+     *                        Timer Countdown Start Time:
+     *                            type: date
+     *                            example: 2022-02-10
+     *                        Usr Brandscore Penalty:
+     *                            type: integer
+     *                        Task Status:
+     *                            type: integer
+     *     parameters:
+     *         - name: userlevelTaskActionID
+     *           in: path
+     *           required: true
+     *           schema:
+     *              type: string
+     *     tags:
+     *       - Task Level
+     *     description: Update User Task level Action
+     *     produces:
+     *       - application/json
+     *     responses:
+     *       201:
+     *         description: Update User Task level Action
+     *       422:
+     *         description: validation errors
+     *       500:
+     *         description: Internal server error
+     *       401:
+     *          description: Unauthorized
+     *          content:
+     *              application/json:
+     *                  schema:
+     *                      type: object
+     *                      properties:
+     *                          message:
+     *                              type: string
+     *                              example: Authorisation Required
+     */
+    router.put("/task_level/update_task_cta_response/:userlevelTaskActionID", auth, levelTask.updateUserTaskLevelAction);
 
     // Retrieve all task level listing
     /**
@@ -284,7 +410,7 @@ module.exports = app => {
      */
     router.post("/task_level/post_user_address", auth, levelTask.postUserAddress);
 
-    // Retrieve all task level listing
+    // Retrieve all user addresses
     /**
      * @swagger
      * /api/task_level/get_user_address:
@@ -319,12 +445,12 @@ module.exports = app => {
      *              type: string
      *     tags:
      *       - Task Level
-     *     description: Returns all brands
+     *     description: Returns all user shipping address
      *     produces:
      *       - application/json
      *     responses:
      *       200:
-     *         description: A list of brands
+     *         description: A list of all user shipping address
      *       401:
      *          description: Unauthorized
      *          content:
@@ -368,5 +494,110 @@ module.exports = app => {
    *                              example: Authorisation Required
    */
   router.delete("/task_level/delete_user_address/:usrShippingAddressId", auth, levelTask.deleteuserAddress);
+
+  /**
+     * @swagger
+     * /api/task_level/shipping_confirmation:
+     *   post:
+     *     requestBody:
+     *        required: false
+     *        content:
+     *            application/json:
+     *                schema:
+     *                    type: object
+     *                    properties:
+     *                        Task Id:
+     *                            type: integer
+     *                        Shipping Stage:
+     *                            type: integer
+     *                        Shipping Stage Description:
+     *                            type: string
+     *                        Shipping Stage Description Id:
+     *                            type: integer
+     *                        Free Text Descripton:
+     *                            type: string
+     *     tags:
+     *       - Task Level
+     *     description: Add User Task level Action
+     *     produces:
+     *       - application/json
+     *     responses:
+     *       201:
+     *         description: Add User Task level Action
+     *       422:
+     *         description: validation errors
+     *       500:
+     *         description: Internal server error
+     *       401:
+     *          description: Unauthorized
+     *          content:
+     *              application/json:
+     *                  schema:
+     *                      type: object
+     *                      properties:
+     *                          message:
+     *                              type: string
+     *                              example: Authorisation Required
+     */
+    router.post("/task_level/shipping_confirmation", auth, levelTask.shippingConfirmation);
+
+    // Retrieve shipping confirmation
+    /**
+     * @swagger
+     * /api/task_level/shipping_confirmation:
+     *   get:
+     *     parameters:
+     *         - name: userId
+     *           in: query
+     *           required: false
+     *           schema:
+     *              type: integer
+     *         - name: taskId
+     *           in: query
+     *           required: false
+     *           schema:
+     *              type: integer
+     *         - name: pageNumber
+     *           in: query
+     *           required: false
+     *           schema:
+     *              type: integer
+     *         - name: sortBy
+     *           in: query
+     *           required: false
+     *           schema:
+     *              type: string
+     *              example: sc_id,user_id,task_id,shipping_stage,shipping_stage_description,shipping_stage_description_id,free_text_descripton,sc_created_at,sc_updated_at    # Example of a parameter value
+     *         - name: sortOrder
+     *           in: query
+     *           required: false
+     *           schema:
+     *              type: string
+     *              example: ASC,DESC    # Example of a parameter value
+     *         - name: sortVal
+     *           in: query
+     *           required: false
+     *           schema:
+     *              type: string
+     *     tags:
+     *       - Task Level
+     *     description: Returns Shipping Confirmation Status
+     *     produces:
+     *       - application/json
+     *     responses:
+     *       200:
+     *         description: A list of all shipping confirmation status
+     *       401:
+     *          description: Unauthorized
+     *          content:
+     *              application/json:
+     *                  schema:
+     *                      type: object
+     *                      properties:
+     *                          message:
+     *                              type: string
+     *                              example: Authorisation Required
+     */
+    router.get('/task_level/shipping_confirmation', auth, levelTask.shippingConfirmationListing)
     app.use("/api", router);
 };

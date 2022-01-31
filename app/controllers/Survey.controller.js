@@ -7,6 +7,7 @@ const SurveySubmissions = db.survey_submissions;
 const SurveyStats = db.survey_stats;
 const SurveyUserComplete = db.survey_user_complete;
 const audit_log = db.audit_log;
+const common = require("../common");
 const logger = require("../middleware/logger");
 const {
     validationResult
@@ -55,6 +56,7 @@ exports.createNewSurvey = async (req, res) => {
     Survey.create(SurveyData)
         .then(data => {
             audit_log.saveAuditLog(req.header(process.env.UKEY_HEADER || "x-api-key"), 'add', 'Survey', data.sr_id, data.dataValues);
+            common.jsonTask(data.sr_id, 'Survey', 'add');
             res.status(201).send({
                 msg: "Survey Added Successfully",
                 SurveyID: data.sr_id
@@ -172,6 +174,7 @@ exports.updateSurvey = async (req, res) => {
     }).then(function ([num, [result]]) {
         if (num == 1) {
             audit_log.saveAuditLog(req.header(process.env.UKEY_HEADER || "x-api-key"), 'update', 'survey', id, result.dataValues, SurveyDetails);
+            common.jsonTask(id, 'Survey', 'update');
             res.status(200).send({
                 message: "Survey updated successfully."
             });

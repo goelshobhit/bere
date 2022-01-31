@@ -86,6 +86,9 @@ module.exports = (sequelize, Sequelize) => {
             type: Sequelize.INTEGER,
             defaultValue: 4
        },
+       u_brandscore:{
+        type: Sequelize.INTEGER
+     },
         u_website:{
 			 type: Sequelize.STRING(150)
         },
