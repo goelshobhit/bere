@@ -49,7 +49,7 @@ exports.createNewSurvey = async (req, res) => {
         "sr_hashtags": body.hasOwnProperty("Survey Hashtag") ? body["Survey Hashtag"] : "",
         "sr_color": body.hasOwnProperty("Survey Color") ? body["Survey Color"] : 0,
         "sr_startdate_time": body.hasOwnProperty("Start Date") ? body["Start Date"] : new Date(),
-        "sr_enddate_time": body.hasOwnProperty("End Date") ? body["End Date"] : new Date(),
+        "sr_enddate_time": body.hasOwnProperty("End Date") ? body["End Date"] : new Date(new Date().setFullYear(new Date().getFullYear() + 2)),
         "sr_status": body.hasOwnProperty("Survey Status") ? body["Survey Status"] : 1,
         "sr_usr_restriction": body.hasOwnProperty("User Restriction") ? body["User Restriction"] : 0
     }
@@ -163,7 +163,7 @@ exports.updateSurvey = async (req, res) => {
         "sr_hashtags": body.hasOwnProperty("Survey Hashtag") ? body["Survey Hashtag"] : "",
         "sr_color": body.hasOwnProperty("Survey Color") ? body["Survey Color"] : 0,
         "sr_startdate_time": body.hasOwnProperty("Start Date") ? body["Start Date"] : new Date(),
-        "sr_enddate_time": body.hasOwnProperty("End Date") ? body["End Date"] : new Date(),
+        "sr_enddate_time": body.hasOwnProperty("End Date") ? body["End Date"] : new Date(new Date().setFullYear(new Date().getFullYear() + 2)),
         "sr_status": body.hasOwnProperty("Survey Status") ? body["Survey Status"] : 1
     }
     Survey.update(SurveyData, {

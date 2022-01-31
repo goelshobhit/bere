@@ -502,6 +502,8 @@ function Common() {
           result.dataValues.surveyId = result.dataValues.sr_id;
           result.dataValues.ta_name = result.dataValues.sr_title;
           result.dataValues.ta_type = 5;
+          result.dataValues.ta_start_date = result.dataValues.sr_startdate_time;
+          result.dataValues.ta_end_date =result.dataValues.sr_enddate_time;
           var add_data = {
             "tj_type": type,
             "tj_task_id": id,
@@ -516,11 +518,11 @@ function Common() {
             sr_id: id
           }
         }).then(function (result) {
-          console.log('result=========');
-          console.log(result);
           result.dataValues.surveyId = result.dataValues.sr_id;
           result.dataValues.ta_type = 5;
           result.dataValues.ta_name = result.dataValues.sr_title;
+          result.dataValues.ta_start_date = result.dataValues.sr_startdate_time;
+          result.dataValues.ta_end_date = result.dataValues.sr_enddate_time;
           var update_data = {
             "tj_data": result,
             "tj_status": result.dataValues.sr_status
