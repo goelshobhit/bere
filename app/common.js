@@ -510,7 +510,7 @@ function Common() {
           delete result.dataValues.brand;
           result.dataValues.surveyId = result.dataValues.sr_id;
           result.dataValues.ta_name = result.dataValues.sr_title;
-          result.dataValues.ta_type = 5;
+          result.dataValues.ta_type = "5";
           result.dataValues.ta_start_date = result.dataValues.sr_startdate_time;
           result.dataValues.ta_end_date =result.dataValues.sr_enddate_time;
           var add_data = {
@@ -537,7 +537,7 @@ function Common() {
           result.dataValues.campaign.brand = result.dataValues.brand;
           delete result.dataValues.brand;
           result.dataValues.surveyId = result.dataValues.sr_id;
-          result.dataValues.ta_type = 5;
+          result.dataValues.ta_type = "5";
           result.dataValues.ta_name = result.dataValues.sr_title;
           result.dataValues.ta_start_date = result.dataValues.sr_startdate_time;
           result.dataValues.ta_end_date = result.dataValues.sr_enddate_time;
