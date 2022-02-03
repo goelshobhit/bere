@@ -1,10 +1,10 @@
 module.exports = app => {
-    const NotifyGrp = require("../controllers/notify_grp.controller.js");
+    const UserInboxSettings = require("../controllers/user_inbox_settings.controller.js");
     var router = require("express").Router();
     const auth = require("../middleware/auth");
   /**
    * @swagger
-   * /api/notify/groups:
+   * /api/notify/settings:
    *   post:
    *     requestBody:
    *        required: false
@@ -13,26 +13,18 @@ module.exports = app => {
    *                schema:
    *                    type: object
    *                    properties:
-   *                        Group Name:
-   *                            type: string
-   *                        Group Description:
-   *                            type: string
-   *                        Category Id:
+   *                        User Id:
    *                            type: integer
-   *                        Delivery Method:
-   *                            type: integer
-   *                        Sent Date:
+   *                        Settings Data:
    *                            type: string
-   *                            format: date-time
-   *                            example: 2020-09-30
    *     tags:
-   *       - Notify Groups
-   *     description: Add new Notify Groups
+   *       - Notify Settings
+   *     description: Add new Notify Settings
    *     produces:
    *       - application/json
    *     responses:
    *       201:
-   *         description: Add new Groups
+   *         description: Add new settings
    *       422:
    *         description: validation errors
    *       500:
@@ -48,10 +40,10 @@ module.exports = app => {
    *                              type: string
    *                              example: Authorisation Required
    */
-	router.post("/notify/groups", auth, NotifyGrp.createNotifyGrp);
+	router.post("/notify/settings", auth, UserInboxSettings.createUserInboxSettings);
   /**
    * @swagger
-   * /api/notify/groups/{notifyTrigGrpId}:
+   * /api/notify/settings/{userInboxSettingsId}:
    *   put:
    *     requestBody:
    *        required: false
@@ -60,32 +52,24 @@ module.exports = app => {
    *                schema:
    *                    type: object
    *                    properties:
-   *                        notify_grp_name:
+   *                        u_id:
    *                            type: string
-   *                        notify_grp_description:
+   *                        settings_data:
    *                            type: string
-   *                        notify_trig_cat_id:
-   *                            type: integer
-   *                        notify_grp_deliv_method:
-   *                            type: integer
-   *                        notify_trig_grp_sentdate:
-   *                            type: string
-   *                            format: date-time
-   *                            example: 2020-09-30
    *     parameters:
-   *         - name: notifyTrigGrpId
+   *         - name: notifyTrigCatId
    *           in: path
    *           required: true
    *           schema:
    *              type: integer
    *     tags:
-   *       - Notify Groups
-   *     description: Update Notify Groups
+   *       - Notify Settings
+   *     description: Update Notify Settings
    *     produces:
    *       - application/json
    *     responses:
    *       201:
-   *         description: Notify Groups updated
+   *         description: Notify Settings updated
    *       422:
    *         description: validation errors
    *       500:
@@ -101,10 +85,10 @@ module.exports = app => {
    *                              type: string
    *                              example: Authorisation Required
    */
-   router.put("/notify/groups/:notifyTrigGrpId", auth, NotifyGrp.updateNotifyGrp);
+   router.put("/notify/settings/:userInboxSettingsId", auth, UserInboxSettings.updateUserInboxSettings);
   /**
    * @swagger
-   * /api/notify/groups:
+   * /api/notify/settings:
    *   get:
    *     parameters:
    *         - name: pageNumber
@@ -117,7 +101,7 @@ module.exports = app => {
    *           required: false
    *           schema:
    *              type: string
-   *              example: notify_trig_grp_id,notify_grp_name,notify_grp_description,notify_grp_deliv_method,notify_trig_grp_sentdate   # Example of a parameter value
+   *              example: user_inbox_settings_id,u_id,settings_data  # Example of a parameter value
    *         - name: sortOrder
    *           in: query
    *           required: false
@@ -130,13 +114,13 @@ module.exports = app => {
    *           schema:
    *              type: string
    *     tags:
-   *       - Notify Groups
-   *     description: Returns all Notify Groups
+   *       - Notify Settings
+   *     description: Returns all Notify Settings
    *     produces:
    *       - application/json
    *     responses:
    *       200:
-   *         description: A list of Notify Groups
+   *         description: A list of Notify Settings
    *       401:
    *          description: Unauthorized
    *          content:
@@ -148,13 +132,13 @@ module.exports = app => {
    *                              type: string
    *                              example: Authorisation Required
    */
-    router.get('/notify/groups', auth, NotifyGrp.notifyGrpListing)
+    router.get('/notify/settings', auth, UserInboxSettings.UserInboxSettingsListing)
   /**
    * @swagger
-   * /api/notify/groups/{notifyTrigGrpId}:
+   * /api/notify/settings/{userInboxSettingsId}:
    *   get:
    *     parameters:
-   *         - name: notifyTrigGrpId
+   *         - name: userInboxSettingsId
    *           in: path
    *           required: true
    *           schema:
@@ -170,13 +154,13 @@ module.exports = app => {
    *           schema:
    *              type: integer
    *     tags:
-   *       - Notify Groups
-   *     description: Retrieve a single Notify Group with notifyTrigGrpId
+   *       - Notify Settings
+   *     description: Retrieve a single notify setting with notifyTrigGrpId
    *     produces:
    *       - application/json
    *     responses:
    *       200:
-   *         description: Details of a Notify Group
+   *         description: Details of a notify setting
    *       401:
    *          description: Unauthorized
    *          content:
@@ -188,25 +172,60 @@ module.exports = app => {
    *                              type: string
    *                              example: Authorisation Required
    */
-    router.get("/notify/groups/:notifyTrigGrpId", auth, NotifyGrp.notifyGrpDetails);
+    router.get("/notify/settings/:userInboxSettingsId", auth, UserInboxSettings.UserInboxSettingsDetails);
   /**
    * @swagger
-   * /api/notify/groups/{notifyTrigGrpId}:
+   * /api/notify/setting:
+   *   get:
+   *     parameters:
+   *         - name: pageSize
+   *           in: query
+   *           required: false
+   *           schema:
+   *              type: integer
+   *         - name: pageNumber
+   *           in: query
+   *           required: false
+   *           schema:
+   *              type: integer
+   *     tags:
+   *       - Notify Settings
+   *     description: Retrieve a single notify setting with notifyTrigGrpId
+   *     produces:
+   *       - application/json
+   *     responses:
+   *       200:
+   *         description: Details of a notify setting
+   *       401:
+   *          description: Unauthorized
+   *          content:
+   *              application/json:
+   *                  schema:
+   *                      type: object
+   *                      properties:
+   *                          message:
+   *                              type: string
+   *                              example: Authorisation Required
+   */
+   router.get("/notify/setting", auth, UserInboxSettings.UserInboxSettingsDetailsUserId);
+  /**
+   * @swagger
+   * /api/notify/settings/{userInboxSettingsId}:
    *   delete:
    *     parameters:
-   *         - name: notifyTrigGrpId
+   *         - name: userInboxSettingsId
    *           in: path
    *           required: true
    *           schema:
    *              type: integer
    *     tags:
-   *       - Notify Groups
-   *     description: Delete a notify group with id
+   *       - Notify Settings
+   *     description: Delete a notify setting with id
    *     produces:
    *       - application/json
    *     responses:
    *       200:
-   *         description: Delete a notify group
+   *         description: Delete a notify setting
    *       401:
    *          description: Unauthorized
    *          content:
@@ -218,7 +237,7 @@ module.exports = app => {
    *                              type: string
    *                              example: Authorisation Required
    */
-   router.delete("/notify/groups/:notifyTrigGrpId", auth, NotifyGrp.deleteNotifyGrp);   
-    app.use("/api", router);
+   router.delete("/notify/settings/:userInboxSettingsId", auth, UserInboxSettings.deleteUserInboxSettings);   
+   app.use("/api", router);
 };
   
