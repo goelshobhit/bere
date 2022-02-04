@@ -73,6 +73,15 @@ module.exports = (sequelize, Sequelize) => {
 		is_autotakedown:{
             type: Sequelize.INTEGER,
 			default: 0
+        },
+        custom_hashtags: {
+            type: Sequelize.STRING(255)
+        },
+        caption: {
+            type: Sequelize.TEXT
+        },
+        video_response: {
+            type: Sequelize.STRING(255)
         }
     }, {
         createdAt: 'ucpl_created_at',

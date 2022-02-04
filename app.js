@@ -267,6 +267,7 @@ require("./app/routes/blacklisted.routes")(app);
 require("./app/routes/contentReport/content_report_category.routes")(app);
 require("./app/routes/contentReport/content_report.routes")(app);
 require("./app/routes/level_task.routes")(app);
+require("./app/routes/content_viewer_rewards.routes")(app);
 server.listen(PORT, function () {
   console.log(`Server is running on port ${PORT}.`)
 });
