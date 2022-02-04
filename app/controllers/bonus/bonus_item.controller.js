@@ -2,7 +2,6 @@ const db = require("../../models");
 const audit_log = db.audit_log
 const logger = require("../../middleware/logger");
 const bonus_item = db.bonus_item;
-const appConfig = require("../../config/config.js");
 
 /**
  * Function to get all bonus Items
@@ -53,7 +52,7 @@ exports.bonusItemlisting = async (req, res) => {
         var icon_images = [];
         if (bonus_item_icons_arr.length) {
           for (const bonus_item_arr_key in bonus_item_icons_arr) {
-            icon_images.push(process.env.SITE_API_URL+'/'+bonus_item_icons_arr[bonus_item_arr_key]);
+            icon_images.push(site_new_url+'uploads/'+bonus_item_icons_arr[bonus_item_arr_key]);
           }
         }
         bonus_item_list[bonus_item_key].dataValues.bonus_item_icons = icon_images;
