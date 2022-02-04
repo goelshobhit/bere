@@ -810,7 +810,7 @@ exports.mediaUpload = async (req, res) => {
 }
 
 /**
- * Function to upload media files
+ * Function to upload media multiple files
  * @param  {object}  req expressJs request object
  * @param  {object}  res expressJs response object
  * @return {Promise}
