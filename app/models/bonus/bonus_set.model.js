@@ -12,7 +12,7 @@ module.exports = (sequelize, Sequelize) => {
     },
     bonus_item_id: {
       allowNull: false,
-      type: Sequelize.INTEGER
+      type: Sequelize.JSONB
     },
     bonus_set_item_name: {
       allowNull: false,
