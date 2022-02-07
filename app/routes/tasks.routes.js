@@ -596,7 +596,7 @@ module.exports = app => {
 	*                             format: binary
 	*                        media_key:
 	*                            type: string
-	*                            example: "bonus_item:bonus_item_icons,bonus_product_images"
+	*                            example: "bonus_item:bonus_item_icons,bonus_product_images,bonus_set:bonus_set_icons,bonus_set_images"
 	*     tags:
 	*       - File Upload
 	*     description: upload media like images,files

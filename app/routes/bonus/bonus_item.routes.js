@@ -17,6 +17,12 @@ module.exports = app => {
      *                            type: integer
      *                        Bonus Item Name:
      *                            type: string
+     *                        Bonus Item Description:
+     *                            type: string
+     *                        Bonus Item Icons:
+     *                            type: string
+     *                        Bonus Product Images:
+     *                            type: string
      *                        Bonus Item Qty:
      *                            type: integer
      *                        Bonus Item Remaining Qty:

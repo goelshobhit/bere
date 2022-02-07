@@ -2,6 +2,7 @@ const db = require("../../models");
 const audit_log = db.audit_log
 const logger = require("../../middleware/logger");
 const bonus_set = db.bonus_set;
+const bonus_item = db.bonus_item;
 
 
 
@@ -15,7 +16,7 @@ exports.bonusSetlisting = async (req, res) => {
   const pageSize = parseInt(req.query.pageSize || 10);
   const pageNumber = parseInt(req.query.pageNumber || 1);
   const skipCount = (pageNumber - 1) * pageSize;
-  const sortBy = req.query.sortBy || 'bonus_item_id'
+  const sortBy = req.query.sortBy || 'bonus_set_id'
   const sortOrder = req.query.sortOrder || 'DESC'
 
   var options = {
@@ -41,10 +42,77 @@ exports.bonusSetlisting = async (req, res) => {
       bonus_set_id: req.query.BonusSetId
     }
   }
+  if (req.query.BrandId) {
+    options['where']['bonus_set_brand_id'] = req.query.BrandId;
+  }
   var total = await bonus_set.count({
     where: options['where']
   });
   const bonus_set_list = await bonus_set.findAll(options);
+  if (bonus_set_list) {
+    var site_url = process.env.SITE_API_URL;
+   // var site_new_url = site_url.replace("/api", '');
+   var bonus_item_all_ids = [];
+    for (const bonus_set_key in bonus_set_list) {
+      if (bonus_set_list[bonus_set_key].bonus_item_id.length) {
+        var bonus_item_ids = bonus_set_list[bonus_set_key].bonus_item_id;
+        for (const bonus_item_id_key in bonus_item_ids) {
+          bonus_item_all_ids.push(bonus_item_ids[bonus_item_id_key]);
+        }
+      }
+      
+      if (bonus_set_list[bonus_set_key].bonus_set_icons) {
+        var bonus_set_icons_arr = bonus_set_list[bonus_set_key].bonus_set_icons.split(",");
+        var icon_images = [];
+        if (bonus_set_icons_arr.length) {
+          for (const bonus_item_arr_key in bonus_set_icons_arr) {
+            icon_images.push(bonus_set_icons_arr[bonus_item_arr_key]);
+            //icon_images.push(site_new_url+'uploads/'+bonus_set_icons_arr[bonus_item_arr_key]);
+          }
+        }
+        bonus_set_list[bonus_set_key].dataValues.bonus_set_icons = icon_images;
+      }
+      if (bonus_set_list[bonus_set_key].bonus_set_images) {
+        var bonus_set_images_arr = bonus_set_list[bonus_set_key].bonus_set_images.split(",");
+        var bonus_set_images = [];
+        if (bonus_set_images_arr.length) {
+          for (const bonus_item_arr_key in bonus_set_images_arr) {
+            bonus_set_images.push(bonus_set_images_arr[bonus_item_arr_key]);
+            //bonus_set_images.push(site_new_url+'uploads/' +bonus_set_images_arr[bonus_item_arr_key]);
+          }
+        }
+        bonus_set_list[bonus_set_key].dataValues.bonus_set_images = bonus_set_images;
+      }
+    }
+  }
+  if (bonus_item_all_ids.length) {
+    var bonus_options = {
+         where: {
+            bonus_item_id:bonus_item_all_ids
+          }
+     };
+    var bonus_item_list_arr = {};
+    const bonus_item_list = await bonus_item.findAll(bonus_options);
+    if (bonus_item_list.length) {
+      for (const bonus_item_list_key in bonus_item_list) {
+        bonus_item_list_arr[bonus_item_list[bonus_item_list_key].bonus_item_id] = bonus_item_list[bonus_item_list_key];
+      }
+    }
+    for (const bonus_set_key in bonus_set_list) {
+      bonus_set_list[bonus_set_key].dataValues.bonus_items = [];
+      if (bonus_set_list[bonus_set_key].bonus_item_id.length) {
+        var bonus_item_ids = bonus_set_list[bonus_set_key].bonus_item_id;
+        for (const bonus_item_id_key in bonus_item_ids) {
+          var bonus_item_id = bonus_item_ids[bonus_item_id_key];
+          if (bonus_item_list_arr[bonus_item_id] != undefined) {
+            bonus_set_list[bonus_set_key].dataValues.bonus_items.push(bonus_item_list_arr[bonus_item_id]);
+          }
+        }
+      }
+    }
+    
+  }
+  
   res.status(200).send({
     data: bonus_set_list,
     totalRecords: total
@@ -96,6 +164,8 @@ exports.createBonusItemSet = async (req, res) => {
     "bonus_item_id": body.hasOwnProperty("Bonus Item ids") ? body["Bonus Item ids"] : "",
     "bonus_set_item_name": body.hasOwnProperty("Bonus Set Item Name") ? body["Bonus Set Item Name"] : "0",
     "bonus_set_item_qty": body.hasOwnProperty("Bonus Set Item Qty") ? body["Bonus Set Item Qty"] : 0,
+    "bonus_set_icons": body.hasOwnProperty("Bonus Set Icons") ? req.body["Bonus Set Icons"] : "",
+    "bonus_set_images": body.hasOwnProperty("Bonus Set Images") ? req.body["Bonus Set Images"] : "",
     "bonus_set_item_timestamp": (body.hasOwnProperty("Bonus Set Item Timestamp") && body["Bonus Set Item Timestamp"]) ? body["Bonus Set Item Timestamp"] : new Date().getTime(),
     "bonus_set_status": body.hasOwnProperty("Bonus Set Status") ? body["Bonus Set Status"] : 0
   }
@@ -160,6 +230,8 @@ exports.updateBonusSet = async (req, res) => {
     "bonus_item_id": body.hasOwnProperty("Bonus Item ids") ? body["Bonus Item ids"] : "",
     "bonus_set_item_name": body.hasOwnProperty("Bonus Set Item Name") ? body["Bonus Set Item Name"] : "0",
     "bonus_set_item_qty": body.hasOwnProperty("Bonus Set Item Qty") ? body["Bonus Set Item Qty"] : new Date().getTime(),
+    "bonus_set_icons": body.hasOwnProperty("Bonus Set Icons") ? req.body["Bonus Set Icons"] : "",
+    "bonus_set_images": body.hasOwnProperty("Bonus Set Images") ? req.body["Bonus Set Images"] : "",
     "bonus_set_item_timestamp": (body.hasOwnProperty("Bonus Set Item Timestamp") && body["Bonus Set Item Timestamp"]) ? body["Bonus Set Item Timestamp"] : new Date().getTime()
   }
   bonus_set.update(bonusSetData, {

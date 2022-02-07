@@ -22,6 +22,12 @@ module.exports = (sequelize, Sequelize) => {
       allowNull: false,
       type: Sequelize.INTEGER
     },
+    bonus_set_icons: {
+      type: Sequelize.TEXT
+    },
+    bonus_set_images: {
+      type: Sequelize.TEXT
+    },
     bonus_set_item_timestamp: {
       allowNull: false,
       type: Sequelize.STRING(50)

@@ -25,6 +25,10 @@ module.exports = app => {
      *                            type: string
      *                        Bonus Set Item Qty:
      *                            type: integer
+     *                        Bonus Set Icons:
+     *                            type: string
+     *                        Bonus Set Images:
+     *                            type: string
      *                        Bonus Set Item Timestamp:
      *                            type: string
      *                        Bonus Set Status:
@@ -144,6 +148,11 @@ module.exports = app => {
      *   get:
      *     parameters:
      *         - name: BonusSetId
+     *           in: query
+     *           required: false
+     *           schema:
+     *              type: integer
+     *         - name: BrandId
      *           in: query
      *           required: false
      *           schema:
