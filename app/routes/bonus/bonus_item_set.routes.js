@@ -15,8 +15,12 @@ module.exports = app => {
      *                    properties:
      *                        Bonus Set Brand Id:
      *                            type: integer
-     *                        Bonus Item id:
-     *                            type: integer
+     *                        Bonus Item ids:
+     *                            type: array
+     *                            items:
+     *                              oneOf:
+     *                               type: integer
+     *                            example: ["1","2"]
      *                        Bonus Set Item Name:
      *                            type: string
      *                        Bonus Set Item Qty:
@@ -63,8 +67,12 @@ module.exports = app => {
      *                    properties:
      *                        Bonus Set Brand Id:
      *                            type: integer
-     *                        Bonus Item id:
-     *                            type: integer
+     *                        Bonus Item ids:
+     *                            type: array
+     *                            items:
+     *                              oneOf:
+     *                               type: integer
+     *                            example: ["1","2"]
      *                        Bonus Set Item Name:
      *                            type: string
      *                        Bonus Set Item Qty:

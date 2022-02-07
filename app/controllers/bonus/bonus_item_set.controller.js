@@ -131,9 +131,33 @@ exports.updateBonusSet = async (req, res) => {
       bonus_set_id: id
     }
   });
+  if (!body["Bonus Item ids"]) {
+    res.status(400).send({
+      msg:
+        "Bonus Item ids is required"
+    });
+    return;
+  }
+  var bonus_item_ids = body["Bonus Item ids"];
+  if (!bonus_item_ids.length) {
+    res.status(400).send({
+      msg:
+        "Bonus Item ids must be array"
+    });
+    return;
+  }
+  for (const bonus_item_id_key in bonus_item_ids) {
+    if (isNaN( bonus_item_ids[bonus_item_id_key] )) {
+      res.status(400).send({
+          msg:
+            "Bonus Item ids must be array of integer values"
+        });
+        return;
+    }
+  }
   const bonusSetData = {
     "bonus_set_brand_id": body.hasOwnProperty("Bonus Set Brand Id") ? body["Bonus Set Brand Id"] : "0",
-    "bonus_item_id": body.hasOwnProperty("Bonus Item id") ? body["Bonus Item id"] : "0",
+    "bonus_item_id": body.hasOwnProperty("Bonus Item ids") ? body["Bonus Item ids"] : "",
     "bonus_set_item_name": body.hasOwnProperty("Bonus Set Item Name") ? body["Bonus Set Item Name"] : "0",
     "bonus_set_item_qty": body.hasOwnProperty("Bonus Set Item Qty") ? body["Bonus Set Item Qty"] : new Date().getTime(),
     "bonus_set_item_timestamp": (body.hasOwnProperty("Bonus Set Item Timestamp") && body["Bonus Set Item Timestamp"]) ? body["Bonus Set Item Timestamp"] : new Date().getTime()
