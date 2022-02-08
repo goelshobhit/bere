@@ -51,7 +51,7 @@ exports.bonusSetlisting = async (req, res) => {
   const bonus_set_list = await bonus_set.findAll(options);
   if (bonus_set_list) {
     var site_url = process.env.SITE_API_URL;
-   // var site_new_url = site_url.replace("/api", '');
+    var site_new_url = site_url.replace("/api", '');
    var bonus_item_all_ids = [];
     for (const bonus_set_key in bonus_set_list) {
       if (bonus_set_list[bonus_set_key].bonus_item_id.length) {
@@ -66,8 +66,8 @@ exports.bonusSetlisting = async (req, res) => {
         var icon_images = [];
         if (bonus_set_icons_arr.length) {
           for (const bonus_item_arr_key in bonus_set_icons_arr) {
-            icon_images.push(bonus_set_icons_arr[bonus_item_arr_key]);
-            //icon_images.push(site_new_url+'uploads/'+bonus_set_icons_arr[bonus_item_arr_key]);
+            //icon_images.push(bonus_set_icons_arr[bonus_item_arr_key]);
+            icon_images.push(site_new_url+bonus_set_icons_arr[bonus_item_arr_key]);
           }
         }
         bonus_set_list[bonus_set_key].dataValues.bonus_set_icons = icon_images;
@@ -77,8 +77,8 @@ exports.bonusSetlisting = async (req, res) => {
         var bonus_set_images = [];
         if (bonus_set_images_arr.length) {
           for (const bonus_item_arr_key in bonus_set_images_arr) {
-            bonus_set_images.push(bonus_set_images_arr[bonus_item_arr_key]);
-            //bonus_set_images.push(site_new_url+'uploads/' +bonus_set_images_arr[bonus_item_arr_key]);
+            //bonus_set_images.push(bonus_set_images_arr[bonus_item_arr_key]);
+            bonus_set_images.push(site_new_url+bonus_set_images_arr[bonus_item_arr_key]);
           }
         }
         bonus_set_list[bonus_set_key].dataValues.bonus_set_images = bonus_set_images;
