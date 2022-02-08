@@ -3,7 +3,7 @@ const audit_log = db.audit_log
 const logger = require("../../middleware/logger");
 const bonus_set = db.bonus_set;
 const bonus_item = db.bonus_item;
-
+const common = require("../../common");
 
 
 /**
@@ -51,7 +51,7 @@ exports.bonusSetlisting = async (req, res) => {
   const bonus_set_list = await bonus_set.findAll(options);
   if (bonus_set_list) {
     var site_url = process.env.SITE_API_URL;
-    var site_new_url = site_url.replace("/api", '');
+    //var site_new_url = site_url.replace("/api", '');
    var bonus_item_all_ids = [];
     for (const bonus_set_key in bonus_set_list) {
       if (bonus_set_list[bonus_set_key].bonus_item_id.length) {
@@ -66,8 +66,8 @@ exports.bonusSetlisting = async (req, res) => {
         var icon_images = [];
         if (bonus_set_icons_arr.length) {
           for (const bonus_item_arr_key in bonus_set_icons_arr) {
-            //icon_images.push(bonus_set_icons_arr[bonus_item_arr_key]);
-            icon_images.push(site_new_url+bonus_set_icons_arr[bonus_item_arr_key]);
+            icon_images.push(bonus_set_icons_arr[bonus_item_arr_key]);
+            //icon_images.push(site_new_url+bonus_set_icons_arr[bonus_item_arr_key]);
           }
         }
         bonus_set_list[bonus_set_key].dataValues.bonus_set_icons = icon_images;
@@ -77,12 +77,13 @@ exports.bonusSetlisting = async (req, res) => {
         var bonus_set_images = [];
         if (bonus_set_images_arr.length) {
           for (const bonus_item_arr_key in bonus_set_images_arr) {
-            //bonus_set_images.push(bonus_set_images_arr[bonus_item_arr_key]);
-            bonus_set_images.push(site_new_url+bonus_set_images_arr[bonus_item_arr_key]);
+            bonus_set_images.push(bonus_set_images_arr[bonus_item_arr_key]);
+            //bonus_set_images.push(site_new_url+bonus_set_images_arr[bonus_item_arr_key]);
           }
         }
         bonus_set_list[bonus_set_key].dataValues.bonus_set_images = bonus_set_images;
       }
+      bonus_set_list[bonus_set_key].dataValues.media_token = common.imageToken(bonus_set_list[bonus_set_key].bonus_set_id);
     }
   }
   if (bonus_item_all_ids.length) {
@@ -229,7 +230,7 @@ exports.updateBonusSet = async (req, res) => {
     "bonus_set_brand_id": body.hasOwnProperty("Bonus Set Brand Id") ? body["Bonus Set Brand Id"] : "0",
     "bonus_item_id": body.hasOwnProperty("Bonus Item ids") ? body["Bonus Item ids"] : "",
     "bonus_set_item_name": body.hasOwnProperty("Bonus Set Item Name") ? body["Bonus Set Item Name"] : "0",
-    "bonus_set_item_qty": body.hasOwnProperty("Bonus Set Item Qty") ? body["Bonus Set Item Qty"] : new Date().getTime(),
+    "bonus_set_item_qty": body.hasOwnProperty("Bonus Set Item Qty") ? body["Bonus Set Item Qty"] : 0,
     "bonus_set_icons": body.hasOwnProperty("Bonus Set Icons") ? req.body["Bonus Set Icons"] : "",
     "bonus_set_images": body.hasOwnProperty("Bonus Set Images") ? req.body["Bonus Set Images"] : "",
     "bonus_set_item_timestamp": (body.hasOwnProperty("Bonus Set Item Timestamp") && body["Bonus Set Item Timestamp"]) ? body["Bonus Set Item Timestamp"] : new Date().getTime()
