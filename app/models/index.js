@@ -136,6 +136,7 @@ db.user_shipping_address = require("./user_shipping_address.model")(sequelize, S
 db.user_level_task_action = require("./user_level_task_action.model")(sequelize, Sequelize);
 db.shipping_confirmation = require("./shipping_confirmation.model")(sequelize, Sequelize);
 db.content_viewer_rewards = require("./content_viewer_rewards.model")(sequelize, Sequelize);
+db.voting = require("./voting.model")(sequelize, Sequelize);
 
 //Relations
 db.users.hasMany(db.bonus_ticket, {foreignKey: 'u_id', targetKey: 'bonus_ticket_usrid'});
@@ -219,6 +220,8 @@ db.content_report_moderate.belongsTo(db.content_report, {foreignKey: 'content_re
 db.bonus_usr.belongsTo(db.user_profile, {foreignKey: 'bonus_usr_id', targetKey: 'u_id'});
 db.energy.belongsTo(db.user_profile, {foreignKey: 'energy_userid', targetKey: 'u_id'});
 db.energy_award.belongsTo(db.user_profile, {foreignKey: 'energy_userid', targetKey: 'u_id'});
+db.voting.belongsTo(db.user_profile, {foreignKey: 'voter_usr_id', targetKey: 'u_id'});
+db.voting.belongsTo(db.brands, {foreignKey: 'voting_brand_id', targetKey: 'cr_co_id'});
 
 
 db.brand_score.belongsTo(db.user_profile, {foreignKey: 'brandscore_user_id', targetKey: 'u_id'});
