@@ -146,9 +146,9 @@ db.bonus_summary.hasMany(db.bonus_ticket, {foreignKey: 'bonus_summary_id', targe
 db.bonus_ticket.belongsTo(db.bonus_summary, {foreignKey: 'bonus_summary_id', targetKey: 'bonus_summary_id'});
 db.bonus_summary.hasMany(db.bonus_rewards, {foreignKey: 'bonus_summary_id', targetKey: 'bonus_summary_id'});
 db.bonus_rewards.belongsTo(db.bonus_summary, {foreignKey: 'bonus_summary_id', targetKey: 'bonus_summary_id'});
-db.brands.hasMany(db.bonus_task, {foreignKey: 'cr_co_id', targetKey: 'bonus_task_brand_id'});
+db.brands.hasMany(db.bonus_task, {foreignKey: 'bonus_task_brand_id', targetKey: 'cr_co_id'});
 db.bonus_task.belongsTo(db.brands, {foreignKey: 'bonus_task_brand_id', targetKey: 'cr_co_id'});
-db.users.hasMany(db.bonus_task, {foreignKey: 'u_id', targetKey: 'bonus_task_usr_id'});
+db.users.hasMany(db.bonus_task, {foreignKey: 'bonus_task_usr_id', targetKey: 'u_id'});
 db.bonus_task.belongsTo(db.users, {foreignKey: 'bonus_task_usr_id', targetKey: 'u_id'});
 db.brands.hasMany(db.video_ads, {foreignKey: 'cr_co_id', targetKey: 'cr_co_id'});
 db.video_ads.belongsTo(db.brands, {foreignKey: 'cr_co_id', targetKey: 'cr_co_id'});

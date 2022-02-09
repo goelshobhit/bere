@@ -39,6 +39,8 @@ module.exports = app => {
    *                            type: string
    *                        Hashtag:
    *                            type: string
+   *                        Bonus Task Images:
+   *                            type: string
    *     tags:
    *       - Bonus Task
    *     description: Add new Bonus Task
@@ -100,6 +102,8 @@ module.exports = app => {
    *                            type: string
    *                        bonus_task_hashtag:
    *                            type: string
+   *                        bonus_task_images:
+   *                            type: string
    *     parameters:
    *         - name: bonusTaskId
    *           in: path
@@ -135,6 +139,21 @@ module.exports = app => {
    * /api/bonus_task:
    *   get:
    *     parameters:
+   *         - name: brandId
+   *           in: query
+   *           required: false
+   *           schema:
+   *              type: integer
+   *         - name: taskId
+   *           in: query
+   *           required: false
+   *           schema:
+   *              type: integer
+   *         - name: userId
+   *           in: query
+   *           required: false
+   *           schema:
+   *              type: integer
    *         - name: pageNumber
    *           in: query
    *           required: false

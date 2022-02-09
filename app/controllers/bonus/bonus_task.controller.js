@@ -1,6 +1,7 @@
 const db = require("../../models");
 const BonusTask = db.bonus_task;
 const audit_log = db.audit_log
+const common = require("../../common");
 const logger = require("../../middleware/logger");
 const {
     validationResult
@@ -20,7 +21,7 @@ exports.createBonusTask = async(req, res) => {
         });
         return;
     }
-    const bonusTask = {
+    const bonusTaskData = {
         "bonus_task_brand_id": body.hasOwnProperty("Brand Id") ? body["Brand Id"] : 0,
         "bonus_task_usr_id": body.hasOwnProperty("User Id") ? body["User Id"] : 0,
         "bonus_task_caption1": body.hasOwnProperty("Caption 1") ? body["Caption 1"] : "",
@@ -32,10 +33,11 @@ exports.createBonusTask = async(req, res) => {
         "bonus_task_image_url": body.hasOwnProperty("Image Url") ? body["Image Url"] : "",
         "bonus_task_video_url": body.hasOwnProperty("Video Url") ? body["Video Url"] : "",
         "bonus_task_completion_date": body.hasOwnProperty("Completion Date") ? body["Completion Date"] : "",
-        "bonus_task_entry_date": body.hasOwnProperty("Additional Task Id") ? body["Additional Task Id"] : "",
-        "bonus_task_hashtag": body.hasOwnProperty("Additional Task Id") ? body["Additional Task Id"] : ""
+        "bonus_task_entry_date": body.hasOwnProperty("Entry Date") ? body["Entry Date"] : "",
+        "bonus_task_hashtag": body.hasOwnProperty("Hashtag") ? body["Hashtag"] : "",
+        "bonus_task_images": body.hasOwnProperty("Bonus Task Images") ? body["Bonus Task Images"] : ""
     }
-        BonusTask.create(bonusTask).then(data => {
+        BonusTask.create(bonusTaskData).then(data => {
             audit_log.saveAuditLog(req.header(process.env.UKEY_HEADER || "x-api-key"),'add','todayTimeStamp',data.bonus_task_id,data.dataValues);
         res.status(201).send({			
             msg: "Bonus Task Created Successfully",
@@ -70,16 +72,32 @@ exports.bonusTaskListing = async(req, res) => {
         ],
         where: {}
     };
+    
     if(req.query.sortVal) {
         var sortValue = req.query.sortVal;
         options.where = sortValue ? {
             [sortBy]: `${sortValue}`
         } : null;
     }
+    if (req.query.brandId) {
+        options['where']['bonus_task_brand_id'] = req.query.brandId;
+    }
+    if (req.query.taskId) {
+        options['where']['bonus_task_id'] = req.query.taskId;
+    }
+    if (req.query.userId) {
+        options['where']['bonus_task_usr_id'] = req.query.userId;
+    }
     var total = await BonusTask.count({
         where: options['where']
     });
     const bonusTask_list = await BonusTask.findAll(options);
+    if (bonusTask_list.length) {
+        for (const bonus_list_key in bonusTask_list) {
+            bonusTask_list[bonus_list_key].dataValues.media_token = common.imageToken(bonusTask_list[bonus_list_key].bonus_task_id);
+        }
+    }
+    
     res.status(200).send({
         data: bonusTask_list,
 		totalRecords:total
@@ -106,7 +124,8 @@ exports.bonusTaskDetails = async(req, res) => {
         return
     }
     res.status(200).send({
-        data: bonusTask
+        data: bonusTask,
+		media_token: common.imageToken(bonusTaskId)
     });
 };
 /**

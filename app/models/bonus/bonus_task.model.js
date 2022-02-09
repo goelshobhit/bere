@@ -1,9 +1,9 @@
 module.exports = (sequelize, Sequelize) => {
   const bonus_task = sequelize.define("bonus_task", {
     bonus_task_id: {
+      allowNull: false,
       autoIncrement: true,
       primaryKey: true,
-      allowNull: false,
       type: Sequelize.INTEGER
     },
     bonus_task_brand_id: {
@@ -46,6 +46,9 @@ module.exports = (sequelize, Sequelize) => {
     },
     bonus_task_hashtag: {
       type: Sequelize.STRING(255)
+    },
+    bonus_task_images: {
+      type: Sequelize.TEXT
     }
   }, {
       createdAt: 'bonus_task_created_at',
