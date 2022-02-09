@@ -77,6 +77,7 @@ db.post_report = require("./post_report.model")(sequelize, Sequelize);
 db.user_fan_following = require("./user_fan_following.model")(sequelize, Sequelize);
 db.budget_history=require("./budget_history.model")(sequelize,Sequelize);
 db.bonus_ticket = require("./bonus/bonus_ticket.model")(sequelize, Sequelize);
+db.bonus_ticket_rule = require("./bonus/bonus_ticket_rule.model")(sequelize, Sequelize);
 db.bonus_ticket_rules = require("./bonus/bonus_ticket_rules.model")(sequelize, Sequelize);
 db.bonus_task = require("./bonus/bonus_task.model")(sequelize, Sequelize);
 db.bonus_rewards = require("./bonus/bonus_rewards.model")(sequelize, Sequelize);
@@ -237,6 +238,8 @@ db.bonus_summary.belongsTo(db.bonus_set, {foreignKey: 'bonus_summary_set_id', ta
 
 db.user_profile.hasMany(db.bonus_sm_share, {foreignKey: 'bonus_sm_share_user_id', targetKey: 'u_id'});
 db.bonus_sm_share.belongsTo(db.user_profile, {foreignKey: 'bonus_sm_share_user_id', targetKey: 'u_id'});
+
+db.bonus_ticket_rules.belongsTo(db.bonus_ticket_rule, {foreignKey: 'bonus_tickets_rules_id', targetKey: 'bonus_tickets_rules_id'});
 
 db.user_profile.hasMany(db.post_comment, {foreignKey: 'pc_commenter_uid', targetKey: 'u_id'});
 db.post_comment.belongsTo(db.user_profile, {foreignKey: 'pc_commenter_uid', targetKey: 'u_id'});

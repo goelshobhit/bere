@@ -1,13 +1,17 @@
 module.exports = (sequelize, Sequelize) => {
   const bonus_tickets_rules = sequelize.define("bonus_tickets_rules", {
-    bonus_tickets_rules_id: {
+    bonus_tickets_rules_autoid: {
       allowNull: false,
       autoIncrement: true,
       primaryKey: true,
       type: Sequelize.INTEGER
     },
+    bonus_tickets_rules_id: {
+      allowNull: false,
+      type: Sequelize.INTEGER
+    },
     bonus_tickets_rules: {
-      type: Sequelize.STRING(255)
+      type: Sequelize.JSONB
     },
     bonus_tickets_how_it_works: {
       type: Sequelize.STRING(255)

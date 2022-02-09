@@ -1,10 +1,81 @@
 const db = require("../../models");
+const BonusTicketRule = db.bonus_ticket_rule;
 const BonusTicketRules = db.bonus_ticket_rules;
 const audit_log = db.audit_log
 const logger = require("../../middleware/logger");
 const {
     validationResult
 } = require("express-validator");
+
+/**
+ * Function to add new Bonus Ticket Rules
+ * @param  {object}  req expressJs request object
+ * @param  {object}  res expressJs response object
+ * @return {Promise}
+ */
+exports.addBonusTicketRule = async(req, res) => {
+    const body = req.body
+	const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        res.status(422).json({
+            errors: errors.array()
+        });
+        return;
+    }
+    const bonusTicketRuleData = {
+        "bonus_tickets_rule_name": body.hasOwnProperty("Bonus Ticket Rule Name") ? body["Bonus Ticket Rule Name"] : ""
+       }
+       BonusTicketRule.create(bonusTicketRuleData).then(data => {
+            audit_log.saveAuditLog(req.header(process.env.UKEY_HEADER || "x-api-key"),'add','todayTimeStamp',data.bonus_tickets_rules_id,data.dataValues);
+        res.status(201).send({			
+            msg: "Bonus Ticket Rules Created Successfully",
+            bonusTicketsRulesId: data.bonus_tickets_rules_id
+        });
+    }).catch(err => {
+        logger.log("error", "Some error occurred while creating the Bonus Ticket Rule=" + err);
+        res.status(500).send({
+            message: err.message || "Some error occurred while creating the Bonus Ticket Rule."
+        });
+    })
+};
+
+/**
+ * Function to get all Bonus Ticket Rule Name with Id
+ * @param  {object}  req expressJs request object
+ * @param  {object}  res expressJs response object
+ * @return {Promise}
+ */
+exports.bonusTicketRuleListing = async(req, res) => {
+    const pageSize = parseInt(req.query.pageSize || 10);
+	const pageNumber = parseInt(req.query.pageNumber || 1);
+	const skipCount = (pageNumber - 1) * pageSize;
+	const sortBy = req.query.sortBy || 'bonus_tickets_rules_id'
+	const sortOrder = req.query.sortOrder || 'DESC'
+    
+    var options = {
+        limit: pageSize,
+        offset: skipCount,
+        order: [
+            [sortBy, sortOrder]
+        ],
+        where: {}
+    };
+    if(req.query.sortVal) {
+        var sortValue = req.query.sortVal;
+        options.where = sortValue ? {
+            [sortBy]: `${sortValue}`
+        } : null;
+    }
+    var total = await BonusTicketRule.count({
+        where: options['where']
+    });
+    const bonusTicketRule_list = await BonusTicketRule.findAll(options);
+    res.status(200).send({
+        data: bonusTicketRule_list,
+		totalRecords:total
+    });
+};
+
 /**
  * Function to add new Bonus Ticket Rules
  * @param  {object}  req expressJs request object
@@ -21,15 +92,16 @@ exports.createBonusTicketRules = async(req, res) => {
         return;
     }
     const bonusTicketRules = {
+        "bonus_tickets_rules_id": body.hasOwnProperty("Bonus Tickets Rules Id") ? body["Bonus Tickets Rules Id"] : "",
         "bonus_tickets_rules": body.hasOwnProperty("Bonus Ticket Rules") ? body["Bonus Ticket Rules"] : "",
         "bonus_tickets_how_it_works": body.hasOwnProperty("How It Works") ? body["How It Works"] : "",
         "bonus_tickets_cashout_rules": body.hasOwnProperty("Cashout Rules") ? body["Cashout Rules"] : "",
        }
     BonusTicketRules.create(bonusTicketRules).then(data => {
-            audit_log.saveAuditLog(req.header(process.env.UKEY_HEADER || "x-api-key"),'add','todayTimeStamp',data.bonus_tickets_rules_id,data.dataValues);
+            audit_log.saveAuditLog(req.header(process.env.UKEY_HEADER || "x-api-key"),'add','todayTimeStamp',data.bonus_tickets_rules_autoid,data.dataValues);
         res.status(201).send({			
             msg: "Bonus Ticket Rules Created Successfully",
-            bonusTicketsRulesId: data.bonus_tickets_rules_id
+            bonusTicketsRulesAutoId: data.bonus_tickets_rules_autoid
         });
     }).catch(err => {
         logger.log("error", "Some error occurred while creating the Bonus Ticket Rules=" + err);
@@ -49,10 +121,16 @@ exports.bonusTicketRulesListing = async(req, res) => {
     const pageSize = parseInt(req.query.pageSize || 10);
 	const pageNumber = parseInt(req.query.pageNumber || 1);
 	const skipCount = (pageNumber - 1) * pageSize;
-	const sortBy = req.query.sortBy || 'bonus_tickets_rules_id'
+	const sortBy = req.query.sortBy || 'bonus_tickets_rules_autoid'
 	const sortOrder = req.query.sortOrder || 'DESC'
     
     var options = {
+        include: [{
+            model: BonusTicketRule,
+            attributes: [
+                ["bonus_tickets_rule_name", "Bonus Ticket Rule Name"]
+            ]
+        }],
         limit: pageSize,
         offset: skipCount,
         order: [
@@ -82,10 +160,16 @@ exports.bonusTicketRulesListing = async(req, res) => {
  * @return {Promise}
  */
 exports.bonusTicketRulesDetails = async(req, res) => {
-    const bonusTicketsRulesId = req.params.bonusTicketsRulesId;
+    const bonusTicketsRulesAutoId = req.params.bonusTicketsRulesAutoId;
     var options = {
+        include: [{
+            model: BonusTicketRule,
+            attributes: [
+                ["bonus_tickets_rule_name", "Bonus Ticket Rule Name"]
+            ]
+        }],
         where: {
-            bonus_tickets_rules_id: bonusTicketsRulesId
+            bonus_tickets_rules_autoid: bonusTicketsRulesAutoId
         }
     };
     const bonusTicketRules = await BonusTicketRules.findOne(options);
@@ -106,16 +190,16 @@ exports.bonusTicketRulesDetails = async(req, res) => {
  * @return {Promise}
  */
 exports.updateBonusTicketRules = async(req, res) => {
-    const id = req.params.bonusTicketsRulesId;
+    const id = req.params.bonusTicketsRulesAutoId;
     var BonusTicketRulesDetails = await BonusTicketRules.findOne({
         where: {
-            bonus_tickets_rules_id: id
+            bonus_tickets_rules_autoid: id
         }
     })
     BonusTicketRules.update(req.body, {
 		returning:true,
         where: {
-            bonus_tickets_rules_id: id
+            bonus_tickets_rules_autoid: id
         }
     }).then(function([ num, [result] ]) {
         if (num == 1) {
@@ -146,18 +230,18 @@ exports.updateBonusTicketRules = async(req, res) => {
  exports.deleteBonusTicketRules = async (req, res) => {
     const BonusTicketRulesDetails = await BonusTicketRules.findOne({
             where: {
-                bonus_tickets_rules_id: req.params.bonusTicketsRulesId
+                bonus_tickets_rules_autoid: req.params.bonusTicketsRulesAutoId
             }
         });
     if(!BonusTicketRulesDetails){
         res.status(500).send({
-            message: "Could not delete Bonus Ticket Rules with id=" + req.params.bonusTicketsRulesId
+            message: "Could not delete Bonus Ticket Rules with id=" + req.params.bonusTicketsRulesAutoId
           });
           return;
     }
     BonusTicketRules.destroy({
         where: { 
-            bonus_tickets_rules_id: req.params.bonusTicketsRulesId
+            bonus_tickets_rules_autoid: req.params.bonusTicketsRulesAutoId
         }
       })
         .then(num => {
@@ -168,7 +252,7 @@ exports.updateBonusTicketRules = async(req, res) => {
         })
         .catch(err => {
           res.status(500).send({
-            message: "Could not delete Bonus Ticket Rules with id=" + req.params.bonusTicketsRulesId
+            message: "Could not delete Bonus Ticket Rules with id=" + req.params.bonusTicketsRulesAutoId
           });
           return;
         });

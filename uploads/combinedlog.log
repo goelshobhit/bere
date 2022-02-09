@@ -1,0 +1,1 @@
+{"level":"error","message":"Some error occurred while creating the Bonus Ticket Rules=SequelizeValidationError: notNull Violation: bonus_tickets_rules.bonus_tickets_rules_id cannot be null"}
