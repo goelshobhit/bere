@@ -2,6 +2,8 @@ const db = require("../../models");
 const audit_log = db.audit_log;
 const logger = require("../../middleware/logger");
 const bonus_user = db.bonus_usr;
+const common = require("../../common");
+
 /**
  * Function to add bonus user
  * @param  {object}  req expressJs request object
@@ -20,7 +22,7 @@ exports.createBonusUser = async (req, res) => {
   }
   var uid = req.header(process.env.UKEY_HEADER || "x-api-key");
   const data = {
-    "bonus_usr_id": uid,
+    "bonus_usr_id": body.hasOwnProperty("Bonus User Id") ? req.body["Bonus User Id"] : uid,
     "bonus_usr_riddim_level": body.hasOwnProperty("Bonus user Reddim Level") ? req.body["Bonus user Reddim Level"] : "0",
     "bonus_usr_followers_riddim": body.hasOwnProperty("Bonus user Followers riddim") ? req.body["Bonus user Followers riddim"] : "0",
     "bonus_usr_history_not_won": body.hasOwnProperty("Bonus User History Not Won") ? req.body["Bonus User History Not Won"] : "0"
@@ -59,7 +61,7 @@ exports.updateBonusUser = async (req, res) => {
   });
   var uid = req.header(process.env.UKEY_HEADER || "x-api-key");
   const bonusUserData = {
-    "bonus_usr_id": uid,
+    "bonus_usr_id": body.hasOwnProperty("Bonus User Id") ? req.body["Bonus User Id"] : uid,
     "bonus_usr_riddim_level": body.hasOwnProperty("Bonus user Reddim Level") ? req.body["Bonus user Reddim Level"] : "0",
     "bonus_usr_followers_riddim": body.hasOwnProperty("Bonus user Followers riddim") ? req.body["Bonus user Followers riddim"] : "0",
     "bonus_usr_history_not_won": body.hasOwnProperty("Bonus User History Not Won") ? req.body["Bonus User History Not Won"] : "0"
@@ -131,12 +133,50 @@ exports.bonusUserlisting = async (req, res) => {
   var total = await bonus_user.count({
     where: options['where']
   });
-  const bonus_user_list = await bonus_user.findAll(options);
+  let bonus_user_list = await bonus_user.findAll(options);
+  if (bonus_user_list.length) {
+    for (const bonus_list_key in bonus_user_list) {
+      bonus_user_list[bonus_list_key].dataValues.media_token = common.imageToken(bonus_user_list[bonus_list_key].user_profile.u_id);
+    }
+}
   res.status(200).send({
     data: bonus_user_list,
     totalRecords: total
   });
 }
+
+/**
+ * Function to get single Bonus User
+ * @param  {object}  req expressJs request object
+ * @param  {object}  res expressJs response object
+ * @return {Promise}
+ */
+exports.bonusUserDetails = async(req, res) => {
+  const bonusUserId = req.params.bonusUserId;
+  var options = {
+    include: [
+      {
+        model: db.user_profile,
+        attributes: ["u_id", ["u_display_name", "username"], ["u_prof_img_path", "user_imgpath"]],
+        required: false
+      }
+    ],
+      where: {
+          bonus_usr_id: bonusUserId
+      }
+  };
+  const bonusUser = await bonus_user.findOne(options);
+  if(!bonusUser){
+      res.status(500).send({
+          message: "Bonus User not found"
+      });
+      return
+  }
+  res.status(200).send({
+      data: bonusUser,
+      media_token: common.imageToken(bonusUser.user_profile.u_id)
+  });
+};
 
 /**
  * Function to delete Bonus User
