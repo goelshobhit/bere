@@ -144,7 +144,7 @@ module.exports = app => {
    *           required: false
    *           schema:
    *              type: integer
-   *         - name: taskId
+   *         - name: bonusTaskId
    *           in: query
    *           required: false
    *           schema:

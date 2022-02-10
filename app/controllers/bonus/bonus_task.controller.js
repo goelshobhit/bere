@@ -82,8 +82,8 @@ exports.bonusTaskListing = async(req, res) => {
     if (req.query.brandId) {
         options['where']['bonus_task_brand_id'] = req.query.brandId;
     }
-    if (req.query.taskId) {
-        options['where']['bonus_task_id'] = req.query.taskId;
+    if (req.query.bonusTaskId) {
+        options['where']['bonus_task_id'] = req.query.bonusTaskId;
     }
     if (req.query.userId) {
         options['where']['bonus_task_usr_id'] = req.query.userId;
