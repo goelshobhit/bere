@@ -16,7 +16,7 @@ module.exports = app => {
    *                        Bonus Ticket Rule Name:
    *                            type: string
    *     tags:
-   *       - Bonus Tickets Rules
+   *       - Bonus Tickets Rule
    *     description: Add new Bonus Ticket Rule
    *     produces:
    *       - application/json
@@ -39,11 +39,11 @@ module.exports = app => {
    *                              example: Authorisation Required
    */
   router.post("/bonus_tickets_rule",auth, BonusTicketRules.addBonusTicketRule);
-  
+
   /**
    * @swagger
-   * /api/bonus_tickets_rules:
-   *   post:
+   * /api/bonus_tickets_rule/{bonusTicketsRulesId}:
+   *   put:
    *     requestBody:
    *        required: false
    *        content:
@@ -51,20 +51,30 @@ module.exports = app => {
    *                schema:
    *                    type: object
    *                    properties:
-   *                        Bonus Ticket Rules:
+   *                        bonus_tickets_rule_id:
+   *                            type: integer
+   *                        bonus_tickets_rules:
+   *                            type: object
+   *                            properties:
+   *                               user_id
+   *                        bonus_tickets_how_it_works:
    *                            type: string
-   *                        How It Works:
+   *                        bonus_tickets_cashout_rules:
    *                            type: string
-   *                        Cashout Rules:
-   *                            type: string
+   *     parameters:
+   *         - name: bonusTicketsRulesId
+   *           in: path
+   *           required: true
+   *           schema:
+   *              type: integer
    *     tags:
-   *       - Bonus Tickets Rules
-   *     description: Add new Bonus Ticket Rules
+   *       - Bonus Tickets Rule
+   *     description: Update Bonus Ticket Rule
    *     produces:
    *       - application/json
    *     responses:
    *       201:
-   *         description: Add new Bonus Ticket Rules
+   *         description: Bonus Ticket Rules updated
    *       422:
    *         description: validation errors
    *       500:
@@ -80,7 +90,7 @@ module.exports = app => {
    *                              type: string
    *                              example: Authorisation Required
    */
-  router.post("/bonus_tickets_rules",auth, BonusTicketRules.createBonusTicketRules);
+  router.put("/bonus_tickets_rule/:bonusTicketsRulesId",auth, BonusTicketRules.updateBonusTicketRule);
   
   /**
    * @swagger
@@ -129,6 +139,79 @@ module.exports = app => {
    *                              example: Authorisation Required
    */
   router.get('/bonus_tickets_rule',auth, BonusTicketRules.bonusTicketRuleListing)
+
+    /**
+   * @swagger
+   * /api/bonus_tickets_rule/{bonusTicketsRulesId}:
+   *   delete:
+   *     parameters:
+   *         - name: bonusTicketsRulesId
+   *           in: path
+   *           required: true
+   *           schema:
+   *              type: integer
+   *     tags:
+   *       - Bonus Tickets Rule
+   *     description: Delete a bonus ticket rule with id
+   *     produces:
+   *       - application/json
+   *     responses:
+   *       200:
+   *         description: Delete a bonus ticket rule
+   *       401:
+   *          description: Unauthorized
+   *          content:
+   *              application/json:
+   *                  schema:
+   *                      type: object
+   *                      properties:
+   *                          message:
+   *                              type: string
+   *                              example: Authorisation Required
+   */
+  router.delete("/bonus_tickets_rule/:bonusTicketsRulesId", auth, BonusTicketRules.deleteBonusTicketRule);
+
+    /**
+   * @swagger
+   * /api/bonus_tickets_rules:
+   *   post:
+   *     requestBody:
+   *        required: false
+   *        content:
+   *            application/json:
+   *                schema:
+   *                    type: object
+   *                    properties:
+   *                        Bonus Ticket Rules:
+   *                            type: string
+   *                        How It Works:
+   *                            type: string
+   *                        Cashout Rules:
+   *                            type: string
+   *     tags:
+   *       - Bonus Tickets Rules
+   *     description: Add new Bonus Ticket Rules
+   *     produces:
+   *       - application/json
+   *     responses:
+   *       201:
+   *         description: Add new Bonus Ticket Rules
+   *       422:
+   *         description: validation errors
+   *       500:
+   *         description: Internal server error
+   *       401:
+   *          description: Unauthorized
+   *          content:
+   *              application/json:
+   *                  schema:
+   *                      type: object
+   *                      properties:
+   *                          message:
+   *                              type: string
+   *                              example: Authorisation Required
+   */
+  router.post("/bonus_tickets_rules",auth, BonusTicketRules.createBonusTicketRules);
 
   /**
    * @swagger
@@ -447,7 +530,8 @@ module.exports = app => {
    *                              example: Authorisation Required
    */
     router.get("/bonus_tickets_rules/:bonusTicketsRulesAutoId",auth, BonusTicketRules.bonusTicketRulesDetails);
-   /**
+ 
+    /**
    * @swagger
    * /api/bonus_tickets_rules/{bonusTicketsRulesAutoId}:
    *   delete:

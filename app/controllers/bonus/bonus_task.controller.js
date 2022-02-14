@@ -89,6 +89,44 @@ exports.bonusTaskUserProgress = async(req, res) => {
     })
 };
 
+/**
+ * Function to update single Bonus Task
+ * @param  {object}  req expressJs request object
+ * @param  {object}  res expressJs response object
+ * @return {Promise}
+ */
+exports.updateUserProgress = async(req, res) => {
+    const id = req.params.bonusTaskUserStateId;
+    var userProgresDetails = await BonusTaskUserState.findOne({
+        where: {
+            btus_id: id
+        }
+    });
+    BonusTaskUserState.update(req.body, {
+		returning:true,
+        where: {
+            btus_id: id
+        }
+    }).then(function([ num, [result] ]) {
+        if (num == 1) {
+            audit_log.saveAuditLog(req.header(process.env.UKEY_HEADER || "x-api-key"),'update','bonus_task_user_state',id,result.dataValues,userProgresDetails);
+            res.status(200).send({
+                message: "Bonus Task User State updated successfully."
+            });
+        } else {
+            res.status(400).send({
+                message: `Cannot update Bonus Task User State with id=${id}. Maybe Bonus Task was not found or req.body is empty!`
+            });
+        }
+    }).catch(err => {
+        logger.log("error", err+":Error updating Bonus Task User State with id=" + id);
+        console.log(err)
+        res.status(500).send({
+            message: "Error updating Bonus Task User State with id=" + id
+        });
+    });
+};
+
 
 
 /**

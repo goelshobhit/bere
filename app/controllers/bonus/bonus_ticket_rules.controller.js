@@ -77,6 +77,82 @@ exports.bonusTicketRuleListing = async(req, res) => {
 };
 
 /**
+ * Function to update single Bonus Ticket Rule
+ * @param  {object}  req expressJs request object
+ * @param  {object}  res expressJs response object
+ * @return {Promise}
+ */
+exports.updateBonusTicketRule = async(req, res) => {
+    const id = req.params.bonusTicketsRulesId;
+    var BonusTicketRuleDetails = await BonusTicketRule.findOne({
+        where: {
+            bonus_tickets_rules_id: id
+        }
+    })
+    BonusTicketRule.update(req.body, {
+		returning:true,
+        where: {
+            bonus_tickets_rules_id: id
+        }
+    }).then(function([ num, [result] ]) {
+        if (num == 1) {
+            audit_log.saveAuditLog(req.header(process.env.UKEY_HEADER || "x-api-key"),'update','BonusTicketRule',id,result.dataValues,BonusTicketRuleDetails);
+            res.status(200).send({
+                message: "Bonus Ticket Rule updated successfully."
+            });
+        } else {
+            res.status(400).send({
+                message: `Cannot update Bonus Ticket Rule with id=${id}. Maybe Bonus Ticket Rule was not found or req.body is empty!`
+            });
+        }
+    }).catch(err => {
+        logger.log("error", err+":Error updating Bonus Ticket Rule with id=" + id);
+        console.log(err)
+        res.status(500).send({
+            message: "Error updating Bonus Ticket Rule with id=" + id
+        });
+    });
+};
+
+
+/**
+ * Function to delete Bonus Ticket Rule
+ * @param  {object}  req expressJs request object
+ * @param  {object}  res expressJs response object
+ * @return {Promise}
+ */
+exports.deleteBonusTicketRule = async (req, res) => {
+    const BonusTicketRuleDetails = await BonusTicketRule.findOne({
+            where: {
+                bonus_tickets_rules_id: req.params.bonusTicketsRulesId
+            }
+        });
+    if(!BonusTicketRuleDetails){
+        res.status(500).send({
+            message: "Could not delete Bonus Ticket Rules with id=" + req.params.bonusTicketsRulesId
+          });
+          return;
+    }
+    BonusTicketRule.destroy({
+        where: { 
+            bonus_tickets_rules_id: req.params.bonusTicketsRulesId
+        }
+      })
+        .then(num => {
+        res.status(200).send({
+              message: "Bonus Ticket Rule deleted successfully!"
+        });
+            return;
+        })
+        .catch(err => {
+          res.status(500).send({
+            message: "Could not delete Bonus Ticket Rule with id=" + req.params.bonusTicketsRulesId
+          });
+          return;
+        });
+    }
+
+/**
  * Function to add new Bonus Ticket Rules
  * @param  {object}  req expressJs request object
  * @param  {object}  res expressJs response object
