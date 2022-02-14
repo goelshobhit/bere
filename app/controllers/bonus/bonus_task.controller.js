@@ -1,11 +1,13 @@
 const db = require("../../models");
 const BonusTask = db.bonus_task;
+const BonusTaskUserState = db.bonus_task_user_state;
 const audit_log = db.audit_log
 const common = require("../../common");
 const logger = require("../../middleware/logger");
 const {
     validationResult
 } = require("express-validator");
+
 /**
  * Function to add new Bonus Task
  * @param  {object}  req expressJs request object
@@ -21,9 +23,10 @@ exports.createBonusTask = async(req, res) => {
         });
         return;
     }
+    var userId = req.header(process.env.UKEY_HEADER || "x-api-key");
     const bonusTaskData = {
         "bonus_task_brand_id": body.hasOwnProperty("Brand Id") ? body["Brand Id"] : 0,
-        "bonus_task_usr_id": body.hasOwnProperty("User Id") ? body["User Id"] : 0,
+        "bonus_task_usr_id": body.hasOwnProperty("User Id") ? body["User Id"] : userId,
         "bonus_task_caption1": body.hasOwnProperty("Caption 1") ? body["Caption 1"] : "",
         "bonus_task_caption2": body.hasOwnProperty("Caption 2") ? body["Caption 2"] : "",
         "bonus_task_caption3": body.hasOwnProperty("Caption 3") ? body["Caption 3"] : "",
@@ -49,6 +52,123 @@ exports.createBonusTask = async(req, res) => {
             message: err.message || "Some error occurred while creating the Bonus Task."
         });
     })
+};
+
+/**
+ * Function to set bonus task User Progress
+ * @param  {object}  req expressJs request object
+ * @param  {object}  res expressJs response object
+ * @return {Promise}
+ */
+exports.bonusTaskUserProgress = async(req, res) => {
+    const body = req.body
+	const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        res.status(422).json({
+            errors: errors.array()
+        });
+        return;
+    }
+    var userId = req.header(process.env.UKEY_HEADER || "x-api-key");
+    const bonusTaskuserstateData = {
+        "bonus_task_id": body.hasOwnProperty("Bonus Task Id") ? body["Bonus Task Id"] : 0,
+        "bonus_task_usr_id": body.hasOwnProperty("User Id") ? body["User Id"] : userId,
+        "usr_state": body.hasOwnProperty("State") ? body["State"] : "0"
+    }
+        BonusTaskUserState.create(bonusTaskuserstateData).then(data => {
+            audit_log.saveAuditLog(req.header(process.env.UKEY_HEADER || "x-api-key"),'add','bonus_task_user_state',data.btus_id,data.dataValues);
+        res.status(201).send({			
+            msg: "Bonus Task User State Added Successfully",
+            bonusTaskUserStateId: data.btus_id
+        });
+    }).catch(err => {
+        logger.log("error", "Some error occurred while creating the Bonus Task User State=" + err);
+        res.status(500).send({
+            message: err.message || "Some error occurred while creating the Bonus Task User State."
+        });
+    })
+};
+
+
+
+/**
+ * Function to get all Bonus Task
+ * @param  {object}  req expressJs request object
+ * @param  {object}  res expressJs response object
+ * @return {Promise}
+ */
+exports.UserProgressListing = async(req, res) => {
+    const pageSize = parseInt(req.query.pageSize || 10);
+	const pageNumber = parseInt(req.query.pageNumber || 1);
+	const skipCount = (pageNumber - 1) * pageSize;
+	const sortBy = req.query.sortBy || 'btus_id'
+	const sortOrder = req.query.sortOrder || 'DESC'
+    
+    var options = {
+        limit: pageSize,
+        offset: skipCount,
+        order: [
+            [sortBy, sortOrder]
+        ],
+        where: {}
+    };
+    
+    if(req.query.sortVal) {
+        var sortValue = req.query.sortVal;
+        options.where = sortValue ? {
+            [sortBy]: `${sortValue}`
+        } : null;
+    }
+    if (req.query.bonusTaskUserStateId) {
+        options['where']['btus_id'] = req.query.bonusTaskUserStateId;
+    }
+    if (req.query.bonusTaskId) {
+        options['where']['bonus_task_id'] = req.query.bonusTaskId;
+    }
+    if (req.query.userId) {
+        options['where']['bonus_task_usr_id'] = req.query.userId;
+    }
+    var total = await BonusTaskUserState.count({
+        where: options['where']
+    });
+    const bonusTask_list = await BonusTaskUserState.findAll(options);
+    if (bonusTask_list.length) {
+        for (const bonus_list_key in bonusTask_list) {
+            bonusTask_list[bonus_list_key].dataValues.media_token = common.imageToken(bonusTask_list[bonus_list_key].bonus_task_id);
+        }
+    }
+    
+    res.status(200).send({
+        data: bonusTask_list,
+		totalRecords:total
+    });
+};
+
+/**
+ * Function to get single Bonus Task User State
+ * @param  {object}  req expressJs request object
+ * @param  {object}  res expressJs response object
+ * @return {Promise}
+ */
+exports.bonusTaskUserStateDetails = async(req, res) => {
+    const bonusTaskId = req.params.bonusTaskId;
+    var userId = req.header(process.env.UKEY_HEADER || "x-api-key");
+    var options = {
+        where: {
+            bonus_task_id: bonusTaskId,
+            bonus_task_usr_id: userId
+        }
+    };
+    const bonusTaskUserState = await BonusTaskUserState.findOne(options);
+    if(!bonusTaskUserState){
+        res.status(500).send({
+            message: "Bonus Task User State not found"
+        });
+        return
+    }
+    res.status(200).send({
+        data: bonusTaskUserState
+    });
 };
 
 /**
@@ -103,6 +223,7 @@ exports.bonusTaskListing = async(req, res) => {
 		totalRecords:total
     });
 };
+
 /**
  * Function to get single Bonus Task
  * @param  {object}  req expressJs request object

@@ -1,5 +1,7 @@
 const db = require("../models");
-const BrandScoretask = db.brandscore_task;
+const EngagementType = db.brandscore_engagement_type;
+const EngagementSettings = db.brandscore_engagement_settings;
+const brandscoreIncrease = db.brandscore_increase;
 const BrandScore = db.brand_score;
 const User_profile = db.user_profile;
 const logger = require("../middleware/logger");
@@ -8,6 +10,487 @@ const {
     validationResult
 } = require("express-validator");
 const { brandscore_task } = require("../models");
+
+/**
+ * Function to add Brand Score engagement type
+ * @param  {object}  req expressJs request object
+ * @param  {object}  res expressJs response object
+ * @return {Promise}
+ */
+exports.AddEngagementType = async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        res.status(422).json({
+            errors: errors.array()
+        });
+        return;
+    }
+    const body = req.body;
+    if (!body["Engagement Type"]) {
+        res.status(500).send({
+          msg:
+            "Engagement Type is required."
+        });
+        return;
+      }
+    const engagementTypeData = {
+        "engagement_type": body.hasOwnProperty("Engagement Type") ? req.body["Engagement Type"] : ''
+    }
+    EngagementType.create(engagementTypeData)
+        .then(data => {
+            audit_log.saveAuditLog(req.header(process.env.UKEY_HEADER || "x-api-key"), 'add', 'brandscore_engagement_type', data.engagement_id, data.dataValues);
+            res.status(201).send({
+                msg: "Brandscore Engagement Type Added Successfully",
+                engagementId: data.engagement_id,
+            });
+        })
+        .catch(err => {
+            logger.log("error", err + ": Some error occurred while creating the Brandscore Engagement Type");
+            res.status(500).send({
+                message: err.message || "Some error occurred while creating the Brandscore Engagement Type."
+            });
+        });
+}
+
+/**
+ * Function to update Engagement Type
+ * @param  {object}  req expressJs request object
+ * @param  {object}  res expressJs response object
+ * @return {Promise}
+ */
+
+exports.updateEngagementType = async(req, res) => {
+    const id = req.params.engagementId;
+    var engagemenDetails = await EngagementType.findOne({
+        where: {
+            engagement_id: id
+        }
+    });
+    EngagementType.update(req.body, {
+        returning: true,
+        where: {
+            engagement_id: id
+        }
+    }).then(function([ num, [result] ]) {
+        if (num == 1) {
+            audit_log.saveAuditLog(req.header(process.env.UKEY_HEADER || "x-api-key"),'update','brandscore_engagement_type',id,result.dataValues,engagemenDetails);
+            res.status(200).send({
+                message: "Brandscore Engagement Type updated successfully."
+            });
+        } else {
+            res.status(400).send({
+                message: `Cannot update Brandscore Engagement Type with id=${id}. Maybe Brandscore Engagement Type was not found or req.body is empty!`
+            });
+        }
+    }).catch(err => {
+       logger.log("error", err+": Error updating Brandscore Engagement Type with id=" + id);
+        res.status(500).send({
+            message: err+"Error updating Brandscore Engagement Type with id=" + id
+        });
+    });
+ }
+
+ /**
+ * Function to delete Engagement Type
+ * @param  {object}  req expressJs request object
+ * @param  {object}  res expressJs response object
+ * @return {Promise}
+ */
+exports.deleteEngagementType = async (req, res) => {
+    const engagementTypeDetails = await EngagementType.findOne({
+            where: {
+                engagement_id: req.params.engagementId
+            }
+        });
+    if(!engagementTypeDetails){
+        res.status(500).send({
+            message: "Could not delete Brandscore Engagement Type with id=" + req.params.engagementId
+          });
+          return;
+    }
+    EngagementType.destroy({
+        where: { 
+            engagement_id: req.params.engagementId
+        }
+      })
+        .then(num => {
+        res.status(200).send({
+              message: "Brandscore Engagement Type deleted successfully!"
+        });
+            return;
+        })
+        .catch(err => {
+          res.status(500).send({
+            message: "Could not delete Brandscore Engagement Type with id=" + req.params.engagementId
+          });
+          return;
+        });
+    };
+
+ /**
+ * Function to get all Engagement Types
+ * @param  {object}  req expressJs request object
+ * @param  {object}  res expressJs response object
+ * @return {Promise}
+ */
+exports.EngagementTypelisting = async (req, res) => {
+    const pageSize = parseInt(req.query.pageSize || 10);
+    const pageNumber = parseInt(req.query.pageNumber || 1);
+    const skipCount = (pageNumber - 1) * pageSize;
+    const sortBy = req.query.sortBy || 'engagement_id'
+    const sortOrder = req.query.sortOrder || 'DESC'
+    var options = {
+        limit: pageSize,
+        offset: skipCount,
+        order: [
+            [sortBy, sortOrder]
+        ],
+        where: {}
+    };
+    if (req.query.sortVal) {
+        var sortValue = req.query.sortVal;
+        options.where = sortValue ? {
+            [sortBy]: `${sortValue}`
+        } : null;
+    }
+    if (req.query.engagementId) {
+        options['where']['engagement_id'] = req.query.engagementId;
+    }
+    
+    var total = await EngagementType.count({
+        where: options['where']
+    });
+    const EngagementTypeListing = await EngagementType.findAll(options);
+    res.status(200).send({
+        data: EngagementTypeListing,
+        totalRecords: total
+    });
+};
+
+ /**
+ * Function to get all Engagement Setting
+ * @param  {object}  req expressJs request object
+ * @param  {object}  res expressJs response object
+ * @return {Promise}
+ */
+exports.engagementSettinglisting = async (req, res) => {
+    const pageSize = parseInt(req.query.pageSize || 10);
+    const pageNumber = parseInt(req.query.pageNumber || 1);
+    const skipCount = (pageNumber - 1) * pageSize;
+    const sortBy = req.query.sortBy || 'bes_id'
+    const sortOrder = req.query.sortOrder || 'DESC'
+    var options = {
+        limit: pageSize,
+        offset: skipCount,
+        order: [
+            [sortBy, sortOrder]
+        ],
+        where: {}
+    };
+    if (req.query.sortVal) {
+        var sortValue = req.query.sortVal;
+        options.where = sortValue ? {
+            [sortBy]: `${sortValue}`
+        } : null;
+    }
+    if (req.query.engagementSettingId) {
+        options['where']['bes_id'] = req.query.engagementSettingId;
+    }
+    
+    var total = await EngagementSettings.count({
+        where: options['where']
+    });
+    const EngagementTypeListing = await EngagementSettings.findAll(options);
+    res.status(200).send({
+        data: EngagementTypeListing,
+        totalRecords: total
+    });
+};
+
+/**
+ * Function to add Brand Score engagement settings
+ * @param  {object}  req expressJs request object
+ * @param  {object}  res expressJs response object
+ * @return {Promise}
+ */
+exports.AddEngagementSettings = async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        res.status(422).json({
+            errors: errors.array()
+        });
+        return;
+    }
+    const body = req.body;
+    if (!body["Engagement Id"]) {
+        res.status(500).send({
+          msg:
+            "Engagement Id is required."
+        });
+        return;
+      }
+    if (!body["Engagement Level"]) {
+        res.status(500).send({
+          msg:
+            "Engagement Level is required."
+        });
+        return;
+      }
+    const engagementSettingData = {
+        "engagement_id": body.hasOwnProperty("Engagement Id") ? req.body["Engagement Id"] : 0,
+        "engagement_level": body.hasOwnProperty("Engagement Level") ? req.body["Engagement Level"] : 0,
+        "brand_score": body.hasOwnProperty("Brand Score") ? req.body["Brand Score"] : 0
+    }
+    EngagementSettings.create(engagementSettingData)
+        .then(data => {
+            audit_log.saveAuditLog(req.header(process.env.UKEY_HEADER || "x-api-key"), 'add', 'brandscore_engagement_settings', data.bes_id, data.dataValues);
+            res.status(201).send({
+                msg: "Brandscore Engagement Settings Added Successfully",
+                engagementSettingId: data.bes_id
+            });
+        })
+        .catch(err => {
+            logger.log("error", err + ": Some error occurred while creating the Brandscore Engagement Settings");
+            res.status(500).send({
+                message: err.message || "Some error occurred while creating the Brandscore Engagement Settings."
+            });
+        });
+}
+
+/**
+ * Function to update Engagement Setting
+ * @param  {object}  req expressJs request object
+ * @param  {object}  res expressJs response object
+ * @return {Promise}
+ */
+
+exports.updateEngagementSettings = async(req, res) => {
+    const id = req.params.engagementSettingId;
+    var engagementSettingDetails = await EngagementSettings.findOne({
+        where: {
+            bes_id: id
+        }
+    });
+    EngagementSettings.update(req.body, {
+        returning: true,
+        where: {
+            bes_id: id
+        }
+    }).then(function([ num, [result] ]) {
+        if (num == 1) {
+            audit_log.saveAuditLog(req.header(process.env.UKEY_HEADER || "x-api-key"),'update','brandscore_engagement_settings',id,result.dataValues,engagementSettingDetails);
+            res.status(200).send({
+                message: "Brandscore Engagement Settings updated successfully."
+            });
+        } else {
+            res.status(400).send({
+                message: `Cannot update Brandscore Engagement Settings with id=${id}. Maybe Brandscore Engagement Type was not found or req.body is empty!`
+            });
+        }
+    }).catch(err => {
+       logger.log("error", err+": Error updating Brandscore Engagement Settings with id=" + id);
+        res.status(500).send({
+            message: err+"Error updating Brandscore Engagement Settings with id=" + id
+        });
+    });
+ }
+
+ /**
+ * Function to delete Engagement Setting
+ * @param  {object}  req expressJs request object
+ * @param  {object}  res expressJs response object
+ * @return {Promise}
+ */
+exports.deleteEngagementSettings = async (req, res) => {
+    const engagementSettingsDetails = await EngagementSettings.findOne({
+            where: {
+                bes_id: req.params.engagementSettingId
+            }
+        });
+    if(!engagementSettingsDetails){
+        res.status(500).send({
+            message: "Could not delete Brandscore Engagement Setting with id=" + req.params.engagementSettingId
+          });
+          return;
+    }
+    EngagementSettings.destroy({
+        where: { 
+            bes_id: req.params.engagementSettingId
+        }
+      })
+        .then(num => {
+        res.status(200).send({
+              message: "Brandscore Engagement Setting deleted successfully!"
+        });
+            return;
+        })
+        .catch(err => {
+          res.status(500).send({
+            message: "Could not delete Brandscore Engagement Setting with id=" + req.params.engagementSettingId
+          });
+          return;
+        });
+    };
+
+
+/**
+ * Function to add Brand Score engagement settings
+ * @param  {object}  req expressJs request object
+ * @param  {object}  res expressJs response object
+ * @return {Promise}
+ */
+exports.IncreaseBrandScore = async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        res.status(422).json({
+            errors: errors.array()
+        });
+        return;
+    }
+    const body = req.body;
+    if (!body["Event Type"]) {
+        res.status(500).send({
+          msg:
+            "Event Type is required."
+        });
+        return;
+      }
+    const brandScoreIncreaseData = {
+        "brand_id": body.hasOwnProperty("Brand Id") ? body["Brand Id"] : 0,
+        "user_id": body.hasOwnProperty("User Id") ? body["User Id"] : 0,
+        "event_id": body.hasOwnProperty("Event Id") ? body["Event Id"] : 0,
+        "event_type": body.hasOwnProperty("Event Type") ? body["Event Type"] : '',
+        "event_hashtag": body.hasOwnProperty("Event Hashtag") ? body["Event Hashtag"] : 0,
+        "event_engagement_id": body.hasOwnProperty("Event Engagement Id") ? body["Event Engagement Id"] : 0,
+        "platform_id": body.hasOwnProperty("Platform Id") ? body["Platform Id"] : 0,
+        "brandscore_user_score_increase": body.hasOwnProperty("Brandscore User Score Increase") ? body["Brandscore User Score Increase"] : 0
+    }
+    brandscoreIncrease.create(brandScoreIncreaseData)
+        .then(data => {
+            audit_log.saveAuditLog(req.header(process.env.UKEY_HEADER || "x-api-key"), 'add', 'brandscore_increase', data.brandscore_increase_id, data.dataValues);
+            res.status(201).send({
+                msg: "Brandscore Increase Added Successfully",
+                brandscoreIncreaseId: data.brandscore_increase_id
+            });
+        })
+        .catch(err => {
+            logger.log("error", err + ": Some error occurred while creating the Brandscore Increase.");
+            res.status(500).send({
+                message: err.message || "Some error occurred while creating the Brandscore Increase."
+            });
+        });
+}
+
+ /**
+ * Function to get all brandscore increase
+ * @param  {object}  req expressJs request object
+ * @param  {object}  res expressJs response object
+ * @return {Promise}
+ */
+exports.brandscoreIncreaselisting = async (req, res) => {
+    const pageSize = parseInt(req.query.pageSize || 10);
+    const pageNumber = parseInt(req.query.pageNumber || 1);
+    const skipCount = (pageNumber - 1) * pageSize;
+    const sortBy = req.query.sortBy || 'brandscore_increase_id'
+    const sortOrder = req.query.sortOrder || 'DESC'
+    var options = {
+        include: [
+            {
+                model: db.brands,
+                required: false,
+                attributes: [
+                    ["cr_co_name", "Brand Name"]
+                ],
+                where: { is_autotakedown: 0 }
+            },
+            {
+                model: User_profile,
+                attributes: [["u_display_name", "user_name"]],
+                required: false,
+                where: {
+                    is_autotakedown: 0
+                }
+            },
+            {
+                model: db.tasks,
+                required: false,
+                attributes: [
+                    ["ta_name", "Task Name"]
+                ]
+            }
+        ],
+        limit: pageSize,
+        offset: skipCount,
+        order: [
+            [sortBy, sortOrder]
+        ],
+        where: {}
+    };
+    if (req.query.sortVal) {
+        var sortValue = req.query.sortVal;
+        options.where = sortValue ? {
+            [sortBy]: `${sortValue}`
+        } : null;
+    }
+    if (req.query.brandscoreIncreaseId) {
+        options['where']['brandscore_increase_id'] = req.query.brandscoreIncreaseId;
+    }
+    if (req.query.brandId) {
+        options['where']['brand_id'] = req.query.brandId;
+    }
+    if (req.query.userId) {
+        options['where']['user_id'] = req.query.userId;
+    }
+    if (req.query.eventId) {
+        options['where']['event_id'] = req.query.eventId;
+    }
+    
+    var total = await brandscoreIncrease.count({
+        where: options['where']
+    });
+    const EngagementTypeListing = await brandscoreIncrease.findAll(options);
+    res.status(200).send({
+        data: EngagementTypeListing,
+        totalRecords: total
+    });
+};
+
+/**
+ * Function to update increase Brand Score
+ * @param  {object}  req expressJs request object
+ * @param  {object}  res expressJs response object
+ * @return {Promise}
+ */
+exports.updateIncreaseBrandScore = async(req, res) => {
+    const id = req.params.brandscoreIncreaseId;
+    var increaseBrandScoreDetails = await brandscoreIncrease.findOne({
+        where: {
+            brandscore_increase_id: id
+        }
+    });
+    brandscoreIncrease.update(req.body, {
+        returning: true,
+        where: {
+            brandscore_increase_id: id
+        }
+    }).then(function([ num, [result] ]) {
+        if (num == 1) {
+            audit_log.saveAuditLog(req.header(process.env.UKEY_HEADER || "x-api-key"),'update','brandscore_increase',id,result.dataValues,increaseBrandScoreDetails);
+            res.status(200).send({
+                message: "Brandscore Increase updated successfully."
+            });
+        } else {
+            res.status(400).send({
+                message: `Cannot update Brandscore Increase with id=${id}. Maybe Brandscore Increase was not found or req.body is empty!`
+            });
+        }
+    }).catch(err => {
+       logger.log("error", err+": Error updating Brandscore Increase with id=" + id);
+        res.status(500).send({
+            message: err+"Error updating Brandscore Increase with id=" + id
+        });
+    });
+ }
 
 /**
  * Function to add Brand Score task
