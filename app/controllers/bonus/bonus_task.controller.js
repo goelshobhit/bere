@@ -27,6 +27,8 @@ exports.createBonusTask = async(req, res) => {
     const bonusTaskData = {
         "bonus_task_brand_id": body.hasOwnProperty("Brand Id") ? body["Brand Id"] : 0,
         "bonus_task_usr_id": body.hasOwnProperty("User Id") ? body["User Id"] : userId,
+        "bonus_set_id": body.hasOwnProperty("Bonus Set Id") ? body["Bonus Set Id"] : 0,
+        "bonus_task_is_finished": body.hasOwnProperty("Is Finished") ? body["Is Finished"] : "0",
         "bonus_task_caption1": body.hasOwnProperty("Caption 1") ? body["Caption 1"] : "",
         "bonus_task_caption2": body.hasOwnProperty("Caption 2") ? body["Caption 2"] : "",
         "bonus_task_caption3": body.hasOwnProperty("Caption 3") ? body["Caption 3"] : "",
@@ -223,6 +225,27 @@ exports.bonusTaskListing = async(req, res) => {
 	const sortOrder = req.query.sortOrder || 'DESC'
     
     var options = {
+        include: [
+            {
+                model: db.brands,
+                attributes: [
+                    ["cr_co_name", "Brand Name"]
+                ],
+                where:{is_autotakedown:0}
+            },
+            {
+                model: db.bonus_set,
+                attributes: [
+                    "bonus_set_item_name"
+                ]
+            },
+            {
+                model: db.user_profile,
+                attributes: [["u_display_name", "post_username"],["u_prof_img_path", "post_user_imgpath"]],
+                required:false,
+                where:{is_autotakedown:0}
+            },
+        ],
         limit: pageSize,
         offset: skipCount,
         order: [
@@ -271,6 +294,27 @@ exports.bonusTaskListing = async(req, res) => {
 exports.bonusTaskDetails = async(req, res) => {
     const bonusTaskId = req.params.bonusTaskId;
     var options = {
+        include: [
+            {
+                model: db.brands,
+                attributes: [
+                    ["cr_co_name", "Brand Name"]
+                ],
+                where:{is_autotakedown:0}
+            },
+            {
+                model: db.bonus_set,
+                attributes: [
+                    "bonus_set_item_name"
+                ]
+            },
+            {
+                model: db.user_profile,
+                attributes: [["u_display_name", "post_username"],["u_prof_img_path", "post_user_imgpath"]],
+                required:false,
+                where:{is_autotakedown:0}
+            },
+        ],
         where: {
             bonus_task_id: bonusTaskId
         }

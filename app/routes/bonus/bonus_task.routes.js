@@ -17,6 +17,10 @@ module.exports = app => {
    *                            type: integer
    *                        User Id:
    *                            type: integer
+   *                        Bonus Set Id:
+   *                            type: integer
+   *                        Is Finished:
+   *                            type: integer
    *                        Caption 1:
    *                            type: string
    *                        Caption 2:
@@ -79,6 +83,10 @@ module.exports = app => {
    *                        bonus_task_brand_id:
    *                            type: integer
    *                        bonus_task_usr_id:
+   *                            type: integer
+   *                        bonus_set_id:
+   *                            type: integer
+   *                        bonus_task_is_finished:
    *                            type: integer
    *                        bonus_task_caption1:
    *                            type: string
@@ -164,7 +172,7 @@ module.exports = app => {
    *           required: false
    *           schema:
    *              type: string
-   *              example: bonus_task_brand_id,bonus_task_usr_id,bonus_task_caption1,bonus_task_caption2,bonus_task_caption3,bonus_task_own_caption,bonus_task_title,bonus_task_summary_content,bonus_task_image_url,bonus_task_video_url,bonus_task_completion_date,bonus_task_entry_date,bonus_task_hashtag # Example of a parameter value
+   *              example: bonus_task_brand_id,bonus_set_id,bonus_task_is_finished,bonus_task_usr_id,bonus_task_caption1,bonus_task_caption2,bonus_task_caption3,bonus_task_own_caption,bonus_task_title,bonus_task_summary_content,bonus_task_image_url,bonus_task_video_url,bonus_task_completion_date,bonus_task_entry_date,bonus_task_hashtag # Example of a parameter value
    *         - name: sortOrder
    *           in: query
    *           required: false

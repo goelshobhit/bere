@@ -154,7 +154,9 @@ db.bonus_rewards.belongsTo(db.bonus_summary, {foreignKey: 'bonus_summary_id', ta
 db.brands.hasMany(db.bonus_task, {foreignKey: 'bonus_task_brand_id', targetKey: 'cr_co_id'});
 db.bonus_task.belongsTo(db.brands, {foreignKey: 'bonus_task_brand_id', targetKey: 'cr_co_id'});
 db.users.hasMany(db.bonus_task, {foreignKey: 'bonus_task_usr_id', targetKey: 'u_id'});
-db.bonus_task.belongsTo(db.users, {foreignKey: 'bonus_task_usr_id', targetKey: 'u_id'});
+db.bonus_task.belongsTo(db.user_profile, {foreignKey: 'bonus_task_usr_id', targetKey: 'u_id'});
+
+db.bonus_task.belongsTo(db.bonus_set, {foreignKey: 'bonus_set_id', targetKey: 'bonus_set_id'});
 
 db.bonus_task_user_state.belongsTo(db.users, {foreignKey: 'bonus_task_usr_id', targetKey: 'u_id'});
 db.bonus_task_user_state.belongsTo(db.bonus_task, {foreignKey: 'bonus_task_id', targetKey: 'bonus_task_id'});
