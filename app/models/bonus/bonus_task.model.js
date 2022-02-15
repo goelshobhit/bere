@@ -10,14 +10,6 @@ module.exports = (sequelize, Sequelize) => {
       allowNull: false,
       type: Sequelize.INTEGER
     },
-    bonus_set_id: {
-      allowNull: false,
-      type: Sequelize.INTEGER
-    },
-    bonus_task_is_finished: {
-      defaultValue: 0,
-      type: Sequelize.INTEGER
-    },
     bonus_task_usr_id: {
       allowNull: false,
       type: Sequelize.INTEGER
