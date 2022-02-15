@@ -49,7 +49,10 @@ module.exports = (sequelize, Sequelize) => {
     },
     bonus_task_images: {
       type: Sequelize.TEXT
-    }
+    },
+    bonus_task_start_date:{
+      type: Sequelize.STRING(255)
+		}
   }, {
       createdAt: 'bonus_task_created_at',
       updatedAt: 'bonus_task_updated_at',
