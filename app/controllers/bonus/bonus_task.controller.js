@@ -38,7 +38,8 @@ exports.createBonusTask = async(req, res) => {
         "bonus_task_completion_date": body.hasOwnProperty("Completion Date") ? body["Completion Date"] : "",
         "bonus_task_entry_date": body.hasOwnProperty("Entry Date") ? body["Entry Date"] : "",
         "bonus_task_hashtag": body.hasOwnProperty("Hashtag") ? body["Hashtag"] : "",
-        "bonus_task_images": body.hasOwnProperty("Bonus Task Images") ? body["Bonus Task Images"] : ""
+        "bonus_task_images": body.hasOwnProperty("Bonus Task Images") ? body["Bonus Task Images"] : "",
+        "bonus_task_start_date": body.hasOwnProperty("Bonus Task Start Date") ? body["Bonus Task Start Date"] : ""
     }
         BonusTask.create(bonusTaskData).then(data => {
             audit_log.saveAuditLog(req.header(process.env.UKEY_HEADER || "x-api-key"),'add','todayTimeStamp',data.bonus_task_id,data.dataValues);
@@ -259,7 +260,7 @@ exports.bonusTaskListing = async(req, res) => {
     res.status(200).send({
         data: bonusTask_list,
 		totalRecords:total
-    });
+    })
 };
 
 /**
