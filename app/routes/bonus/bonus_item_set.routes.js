@@ -33,6 +33,8 @@ module.exports = app => {
      *                            type: string
      *                        Bonus Set Status:
      *                            type: integer
+     *                        Bonus Set Duration:
+     *                            type: integer
      *     tags:
      *       - Bonus Item Set
      *     description: Add bonus Item Set
@@ -84,6 +86,8 @@ module.exports = app => {
      *                        Bonus Set Item Timestamp:
      *                            type: string
      *                        Bonus Set Status:
+     *                            type: integer
+     *                        Bonus Set Duration:
      *                            type: integer
      *     tags:
      *       - Bonus Item Set

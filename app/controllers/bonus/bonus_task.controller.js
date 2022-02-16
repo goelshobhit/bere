@@ -38,7 +38,8 @@ exports.createBonusTask = async(req, res) => {
         "bonus_task_completion_date": body.hasOwnProperty("Completion Date") ? body["Completion Date"] : "",
         "bonus_task_entry_date": body.hasOwnProperty("Entry Date") ? body["Entry Date"] : "",
         "bonus_task_hashtag": body.hasOwnProperty("Hashtag") ? body["Hashtag"] : "",
-        "bonus_task_images": body.hasOwnProperty("Bonus Task Images") ? body["Bonus Task Images"] : ""
+        "bonus_task_images": body.hasOwnProperty("Bonus Task Images") ? body["Bonus Task Images"] : "",
+        "bonus_task_start_date": body.hasOwnProperty("Bonus Task Start Date") ? body["Bonus Task Start Date"] : ""
     }
         BonusTask.create(bonusTaskData).then(data => {
             audit_log.saveAuditLog(req.header(process.env.UKEY_HEADER || "x-api-key"),'add','todayTimeStamp',data.bonus_task_id,data.dataValues);
@@ -192,6 +193,13 @@ exports.bonusTaskUserStateDetails = async(req, res) => {
     const bonusTaskId = req.params.bonusTaskId;
     var userId = req.header(process.env.UKEY_HEADER || "x-api-key");
     var options = {
+        include: [
+            {
+              model: db.user_profile,
+              attributes: ["u_id", ["u_display_name", "username"], ["u_prof_img_path", "user_imgpath"]],
+              required: false
+            }
+        ],
         where: {
             bonus_task_id: bonusTaskId,
             bonus_task_usr_id: userId
@@ -205,7 +213,8 @@ exports.bonusTaskUserStateDetails = async(req, res) => {
         return
     }
     res.status(200).send({
-        data: bonusTaskUserState
+        data: bonusTaskUserState,
+        media_token: common.imageToken(bonusTaskUserState.user_profile.u_id)
     });
 };
 
@@ -259,7 +268,7 @@ exports.bonusTaskListing = async(req, res) => {
     res.status(200).send({
         data: bonusTask_list,
 		totalRecords:total
-    });
+    })
 };
 
 /**
@@ -271,6 +280,14 @@ exports.bonusTaskListing = async(req, res) => {
 exports.bonusTaskDetails = async(req, res) => {
     const bonusTaskId = req.params.bonusTaskId;
     var options = {
+        include: [
+            {
+                model: db.brands,
+                attributes: [
+                    ["cr_co_name", "Brand Name"]
+                ]
+            }
+        ],
         where: {
             bonus_task_id: bonusTaskId
         }

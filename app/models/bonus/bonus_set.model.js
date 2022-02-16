@@ -22,6 +22,10 @@ module.exports = (sequelize, Sequelize) => {
       allowNull: false,
       type: Sequelize.INTEGER
     },
+    bonus_set_duration: {
+      defaultValue: 30,
+      type: Sequelize.INTEGER
+    },
     bonus_set_icons: {
       type: Sequelize.TEXT
     },

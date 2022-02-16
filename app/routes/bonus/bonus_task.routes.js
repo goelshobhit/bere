@@ -41,6 +41,8 @@ module.exports = app => {
    *                            type: string
    *                        Bonus Task Images:
    *                            type: string
+   *                        Bonus Task Start Date:
+   *                            type: string
    *     tags:
    *       - Bonus Task
    *     description: Add new Bonus Task
@@ -103,6 +105,8 @@ module.exports = app => {
    *                        bonus_task_hashtag:
    *                            type: string
    *                        bonus_task_images:
+   *                            type: string
+   *                        bonus_task_start_date:
    *                            type: string
    *     parameters:
    *         - name: bonusTaskId
