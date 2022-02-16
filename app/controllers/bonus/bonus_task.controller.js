@@ -193,11 +193,19 @@ exports.bonusTaskUserStateDetails = async(req, res) => {
     const bonusTaskId = req.params.bonusTaskId;
     var userId = req.header(process.env.UKEY_HEADER || "x-api-key");
     var options = {
+        include: [
+            {
+              model: db.user_profile,
+              attributes: ["u_id", ["u_display_name", "username"], ["u_prof_img_path", "user_imgpath"]],
+              required: false
+            }
+        ],
         where: {
             bonus_task_id: bonusTaskId,
             bonus_task_usr_id: userId
         }
     };
+    try {
     const bonusTaskUserState = await BonusTaskUserState.findOne(options);
     if(!bonusTaskUserState){
         res.status(500).send({
@@ -206,8 +214,12 @@ exports.bonusTaskUserStateDetails = async(req, res) => {
         return
     }
     res.status(200).send({
-        data: bonusTaskUserState
+        data: bonusTaskUserState,
+        media_token: common.imageToken(bonusTaskUserState.user_profile.u_id)
     });
+} catch(err) {
+    console.log(err);
+}
 };
 
 /**
