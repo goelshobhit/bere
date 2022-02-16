@@ -16,6 +16,7 @@ const Survey = db.survey;
 const accountBalance = db.account_balance;
 const Op = db.Sequelize.Op;
 const searchUserCount = 8;
+const brandscoreIncrease = db.brandscore_increase;
 function Common() {
   Common.prototype.mkdirpath = function (dirPath) {
     var dir = dirPath;
@@ -310,7 +311,7 @@ function Common() {
         coins = userAccount.ac_balance - coins;
         stars = userAccount.ac_balance_stars - stars;
       }
-      
+
       accountBalance.update({ ac_balance: coins, ac_balance_stars: stars }, {
         where: {
           ac_user_id: userId
@@ -512,7 +513,7 @@ function Common() {
           result.dataValues.ta_name = result.dataValues.sr_title;
           result.dataValues.ta_type = "5";
           result.dataValues.ta_start_date = result.dataValues.sr_startdate_time;
-          result.dataValues.ta_end_date =result.dataValues.sr_enddate_time;
+          result.dataValues.ta_end_date = result.dataValues.sr_enddate_time;
           var add_data = {
             "tj_type": type,
             "tj_task_id": id,
@@ -555,6 +556,73 @@ function Common() {
     }
     // end of Single Task 
   };
+  /*
+  brandScore Detail will be like below
+  var brandscoreDetail = {
+    "task_id": req.body["Task id"],
+    "user_total": user_total,
+    "user_id": userId,
+    "event_type": 'Task',
+    "event_hashtag": req.body["Post hashtags"],
+    "engagement_type": 'Post',
+    "brand_id": BrandDetails.cr_co_id
+  };
+   */
+  Common.prototype.updateBrandscore = async function (brandscoreDetail) {
+    let engagementTypeDetails = await db.brandscore_engagement_type.findOne({
+      include: [{
+        model: db.brandscore_engagement_settings
+      }],
+      where: {
+        engagement_type: brandscoreDetail.engagement_type
+      }
+    });
+    var engagement_level = [];
+    var engagement_level_details = {};
+    if (engagementTypeDetails.brandscore_engagement_settings.length) {
+      var brandscore_engagement_settings = engagementTypeDetails.brandscore_engagement_settings;
+      for (const brandscore_engagement_settings_key in brandscore_engagement_settings) {
+        if (brandscore_engagement_settings[brandscore_engagement_settings_key].engagement_level <= brandscoreDetail.user_total) {
+          engagement_level.push(brandscore_engagement_settings[brandscore_engagement_settings_key].engagement_level);
+          engagement_level_details[brandscore_engagement_settings[brandscore_engagement_settings_key].engagement_level] = brandscore_engagement_settings[brandscore_engagement_settings_key].brand_score;
+        }
+      }
+      let scoreIncreaseDetails = await db.brandscore_increase.findOne({
+        where: {
+          event_id: brandscoreDetail.task_id,
+          event_type: brandscoreDetail.event_type,
+          user_id: brandscoreDetail.user_id,
+          event_engagement_id: engagementTypeDetails.engagement_id
+        }
+      });
+      var engagementMaxlevel = Math.max.apply(null, engagement_level);
+      if (engagement_level_details[engagementMaxlevel] != undefined) {
+        var brandScore = engagement_level_details[engagementMaxlevel];
+        const brandScoreIncreaseData = {
+          "brand_id": brandscoreDetail.brand_id,
+          "user_id": brandscoreDetail.user_id,
+          "event_id": brandscoreDetail.task_id,
+          "event_type": brandscoreDetail.event_type,
+          "event_hashtag": brandscoreDetail.event_hashtag,
+          "event_engagement_id": engagementTypeDetails.engagement_id,
+          "platform_id": 1,
+          "brandscore_user_score_increase": brandScore
+        }
+        if (scoreIncreaseDetails) {
+          brandscoreIncrease.update(brandScoreIncreaseData, {
+            where: {
+              brandscore_increase_id: scoreIncreaseDetails.brandscore_increase_id
+            }
+          })
+
+        } else {
+          brandscoreIncrease.create(brandScoreIncreaseData);
+        }
+      }
+    }
+
+  };
+
   Common.prototype.sendSMS = function (phone, msg) {
     const accID = process.env.TWILIO_ACC_ID;
     const authToken = process.env.TWILIO_AUTH_TOKEN;
@@ -616,7 +684,7 @@ function Common() {
       Task: [{
         id: 'ta_task_id',
         db: db.tasks
-      },{
+      }, {
         id: 'tj_task_id',
         db: db.tasks_json
       }],
