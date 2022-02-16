@@ -205,7 +205,6 @@ exports.bonusTaskUserStateDetails = async(req, res) => {
             bonus_task_usr_id: userId
         }
     };
-    try {
     const bonusTaskUserState = await BonusTaskUserState.findOne(options);
     if(!bonusTaskUserState){
         res.status(500).send({
@@ -217,9 +216,6 @@ exports.bonusTaskUserStateDetails = async(req, res) => {
         data: bonusTaskUserState,
         media_token: common.imageToken(bonusTaskUserState.user_profile.u_id)
     });
-} catch(err) {
-    console.log(err);
-}
 };
 
 /**
@@ -284,6 +280,14 @@ exports.bonusTaskListing = async(req, res) => {
 exports.bonusTaskDetails = async(req, res) => {
     const bonusTaskId = req.params.bonusTaskId;
     var options = {
+        include: [
+            {
+                model: db.brands,
+                attributes: [
+                    ["cr_co_name", "Brand Name"]
+                ]
+            }
+        ],
         where: {
             bonus_task_id: bonusTaskId
         }
