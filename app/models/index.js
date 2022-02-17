@@ -52,6 +52,8 @@ db.Sequelize = Sequelize;
 db.sequelize = sequelize;
 
 //Modesl/Tables
+db.tickets_distribution = require("./tickets_distribution.model")(sequelize, Sequelize);
+db.winner_algo = require("./winner_algo.model")(sequelize, Sequelize);
 db.brands = require("./brands.model")(sequelize, Sequelize);
 db.campaigns = require("./campaigns.model")(sequelize, Sequelize);
 db.tasks = require("./tasks.model")(sequelize, Sequelize);
@@ -261,6 +263,10 @@ db.level_task.belongsTo(db.brands, {foreignKey: 'brand_id', targetKey: 'cr_co_id
 
 db.user_level_task_action.belongsTo(db.user_profile, {foreignKey: 'task_user_id', targetKey: 'u_id'});
 db.user_level_task_action.belongsTo(db.tasks, {foreignKey: 'task_id', targetKey: 'ta_task_id'});
+
+db.tickets_distribution.belongsTo(db.user_profile, {foreignKey: 'tickets_distribution_user_id', targetKey: 'u_id'});
+db.winner_algo.belongsTo(db.user_profile, {foreignKey: 'winner_user_id', targetKey: 'u_id'});
+db.winner_algo.belongsTo(db.bonus_task, {foreignKey: 'bonus_task_id', targetKey: 'bonus_task_id'});
 
 db.shipping_confirmation.belongsTo(db.user_profile, {foreignKey: 'user_id', targetKey: 'u_id'});
 db.shipping_confirmation.belongsTo(db.tasks, {foreignKey: 'task_id', targetKey: 'ta_task_id'});
