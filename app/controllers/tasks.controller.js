@@ -146,6 +146,13 @@ exports.listing = async (req, res) => {
                     ['ucpl_added_by', 'ASC']
                 ]
             }
+            /*,
+            {
+                model: db.brand_task_closed,
+                attributes:
+                    ["brand_task_closed"],
+                required: false
+            } */
         ],
         limit: pageSize,
         offset: skipCount,
