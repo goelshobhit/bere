@@ -268,6 +268,10 @@ require("./app/routes/blacklisted.routes")(app);
 require("./app/routes/contentReport/content_report_category.routes")(app);
 require("./app/routes/contentReport/content_report.routes")(app);
 require("./app/routes/level_task.routes")(app);
+require("./app/routes/content_viewer_rewards.routes")(app);
+require("./app/routes/voting.routes")(app);
+require("./app/routes/tickets_distribution.routes")(app);
+require("./app/routes/user_winner.routes")(app);
 server.listen(PORT, function () {
   console.log(`Server is running on port ${PORT}.`)
 });

@@ -146,6 +146,13 @@ exports.listing = async (req, res) => {
                     ['ucpl_added_by', 'ASC']
                 ]
             }
+            /*,
+            {
+                model: db.brand_task_closed,
+                attributes:
+                    ["brand_task_closed"],
+                required: false
+            } */
         ],
         limit: pageSize,
         offset: skipCount,
@@ -797,6 +804,70 @@ exports.mediaUpload = async (req, res) => {
                 return;
             });
         }
+    } catch (error) {
+        if (error.code === "LIMIT_UNEXPECTED_FILE") {
+            return res.status(400).send({
+                message: "Too many files to upload."
+            });
+        }
+        return res.status(500).send({
+            message: `Error when trying upload many files: ${error}`
+        });
+    }
+}
+
+/**
+ * Function to upload media multiple files
+ * @param  {object}  req expressJs request object
+ * @param  {object}  res expressJs response object
+ * @return {Promise}
+ */
+exports.imagesUpload = async (req, res) => {
+    try {
+        var files_name = [];
+        var key_files = {};
+        var x = [];
+        let updateData = {};
+        await upload(req, res);
+        if (!req.body.media_key) {
+            return res.status(400).send({
+                message: "media_key is required"
+            });
+        }
+        if (req.files.length <= 0) {
+            return res.status(400).send({
+                message: "At least one file required"
+            });
+        }
+        for (i in req.files) {
+            files_name.push(req.files[i].filename);
+            const match = ["audio/mp3", "audio/mpeg", "audio/wav", "audio/mp4", "audio/aac", "audio/amr", "audio/flac", "audio/ts", "audio/m4a", "audio/mkv", "audio/ogg", "video/mov", "video/mp4", "video/3gp", "video/mkv", "video/webm", "video/m4v", "video/avi", "video/ts"];
+            if (match.indexOf(req.files[i].mimetype) === -1) {
+                sharp(req.files[i].path).resize(465, 360).withMetadata().toFile('uploads/thumbnails/' + req.files[i].filename, (err, resizeImage) => {
+                    if (err) {
+                        logger.log("error", err + ":Error creating thumbnail for " + req.body.actionID + req.body.tblAlias);
+                    }
+                });
+            } else {
+                ffmpeg(req.files[i].path)
+                    .on('end', function () {
+                        console.log('thumbnail');
+                    })
+                    .on('error', function (err) {
+                        logger.log("error", err + ":Error creating video thumbnail for " + req.body.actionID + req.body.tblAlias);
+                    })
+                    .screenshots({
+                        count: 1,
+                        folder: 'uploads/thumbnails',
+                        filename: req.files[i].filename
+                    });
+            }
+        }
+        key_files[req.body.media_key] = files_name
+        res.status(200).send({
+            files_names: key_files
+        });
+        return;
     } catch (error) {
         if (error.code === "LIMIT_UNEXPECTED_FILE") {
             return res.status(400).send({

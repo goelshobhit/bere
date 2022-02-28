@@ -15,15 +15,25 @@ module.exports = app => {
      *                    properties:
      *                        Bonus Set Brand Id:
      *                            type: integer
-     *                        Bonus Item id:
-     *                            type: integer
+     *                        Bonus Item ids:
+     *                            type: array
+     *                            items:
+     *                              oneOf:
+     *                               type: integer
+     *                            example: ["1","2"]
      *                        Bonus Set Item Name:
      *                            type: string
      *                        Bonus Set Item Qty:
      *                            type: integer
+     *                        Bonus Set Icons:
+     *                            type: string
+     *                        Bonus Set Images:
+     *                            type: string
      *                        Bonus Set Item Timestamp:
      *                            type: string
      *                        Bonus Set Status:
+     *                            type: integer
+     *                        Bonus Set Duration:
      *                            type: integer
      *     tags:
      *       - Bonus Item Set
@@ -63,8 +73,12 @@ module.exports = app => {
      *                    properties:
      *                        Bonus Set Brand Id:
      *                            type: integer
-     *                        Bonus Item id:
-     *                            type: integer
+     *                        Bonus Item ids:
+     *                            type: array
+     *                            items:
+     *                              oneOf:
+     *                               type: integer
+     *                            example: ["1","2"]
      *                        Bonus Set Item Name:
      *                            type: string
      *                        Bonus Set Item Qty:
@@ -72,6 +86,8 @@ module.exports = app => {
      *                        Bonus Set Item Timestamp:
      *                            type: string
      *                        Bonus Set Status:
+     *                            type: integer
+     *                        Bonus Set Duration:
      *                            type: integer
      *     tags:
      *       - Bonus Item Set
@@ -136,6 +152,11 @@ module.exports = app => {
      *   get:
      *     parameters:
      *         - name: BonusSetId
+     *           in: query
+     *           required: false
+     *           schema:
+     *              type: integer
+     *         - name: BrandId
      *           in: query
      *           required: false
      *           schema:

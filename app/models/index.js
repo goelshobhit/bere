@@ -52,6 +52,9 @@ db.Sequelize = Sequelize;
 db.sequelize = sequelize;
 
 //Modesl/Tables
+db.brand_task_closed = require("./brand_task_closed.model")(sequelize, Sequelize);
+db.tickets_distribution = require("./tickets_distribution.model")(sequelize, Sequelize);
+db.winner_algo = require("./winner_algo.model")(sequelize, Sequelize);
 db.brands = require("./brands.model")(sequelize, Sequelize);
 db.campaigns = require("./campaigns.model")(sequelize, Sequelize);
 db.tasks = require("./tasks.model")(sequelize, Sequelize);
@@ -77,8 +80,10 @@ db.post_report = require("./post_report.model")(sequelize, Sequelize);
 db.user_fan_following = require("./user_fan_following.model")(sequelize, Sequelize);
 db.budget_history=require("./budget_history.model")(sequelize,Sequelize);
 db.bonus_ticket = require("./bonus/bonus_ticket.model")(sequelize, Sequelize);
+db.bonus_ticket_rule = require("./bonus/bonus_ticket_rule.model")(sequelize, Sequelize);
 db.bonus_ticket_rules = require("./bonus/bonus_ticket_rules.model")(sequelize, Sequelize);
 db.bonus_task = require("./bonus/bonus_task.model")(sequelize, Sequelize);
+db.bonus_task_user_state = require("./bonus/bonus_task_user_state.model")(sequelize, Sequelize);
 db.bonus_rewards = require("./bonus/bonus_rewards.model")(sequelize, Sequelize);
 //notification templates
 db.user_inbox_settings = require("./user_inbox_settings.model")(sequelize, Sequelize);
@@ -135,6 +140,12 @@ db.level_task = require("./level_task.model")(sequelize, Sequelize);
 db.user_shipping_address = require("./user_shipping_address.model")(sequelize, Sequelize);
 db.user_level_task_action = require("./user_level_task_action.model")(sequelize, Sequelize);
 db.shipping_confirmation = require("./shipping_confirmation.model")(sequelize, Sequelize);
+db.content_viewer_rewards = require("./content_viewer_rewards.model")(sequelize, Sequelize);
+db.voting = require("./voting.model")(sequelize, Sequelize);
+db.brandscore_engagement_type = require("./brandscore_engagement_type.model")(sequelize, Sequelize);
+db.brandscore_engagement_settings = require("./brandscore_engagement_settings.model")(sequelize, Sequelize);
+db.brandscore_increase = require("./brandscore_increase.model")(sequelize, Sequelize);
+
 
 //Relations
 db.users.hasMany(db.bonus_ticket, {foreignKey: 'u_id', targetKey: 'bonus_ticket_usrid'});
@@ -143,10 +154,15 @@ db.bonus_summary.hasMany(db.bonus_ticket, {foreignKey: 'bonus_summary_id', targe
 db.bonus_ticket.belongsTo(db.bonus_summary, {foreignKey: 'bonus_summary_id', targetKey: 'bonus_summary_id'});
 db.bonus_summary.hasMany(db.bonus_rewards, {foreignKey: 'bonus_summary_id', targetKey: 'bonus_summary_id'});
 db.bonus_rewards.belongsTo(db.bonus_summary, {foreignKey: 'bonus_summary_id', targetKey: 'bonus_summary_id'});
-db.brands.hasMany(db.bonus_task, {foreignKey: 'cr_co_id', targetKey: 'bonus_task_brand_id'});
+db.brands.hasMany(db.bonus_task, {foreignKey: 'bonus_task_brand_id', targetKey: 'cr_co_id'});
 db.bonus_task.belongsTo(db.brands, {foreignKey: 'bonus_task_brand_id', targetKey: 'cr_co_id'});
-db.users.hasMany(db.bonus_task, {foreignKey: 'u_id', targetKey: 'bonus_task_usr_id'});
+db.users.hasMany(db.bonus_task, {foreignKey: 'bonus_task_usr_id', targetKey: 'u_id'});
 db.bonus_task.belongsTo(db.users, {foreignKey: 'bonus_task_usr_id', targetKey: 'u_id'});
+
+db.bonus_task_user_state.belongsTo(db.user_profile, {foreignKey: 'bonus_task_usr_id', targetKey: 'u_id'});
+db.bonus_task_user_state.belongsTo(db.users, {foreignKey: 'bonus_task_usr_id', targetKey: 'u_id'});
+db.bonus_task_user_state.belongsTo(db.bonus_task, {foreignKey: 'bonus_task_id', targetKey: 'bonus_task_id'});
+
 db.brands.hasMany(db.video_ads, {foreignKey: 'cr_co_id', targetKey: 'cr_co_id'});
 db.video_ads.belongsTo(db.brands, {foreignKey: 'cr_co_id', targetKey: 'cr_co_id'});
 db.video_ads.hasMany(db.video_ads_submit, {foreignKey: 'video_ads_id', targetKey: 'video_ads_id'});
@@ -218,6 +234,8 @@ db.content_report_moderate.belongsTo(db.content_report, {foreignKey: 'content_re
 db.bonus_usr.belongsTo(db.user_profile, {foreignKey: 'bonus_usr_id', targetKey: 'u_id'});
 db.energy.belongsTo(db.user_profile, {foreignKey: 'energy_userid', targetKey: 'u_id'});
 db.energy_award.belongsTo(db.user_profile, {foreignKey: 'energy_userid', targetKey: 'u_id'});
+db.voting.belongsTo(db.user_profile, {foreignKey: 'voter_usr_id', targetKey: 'u_id'});
+db.voting.belongsTo(db.brands, {foreignKey: 'voting_brand_id', targetKey: 'cr_co_id'});
 
 
 db.brand_score.belongsTo(db.user_profile, {foreignKey: 'brandscore_user_id', targetKey: 'u_id'});
@@ -234,6 +252,8 @@ db.bonus_summary.belongsTo(db.bonus_set, {foreignKey: 'bonus_summary_set_id', ta
 db.user_profile.hasMany(db.bonus_sm_share, {foreignKey: 'bonus_sm_share_user_id', targetKey: 'u_id'});
 db.bonus_sm_share.belongsTo(db.user_profile, {foreignKey: 'bonus_sm_share_user_id', targetKey: 'u_id'});
 
+db.bonus_ticket_rules.belongsTo(db.bonus_ticket_rule, {foreignKey: 'bonus_tickets_rules_id', targetKey: 'bonus_tickets_rules_id'});
+
 db.user_profile.hasMany(db.post_comment, {foreignKey: 'pc_commenter_uid', targetKey: 'u_id'});
 db.post_comment.belongsTo(db.user_profile, {foreignKey: 'pc_commenter_uid', targetKey: 'u_id'});
 db.brands_budget.belongsTo(db.brands, {foreignKey: 'cr_co_id', targetKey: 'cr_co_id'});
@@ -242,11 +262,21 @@ db.brands.hasMany(db.brands_budget, {foreignKey: 'cr_co_id', targetKey: 'cr_co_i
 db.level_task.belongsTo(db.tasks, {foreignKey: 'task_id', targetKey: 'ta_task_id'});
 db.level_task.belongsTo(db.brands, {foreignKey: 'brand_id', targetKey: 'cr_co_id'});
 
+db.brand_task_closed.belongsTo(db.tasks, {foreignKey: 'task_id', targetKey: 'ta_task_id'});
+db.brand_task_closed.belongsTo(db.brands, {foreignKey: 'brand_id', targetKey: 'cr_co_id'});
+db.tasks.hasOne(db.brand_task_closed, {foreignKey: 'task_id', targetKey: 'ta_task_id'});
+
 db.user_level_task_action.belongsTo(db.user_profile, {foreignKey: 'task_user_id', targetKey: 'u_id'});
 db.user_level_task_action.belongsTo(db.tasks, {foreignKey: 'task_id', targetKey: 'ta_task_id'});
 
+db.tickets_distribution.belongsTo(db.user_profile, {foreignKey: 'tickets_distribution_user_id', targetKey: 'u_id'});
+db.winner_algo.belongsTo(db.user_profile, {foreignKey: 'winner_user_id', targetKey: 'u_id'});
+db.winner_algo.belongsTo(db.bonus_task, {foreignKey: 'bonus_task_id', targetKey: 'bonus_task_id'});
+
 db.shipping_confirmation.belongsTo(db.user_profile, {foreignKey: 'user_id', targetKey: 'u_id'});
 db.shipping_confirmation.belongsTo(db.tasks, {foreignKey: 'task_id', targetKey: 'ta_task_id'});
+
+db.content_viewer_rewards.belongsTo(db.user_profile, {foreignKey: 'user_id', targetKey: 'u_id'});
 
 db.user_shipping_address.belongsTo(db.user_profile, {foreignKey: 'usr_id', targetKey: 'u_id'});
 
@@ -290,6 +320,12 @@ db.users.hasMany(db.reward_count, {foreignKey: 'u_id', targetKey: 'reward_count_
 db.reward_count.belongsTo(db.users, {foreignKey: 'reward_count_usr_id', targetKey: 'u_id'});
 db.users.hasMany(db.reward_center, {foreignKey: 'u_id', targetKey: 'reward_center_owner_id'});
 db.reward_center.belongsTo(db.users, {foreignKey: 'reward_center_owner_id', targetKey: 'u_id'});
+db.brandscore_engagement_settings.belongsTo(db.brandscore_engagement_type, {foreignKey: 'engagement_id', targetKey: 'engagement_id'});
+db.brandscore_engagement_type.hasMany(db.brandscore_engagement_settings, {foreignKey: 'engagement_id', targetKey: 'engagement_id'});
+db.brandscore_increase.belongsTo(db.brands, {foreignKey: 'brand_id', targetKey: 'cr_co_id'});
+db.brandscore_increase.belongsTo(db.user_profile, {foreignKey: 'user_id', targetKey: 'u_id'});
+//db.brandscore_increase.belongsTo(db.tasks, {foreignKey: 'event_id', targetKey: 'ta_task_id'});
+db.brandscore_increase.belongsTo(db.brandscore_engagement_type, {foreignKey: 'event_engagement_id', targetKey: 'engagement_id'});
 
 db.migrator = migrator;
 db.seeder = seeder;

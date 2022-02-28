@@ -544,13 +544,13 @@ module.exports = app => {
 	*                             format: binary
 	*                        media_action:
 	*                            type: string
-	*                            example: "task:ta_post_insp_image,ta_header_image,ta_sound,ta_bonus_rewards_benefits brand:cr_co_logo_path, post:ucpl_content_data,thumb user:u_prof_img_path ,contest: ct_post_insp_image,ct_header_image,ct_sound"
+	*                            example: "task:ta_post_insp_image,ta_header_image,ta_sound,ta_bonus_rewards_benefits brand:cr_co_logo_path, post:ucpl_content_data,thumb user:u_prof_img_path ,contest: ct_post_insp_image,ct_header_image,ct_sound,shipping_confirmation: product_img,level_task: task_banner_img"
 	*                        actionID:
 	*                            type: string
 	*                            example: "1"
 	*                        tblAlias:
 	*                            type: string
-	*                            example: "task,brand,campaign,user,post,contest"
+	*                            example: "task,brand,campaign,user,post,contest,shipping_confirmation,level_task"
 	*                        note:
 	*                            type: string
 	*     tags:
@@ -577,6 +577,49 @@ module.exports = app => {
 	*                              example: Authorisation Required
 	*/
   router.post("/media-upload", Tasks.mediaUpload);
+
+  	/**
+	* @swagger
+	* /api/images-upload:
+	*   post:
+	*     requestBody:
+	*        required: true
+	*        content:
+	*            multipart/form-data:
+	*                schema:
+	*                    type: object
+	*                    properties:
+	*                        media_file:
+	*                            type: array
+	*                            items:
+	*                             type: string
+	*                             format: binary
+	*                        media_key:
+	*                            type: string
+	*                            example: "bonus_item:bonus_item_icons,bonus_product_images,bonus_set:bonus_set_icons,bonus_set_images"
+	*     tags:
+	*       - File Upload
+	*     description: upload media like images,files
+	*     produces:
+	*       - application/json
+	*     responses:
+	*       200:
+	*         description: Media upload succesfully
+	*       400:
+	*         description: You must select at least 1 file
+	*       401:
+	*          description: Unauthorized
+	*          content:
+	*              application/json:
+	*                  schema:
+	*                      type: object
+	*                      properties:
+	*                          message:
+	*                              type: string
+	*                              example: Authorisation Required
+	*/
+  router.post("/images-upload", Tasks.imagesUpload);
+
   /**
   * @swagger
   * /api/contest/{taskID}:
