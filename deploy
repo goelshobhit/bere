@@ -1,3 +1,0 @@
-cd /var/www/social-app-api/
-sudo git pull
-pm2 restart all
