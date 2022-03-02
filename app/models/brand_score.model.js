@@ -82,6 +82,9 @@ module.exports = (sequelize, Sequelize) => {
     score_decrease_del_post: {
       type: Sequelize.INTEGER
     },
+    brandscore_unlock: {
+      type: Sequelize.INTEGER
+    },
     brand_score_created_at: {
       allowNull: false,
       type: Sequelize.DATE
