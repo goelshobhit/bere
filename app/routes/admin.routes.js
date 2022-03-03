@@ -26,7 +26,7 @@ module.exports = app => {
      *                        User role:
      *                            type: integer
      *     tags:
-     *       - Admin Users
+     *       - Admin User
      *     description: Add new user
      *     produces:
      *       - application/json
