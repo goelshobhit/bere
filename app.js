@@ -271,6 +271,7 @@ require("./app/routes/content_viewer_rewards.routes")(app);
 require("./app/routes/voting.routes")(app);
 require("./app/routes/tickets_distribution.routes")(app);
 require("./app/routes/user_winner.routes")(app);
+require("./app/routes/image_upload.routes")(app);
 server.listen(PORT, function () {
   console.log(`Server is running on port ${PORT}.`)
 });
