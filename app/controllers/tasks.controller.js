@@ -15,6 +15,7 @@ const common = require("../common");
 var ffmpeg = require('fluent-ffmpeg');
 const User_profile = db.user_profile;
 const levelTask = db.level_task;
+const sequelize= require('sequelize');
 const {
     validationResult
 } = require("express-validator");
@@ -147,6 +148,13 @@ exports.listing = async (req, res) => {
                     ['ucpl_added_by', 'ASC']
                 ]
             }
+            /*,
+            {
+                model: db.brand_task_closed,
+                attributes:
+                    ["brand_task_closed"],
+                required: false
+            } */
         ],
         limit: pageSize,
         offset: skipCount,
@@ -1123,3 +1131,63 @@ exports.listingContest = async (req, res) => {
         totalRecords: total
     });
 }
+
+/**
+ * Function to get all survey questions and answers
+ * @param  {object}  req expressJs request object
+ * @param  {object}  res expressJs response object
+ * @return {Promise}
+ */
+exports.userTasksState = async (req, res) => {
+    const Uid = req.header(process.env.UKEY_HEADER || "x-api-key");
+    var options = {
+        attributes: [["sr_hashtags", "task_hashtag"],["sr_enddate_time", "task_endtime"], "sr_title"],
+        where: {}
+    };
+    options['include'] = [
+        {
+          model: db.survey_user_complete,
+         attributes:[["sr_id", "task_event_id"],["sr_completed", "task_status"],["sr_uid", "user_id"]],
+          where : {
+            sr_completed: 0,
+            sr_uid: Uid
+          }
+        }
+      ]
+    
+    options['where'] = {
+        sr_status: 1
+    }
+    const survey_user_state = await db.survey.findAll(options);
+    var surveyData = [];
+    if (survey_user_state.length) {
+        for (var survey_key in survey_user_state) {
+            var surveyDetail = {};
+            var hashtag = survey_user_state[survey_key].dataValues.task_hashtag;
+            surveyDetail['task_event_id'] = survey_user_state[survey_key].dataValues.survey_user_completes[0].dataValues.task_event_id;
+            
+            surveyDetail['task_title'] = survey_user_state[survey_key].dataValues.sr_title;
+            surveyDetail['task_status'] = survey_user_state[survey_key].dataValues.survey_user_completes[0].dataValues.task_status;
+            surveyDetail['user_id'] = survey_user_state[survey_key].dataValues.survey_user_completes[0].dataValues.user_id;
+            surveyDetail['task_hashtag'] = hashtag.join(hashtag);
+            surveyDetail['task_endtime'] = survey_user_state[survey_key].dataValues.task_endtime;
+            surveyDetail['task_event_type'] = 'Survey';
+            surveyData.push(surveyDetail);
+
+        }
+    }
+    var bonus_options = {
+        attributes: [["bonus_task_id", "task_event_id"], ["bonus_task_completion_date", "task_title"], ["bonus_task_is_finished", "task_status"],["bonus_task_usr_id", "user_id"],["bonus_task_hashtag", "task_hashtag"],["bonus_task_completion_date", "task_endtime"]],
+        where: {bonus_task_is_finished: 0}
+    };
+    const bonus_task_result = await db.bonus_task.findAll(bonus_options);
+    if (bonus_task_result.length) {
+        for (var bonus_task_key in bonus_task_result) {
+            bonus_task_result[bonus_task_key].dataValues.task_event_type = "Bonus Task";
+        }
+    }
+    const result = bonus_task_result.concat(surveyData);
+    res.status(200).send({
+        data: result
+    });
+};

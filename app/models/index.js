@@ -52,6 +52,8 @@ db.Sequelize = Sequelize;
 db.sequelize = sequelize;
 
 //Modesl/Tables
+db.brand_task_closed = require("./brand_task_closed.model")(sequelize, Sequelize);
+db.mini_task = require("./mini_task.model")(sequelize, Sequelize);
 db.tickets_distribution = require("./tickets_distribution.model")(sequelize, Sequelize);
 db.winner_algo = require("./winner_algo.model")(sequelize, Sequelize);
 db.brands = require("./brands.model")(sequelize, Sequelize);
@@ -209,6 +211,9 @@ db.survey.hasMany(db.survey_question_answers, {foreignKey: 'sr_id', targetKey: '
 db.survey_question_answers.belongsTo(db.survey_questions, {foreignKey: 'srq_id', targetKey: 'srq_id'});
 db.survey_questions.hasMany(db.survey_question_answers, {foreignKey: 'srq_id', targetKey: 'srq_id'});
 
+db.survey_user_complete.belongsTo(db.survey, {foreignKey: 'sr_id', targetKey: 'sr_id'});
+db.survey.hasMany(db.survey_user_complete, {foreignKey: 'sr_id', targetKey: 'sr_id'});
+
 db.survey_submissions.belongsTo(db.survey, {foreignKey: 'srs_sr_id', targetKey: 'sr_id'});
 db.survey.hasMany(db.survey_submissions, {foreignKey: 'srs_sr_id', targetKey: 'sr_id'});
 
@@ -260,6 +265,10 @@ db.brands.hasMany(db.brands_budget, {foreignKey: 'cr_co_id', targetKey: 'cr_co_i
 
 db.level_task.belongsTo(db.tasks, {foreignKey: 'task_id', targetKey: 'ta_task_id'});
 db.level_task.belongsTo(db.brands, {foreignKey: 'brand_id', targetKey: 'cr_co_id'});
+
+db.brand_task_closed.belongsTo(db.tasks, {foreignKey: 'task_id', targetKey: 'ta_task_id'});
+db.brand_task_closed.belongsTo(db.brands, {foreignKey: 'brand_id', targetKey: 'cr_co_id'});
+db.tasks.hasOne(db.brand_task_closed, {foreignKey: 'task_id', targetKey: 'ta_task_id'});
 
 db.user_level_task_action.belongsTo(db.user_profile, {foreignKey: 'task_user_id', targetKey: 'u_id'});
 db.user_level_task_action.belongsTo(db.tasks, {foreignKey: 'task_id', targetKey: 'ta_task_id'});

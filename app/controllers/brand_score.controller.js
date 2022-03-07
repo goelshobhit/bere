@@ -3,6 +3,7 @@ const EngagementType = db.brandscore_engagement_type;
 const EngagementSettings = db.brandscore_engagement_settings;
 const brandscoreIncrease = db.brandscore_increase;
 const BrandScore = db.brand_score;
+const BrandScoretask = db.brandscore_task;
 const User_profile = db.user_profile;
 const logger = require("../middleware/logger");
 const audit_log = db.audit_log;
@@ -699,7 +700,8 @@ exports.AddBrandScore = async (req, res) => {
         "post_deletion": body.hasOwnProperty("Post Deletion") ? req.body["Post Deletion"] : 0,
         "brand_vote": body.hasOwnProperty("Brand Vote") ? req.body["Brand Vote"] : 0,
         "video_uploaded": body.hasOwnProperty("Video Uploaded") ? req.body["Video Uploaded"] : '',
-        "score_decrease_del_post": body.hasOwnProperty("Score Decrease Del Post") ? req.body["Score Decrease Del Post"] : 0
+        "score_decrease_del_post": body.hasOwnProperty("Score Decrease Del Post") ? req.body["Score Decrease Del Post"] : 0,
+        "brandscore_unlock": body.hasOwnProperty("Brandscore Unlock") ? req.body["Brandscore Unlock"] : 0
     }
     BrandScore.create(brandScoreData)
         .then(data => {
@@ -724,14 +726,12 @@ exports.AddBrandScore = async (req, res) => {
  * @return {Promise}
  */
 exports.updateBrandScoreTask = async (req, res) => {
-    const body = req.body;
     const id = req.params.brandScoreId;
     var brandScoreDetails = await BrandScoretask.findOne({
         where: {
             brandscore_id: id
         }
     });
-    var userId = req.header(process.env.UKEY_HEADER || "x-api-key");
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         res.status(422).json({
@@ -739,25 +739,7 @@ exports.updateBrandScoreTask = async (req, res) => {
         });
         return;
     }
-    const brandScoreTaskdata = {
-        "brandscore_brand_id": body.hasOwnProperty("Brand Id") ? req.body["Brand Id"] : 0,
-        "brandscore_task_id": body.hasOwnProperty("Task Id") ? req.body["Task Id"] : 0,
-        "brandscore_user_id": body.hasOwnProperty("User Id") ? req.body["User Id"] : userId,
-        "brandscore_task_reach_count": body.hasOwnProperty("Reach Count") ? req.body["Reach Count"] : 0,
-        "brandscore_task_comments_count": body.hasOwnProperty("Comments Count") ? req.body["Comments Count"] : 0,
-        "brandscore_task_pics_count": body.hasOwnProperty("Pics Count") ? req.body["Pics Count"] : 0,
-        "brandscore_task_video_count": body.hasOwnProperty("Video Count") ? req.body["Video Count"] : 0,
-        "brandscore_task_likes_count": body.hasOwnProperty("Likes Count") ? req.body["Likes Count"] : 0,
-        "brandscore_task_hashtag_name": body.hasOwnProperty("Hashtag Name") ? req.body["Hashtag Name"] : '',
-        "brandscore_task_tot_tickets_count": body.hasOwnProperty("Total Tickets Count") ? req.body["Total Tickets Count"] : 0,
-        "brandscore_task_name": body.hasOwnProperty("Task Name") ? req.body["Task Name"] : '',
-        "brandscore_task_award_unlock": body.hasOwnProperty("Award Unlock") ? req.body["Award Unlock"] : 0,
-        "brandscore_task_award_lock": body.hasOwnProperty("Award Lock") ? req.body["Award Lock"] : 0,
-        "brandscore_task_award_limit_count": body.hasOwnProperty("Award Limit Count") ? req.body["Award Limit Count"] : 0,
-        "brandscore_score_count": body.hasOwnProperty("Score Count") ? req.body["Score Count"] : 0
-    }
-
-    BrandScoretask.update(brandScoreTaskdata, {
+    BrandScoretask.update(req.body, {
         returning: true,
         where: {
             brandscore_id: id
@@ -789,9 +771,7 @@ exports.updateBrandScoreTask = async (req, res) => {
 * @return {Promise}
 */
 exports.updateBrandScore = async (req, res) => {
-    const body = req.body;
     const id = req.params.brandScoreId;
-    var userId = req.header(process.env.UKEY_HEADER || "x-api-key");
     var brandScoreDetails = await BrandScore.findOne({
         where: {
             brandscore_id: id
@@ -804,31 +784,7 @@ exports.updateBrandScore = async (req, res) => {
         });
         return;
     }
-    
-    const brandScoreData = {
-        "brandscore_brand_id": body.hasOwnProperty("Brand Id") ? req.body["Brand Id"] : 0,
-        "brandscore_task_id": body.hasOwnProperty("Task Id") ? req.body["Task Id"] : 0,
-        "brandscore_user_id": body.hasOwnProperty("User Id") ? req.body["User Id"] : userId,
-        "brandscore_task_reach_score": body.hasOwnProperty("Reach Score") ? req.body["Reach Score"] : 0,
-        "brandscore_task_comments_score": body.hasOwnProperty("Comments Score") ? req.body["Comments Score"] : 0,
-        "brandscore_task_pics_count_score": body.hasOwnProperty("Pics Count Score") ? req.body["Pics Count Score"] : 0,
-        "brandscore_task_video_count_score": body.hasOwnProperty("Video Count Score") ? req.body["Video Count Score"] : 0,
-        "brandscore_task_likes_count_score": body.hasOwnProperty("Likes Count Score") ? req.body["Likes Count Score"] : 0,
-        "brandscore_task_hashtag_name_score": body.hasOwnProperty("Hashtag Name Score") ? req.body["Hashtag Name Score"] : '',
-        "brandscore_task_tot_tickets_count_score": body.hasOwnProperty("Total Tickets Count Score") ? req.body["Total Tickets Count Score"] : 0,
-        "brandscore_task_name": body.hasOwnProperty("Task Name") ? req.body["Task Name"] : 0,
-        "brandscore_task_award_lock_count_score": body.hasOwnProperty("Award lock Count Score") ? req.body["Award lock Count Score"] : 0,
-        "brandscore_task_award_limit_count": body.hasOwnProperty("Award Limit Count") ? req.body["Award Limit Count"] : 0,
-        "brandscore_score_total_count": body.hasOwnProperty("Score Total Count") ? req.body["Score Total Count"] : 0,
-        "riddim_reach": body.hasOwnProperty("Riddim Reach") ? req.body["Riddim Reach"] : 0,
-        "riddim_engagment": body.hasOwnProperty("Riddim Engagment") ? req.body["Riddim Engagment"] : 0,
-        "share_off_riddim": body.hasOwnProperty("Share Off Riddim") ? req.body["Share Off Riddim"] : 0,
-        "post_deletion": body.hasOwnProperty("Post Deletion") ? req.body["Post Deletion"] : 0,
-        "brand_vote": body.hasOwnProperty("Brand Vote") ? req.body["Brand Vote"] : 0,
-        "video_uploaded": body.hasOwnProperty("Video Uploaded") ? req.body["Video Uploaded"] : '',
-        "score_decrease_del_post": body.hasOwnProperty("Score Decrease Del Post") ? req.body["Score Decrease Del Post"] : 0
-    }
-    BrandScore.update(brandScoreData, {
+    BrandScore.update(req.body, {
         returning: true,
         where: {
             brandscore_id: id

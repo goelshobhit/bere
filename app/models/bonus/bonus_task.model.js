@@ -51,8 +51,13 @@ module.exports = (sequelize, Sequelize) => {
       type: Sequelize.TEXT
     },
     bonus_task_start_date:{
-      type: Sequelize.STRING(255)
-		}
+        type: Sequelize.STRING(255)
+    },
+    bonus_task_is_finished: {
+      type: Sequelize.INTEGER,
+      defaultValue: 0
+    },
+    
   }, {
       createdAt: 'bonus_task_created_at',
       updatedAt: 'bonus_task_updated_at',

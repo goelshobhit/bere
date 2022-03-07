@@ -755,5 +755,32 @@ module.exports = app => {
       }
     });
   });
+
+  /**
+    * @swagger
+    * /api/contest:
+    *   get:
+    *     parameters:
+    *     tags:
+    *       - Tasks
+    *     description: Returns all contest
+    *     produces:
+    *       - application/json
+    *     responses:
+    *       200:
+    *         description: A list of contest
+    *       401:
+    *          description: Unauthorized
+    *          content:
+    *              application/json:
+    *                  schema:
+    *                      type: object
+    *                      properties:
+    *                          message:
+    *                              type: string
+    *                              example: Authorisation Required
+    */
+   router.get('/tasks_user_state', Tasks.userTasksState)
+
   app.use("/api", router);
 };

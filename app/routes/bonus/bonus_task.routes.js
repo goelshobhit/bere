@@ -43,6 +43,8 @@ module.exports = app => {
    *                            type: string
    *                        Bonus Task Start Date:
    *                            type: string
+   *                        Bonus Task Is Finished:
+   *                            type: integer
    *     tags:
    *       - Bonus Task
    *     description: Add new Bonus Task
@@ -108,6 +110,8 @@ module.exports = app => {
    *                            type: string
    *                        bonus_task_start_date:
    *                            type: string
+   *                        bonus_task_is_finished:
+   *                            type: integer
    *     parameters:
    *         - name: bonusTaskId
    *           in: path

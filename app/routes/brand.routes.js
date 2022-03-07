@@ -392,5 +392,109 @@ module.exports = app => {
      *                              example: Authorisation Required
      */
     router.get("/brandbudget/:brandID",  Brands.brandBudgets);
+
+      /**
+     * @swagger
+     * /api/brand_task_closed:
+     *   post:
+     *     requestBody:
+     *        required: false
+     *        content:
+     *            application/json:
+     *                schema:
+     *                    type: object
+     *                    properties:
+     *                        Brand Id:
+     *                            type: integer
+     *                        Task Id:
+     *                            type: array
+     *                            items:
+     *                             type: integer
+     *                        brand_task_closed:
+     *                            type: integer
+     *     tags:
+     *       - Brand
+     *     description: Close Brand task
+     *     produces:
+     *       - application/json
+     *     responses:
+     *       201:
+     *         description: Close Brand task
+     *       422:
+     *         description: validation errors
+     *       500:
+     *         description: Internal server error
+     *       401:
+     *          description: Unauthorized
+     *          content:
+     *              application/json:
+     *                  schema:
+     *                      type: object
+     *                      properties:
+     *                          message:
+     *                              type: string
+     *                              example: Authorisation Required
+     */
+    router.post("/brand_task_closed", auth, Brands.closedBrandTask)
+
+     // Retrieve all Brand task closed
+    /**
+     * @swagger
+     * /api/brand_task_closed:
+     *   get:
+     *     parameters:
+     *         - name: brandId
+     *           in: query
+     *           required: false
+     *           schema:
+     *              type: integer
+     *         - name: taskId
+     *           in: query
+     *           required: false
+     *           schema:
+     *              type: integer
+     *         - name: pageNumber
+     *           in: query
+     *           required: false
+     *           schema:
+     *              type: integer
+     *         - name: sortBy
+     *           in: query
+     *           required: false
+     *           schema:
+     *              type: string
+     *              example: btc_id,brand_id,task_id,brand_task_closed    # Example of a parameter value
+     *         - name: sortOrder
+     *           in: query
+     *           required: false
+     *           schema:
+     *              type: string
+     *              example: ASC,DESC    # Example of a parameter value
+     *         - name: sortVal
+     *           in: query
+     *           required: false
+     *           schema:
+     *              type: string
+     *     tags:
+     *       - Brand
+     *     description: Returns all brands task closed
+     *     produces:
+     *       - application/json
+     *     responses:
+     *       200:
+     *         description: A list of brands task closed
+     *       401:
+     *          description: Unauthorized
+     *          content:
+     *              application/json:
+     *                  schema:
+     *                      type: object
+     *                      properties:
+     *                          message:
+     *                              type: string
+     *                              example: Authorisation Required
+     */
+    router.get('/brand_task_closed', auth, Brands.brandTaskClosedListing)
+
     app.use("/api", router);
 };

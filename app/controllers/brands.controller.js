@@ -1,11 +1,13 @@
 const db = require("../models");
 const Brand = db.brands
 const brands_budget = db.brands_budget
+const brandTaskClosed = db.brand_task_closed;
 const audit_log = db.audit_log
 const logger = require("../middleware/logger");
 const Op = db.Sequelize.Op;
 const common = require("../common");
 const taskJson = db.tasks_json
+const Task = db.tasks
 /**
  * Function to add new brand
  * @param  {object}  req expressJs request object
@@ -450,3 +452,116 @@ exports.brandBudgets = async(req, res) => {
         data: brand
     })
 }
+
+/**
+ * Function to close brand task
+ * @param  {object}  req expressJs request object
+ * @param  {object}  res expressJs response object
+ * @return {Promise}
+ */
+exports.closedBrandTask = async (req, res) => {
+    const body = req.body;
+    if (req.body["Task Id"] && !req.body["Task Id"].length) {
+        return res.status(400).send({
+            message: "Invalid task Ids."
+        });
+    }
+    if (!req.body["Brand Id"]) {
+        return res.status(400).send({
+            message: "Brand Id is Required."
+        });
+    }
+    var current_date = new Date();
+    if (req.body["Task Id"].length) {
+        var task_ids = req.body["Task Id"];
+        for (const task_id_key in task_ids) {
+            var task_id = task_ids[task_id_key];
+            const data = {
+                "brand_id": body.hasOwnProperty("Brand Id") ? req.body["Brand Id"] : 0,
+                "task_id": task_id,
+                "brand_task_closed": body.hasOwnProperty("brand_task_closed") ? req.body["brand_task_closed"] : "0",
+                "brand_task_create_date": current_date,
+                "brand_task_closed_date": current_date
+            }
+            brandTaskClosed.create(data).catch(err => {
+                return res.status(500).send({
+                    message: err.message || "Some error occurred while Closing to Brand Task."
+                });
+            });
+        }
+        res.status(201).send({
+            msg: "Brand Task Closed Successfully"
+        });
+    } else {
+        const data = {
+            "brand_id": body.hasOwnProperty("Brand Id") ? req.body["Brand Id"] : 0,
+            "brand_task_closed": body.hasOwnProperty("brand_task_closed") ? req.body["brand_task_closed"] : "0",
+            "brand_task_create_date": new Date(),
+            "brand_task_closed_date": new Date()
+        }
+        brandTaskClosed.create(data)
+            .then(data => {
+                res.status(201).send({
+                    msg: "Brand Task Closed Successfully",
+                    brandScoreClosedId: data.btc_id,
+                });
+            })
+            .catch(err => {
+                res.status(500).send({
+                    message: err.message || "Some error occurred while Closing to Brand Task."
+                });
+            });
+    }   
+}
+
+/**
+ * Function to get all brands with only name and id
+ * @param  {object}  req expressJs request object
+ * @param  {object}  res expressJs response object
+ * @return {Promise}
+ */
+exports.brandTaskClosedListing = async(req, res) => {
+	const sortBy = req.query.sortBy || 'btc_id'
+    const sortOrder = req.query.sortOrder || 'DESC'
+    const pageSize = parseInt(req.query.pageSize || 10);
+    const pageNumber = parseInt(req.query.pageNumber || 1);
+    const skipCount = (pageNumber - 1) * pageSize;
+    const options = {
+        limit: pageSize,
+        offset: skipCount,
+		include: [
+            {
+                model: Brand,
+                required: false,
+                attributes: [
+                    ["cr_co_name", "Brand Name"]
+                ]
+            },
+            {
+                model: Task,
+                required:false
+            }
+        ],
+        order: [
+            [sortBy, sortOrder]
+        ],
+        where: {}
+    }
+    if (req.query.brandId) {
+        options['where']['brand_id'] = req.query.brandId;
+    }
+    if (req.query.taskId) {
+        options['where']['task_id'] = req.query.taskId;
+    }
+    var total = await brandTaskClosed.count({
+        where: options['where']
+    });
+    const brands_list = await brandTaskClosed.findAll(options);
+    res.status(200).send({
+        data: brands_list,
+        totalRecords: total
+    });
+}
+
+
+

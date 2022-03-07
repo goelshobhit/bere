@@ -272,6 +272,7 @@ require("./app/routes/voting.routes")(app);
 require("./app/routes/tickets_distribution.routes")(app);
 require("./app/routes/user_winner.routes")(app);
 require("./app/routes/image_upload.routes")(app);
+require("./app/routes/mini_task.routes")(app);
 server.listen(PORT, function () {
   console.log(`Server is running on port ${PORT}.`)
 });
