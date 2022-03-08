@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "linear-equator-269207",
+  "private_key_id": "d401c86c6e938638c6e8821c6060195a24dcb2e6",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvwIBADANBgkqhkiG9w0BAQEFAASCBKkwggSlAgEAAoIBAQDZoem0WTMg+efU\nE6BsZWZk6OigWAenpZi4Ql4d/Uzqlu6YmA0/Sg2vAZXdfIjpsfSSfuGJrYa80i8i\n5xyu8kTsiSk3jIKqW6wCOWkQ1ahC3x2/CpmJ1LoM1iU4vOEB3lGb1IpWbwqD2iJS\n0IkgGvL7CGqh+oG/ZAh6vWxQf+pfRJlT1lhpZPe12FM1RnqFGSTtDEkniIgIB/Ko\nvyNVPA7gT7EuA/fmohnpaVlsyINAv2XgCqJ/JKbhf4g1PJQe1WqUERz7e4mffsWs\nazQBXkziBUWw7oqxIfACNwKUOJdwrbGPlWejgrMdBKw2+w6j+6nINFNK2VHGuayk\n3Q+CSLn/AgMBAAECggEACRcvzWY6cgKuUdf+B/kWVVm7OdNjgney0OOIzeTiPRxP\n3BTh3MZpmulMisNkbqqNxj7BigAzFBkNef5AXvhks6KpE5ZtcNNCdJdUUa0zCZQL\nSIsXTcASg23AgUW2el8AdqtimeiqfkZyz5XBXJNzmdPIrHpryARULFhUOWqWbiM6\nMgt2odEMvBFz1hGznwSI/gWrbU7yfeeOdNkN96Q7VJENAQhVTYMxI38he4BMyPWm\n+sfEiAUiOv1Q3Xb8oE58A1wndjxGU/X2dpBqoC4kCUP5WUD5ILbjm8Ft1CsoOsI2\nh22PdNqv+/NWxrlXAqZqyoeXSbRuUtEgHwCxzNKNqQKBgQDuVaDS8oCbRLYulRAE\nhh5WN2QtSCL33zks3wApmwvgmbL+dHRtlUzrHLDVmukL4svy+zKspUvvVtgNO7eU\nWSa5vDi8L1nIJnWqNz+3KbeBdxNIhQ9q1PKevWXGriN1cwqeHsJa8WCMkXw+orv2\nm5MkQQG7t3l115FnD0gTEqkr6QKBgQDpw3dXDedBW6dpi4rLZwBq4DzxvulkgFWK\nydam/numml3lQy9H74/xh3JtOS6B3P+Ql2+dN7ieF//R3x136az6RIq60RzjEdw6\nCO+2lFeFAkzIREvBHGHJMIVWfrOy2tq84OUb5nEvykx2jPz0xzwDc83Yfq/cASn1\n/X7XWvhNpwKBgQCjGJXlxW2c03iYiAleDynTdjRniGXlmixWOISz9BY8rPGAj9Dc\n7L6mZgvdIRU5vQo0TRJwcu1z68oNxD/slNWbZOKuZPjbrvX2dbh0b2fUgNgBWI0k\nXnVpi9KKE8DQLtmlOwdllKitiSGs+1AFgpE+zf2RqAzGR66JCDwaUTrTgQKBgQCD\nhpE9D/uP0IvvXK4pJ7kaaTShKDOVcoeu4UW/C+xynuQ5vIV7yhSJZxZA0i2Sr8+z\ngSExqkpb2VD8uraP45CJ98q+ti20rTXmCWUmq2xa0CJ3g8XDz75NPtmnAv8EoRL1\ntuvxuMTyiLZg9Y7WAsuHfb7SEuXLuXPsjkax0ONofQKBgQDlvmKJdb5SMIV3Hu1j\nIItA2l7M1sQ6uRPAAyixW5g3nMIYIK7kdj9gpYM2T/JVCXFGJgCAcnuRGhTGTFSi\nsrd6n9PAf3j1MlLCjOVNMJxdZhqBiIQA/5l3EnDUtxXLnKgDpewuwupVcAbETd3K\na7yAyDAdRlaemCnZE0VxAccedQ==\n-----END PRIVATE KEY-----\n",
+  "client_email": "dev-server-images@linear-equator-269207.iam.gserviceaccount.com",
+  "client_id": "117104715301103013317",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/dev-server-images%40linear-equator-269207.iam.gserviceaccount.com"
+}

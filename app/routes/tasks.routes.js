@@ -8,6 +8,7 @@ module.exports = app => {
   const appConfig = require("../config/config.js");
   const env = process.env.NODE_ENV || "development";
   const adminValidate = require("../middleware/adminValidate");
+
   /**
    * @swagger
    * /api/tasks:
@@ -609,47 +610,7 @@ module.exports = app => {
 	*/
   router.post("/media-upload", Tasks.mediaUpload);
 
-  	/**
-	* @swagger
-	* /api/images-upload:
-	*   post:
-	*     requestBody:
-	*        required: true
-	*        content:
-	*            multipart/form-data:
-	*                schema:
-	*                    type: object
-	*                    properties:
-	*                        media_file:
-	*                            type: array
-	*                            items:
-	*                             type: string
-	*                             format: binary
-	*                        media_key:
-	*                            type: string
-	*                            example: "bonus_item:bonus_item_icons,bonus_product_images,bonus_set:bonus_set_icons,bonus_set_images"
-	*     tags:
-	*       - File Upload
-	*     description: upload media like images,files
-	*     produces:
-	*       - application/json
-	*     responses:
-	*       200:
-	*         description: Media upload succesfully
-	*       400:
-	*         description: You must select at least 1 file
-	*       401:
-	*          description: Unauthorized
-	*          content:
-	*              application/json:
-	*                  schema:
-	*                      type: object
-	*                      properties:
-	*                          message:
-	*                              type: string
-	*                              example: Authorisation Required
-	*/
-  router.post("/images-upload", Tasks.imagesUpload);
+
 
   /**
   * @swagger

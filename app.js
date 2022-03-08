@@ -271,6 +271,7 @@ require("./app/routes/content_viewer_rewards.routes")(app);
 require("./app/routes/voting.routes")(app);
 require("./app/routes/tickets_distribution.routes")(app);
 require("./app/routes/user_winner.routes")(app);
+require("./app/routes/image_upload.routes")(app);
 require("./app/routes/mini_task.routes")(app);
 require("./app/routes/task_caption.routes")(app);
 server.listen(PORT, function () {
