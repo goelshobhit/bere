@@ -273,6 +273,46 @@ exports.jsonlisting = async (req, res) => {
  * @return {Promise}
  */
 
+exports.taskJsonDetail = async (req, res) => {
+    console.log(req.query.pageSize + "pageSize");
+    const taskID = req.params.taskID;
+    var todayDate = new Date();
+    todayDate.toLocaleString('en-US', { timeZone: 'Asia/Calcutta' })
+    const task = await taskJson.findOne({
+        attributes: [["tj_type", "task_type"], ["tj_task_id", "task_id"], ["tj_data", "task_data"], ["tj_status", "task_status"]],
+        where: {
+            tj_data: {
+                ta_start_date: {
+                    [Op.lte]: todayDate
+                },
+                ta_end_date: {
+                    [Op.gte]: todayDate
+                }
+            },
+            tj_task_id: taskID,
+            is_autotakedown: 0
+        }
+    });
+    if (!task) {
+        res.status(500).send({
+            message: "task not found"
+        });
+        return
+    }
+    res.status(200).send({
+        data: task,
+        taskDetails: common.taskStatusArr()[task.task_status],
+        media_token: common.imageToken(taskID)
+    })
+}
+
+/**
+ * Function to get Tasks details 
+ * @param  {object}  req expressJs request object
+ * @param  {object}  res expressJs response object
+ * @return {Promise}
+ */
+
 exports.taskDetail = async (req, res) => {
     console.log(req.query.pageSize + "pageSize");
     const pageSize = parseInt(req.query.pageSize || 9);
@@ -1094,7 +1134,7 @@ exports.listingContest = async (req, res) => {
 }
 
 /**
- * Function to get all survey questions and answers
+ * Function to get user all task which are in progress or pending. 
  * @param  {object}  req expressJs request object
  * @param  {object}  res expressJs response object
  * @return {Promise}

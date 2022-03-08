@@ -39,6 +39,23 @@ module.exports = app => {
      *                            type: integer
      *                        User Restriction:
      *                            type: integer
+     *                        Survey Questions:
+     *                          type: array
+     *                          items:
+     *                             type: object
+     *                             properties:  
+     *                                 Survey Question:
+     *                                     type: string  
+     *                                 Question Status:
+     *                                     type: integer  
+     *                                 Question Answers:
+     *                                     type: array
+     *                                     items:
+     *                                       type: object
+     *                                       properties:
+     *                                           Survey Answer:
+     *                                                type: string
+     * 
      *     tags:
      *       - Survey
      *     description: Add new Survey
@@ -156,28 +173,49 @@ module.exports = app => {
      *                  schema:
      *                      type: object
      *                      properties:
-     *                          Brand ID:
+     *                          sr_brand_id:
      *                              type: integer
-     *                          Survey title:
+     *                          sr_title:
      *                              type: string
-     *                          Survey Desc:
+     *                          sr_description:
      *                              type: string
-     *                          Survey Hashtag:
+     *                          sr_hashtags:
      *                            type: array
      *                            items:
      *                              oneOf:
      *                               type: string
   *                               example: ["Beta","Test"]
-     *                          Survey Color:
+     *                          sr_color:
      *                              type: integer
-     *                          Start Date:
+     *                          sr_startdate_time:
      *                              type: date
      *                              example: 2021-11-22
-     *                          End Date: 
+     *                          sr_enddate_time: 
      *                              type: date
      *                              example: 2021-12-22
-     *                          Survey Status:
+     *                          sr_status:
      *                              type: integer
+     *                          sr_questions:
+     *                            type: array
+     *                            items:
+     *                               type: object
+     *                               properties:
+     *                                   question_id:
+     *                                       type: integer  
+     *                                   question:
+     *                                       type: string  
+     *                                   status:
+     *                                       type: integer  
+     *                                   question_answers:
+     *                                       type: array
+     *                                       items:
+     *                                         type: object
+     *                                         properties:
+     *                                             answer_id:
+     *                                                  type: integer
+     *                                             answer:
+     *                                                  type: string
+     *                                        
 	 *      parameters:
      *         - name: surveyID
      *           in: path

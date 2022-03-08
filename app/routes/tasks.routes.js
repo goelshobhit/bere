@@ -299,6 +299,37 @@ module.exports = app => {
     *                              example: Authorisation Required
     */
   router.get('/tasks_list', auth, Tasks.jsonlisting)
+
+    /**
+   * @swagger
+   * /api/tasks_list/{taskID}:
+   *   get:
+   *     parameters:
+   *         - name: taskID
+   *           in: path
+   *           required: true
+   *           schema:
+   *              type: string
+   *     tags:
+   *       - Tasks
+   *     description: Retrieve a single task detail with taskID
+   *     produces:
+   *       - application/json
+   *     responses:
+   *       200:
+   *         description: Details of a tasks
+   *       401:
+   *          description: Unauthorized
+   *          content:
+   *              application/json:
+   *                  schema:
+   *                      type: object
+   *                      properties:
+   *                          message:
+   *                              type: string
+   *                              example: Authorisation Required
+   */
+  router.get("/tasks_list/:taskID", auth, Tasks.taskJsonDetail);
   /**
     * @swagger
     * /api/contest:
