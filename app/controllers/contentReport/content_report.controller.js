@@ -59,6 +59,7 @@ exports.submitContentReport = async (req, res) => {
     "content_report_type": body.hasOwnProperty("Content Report Type") ? body["Content Report Type"] : "",
     "content_report_type_id": body.hasOwnProperty("Content Report Type Id") ? req.body["Content Report Type Id"] : "",
     "content_report_owner_id": body.hasOwnProperty("Content Report Owner Id") ? req.body["Content Report Owner Id"] : "",
+    "content_report_page_id": body.hasOwnProperty("Content Report Page Id") ? req.body["Content Report Page Id"] : "",
     "content_report_reporter_id": body.hasOwnProperty("Content Report Reporter Id") ? req.body["Content Report Reporter Id"] : userId,
     "content_report_timestamp": body.hasOwnProperty("Content Report Timestamp") ? req.body["Content Report Timestamp"] : new Date().getTime(),
     "content_report_reason": body.hasOwnProperty("Content Report Reason") ? req.body["Content Report Reason"] : "",
@@ -145,6 +146,11 @@ exports.contentReportListing = async (req, res) => {
     include: [
       {
         model: contentReportModerate,
+        required: false
+      },
+      {
+        model: db.page_location,
+        attributes: ['page_id', 'page_name'],
         required: false
       }
     ],
@@ -299,9 +305,9 @@ exports.contentReportListing = async (req, res) => {
       contentData['campaign_' + campaignList[campaigndetail].cp_campaign_id] = campaignList[campaigndetail];
     }
   }
-  let content_report_data = [];
+  //let content_report_data = [];
   for (const contentreport_data in contentreport_list) {
-    const Content_data = {
+    /* const Content_data = {
       "content_report_id": contentreport_list[contentreport_data].content_report_id,
       "content_report_cat_id": contentreport_list[contentreport_data].content_report_cat_id,
       "content_report_name": contentreport_list[contentreport_data].content_report_name,
@@ -312,20 +318,20 @@ exports.contentReportListing = async (req, res) => {
     };
     if (contentreport_list[contentreport_data].content_report_moderate != undefined) {
       Content_data['content_report_moderate_detail'] = contentreport_list[contentreport_data].content_report_moderate;
-    }
+    } */
     const contentReportType = ['Brand', 'Campaign', 'User', 'Task', 'User Task Post', 'Contest', 'Post Report', 'Comment'];
     var contentType = '';
     contentReportType.forEach(element => {
       contentType = element.replace(/\s/g, '').toLowerCase();
       if (contentData[contentType + '_' + contentreport_list[contentreport_data].content_report_type_id] != undefined) {
-        Content_data['Content Detail'] = contentData[contentType + '_' + contentreport_list[contentreport_data].content_report_type_id];
+        contentreport_list[contentreport_data].dataValues.content_detail =  contentData[contentType + '_' + contentreport_list[contentreport_data].content_report_type_id];
       }
 
     });
-    content_report_data.push(Content_data);
+    //content_report_data.push(Content_data);
   }
   res.status(200).send({
-    data: content_report_data,
+    data: contentreport_list,
     totalRecords: total
   });
 };

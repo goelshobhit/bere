@@ -110,13 +110,13 @@ module.exports = app => {
    *                  schema:
    *                      type: object
    *                      properties:
-   *                          Content Report Cat Autotakedown:
+   *                          content_report_cat_autotakedown:
    *                              type: integer
-   *                          Content Report Cat Name:
+   *                          content_report_cat_name:
    *                              type: string
-   *                          Content Report Cat Hide:
+   *                          content_report_cat_hide:
    *                              type: string
-   *                          Content Report Cat Usr Hide:
+   *                          content_report_cat_usr_hide:
    *                              type: string
  *      parameters:
    *         - name: contentReportCatID

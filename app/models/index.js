@@ -237,6 +237,9 @@ db.content_report_category.hasMany(db.content_report_user, {foreignKey: 'content
 db.content_report.hasOne(db.content_report_moderate, {foreignKey: 'content_report_id', targetKey: 'content_report_id'});
 db.content_report_moderate.belongsTo(db.content_report, {foreignKey: 'content_report_id', targetKey: 'content_report_id'});
 
+db.content_report.belongsTo(db.page_location, {foreignKey: 'content_report_page_id', targetKey: 'page_id'});
+
+
 db.task_caption.belongsTo(db.user_profile, {foreignKey: 'task_caption_user_id', targetKey: 'u_id'});
 db.bonus_usr.belongsTo(db.user_profile, {foreignKey: 'bonus_usr_id', targetKey: 'u_id'});
 db.energy.belongsTo(db.user_profile, {foreignKey: 'energy_userid', targetKey: 'u_id'});
