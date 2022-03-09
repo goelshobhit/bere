@@ -195,7 +195,7 @@ module.exports = app => {
      *                              example: 2021-12-22
      *                          sr_status:
      *                              type: integer
-     *                          sr_questions:
+     *                          survey_questions:
      *                            type: array
      *                            items:
      *                               type: object
@@ -206,7 +206,7 @@ module.exports = app => {
      *                                       type: string  
      *                                   status:
      *                                       type: integer  
-     *                                   question_answers:
+     *                                   survey_question_answers:
      *                                       type: array
      *                                       items:
      *                                         type: object

@@ -127,6 +127,19 @@ exports.surveyListing = async (req, res) => {
         ],
         where: {}
     };
+    options['include'] = [
+        {
+            model: SurveyQuestions,
+            required: false,
+            attributes: [['srq_id', 'question_id'], 'question', 'status'],
+            include: [{
+                model: surveyQuestionAnswers,
+                required: false,
+                attributes: [['srq_answer_id', 'answer_id'], 'answer'],
+            }
+            ]
+        }
+    ]
     if (req.query.sortVal) {
         var sortValue = req.query.sortVal.trim();
         options.where = sortValue ? {
@@ -160,6 +173,19 @@ exports.surveyDetails = async (req, res) => {
             sr_id: surveyID
         }
     };
+    options['include'] = [
+        {
+            model: SurveyQuestions,
+            required: false,
+            attributes: [['srq_id', 'question_id'], 'question', 'status'],
+            include: [{
+                model: surveyQuestionAnswers,
+                required: false,
+                attributes: [['srq_answer_id', 'answer_id'], 'answer'],
+            }
+            ]
+        }
+    ]
     const survey = await Survey.findOne(options);
     if (!survey) {
         res.status(500).send({
@@ -186,8 +212,8 @@ exports.updateSurvey = async (req, res) => {
         return;
     }
     var requested_body = JSON.parse(JSON.stringify(req.body));
-    if (requested_body.hasOwnProperty('sr_questions')) {
-        delete requested_body['sr_questions'];
+    if (requested_body.hasOwnProperty('survey_questions')) {
+        delete requested_body['survey_questions'];
     }
     const id = req.params.surveyID;
     var SurveyDetails = await Survey.findOne({
@@ -204,7 +230,7 @@ exports.updateSurvey = async (req, res) => {
         if (num == 1) {
             audit_log.saveAuditLog(req.header(process.env.UKEY_HEADER || "x-api-key"), 'update', 'survey', id, result.dataValues, SurveyDetails);
             common.jsonTask(id, 'Survey', 'update');
-            var surveyRequestQuestions = req.body.hasOwnProperty("sr_questions") ? req.body["sr_questions"] : '';
+            var surveyRequestQuestions = req.body.hasOwnProperty("survey_questions") ? req.body["survey_questions"] : '';
             /* check survey Valid or not. */
             if (surveyRequestQuestions.length) {
                 for (const surveyRequestQuestion in surveyRequestQuestions) {
@@ -214,8 +240,8 @@ exports.updateSurvey = async (req, res) => {
                     }
                     if (surveyRequestQuestions[surveyRequestQuestion]['question_id'] != undefined) {
                         var requested_question = JSON.parse(JSON.stringify(surveyRequestQuestions[surveyRequestQuestion]));
-                        if (requested_question.hasOwnProperty('question_answers')) {
-                            delete requested_question['question_answers'];
+                        if (requested_question.hasOwnProperty('survey_question_answers')) {
+                            delete requested_question['survey_question_answers'];
                         }
                         var requested_question_id = surveyRequestQuestions[surveyRequestQuestion]['question_id'];
                         SurveyQuestions.update(requested_question, {
@@ -226,7 +252,7 @@ exports.updateSurvey = async (req, res) => {
                         }).then(function ([question_num, [question_result]]) {
                             if (question_num == 1) {
                                 audit_log.saveAuditLog(req.header(process.env.UKEY_HEADER || "x-api-key"), 'add', 'survey_questions', question_result.dataValues.srq_id, question_result.dataValues);
-                                const questionAnswers = surveyRequestQuestions[surveyRequestQuestion]['question_answers'];
+                                const questionAnswers = surveyRequestQuestions[surveyRequestQuestion]['survey_question_answers'];
                                 if (questionAnswers != undefined && questionAnswers.length) {
                                     for (const questionAnswer in questionAnswers) {
                                         if (questionAnswers[questionAnswer]['answer_id'] != undefined) {
@@ -279,7 +305,7 @@ exports.updateSurvey = async (req, res) => {
                             "status": question_status
                         }).then(question_data => {
                             audit_log.saveAuditLog(req.header(process.env.UKEY_HEADER || "x-api-key"), 'add', 'survey_questions', question_data.srq_id, question_data.dataValues);
-                            const questionAnswers = surveyRequestQuestions[surveyRequestQuestion]['question_answers'];
+                            const questionAnswers = surveyRequestQuestions[surveyRequestQuestion]['survey_question_answers'];
                             if (questionAnswers != undefined && questionAnswers.length) {
                                 for (const questionAnswer in questionAnswers) {
                                     surveyQuestionAnswers.create({
