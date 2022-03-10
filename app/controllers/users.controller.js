@@ -86,7 +86,6 @@ exports.createNewUser = async (req, res) => {
             u_email: req.body["User email"].toLowerCase()
         }
     });
-	
     if (UserDetails) {		
         res.status(200).send({
             message: "Aleary Registered"
@@ -100,7 +99,6 @@ exports.createNewUser = async (req, res) => {
             u_ymail_id: req.body["Ymail id"]
         }
     });
-	
     if (UserDetails) {		
         res.status(200).send({
             message: "Aleary Registered"
@@ -113,6 +111,19 @@ exports.createNewUser = async (req, res) => {
             mt_name: 'verify_email'
         }
     });
+    
+    const UserDetails = await Users.findOne({
+        where: {
+            u_login: req.body["User login"].toLowerCase()
+        }
+    });
+    if (UserDetails) {		
+        res.status(400).send({
+            message: "Username Aleary Exist"
+		});
+        return;
+    }
+    
     const data = {
 		"u_acct_type": body.hasOwnProperty("Account type") ? req.body["Account type"] : 0,
 		"u_referer_id": body.hasOwnProperty("Referer id") ? req.body["Referer id"] : 0,
@@ -358,6 +369,7 @@ exports.updateUser = async (req, res) => {
 		});
         return;
     }
+   
 	if(req.body['u_active']!==undefined){
 		console.log(req.body['u_active']+"U Active")
 	updateData = { ...updateData, u_deactive_me: req.header(process.env.UKEY_HEADER || "x-api-key") };
@@ -386,9 +398,10 @@ exports.updateUser = async (req, res) => {
 	if(req.body.u_login){
 	const UserDetails = await Users.findOne({
         where: {
-            u_login: req.body.u_login
+            u_login: req.body.u_login.toLowerCase()
         }
     });	
+    
 	const Userprofile = await User_profile.findOne({
         where: {
             u_display_name: req.body.u_login
@@ -961,6 +974,40 @@ exports.checkUserExits = async (req, res) => {
 	});
 	return;
 };
+
+/**
+ * check username exist or not
+ * @param  {[object]}  req request object
+ * @param  {[object]}  res response object
+ * @return {Promise}
+ */
+exports.checkUserNameExists = async (req, res) => {
+    if (!req.body["username"]) {
+        res.status(400).send({
+            msg:
+                "username is required"
+        });
+        return;
+    }
+    const UserDetails = await Users.findOne({
+        where: {
+            u_login: req.body["username"].toLowerCase()
+        },
+		attributes:["u_id"]
+    });	
+    if (UserDetails) {	
+        res.status(400).send({
+            message: "Already Exist"
+		   });
+		  return;
+        
+    }
+	res.status(200).send({
+	message: "Not Exist"
+	});
+	return;
+};
+
 /**
  * [check email or phone exits
  * @param  {[object]}  req request object

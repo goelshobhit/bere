@@ -567,6 +567,34 @@ module.exports = app => {
 	*         description: Exit
 	*/
 	router.post("/users/check_email", Users.checkUserExits);
+
+		/**
+	* @swagger
+	* /api/users/check_username:
+	*   post:
+	*     requestBody:
+	*        required: true
+	*        content:
+	*            application/json:
+	*                schema:
+	*                    type: object
+	*                    properties:
+	*                        username:
+	*                            type: string
+	*     tags:
+	*       - Users
+	*     description: check username
+	*     security:  []
+	*     produces:
+	*       - application/json
+	*     responses:
+	*       400:
+	*         description: Already Exist
+	*       200:
+	*         description: Not Exist
+	*/
+	router.post("/users/check_username", Users.checkUserNameExists);
+
   /**
 	* @swagger
 	* /api/users/send_email_verify:
