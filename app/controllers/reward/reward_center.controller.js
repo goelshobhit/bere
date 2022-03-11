@@ -55,6 +55,13 @@ exports.rewardCenterListing = async(req, res) => {
 	const sortOrder = req.query.sortOrder || 'DESC'
     
     var options = {
+        include: [
+            {
+              model: db.page_location,
+              attributes: ['page_id', 'page_name'],
+              required: false
+            }
+          ],
         limit: pageSize,
         offset: skipCount,
         order: [
