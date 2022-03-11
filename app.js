@@ -275,6 +275,9 @@ require("./app/routes/image_upload.routes")(app);
 require("./app/routes/mini_task.routes")(app);
 require("./app/routes/task_caption.routes")(app);
 require("./app/routes/page_location.routes")(app);
+require("./app/routes/faq.routes")(app);
+require("./app/routes/tips.routes")(app);
+require("./app/routes/terms_conditions.routes")(app);
 server.listen(PORT, function () {
   console.log(`Server is running on port ${PORT}.`)
 });

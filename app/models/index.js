@@ -52,6 +52,9 @@ db.Sequelize = Sequelize;
 db.sequelize = sequelize;
 
 //Modesl/Tables
+db.tips = require("./tips.model")(sequelize, Sequelize);
+db.terms_conditions = require("./terms_conditions.model")(sequelize, Sequelize);
+db.faq = require("./frequently_asked_questions.model")(sequelize, Sequelize);
 db.page_location = require("./page_location.model")(sequelize, Sequelize);
 db.task_caption = require("./task_caption.model")(sequelize, Sequelize);
 db.brand_task_closed = require("./brand_task_closed.model")(sequelize, Sequelize);
