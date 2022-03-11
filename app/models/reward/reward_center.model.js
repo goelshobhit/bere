@@ -16,10 +16,6 @@ module.exports = (sequelize, Sequelize) => {
 			type: Sequelize.INTEGER,
             allowNull: false,
         },
-        reward_center_location_name: {
-			type: Sequelize.INTEGER,
-            allowNull: false,
-        },
         reward_center_reward_type: {
             type: Sequelize.INTEGER,
             allowNull: false,
