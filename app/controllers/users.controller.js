@@ -220,7 +220,7 @@ exports.listing = async (req, res) => {
         order: [
             [sortBy, sortOrder]
         ],
-		attributes:["u_id","u_referer_id","u_acct_type","u_act_sec","u_email","u_active","u_fb_username","u_fb_id","u_gmail_username","u_gmail_id","u_ymail_username","u_ymail_id","u_pref_login","u_instagram_username","u_instagram_id","u_created_at","u_updated_at","u_email_verify_status"],
+		attributes:["u_id","u_referer_id","u_acct_type","u_act_sec","u_email","u_active","u_fb_username","u_fb_id","u_gmail_username","u_gmail_id","u_ymail_username","u_ymail_id","u_pref_login","u_instagram_username","u_instagram_id","u_created_at","u_updated_at","u_email_verify_status", "is_user_deactivated", "is_user_hidden"],
         where: {
 			u_active:true
 		}
@@ -240,6 +240,8 @@ exports.listing = async (req, res) => {
             }
     }
     options['where']['is_autotakedown'] = 0;
+    options['where']['is_user_deactivated'] = 0;
+    options['where']['is_user_hidden'] = 0;
     var total = await Users.count({
         where: options['where']
     });
@@ -292,7 +294,7 @@ exports.userDetail = async (req, res) => {
 			],
 		}
 		],
-		attributes:["u_id","u_login","u_referer_id","u_acct_type","u_act_sec","u_email","u_active","u_pref_login","u_created_at","u_updated_at","u_email_verify_status",
+		attributes:["u_id","u_login","u_referer_id","u_acct_type","u_act_sec","u_email","u_active","u_pref_login","u_created_at","u_updated_at","u_email_verify_status", "is_user_deactivated", "is_user_hidden",
 		[db.sequelize.literal('(SELECT COUNT(*) FROM user_fan_following WHERE user_fan_following.faf_by = user_login.u_id)'), 'total_following'],
 		[db.sequelize.literal('(SELECT COUNT(*) FROM user_fan_following WHERE user_fan_following.faf_to = user_login.u_id )'), 'total_fans'],
 		[db.sequelize.literal('(SELECT COUNT(*)  FROM user_fan_following WHERE user_fan_following.faf_by = '+Uid+' and user_fan_following.faf_to = user_login.u_id)'), 'followed_by_me'],
@@ -300,6 +302,7 @@ exports.userDetail = async (req, res) => {
 		],
         where: {
             u_id: userID,
+            is_user_hidden: 0
         }
     });
     if (!User) {
@@ -308,6 +311,12 @@ exports.userDetail = async (req, res) => {
         });
         return
     }
+    if (User && User.is_user_deactivated == 1) {
+		res.status(500).send({
+            message: "User Is deactivated"
+        });
+        return
+	}
 	if(User && User.u_active!=true){
 		res.status(500).send({
             message: "User details not found"
