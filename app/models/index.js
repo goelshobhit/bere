@@ -62,6 +62,7 @@ db.mini_task = require("./mini_task.model")(sequelize, Sequelize);
 db.tickets_distribution = require("./tickets_distribution.model")(sequelize, Sequelize);
 db.winner_algo = require("./winner_algo.model")(sequelize, Sequelize);
 db.brands = require("./brands.model")(sequelize, Sequelize);
+db.notify_object = require("./notify_object.model")(sequelize, Sequelize);
 db.campaigns = require("./campaigns.model")(sequelize, Sequelize);
 db.tasks = require("./tasks.model")(sequelize, Sequelize);
 db.hashtags = require("./task.hashtag.model")(sequelize, Sequelize);
