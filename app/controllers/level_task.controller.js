@@ -57,13 +57,6 @@ exports.postTaskLevel = async (req, res) => {
  */
 exports.updateTaskLevel = async (req, res) => {
     const body = req.body;
-    if (!req.body["Task Level"]) {
-        res.status(400).send({
-            msg:
-                "Task Level is required"
-        });
-        return;
-    }
     const id = req.params.levelTaskID;
     var levelTaskDetails = await levelTask.findOne({
         where: {
@@ -78,7 +71,7 @@ exports.updateTaskLevel = async (req, res) => {
         "task_details": body.hasOwnProperty("Task Details") ? req.body["Task Details"] : "",
         "task_price": body.hasOwnProperty("Task Price") ? req.body["Task Price"] : ""
     }
-    levelTask.update(levelTaskData, {
+    levelTask.update(req.body, {
         returning: true,
         where: {
             level_task_id: id
@@ -229,41 +222,13 @@ exports.postUserTaskLevelAction = async (req, res) => {
  * @return {Promise}
  */
 exports.updateUserTaskLevelAction = async (req, res) => {
-    const body = req.body;
-    if (!req.body["Task Id"]) {
-        res.status(400).send({
-            msg:
-                "Task Id is required"
-        });
-        return;
-    }
-    if (!req.body["User CTA Action"]) {
-        res.status(400).send({
-            msg:
-                "User CTA Action is required"
-        });
-        return;
-    }
-    var UserId = req.header(process.env.UKEY_HEADER || "x-api-key");
     const id = req.params.userlevelTaskActionID;
     var userLevelTaskDetails = await userLevelTaskAction.findOne({
         where: {
             user_level_task_action_id: id
         }
     });
-    
-    const userLevelTaskData = {
-        "task_id": body.hasOwnProperty("Task Id") ? req.body["Task Id"] : 0,
-        "task_type": body.hasOwnProperty("Task Type") ? req.body["Task Type"] : 0,
-        "user_cta_action": body.hasOwnProperty("User CTA Action") ? req.body["User CTA Action"] : "",
-        "user_cta_reasons": body.hasOwnProperty("User CTA Reasons") ? req.body["User CTA Reasons"] : 0,
-        "task_user_id": body.hasOwnProperty("Task User Id") ? req.body["Task User Id"] : UserId,
-        "time_allowance": body.hasOwnProperty("Time Allowance") ? req.body["Time Allowance"] : 0,
-        "timer_countdown_start_time": body.hasOwnProperty("Timer Countdown Start Time") ? req.body["Timer Countdown Start Time"] : '',
-        "usr_brandscore_penalty": body.hasOwnProperty("Usr Brandscore Penalty") ? body["Usr Brandscore Penalty"] : 0,
-        "task_status": body.hasOwnProperty("Task Status") ? req.body["Task Status"] : 0
-    }
-    userLevelTaskAction.update(userLevelTaskData, {
+    userLevelTaskAction.update(req.body, {
         returning: true,
         where: {
             user_level_task_action_id: id

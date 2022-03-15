@@ -65,15 +65,21 @@ module.exports = app => {
      *                schema:
      *                    type: object
      *                    properties:
-     *                        Bonus Item Brand Id:
+     *                        bonus_item_brand_id:
      *                            type: integer
-     *                        Bonus Item Name:
+     *                        bonus_item_name:
      *                            type: string
-     *                        Bonus Item Qty:
+     *                        bonus_item_description:
+     *                            type: string
+     *                        bonus_item_icons:
+     *                            type: string
+     *                        bonus_product_images:
+     *                            type: string
+     *                        bonus_item_qty:
      *                            type: integer
-     *                        Bonus Item Remaining Qty:
+     *                        bonus_item_remaining_qty:
      *                            type: integer
-     *                        Bonus item Timestamp:
+     *                        bonus_item_timestamp:
      *                            type: string
      *     tags:
      *       - Bonus Item

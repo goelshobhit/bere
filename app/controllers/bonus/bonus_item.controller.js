@@ -136,17 +136,7 @@ exports.updateBonusItem = async (req, res) => {
       bonus_item_id: id
     }
   });
-  const bonusItemData = {
-    "bonus_item_brand_id": body.hasOwnProperty("Bonus Item Brand Id") ? req.body["Bonus Item Brand Id"] : "0",
-    "bonus_item_name": body.hasOwnProperty("Bonus Item Name") ? req.body["Bonus Item Name"] : "0",
-    "bonus_item_description": body.hasOwnProperty("Bonus Item Description") ? req.body["Bonus Item Description"] : "",
-    "bonus_item_icons": body.hasOwnProperty("Bonus Item Icons") ? req.body["Bonus Item Icons"] : "",
-    "bonus_product_images": body.hasOwnProperty("Bonus Product Images") ? req.body["Bonus Product Images"] : "",
-    "bonus_item_qty": body.hasOwnProperty("Bonus Item Qty") ? req.body["Bonus Item Qty"] : 0,
-    "bonus_item_remaining_qty": body.hasOwnProperty("Bonus Item Remaining Qty") ? req.body["Bonus Item Remaining Qty"] : 0,
-    "bonus_item_timestamp": body.hasOwnProperty("Bonus Item Timestamp") ? req.body["Bonus Item Timestamp"] : new Date().getTime()
-  }
-  bonus_item.update(bonusItemData, {
+  bonus_item.update(body, {
     returning: true,
     where: {
       bonus_item_id: id

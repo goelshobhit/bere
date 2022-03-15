@@ -34,9 +34,16 @@ module.exports = app => {
      *                        Bonus Summary Set Id:
      *                            type: integer
      *                        Bonus Summary Set Items:
-     *                            type: string
+     *                            type: array
+   *                            items:
+   *                              oneOf:
+   *                               type: string
      *                        Bonus Summary Set Items Qty:
-     *                            type: string
+     *                            type: array
+   *                            items:
+   *                              oneOf:
+   *                               type: integer
+   *                            example: [10,20]
      *                        Bonus Summary Total Token:
      *                            type: integer
      *                        Bonus Summary Total Stars:
@@ -81,37 +88,44 @@ module.exports = app => {
      *                schema:
      *                    type: object
      *                    properties:
-     *                        Bonus Item id:
+     *                        bonus_item_id:
      *                            type: integer
-     *                        Bonus Summary Name:
+     *                        bonus_summary_name:
      *                            type: string
-     *                        Bonus Summary_Hashtag:
+     *                        bonus_summary_hashtag:
      *                            type: array
    *                            items:
    *                              oneOf:
    *                               type: string
    *                            example: ["Beta","Test"]
-     *                        Bonus Summary Timestamp:
+     *                        bonus_summary_timestamp:
      *                            type: string
-     *                        Bonus Summary Start Timestamp:
+     *                        bonus_summary_start_timestamp:
      *                            type: string
-     *                        Bonus_Summary Entryclose Time:
+     *                        bonus_summary_entryclose_time:
      *                            type: string
-     *                        Bonus Summary End Date:
+     *                        bonus_summary_end_date:
      *                            type: string
-     *                        Bonus Summary Set Id:
+     *                        bonus_summary_set_id:
      *                            type: integer
-     *                        Bonus Summary Set Items:
-     *                            type: string
-     *                        Bonus Summary Set Items Qty:
-     *                            type: string
-     *                        Bonus Summary Total Token:
+     *                        bonus_summary_set_items:
+     *                            type: array
+   *                            items:
+   *                              oneOf:
+   *                               type: string
+     *                        bonus_summary_set_items_qty:
+     *                            type: array
+   *                            items:
+   *                              oneOf:
+   *                               type: integer
+   *                            example: [10,20]
+     *                        bonus_summary_total_token:
      *                            type: integer
-     *                        Bonus Summary Total Stars:
+     *                        bonus_summary_total_stars:
      *                            type: integer
-     *                        Bonus Summary Stars Balance:
+     *                        bonus_summary_stars_balance:
      *                            type: integer
-     *                        Bonus Summary Set Token Balance:
+     *                        bonus_summary_set_token_balance:
      *                            type: integer
      *     tags:
      *       - Bonus Summary

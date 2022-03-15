@@ -59,14 +59,7 @@ exports.updateBonusUser = async (req, res) => {
       bu_id: id
     }
   });
-  var uid = req.header(process.env.UKEY_HEADER || "x-api-key");
-  const bonusUserData = {
-    "bonus_usr_id": body.hasOwnProperty("Bonus User Id") ? req.body["Bonus User Id"] : uid,
-    "bonus_usr_riddim_level": body.hasOwnProperty("Bonus user Reddim Level") ? req.body["Bonus user Reddim Level"] : "0",
-    "bonus_usr_followers_riddim": body.hasOwnProperty("Bonus user Followers riddim") ? req.body["Bonus user Followers riddim"] : "0",
-    "bonus_usr_history_not_won": body.hasOwnProperty("Bonus User History Not Won") ? req.body["Bonus User History Not Won"] : "0"
-  }
-  bonus_user.update(bonusUserData, {
+  bonus_user.update(body, {
     returning: true,
     where: {
       bu_id: id

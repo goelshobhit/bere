@@ -63,14 +63,7 @@ exports.updateBonusSocialMediaShare = async (req, res) => {
     }
   });
   var uid = req.header(process.env.UKEY_HEADER || "x-api-key");
-  const bonusSMData = {
-    "bonus_sm_name": body.hasOwnProperty("Bonus SM Name") ? body["Bonus SM Name"] : "0",
-    "bonus_sm_share_user_id": uid,
-    "bonus_sm_share_timestamp": body.hasOwnProperty("Bonus SM Share Timestamp") ? body["Bonus SM Share Timestamp"] : new Date().getTime(),
-    "bonus_sm_share_ack": body.hasOwnProperty("Bonus SM Share Ack") ? body["Bonus SM Share Ack"] : "0",
-    "bonus_sm_share_url": body.hasOwnProperty("Bonus Sm Share Url") ? body["Bonus Sm Share Url"] : "0"
-  }
-  bonus_sm_share.update(bonusSMData, {
+  bonus_sm_share.update(body, {
     returning: true,
     where: {
       bonus_sm_id: id
