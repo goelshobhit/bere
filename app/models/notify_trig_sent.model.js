@@ -55,6 +55,9 @@ module.exports = (sequelize, Sequelize) => {
 			type: Sequelize.INTEGER,
 			allowNull: false,
 		},
+		notify_object_id: {
+			type: Sequelize.INTEGER,
+		},
 		cr_co_id:{
 			type: Sequelize.INTEGER,
 			allowNull: false,

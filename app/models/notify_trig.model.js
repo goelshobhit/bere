@@ -6,8 +6,7 @@ module.exports = (sequelize, Sequelize) => {
             autoIncrement: true
         },
 		notify_event_id:{
-			type: Sequelize.INTEGER,
-            allowNull: false,
+			type: Sequelize.INTEGER
 		},
 		notify_method:{
 			type: Sequelize.TEXT,
@@ -45,7 +44,9 @@ module.exports = (sequelize, Sequelize) => {
 		},
 		notify_trig_push_id:{
 			type: Sequelize.INTEGER,
-			allowNull: false,
+		},
+		notify_object_id: {
+			type: Sequelize.INTEGER,
 		},
 		cr_co_id:{
 			type: Sequelize.INTEGER,

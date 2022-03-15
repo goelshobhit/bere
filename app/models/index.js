@@ -186,6 +186,8 @@ db.notify_cat.hasMany(db.notify_grp, {foreignKey: 'notify_trig_cat_id', allowNul
 db.notify_grp.belongsTo(db.notify_cat, {foreignKey: 'notify_trig_cat_id', allowNull: true, targetKey: 'notify_trig_cat_id'});
 db.notify_grp.hasMany(db.notify_trig, {foreignKey: 'notify_trig_grp_id', targetKey: 'notify_trig_grp_id'});
 db.notify_trig.belongsTo(db.notify_grp, {foreignKey: 'notify_trig_grp_id', targetKey: 'notify_trig_grp_id'});
+db.notify_object.hasMany(db.notify_trig, {foreignKey: 'notify_object_id', targetKey: 'notify_object_id'});
+db.notify_trig.belongsTo(db.notify_object, {foreignKey: 'notify_object_id', targetKey: 'notify_object_id'});
 db.users.hasMany(db.user_inbox_settings, {foreignKey: 'u_id', targetKey: 'u_id'});
 db.user_inbox_settings.belongsTo(db.users, {foreignKey: 'u_id', targetKey: 'u_id'});
 db.campaigns.belongsTo(db.brands, {foreignKey: 'cr_co_id', targetKey: 'cr_co_id'});
