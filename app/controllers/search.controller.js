@@ -153,7 +153,7 @@ exports.searchRecords = async (req, res) => {
     };
     const Searchdata = await SearchResults.findAll(options);
     var SearchUserCount = Searchdata.length;
-    if (Searchdata && 0) {
+    if (Searchdata) {
       for (var i = 0; i < SearchUserCount; i++) {
         var FirstRecordId = Searchdata[0].id;
         if (Searchdata[i].search_keyword == keyWord) {
