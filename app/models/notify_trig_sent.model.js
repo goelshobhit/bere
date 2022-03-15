@@ -10,24 +10,19 @@ module.exports = (sequelize, Sequelize) => {
 			allowNull: false,
 		},
 		notify_trig_id: {
-			type: Sequelize.INTEGER,
-			allowNull: false,
+			type: Sequelize.INTEGER
 		},
 		notify_event_id:{
 			type: Sequelize.INTEGER,
-            allowNull: false,
 		},
 		notify_method:{
 			type: Sequelize.TEXT,
-			allowNull: false,
 		},
 		notify_type:{
 			type: Sequelize.TEXT,
-			allowNull: false,
 		},
 		notify_trig_pushalert:{
 			type: Sequelize.TEXT,
-			allowNull: false,
 		},
 		notify_trig_msg:{
 			type: Sequelize.TEXT,
@@ -45,15 +40,15 @@ module.exports = (sequelize, Sequelize) => {
 		},
 		notify_ack:{
 			type: Sequelize.DATE,
-			allowNull: false,
 		},
 		notify_trig_status:{
 			type: Sequelize.DATE,
-			allowNull: false,
 		},
 		notify_trig_push_id:{
+			type: Sequelize.INTEGER
+		},
+		notify_object_id: {
 			type: Sequelize.INTEGER,
-			allowNull: false,
 		},
 		cr_co_id:{
 			type: Sequelize.INTEGER,

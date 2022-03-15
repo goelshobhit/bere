@@ -62,6 +62,7 @@ db.mini_task = require("./mini_task.model")(sequelize, Sequelize);
 db.tickets_distribution = require("./tickets_distribution.model")(sequelize, Sequelize);
 db.winner_algo = require("./winner_algo.model")(sequelize, Sequelize);
 db.brands = require("./brands.model")(sequelize, Sequelize);
+db.notify_object = require("./notify_object.model")(sequelize, Sequelize);
 db.campaigns = require("./campaigns.model")(sequelize, Sequelize);
 db.tasks = require("./tasks.model")(sequelize, Sequelize);
 db.hashtags = require("./task.hashtag.model")(sequelize, Sequelize);
@@ -185,6 +186,8 @@ db.notify_cat.hasMany(db.notify_grp, {foreignKey: 'notify_trig_cat_id', allowNul
 db.notify_grp.belongsTo(db.notify_cat, {foreignKey: 'notify_trig_cat_id', allowNull: true, targetKey: 'notify_trig_cat_id'});
 db.notify_grp.hasMany(db.notify_trig, {foreignKey: 'notify_trig_grp_id', targetKey: 'notify_trig_grp_id'});
 db.notify_trig.belongsTo(db.notify_grp, {foreignKey: 'notify_trig_grp_id', targetKey: 'notify_trig_grp_id'});
+db.notify_object.hasMany(db.notify_trig, {foreignKey: 'notify_object_id', targetKey: 'notify_object_id'});
+db.notify_trig.belongsTo(db.notify_object, {foreignKey: 'notify_object_id', targetKey: 'notify_object_id'});
 db.users.hasMany(db.user_inbox_settings, {foreignKey: 'u_id', targetKey: 'u_id'});
 db.user_inbox_settings.belongsTo(db.users, {foreignKey: 'u_id', targetKey: 'u_id'});
 db.campaigns.belongsTo(db.brands, {foreignKey: 'cr_co_id', targetKey: 'cr_co_id'});
