@@ -755,11 +755,18 @@ default:
             required:false
 		}
 		],
-		attributes:["u_id","u_referer_id","u_acct_type","u_act_sec","u_email","u_active","u_fb_username","u_fb_id","u_gmail_username","u_gmail_id","u_ymail_username","u_ymail_id","u_pref_login","u_instagram_username","u_instagram_id","u_created_at","u_updated_at","u_email_verify_status"],
+		attributes:["u_id","u_referer_id","u_acct_type","u_act_sec","u_email","u_active","u_fb_username","u_fb_id","u_gmail_username","u_gmail_id","u_ymail_username","u_ymail_id","u_pref_login","u_instagram_username","u_instagram_id","u_created_at","u_updated_at","u_email_verify_status", "is_user_deactivated", "is_user_hidden"],
         where: {
             u_id: uID
         }
     });
+    /* Account Deactivated Check */
+    if (UserDetails.is_user_deactivated == 1) {
+        res.status(404).send({
+            message: "Your account is deactivated"
+        });
+        return;
+    }
 	if(UserDetails.u_active!==undefined && UserDetails.u_active!==true){
 	let updateData = { u_deactive_me: uID,u_active:true };
 	Users.update(updateData,
@@ -1562,4 +1569,74 @@ exports.user_debit_transactions = async (req, res) => {
 			});
 			return ;
 		});
+}
+
+/**
+ * Function to deactivate or hide unhide account
+ * @param  {object}  req expressJs request object
+ * @param  {object}  res expressJs response object
+ * @return {Promise}
+ */
+exports.userDeactivateOrHide = async (req, res) => {
+    const id = req.params.userID;
+	if(!id){
+		res.status(404).send({
+            message: "User with id not found"
+        });
+		return;
+    }
+	if(!req.body.u_action){
+		res.status(404).send({
+            message: "u_action is Required"
+        });
+		return;
+    }
+    let updateData = {};
+    if (req.body.u_action == 1) {
+        updateData = { is_user_hidden: 1 };
+    } else if (req.body.u_action == 2) {
+        updateData = { is_user_hidden: 0 };
+    } else if (req.body.u_action == 3) {
+        updateData = { is_user_deactivated: 1 };
+    } else if (req.body.u_action == 4) {
+        updateData = { is_user_deactivated: 0 };
+    }
+    const UserDetails = await Users.findOne({
+        where: {
+            u_id: id
+        }
+    });	
+    if (UserDetails.is_user_deactivated == 1 && UserDetails.is_user_hidden == 0 && req.body.u_action == 1) {
+        res.status(404).send({
+            message: "Account is deactive, Cound not update to hidden."
+        });
+		return;
+    }
+    if (UserDetails && updateData != undefined) {
+        Users.update(updateData, {
+            returning: true,
+            where: {
+                u_id: id
+            }
+        }).then(function([ num, [result] ]) {
+            if (num == 1) {
+                audit_log.saveAuditLog(req.header(process.env.UKEY_HEADER || "x-api-key"),'update','Users',id,result.dataValues,UserDetails);
+              
+                res.status(200).send({
+                    message: "User updated successfully."
+                });
+            } else {
+                res.status(400).send({
+                    message: `Cannot update Users with id=${id}. Maybe user was not found or req.body is empty!`
+                });
+            }
+        }).catch(err => {
+            logger.log("error", err+":updating User with id=" + id);
+            res.status(500).send({
+                message: err+"Error updating User with id=" + id
+            });
+            return;
+        });
+    }
+    
 }

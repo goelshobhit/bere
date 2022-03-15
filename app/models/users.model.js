@@ -76,7 +76,16 @@ module.exports = (sequelize, Sequelize) => {
 		is_autotakedown:{
             type: Sequelize.INTEGER,
 			default: 0
+        },
+		is_user_deactivated:{
+            type: Sequelize.INTEGER,
+			default: 0
+        },
+		is_user_hidden:{
+            type: Sequelize.INTEGER,
+			default: 0
         }
+        
     }, {
         createdAt: 'u_created_at',
         updatedAt: 'u_updated_at',
@@ -95,7 +104,7 @@ Users.encryptPassword = function(plainText, salt) {
         .digest('hex');
     }
 Users.authenticate = async function(email,colmn) {
-    const user =Users.findOne({ attributes:["u_id","u_referer_id","u_salt","u_pass","u_acct_type","u_act_sec","u_email","u_active","u_pref_login","u_created_at","u_updated_at","u_deactive_me"],where: {[colmn]: email} });
+    const user =Users.findOne({ attributes:["u_id","u_referer_id","u_salt","u_pass","u_acct_type","u_act_sec","u_email","u_active","u_pref_login","u_created_at","u_updated_at","u_deactive_me", "is_user_deactivated", "is_user_hidden"],where: {[colmn]: email} });
     if(user){
       return user;
     }else{
