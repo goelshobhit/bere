@@ -500,6 +500,32 @@ module.exports = app => {
 	*         description: Please enter valid user details
 	*/
 	router.post("/users/forgetpassword", Users.forgetPassword);
+		/**
+	* @swagger
+	* /api/users/forgetpasswordmandrill:
+	*   post:
+	*     requestBody:
+	*        required: true
+	*        content:
+	*            application/json:
+	*                schema:
+	*                    type: object
+	*                    properties:
+	*                        email:
+	*                            type: string
+	*     tags:
+	*       - Users
+	*     description: Forgot password
+	*     security:  []
+	*     produces:
+	*       - application/json
+	*     responses:
+	*       200:
+	*         description: New password generated successfully and mail send
+	*       403:
+	*         description: Please enter valid user details
+	*/
+	router.post("/users/forgetpasswordmandrill", Users.forgetPasswordUsingMandrill);
 	/**
 	* @swagger
 	* /api/users/changepassword:
