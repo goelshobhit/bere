@@ -8,6 +8,7 @@ const adminSetting=db.admin_setting;
 const mail_templates=db.mail_templates;
 const accountBalance=db.account_balance;
 const ledgerTransactions = db.ledger_transactions;
+const mandrillapp = require("../middleware/mandrillapp.js");
 const mailer = require("../middleware/mailer.js");
 const Op = db.Sequelize.Op;
 const upload = require("../middleware/upload");
@@ -853,6 +854,58 @@ exports.forgetPassword = async (req, res) => {
             html: templateBody
         };
         mailer.sendMail(message);
+    }
+};
+
+/**
+ * [forgetPassword Function to change password of a user
+ * @param  {Object}  req expressJs request Object
+ * @param  {Object}  res expressJs request Object
+ * @return {Promise}
+ */
+ exports.forgetPasswordUsingMandrill = async (req, res) => {
+    if (!req.body.email) {
+        res.status(400).send({
+            message: "Email can not be empty!"
+        });
+        return;
+    }
+    var emailId = req.body.email.toLowerCase();
+	const resultData = await Users.authenticate(emailId,'u_email');
+	
+    if (!resultData) {
+        res.status(403).send({
+            message: " please enter valid user details"
+        });
+    } else {
+        var newpassword = crypto.randomBytes(8).toString("base64");
+		console.log(newpassword);
+        var new_salt = Users.generateSalt();
+        var gen_password = Users.encryptPassword(newpassword, new_salt);
+        const userData = {
+            u_pass: gen_password,
+            u_salt: new_salt
+        };
+        logger.log("info", "Forget email for emailId: "+emailId+" with password :"+newpassword);
+    
+        Users.update(userData, {
+            where: {
+                u_email: emailId
+            }
+        }).then(data => {
+            res.status(200).end();
+        });
+        const templateContent = [
+            {
+                "name": "new_code",
+                "content": newpassword
+            },
+            {
+                "name": "email",
+                "content": emailId
+            }
+        ]
+        mandrillapp.sendAnEmailUsingTemplate("forget-code", templateContent, emailId);
     }
 };
 /**
