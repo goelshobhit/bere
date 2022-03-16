@@ -238,6 +238,7 @@ require("./app/routes/post_report.routes")(app);
 require("./app/routes/audit_log.routes")(app);
 require("./app/routes/search.routes")(app);
 require("./app/routes/notify_grp.routes")(app);
+require("./app/routes/notify_object.routes")(app);
 require("./app/routes/notify_cat.routes")(app);
 require("./app/routes/notify_event.routes")(app);
 require("./app/routes/notify_trig.routes")(app);
@@ -272,6 +273,13 @@ require("./app/routes/content_viewer_rewards.routes")(app);
 require("./app/routes/voting.routes")(app);
 require("./app/routes/tickets_distribution.routes")(app);
 require("./app/routes/user_winner.routes")(app);
+require("./app/routes/image_upload.routes")(app);
+require("./app/routes/mini_task.routes")(app);
+require("./app/routes/task_caption.routes")(app);
+require("./app/routes/page_location.routes")(app);
+require("./app/routes/faq.routes")(app);
+require("./app/routes/tips.routes")(app);
+require("./app/routes/terms_conditions.routes")(app);
 server.listen(PORT, function () {
   console.log(`Server is running on port ${PORT}.`)
 });

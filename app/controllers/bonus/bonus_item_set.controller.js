@@ -203,29 +203,12 @@ exports.updateBonusSet = async (req, res) => {
       bonus_set_id: id
     }
   });
-  if (!body["Bonus Item ids"]) {
+  if (body["bonus_item_id"] != undefined && !body["bonus_item_id"].length) { 
     res.status(400).send({
       msg:
-        "Bonus Item ids is required"
+        "bonus_item_id must be array"
     });
     return;
-  }
-  var bonus_item_ids = body["Bonus Item ids"];
-  if (!bonus_item_ids.length) {
-    res.status(400).send({
-      msg:
-        "Bonus Item ids must be array"
-    });
-    return;
-  }
-  for (const bonus_item_id_key in bonus_item_ids) {
-    if (isNaN( bonus_item_ids[bonus_item_id_key] )) {
-      res.status(400).send({
-          msg:
-            "Bonus Item ids must be array of integer values"
-        });
-        return;
-    }
   }
   const bonusSetData = {
     "bonus_set_brand_id": body.hasOwnProperty("Bonus Set Brand Id") ? body["Bonus Set Brand Id"] : "0",
@@ -236,7 +219,7 @@ exports.updateBonusSet = async (req, res) => {
     "bonus_set_images": body.hasOwnProperty("Bonus Set Images") ? req.body["Bonus Set Images"] : "",
     "bonus_set_item_timestamp": (body.hasOwnProperty("Bonus Set Item Timestamp") && body["Bonus Set Item Timestamp"]) ? body["Bonus Set Item Timestamp"] : new Date().getTime()
   }
-  bonus_set.update(bonusSetData, {
+  bonus_set.update(req.body, {
     returning: true,
     where: {
       bonus_set_id: id

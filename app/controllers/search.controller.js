@@ -173,16 +173,40 @@ exports.searchRecords = async (req, res) => {
           }
         };
         const UserProfileDetails = await UserProfile.findAll(userOptions);
+        
         if (UserProfileDetails.length) {
+          let user_ids = [];
+          for (const UserProfileDetail in UserProfileDetails) {
+            user_ids.push(UserProfileDetails[UserProfileDetail].u_id);
+          }
+          var userLoginOptions = {
+            where: {
+              u_id: user_ids,
+              is_user_deactivated : 0,
+              is_user_hidden : 0
+            },
+            attributes:['u_id']
+          };
+          const UserDetails = await db.users.findAll(userLoginOptions);
+          let validUser = {};
+          if (UserDetails.length) {
+            for (const UserDetail in UserDetails) {
+              validUser[UserDetails[UserDetail].u_id] =UserDetails[UserDetail].u_id; 
+            } 
+          }
           var UserProfileDisplayDetails = [];
           for (const UserProfileDetail in UserProfileDetails) {
-            UserProfileDisplayDetails.push({
-              "u_id": UserProfileDetails[UserProfileDetail].u_id,
-              "u_display_name": UserProfileDetails[UserProfileDetail].u_display_name,
-              "u_f_name": UserProfileDetails[UserProfileDetail].u_f_name,
-              "u_l_name": UserProfileDetails[UserProfileDetail].u_l_name,
-              "u_prof_img_path": UserProfileDetails[UserProfileDetail].u_prof_img_path
-            });
+            /* do not show deactivated and hide accounts */
+            if (validUser[UserProfileDetails[UserProfileDetail].u_id] != undefined) {
+              UserProfileDisplayDetails.push({
+                "u_id": UserProfileDetails[UserProfileDetail].u_id,
+                "u_display_name": UserProfileDetails[UserProfileDetail].u_display_name,
+                "u_f_name": UserProfileDetails[UserProfileDetail].u_f_name,
+                "u_l_name": UserProfileDetails[UserProfileDetail].u_l_name,
+                "u_prof_img_path": UserProfileDetails[UserProfileDetail].u_prof_img_path
+              });
+            }
+           
           }
           response_data.Profile = UserProfileDisplayDetails;
         }
@@ -407,15 +431,37 @@ exports.searchRecords = async (req, res) => {
     };
     const UserProfileDetails = await UserProfile.findAll(userOptions);
     if (UserProfileDetails.length) {
+      let user_ids = [];
+          for (const UserProfileDetail in UserProfileDetails) {
+            user_ids.push(UserProfileDetails[UserProfileDetail].u_id);
+          }
+          var userLoginOption = {
+            where: {
+              u_id: user_ids,
+              is_user_deactivated : 0,
+              is_user_hidden : 0
+            },
+            attributes:['u_id']
+          };
+          const UserDetails = await db.users.findAll(userLoginOption);
+          let validUser = {};
+          if (UserDetails.length) {
+            for (const UserDetail in UserDetails) {
+              validUser[UserDetails[UserDetail].u_id] =UserDetails[UserDetail].u_id; 
+            } 
+          }
         var UserProfileDisplayDetails = [];
         for (const UserProfileDetail in UserProfileDetails) {
-          UserProfileDisplayDetails.push({
-            "u_id": UserProfileDetails[UserProfileDetail].u_id,
-            "u_display_name": UserProfileDetails[UserProfileDetail].u_display_name,
-            "u_f_name": UserProfileDetails[UserProfileDetail].u_f_name,
-            "u_l_name": UserProfileDetails[UserProfileDetail].u_l_name,
-            "u_prof_img_path": UserProfileDetails[UserProfileDetail].u_prof_img_path
-          });
+          /* do not show deactivated and hide accounts */
+          if (validUser[UserProfileDetails[UserProfileDetail].u_id] != undefined) {
+            UserProfileDisplayDetails.push({
+              "u_id": UserProfileDetails[UserProfileDetail].u_id,
+              "u_display_name": UserProfileDetails[UserProfileDetail].u_display_name,
+              "u_f_name": UserProfileDetails[UserProfileDetail].u_f_name,
+              "u_l_name": UserProfileDetails[UserProfileDetail].u_l_name,
+              "u_prof_img_path": UserProfileDetails[UserProfileDetail].u_prof_img_path
+            });
+        }
         }
         
         response_data.Profile = UserProfileDisplayDetails;

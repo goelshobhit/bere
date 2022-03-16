@@ -25,6 +25,9 @@ module.exports = (sequelize, Sequelize) => {
     content_report_owner_id: {
       type: Sequelize.INTEGER
     },
+    content_report_page_id: {
+      type: Sequelize.INTEGER
+    },
     content_report_reporter_id: {
       allowNull: false,
       type: Sequelize.INTEGER

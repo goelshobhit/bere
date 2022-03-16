@@ -21,20 +21,21 @@ exports.createNotifySent = async(req, res) => {
         return;
     }
     const notifySent = {
-        "notify_trig_id": body.hasOwnProperty("Notify Trigger Id") ? body["Notify Trigger Id"] : 0,
-        "u_id": body.hasOwnProperty("User Id") ? body["User Id"] : 0,
-        "notify_event_id": body.hasOwnProperty("Event Id") ? body["Event Id"] : 0,
+        "Notify Trigger Id": body.hasOwnProperty("Notify Trigger Id") ? body["Notify Trigger Id"] : 0,
+        "User Id": body.hasOwnProperty("User Id") ? body["User Id"] : 0,
+        "notify_event_id": body.hasOwnProperty("Event Id") ? body["Event Id"] : null,
         "notify_method": body.hasOwnProperty("Method") ? body["Method"] : "",
         "notify_type": body.hasOwnProperty("Type") ? body["Type"] : "",
         "notify_trig_pushalert": body.hasOwnProperty("Pushalert") ? body["Pushalert"] : "",
         "notify_trig_msg": body.hasOwnProperty("Message") ? body["Message"] : "",
-        "notify_trig_grp_id": body.hasOwnProperty("Group Id") ? body["Group Id"] : 0,
+        "notify_trig_grp_id": body.hasOwnProperty("Group Id") ? body["Group Id"] : null,
         "notify_group_name": body.hasOwnProperty("Group Name") ? body["Group Name"] : "",
         "notify_send_date": body.hasOwnProperty("Send Date") ? body["Send Date"] : new Date(),
         "notify_ack": body.hasOwnProperty("Ack") ? body["Ack"] : new Date(),
         "notify_trig_status": body.hasOwnProperty("Trigger Status") ? body["Trigger Status"] : "",
-        "notify_trig_push_id": body.hasOwnProperty("Trigger Push Id") ? body["Trigger Push Id"] : 0,
-        "cr_co_id": body.hasOwnProperty("Brand Id") ? body["Brand Id"] : 0
+        "notify_trig_push_id": body.hasOwnProperty("Trigger Push Id") ? body["Trigger Push Id"] : null,
+        "cr_co_id": body.hasOwnProperty("Brand Id") ? body["Brand Id"] : null,
+        "notify_object_id": body.hasOwnProperty("Object Id") ? body["Object Id"] : null
     }
     NotifySent.create(notifySent).then(data => {
             audit_log.saveAuditLog(req.header(process.env.UKEY_HEADER || "x-api-key"),'add','todayTimeStamp',data.notify_sent_trig_id,data.dataValues);

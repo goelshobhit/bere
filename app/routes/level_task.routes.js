@@ -61,15 +61,15 @@ module.exports = app => {
      *                schema:
      *                    type: object
      *                    properties:
-     *                        Brand Id:
+     *                        brand_id:
      *                            type: integer
-     *                        Task Id:
+     *                        task_id:
      *                            type: integer
-     *                        Task Level:
+     *                        task_level:
      *                            type: integer
-     *                        Task Details:
+     *                        task_details:
      *                            type: string
-     *                        Task Price:
+     *                        task_price:
      *                            type: integer
      *     parameters:
      *         - name: levelTaskID
@@ -260,24 +260,24 @@ module.exports = app => {
      *                schema:
      *                    type: object
      *                    properties:
-      *                        Task Id:
+      *                        task_id:
      *                            type: integer
-     *                        Task Type:
+     *                        task_type:
      *                            type: integer
-     *                        User CTA Action:
+     *                        user_cta_action:
      *                            type: integer
-     *                        User CTA Reasons:
+     *                        user_cta_reasons:
      *                            type: integer
-     *                        Task User Id:
+     *                        task_user_id:
      *                            type: integer
-     *                        Time Allowance:
+     *                        time_allowance:
      *                            type: integer
-     *                        Timer Countdown Start Time:
+     *                        timer_countdown_start_time:
      *                            type: date
      *                            example: 2022-02-10
-     *                        Usr Brandscore Penalty:
+     *                        usr_brandscore_penalty:
      *                            type: integer
-     *                        Task Status:
+     *                        task_status:
      *                            type: integer
      *     parameters:
      *         - name: userlevelTaskActionID

@@ -52,10 +52,17 @@ db.Sequelize = Sequelize;
 db.sequelize = sequelize;
 
 //Modesl/Tables
+db.tips = require("./tips.model")(sequelize, Sequelize);
+db.terms_conditions = require("./terms_conditions.model")(sequelize, Sequelize);
+db.faq = require("./frequently_asked_questions.model")(sequelize, Sequelize);
+db.page_location = require("./page_location.model")(sequelize, Sequelize);
+db.task_caption = require("./task_caption.model")(sequelize, Sequelize);
 db.brand_task_closed = require("./brand_task_closed.model")(sequelize, Sequelize);
+db.mini_task = require("./mini_task.model")(sequelize, Sequelize);
 db.tickets_distribution = require("./tickets_distribution.model")(sequelize, Sequelize);
 db.winner_algo = require("./winner_algo.model")(sequelize, Sequelize);
 db.brands = require("./brands.model")(sequelize, Sequelize);
+db.notify_object = require("./notify_object.model")(sequelize, Sequelize);
 db.campaigns = require("./campaigns.model")(sequelize, Sequelize);
 db.tasks = require("./tasks.model")(sequelize, Sequelize);
 db.hashtags = require("./task.hashtag.model")(sequelize, Sequelize);
@@ -179,6 +186,8 @@ db.notify_cat.hasMany(db.notify_grp, {foreignKey: 'notify_trig_cat_id', allowNul
 db.notify_grp.belongsTo(db.notify_cat, {foreignKey: 'notify_trig_cat_id', allowNull: true, targetKey: 'notify_trig_cat_id'});
 db.notify_grp.hasMany(db.notify_trig, {foreignKey: 'notify_trig_grp_id', targetKey: 'notify_trig_grp_id'});
 db.notify_trig.belongsTo(db.notify_grp, {foreignKey: 'notify_trig_grp_id', targetKey: 'notify_trig_grp_id'});
+db.notify_object.hasMany(db.notify_trig, {foreignKey: 'notify_object_id', targetKey: 'notify_object_id'});
+db.notify_trig.belongsTo(db.notify_object, {foreignKey: 'notify_object_id', targetKey: 'notify_object_id'});
 db.users.hasMany(db.user_inbox_settings, {foreignKey: 'u_id', targetKey: 'u_id'});
 db.user_inbox_settings.belongsTo(db.users, {foreignKey: 'u_id', targetKey: 'u_id'});
 db.campaigns.belongsTo(db.brands, {foreignKey: 'cr_co_id', targetKey: 'cr_co_id'});
@@ -210,6 +219,9 @@ db.survey.hasMany(db.survey_question_answers, {foreignKey: 'sr_id', targetKey: '
 db.survey_question_answers.belongsTo(db.survey_questions, {foreignKey: 'srq_id', targetKey: 'srq_id'});
 db.survey_questions.hasMany(db.survey_question_answers, {foreignKey: 'srq_id', targetKey: 'srq_id'});
 
+db.survey_user_complete.belongsTo(db.survey, {foreignKey: 'sr_id', targetKey: 'sr_id'});
+db.survey.hasMany(db.survey_user_complete, {foreignKey: 'sr_id', targetKey: 'sr_id'});
+
 db.survey_submissions.belongsTo(db.survey, {foreignKey: 'srs_sr_id', targetKey: 'sr_id'});
 db.survey.hasMany(db.survey_submissions, {foreignKey: 'srs_sr_id', targetKey: 'sr_id'});
 
@@ -231,6 +243,11 @@ db.content_report_category.hasMany(db.content_report_user, {foreignKey: 'content
 db.content_report.hasOne(db.content_report_moderate, {foreignKey: 'content_report_id', targetKey: 'content_report_id'});
 db.content_report_moderate.belongsTo(db.content_report, {foreignKey: 'content_report_id', targetKey: 'content_report_id'});
 
+db.content_report.belongsTo(db.page_location, {foreignKey: 'content_report_page_id', targetKey: 'page_id'});
+db.reward_center.belongsTo(db.page_location, {foreignKey: 'reward_center_location_id', targetKey: 'page_id'});
+
+
+db.task_caption.belongsTo(db.user_profile, {foreignKey: 'task_caption_user_id', targetKey: 'u_id'});
 db.bonus_usr.belongsTo(db.user_profile, {foreignKey: 'bonus_usr_id', targetKey: 'u_id'});
 db.energy.belongsTo(db.user_profile, {foreignKey: 'energy_userid', targetKey: 'u_id'});
 db.energy_award.belongsTo(db.user_profile, {foreignKey: 'energy_userid', targetKey: 'u_id'});

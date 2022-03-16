@@ -66,8 +66,6 @@ module.exports = app => {
    *                            type: integer
    *                        reward_center_location_id:
    *                            type: integer
-   *                        reward_center_location_name:
-   *                            type: integer
    *                        reward_center_reward_type:
    *                            type: integer
    *                        reward_center_reward_trigger_id:
@@ -118,7 +116,7 @@ module.exports = app => {
    *           required: false
    *           schema:
    *              type: string
-   *              example: reward_center_name,reward_center_owner_id,reward_center_location_id,reward_center_location_name,reward_center_reward_type,reward_center_reward_trigger_id # Example of a parameter value
+   *              example: reward_center_name,reward_center_owner_id,reward_center_location_id,reward_center_reward_type,reward_center_reward_trigger_id # Example of a parameter value
    *         - name: sortOrder
    *           in: query
    *           required: false

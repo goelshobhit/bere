@@ -69,6 +69,136 @@ module.exports = app => {
    */
   router.post("/brandscore_task",auth, BrandScore.AddBrandScoreTask);
 
+   	/**
+   * @swagger
+   * /api/brandscore_task/{brandScoreId}:
+   *   put:
+   *     requestBody:
+   *        required: false
+   *        content:
+   *            application/json:
+   *                schema:
+   *                    type: object
+   *                    properties:
+   *                        brandscore_brand_id:
+   *                            type: integer
+   *                        brandscore_task_id:
+   *                            type: integer
+   *                        brandscore_user_id:
+   *                            type: integer
+   *                        brandscore_task_reach_count:
+   *                            type: integer
+   *                        brandscore_task_comments_count:
+   *                            type: integer
+   *                        brandscore_task_pics_count:
+   *                            type: integer
+   *                        brandscore_task_video_count:
+   *                            type: integer
+   *                        brandscore_task_likes_count:
+   *                            type: integer
+   *                        brandscore_task_hashtag_name:
+   *                            type: string
+   *                        brandscore_task_tot_tickets_count:
+   *                            type: integer
+   *                        brandscore_task_name:
+   *                            type: string
+   *                        brandscore_task_award_unlock:
+   *                            type: integer
+   *                        brandscore_task_award_lock:
+   *                            type: integer
+   *                        brandscore_task_award_limit_count:
+   *                            type: integer
+   *                        brandscore_score_count:
+   *                            type: integer
+   *     tags:
+   *       - Brand Score
+   *     description: Update new Brand Score Task Detail
+   *     produces:
+   *       - application/json
+   *     responses:
+   *       201:
+   *         description: Update new Brand Score Task Detail
+   *       422:
+   *         description: validation errors
+   *       500:
+   *         description: Internal server error
+   *       401:
+   *          description: Unauthorized
+   *          content:
+   *              application/json:
+   *                  schema:
+   *                      type: object
+   *                      properties:
+   *                          message:
+   *                              type: string
+   *                              example: Authorisation Required
+   */
+  router.put("/brandscore_task/:brandScoreId",auth, BrandScore.updateBrandScoreTask);
+
+  // Retrieve all Brandscore task
+    /**
+     * @swagger
+     * /api/brandscore_task:
+     *   get:
+     *     parameters:
+     *         - name: taskId
+     *           in: query
+     *           required: false
+     *           schema:
+     *              type: integer
+     *         - name: brandId
+     *           in: query
+     *           required: false
+     *           schema:
+     *              type: integer
+     *         - name: userId
+     *           in: query
+     *           required: false
+     *           schema:
+     *              type: integer
+     *         - name: pageNumber
+     *           in: query
+     *           required: false
+     *           schema:
+     *              type: integer
+     *         - name: sortBy
+     *           in: query
+     *           required: false
+     *           schema:
+     *              type: string
+     *              example: brandscore_id,brandscore_brand_id,brandscore_task_id,brandscore_task_reach_count,brandscore_task_comments_count,brandscore_task_pics_count,brandscore_task_video_count,brandscore_task_likes_count,brandscore_task_name,brandscore_task_tot_tickets_count    # Example of a parameter value
+     *         - name: sortOrder
+     *           in: query
+     *           required: false
+     *           schema:
+     *              type: string
+     *              example: ASC,DESC    # Example of a parameter value
+     *         - name: sortVal
+     *           in: query
+     *           required: false
+     *           schema:
+     *              type: string
+     *     tags:
+     *       - Brand Score
+     *     description: Returns all BrandScore Task
+     *     produces:
+     *       - application/json
+     *     responses:
+     *       200:
+     *         description: A list of BrandScore Task
+     *       401:
+     *          description: Unauthorized
+     *          content:
+     *              application/json:
+     *                  schema:
+     *                      type: object
+     *                      properties:
+     *                          message:
+     *                              type: string
+     *                              example: Authorisation Required
+     */
+    router.get('/brandscore_task', auth, BrandScore.brandScoreTasklisting)
+
   	/**
    * @swagger
    * /api/brandscore_engagement_type:
@@ -596,137 +726,7 @@ module.exports = app => {
     */
 
    router.put("/brandscore_increase/:brandscoreIncreaseId",auth,BrandScore.updateIncreaseBrandScore)
-
-  	/**
-   * @swagger
-   * /api/brandscore_task/{brandScoreId}:
-   *   put:
-   *     requestBody:
-   *        required: false
-   *        content:
-   *            application/json:
-   *                schema:
-   *                    type: object
-   *                    properties:
-   *                        Brand Id:
-   *                            type: integer
-   *                        Task Id:
-   *                            type: integer
-   *                        User Id:
-   *                            type: integer
-   *                        Reach Count:
-   *                            type: integer
-   *                        Comments Count:
-   *                            type: integer
-   *                        Pics Count:
-   *                            type: integer
-   *                        Video Count:
-   *                            type: integer
-   *                        Likes Count:
-   *                            type: integer
-   *                        Hashtag Name:
-   *                            type: string
-   *                        Total Tickets Count:
-   *                            type: integer
-   *                        Task Name:
-   *                            type: string
-   *                        Award Unlock:
-   *                            type: integer
-   *                        Award Lock:
-   *                            type: integer
-   *                        Award Limit Count:
-   *                            type: integer
-   *                        Score Count:
-   *                            type: integer
-   *     tags:
-   *       - Brand Score
-   *     description: Update new Brand Score Task Detail
-   *     produces:
-   *       - application/json
-   *     responses:
-   *       201:
-   *         description: Update new Brand Score Task Detail
-   *       422:
-   *         description: validation errors
-   *       500:
-   *         description: Internal server error
-   *       401:
-   *          description: Unauthorized
-   *          content:
-   *              application/json:
-   *                  schema:
-   *                      type: object
-   *                      properties:
-   *                          message:
-   *                              type: string
-   *                              example: Authorisation Required
-   */
-  router.put("/brandscore_task/:brandScoreId",auth, BrandScore.updateBrandScoreTask);
-
-  // Retrieve all Brandscore task
-    /**
-     * @swagger
-     * /api/brandscore_task:
-     *   get:
-     *     parameters:
-     *         - name: taskId
-     *           in: query
-     *           required: false
-     *           schema:
-     *              type: integer
-     *         - name: brandId
-     *           in: query
-     *           required: false
-     *           schema:
-     *              type: integer
-     *         - name: userId
-     *           in: query
-     *           required: false
-     *           schema:
-     *              type: integer
-     *         - name: pageNumber
-     *           in: query
-     *           required: false
-     *           schema:
-     *              type: integer
-     *         - name: sortBy
-     *           in: query
-     *           required: false
-     *           schema:
-     *              type: string
-     *              example: brandscore_id,brandscore_brand_id,brandscore_task_id,brandscore_task_reach_count,brandscore_task_comments_count,brandscore_task_pics_count,brandscore_task_video_count,brandscore_task_likes_count,brandscore_task_name,brandscore_task_tot_tickets_count    # Example of a parameter value
-     *         - name: sortOrder
-     *           in: query
-     *           required: false
-     *           schema:
-     *              type: string
-     *              example: ASC,DESC    # Example of a parameter value
-     *         - name: sortVal
-     *           in: query
-     *           required: false
-     *           schema:
-     *              type: string
-     *     tags:
-     *       - Brand Score
-     *     description: Returns all BrandScore Task
-     *     produces:
-     *       - application/json
-     *     responses:
-     *       200:
-     *         description: A list of BrandScore Task
-     *       401:
-     *          description: Unauthorized
-     *          content:
-     *              application/json:
-     *                  schema:
-     *                      type: object
-     *                      properties:
-     *                          message:
-     *                              type: string
-     *                              example: Authorisation Required
-     */
-    router.get('/brandscore_task', auth, BrandScore.brandScoreTasklisting)
-  
+ 
   /**
    * @swagger
    * /api/brandscore:
@@ -780,6 +780,8 @@ module.exports = app => {
    *                            type: string
    *                        Score Decrease Del Post:
    *                            type: integer
+   *                        Brandscore Unlock:
+   *                            type: integer
    *     tags:
    *       - Brand Score
    *     description: Add new Brand Score Detail
@@ -816,47 +818,49 @@ module.exports = app => {
    *                schema:
    *                    type: object
    *                    properties:
-   *                        Brand Id:
+   *                        brandscore_brand_id:
    *                            type: integer
-   *                        Task Id:
+   *                        brandscore_task_id:
    *                            type: integer
-   *                        User Id:
+   *                        brandscore_user_id:
    *                            type: integer
-   *                        Reach Score:
+   *                        brandscore_task_reach_score:
    *                            type: integer
-   *                        Comments Score:
+   *                        brandscore_task_comments_score:
    *                            type: integer
-   *                        Pics Count Score:
+   *                        brandscore_task_pics_count_score:
    *                            type: integer
-   *                        Video Count Score:
+   *                        brandscore_task_video_count_score:
    *                            type: integer
-   *                        Likes Count Score:
+   *                        brandscore_task_likes_count_score:
    *                            type: integer
-   *                        Hashtag Name Score:
+   *                        brandscore_task_hashtag_name_score:
    *                            type: string
-   *                        Total Tickets Count Score:
+   *                        brandscore_task_tot_tickets_count_score:
    *                            type: integer
-   *                        Task Name:
+   *                        brandscore_task_name:
    *                            type: string
-   *                        Award lock Count Score:
+   *                        brandscore_task_award_lock_count_score:
    *                            type: integer
-   *                        Award Limit Count:
+   *                        brandscore_task_award_limit_count:
    *                            type: integer
-   *                        Score Total Count:
+   *                        brandscore_score_total_count:
    *                            type: integer
-   *                        Riddim Reach:
+   *                        riddim_reach:
    *                            type: integer
-   *                        Riddim Engagment:
+   *                        riddim_engagment:
    *                            type: integer
-   *                        Share Off Riddim:
+   *                        share_off_riddim:
    *                            type: integer
-   *                        Post Deletion:
+   *                        post_deletion:
    *                            type: integer
-   *                        Brand Vote:
+   *                        brand_vote:
    *                            type: integer
-   *                        Video Uploaded:
+   *                        video_uploaded:
    *                            type: string
-   *                        Score Decrease Del Post:
+   *                        score_decrease_del_post:
+   *                            type: integer
+   *                        brandscore_unlock:
    *                            type: integer
    *     tags:
    *       - Brand Score

@@ -500,6 +500,32 @@ module.exports = app => {
 	*         description: Please enter valid user details
 	*/
 	router.post("/users/forgetpassword", Users.forgetPassword);
+		/**
+	* @swagger
+	* /api/users/forgetpasswordmandrill:
+	*   post:
+	*     requestBody:
+	*        required: true
+	*        content:
+	*            application/json:
+	*                schema:
+	*                    type: object
+	*                    properties:
+	*                        email:
+	*                            type: string
+	*     tags:
+	*       - Users
+	*     description: Forgot password
+	*     security:  []
+	*     produces:
+	*       - application/json
+	*     responses:
+	*       200:
+	*         description: New password generated successfully and mail send
+	*       403:
+	*         description: Please enter valid user details
+	*/
+	router.post("/users/forgetpasswordmandrill", Users.forgetPasswordUsingMandrill);
 	/**
 	* @swagger
 	* /api/users/changepassword:
@@ -567,6 +593,34 @@ module.exports = app => {
 	*         description: Exit
 	*/
 	router.post("/users/check_email", Users.checkUserExits);
+
+		/**
+	* @swagger
+	* /api/users/check_username:
+	*   post:
+	*     requestBody:
+	*        required: true
+	*        content:
+	*            application/json:
+	*                schema:
+	*                    type: object
+	*                    properties:
+	*                        username:
+	*                            type: string
+	*     tags:
+	*       - Users
+	*     description: check username
+	*     security:  []
+	*     produces:
+	*       - application/json
+	*     responses:
+	*       400:
+	*         description: Already Exist
+	*       200:
+	*         description: Not Exist
+	*/
+	router.post("/users/check_username", Users.checkUserNameExists);
+
   /**
 	* @swagger
 	* /api/users/send_email_verify:
@@ -983,6 +1037,51 @@ module.exports = app => {
 	*                              example: Authorisation Required
 	*/
 	router.post("/users/debit_transaction", auth, Users.user_debit_transactions);
+
+	/**
+   * @swagger
+   * /api/user_deactivate_hide_account/{userID}:
+   *   put:
+   *     requestBody:
+   *        required: false
+   *        content:
+   *            application/json:
+   *                schema:
+   *                    type: object
+   *                    properties:
+   *                        u_action:
+   *                            type: integer
+   *                            example: "1: Hide User,2: Unhide User,3: Deactivate Account,4: Activate Account"
+   *     parameters:
+   *         - name: userID
+   *           in: path
+   *           required: true
+   *           schema:
+   *              type: string
+   *     tags:
+   *       - Users
+   *     description: Update user dectivate or hidden status
+   *     produces:
+   *       - application/json
+   *     responses:
+   *       201:
+   *         description: Users updated
+   *       422:
+   *         description: validation errors
+   *       500:
+   *         description: Internal server error
+   *       401:
+   *          description: Unauthorized
+   *          content:
+   *              application/json:
+   *                  schema:
+   *                      type: object
+   *                      properties:
+   *                          message:
+   *                              type: string
+   *                              example: Authorisation Required
+   */
+  router.put("/user_deactivate_hide_account/:userID",auth, Users.userDeactivateOrHide);
 	
     app.use("/api", router);
 };

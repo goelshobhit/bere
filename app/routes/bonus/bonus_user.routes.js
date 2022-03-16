@@ -111,13 +111,13 @@ module.exports = app => {
      *                schema:
      *                    type: object
      *                    properties:
-     *                        Bonus User Id:
+     *                        bonus_usr_id:
      *                            type: integer
-     *                        Bonus user Reddim Level:
+     *                        bonus_usr_riddim_level:
      *                            type: integer
-     *                        Bonus user Followers riddim:
+     *                        bonus_usr_history_not_won:
      *                            type: integer
-     *                        Bonus User History Not Won:
+     *                        bonus_usr_followers_riddim:
      *                            type: integer
      *     tags:
      *       - Bonus User

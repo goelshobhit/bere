@@ -28,6 +28,8 @@ module.exports = app => {
      *                        Content Report Owner Id:
      *                            type: integer
      *                            required: true
+     *                        Content Report Page Id:
+     *                            type: integer
      *                        Content Report Reason:
      *                            type: string
      *     tags:

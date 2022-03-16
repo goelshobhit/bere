@@ -38,6 +38,8 @@ module.exports = app => {
    *                           type: integer
    *                        Brand Id:
    *                           type: integer
+   *                        Notify Object Id:
+   *                           type: integer
    *     tags:
    *       - Notify Triggers
    *     description: Add new Notify Trigger
@@ -95,6 +97,8 @@ module.exports = app => {
    *                           type: integer
    *                        cr_co_id:
    *                           type: integer
+   *                        notify_object_id:
+   *                           type: integer
    *     parameters:
    *         - name: notifyTrigId
    *           in: path
@@ -140,7 +144,7 @@ module.exports = app => {
    *           required: false
    *           schema:
    *              type: string
-   *              example: notify_trig_id,notify_event_id,notify_method,notify_type,notify_trig_pushalert,notify_trig_msg,notify_trig_grp_id,notify_group_name,notify_send_date,notify_ack,notify_trig_status,notify_trig_push_id,cr_co_id # Example of a parameter value
+   *              example: notify_trig_id,notify_event_id,notify_method,notify_type,notify_trig_pushalert,notify_trig_msg,notify_trig_grp_id,notify_group_name,notify_send_date,notify_ack,notify_trig_status,notify_trig_push_id,cr_co_id,notify_object_id # Example of a parameter value
    *         - name: sortOrder
    *           in: query
    *           required: false
