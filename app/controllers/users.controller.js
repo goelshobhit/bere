@@ -157,18 +157,22 @@ exports.createNewUser = async (req, res) => {
 			});
             audit_log.saveAuditLog(data.u_id,'add','user_login',data.u_id,data.dataValues);
 		if(req.body["User email"]){
-		const encryptedID = cryptr.encrypt(data.u_id);
-		const vlink=process.env.SITE_API_URL+'users/verify_email/'+encryptedID;
-		var templateBody=template.mt_body;
-		templateBody=templateBody.replace("[CNAME]", req.body["User email"]);
-		templateBody=templateBody.replace("[VLINK]", vlink);
-        const message = {
-            from: "Socialbrands1@gmail.com",
-            to: req.body["User email"],
-            subject: template.mt_subject,
-            html: templateBody
-        };
-        mailer.sendMail(message);
+            try {
+                const encryptedID = cryptr.encrypt(data.u_id);
+                const vlink=process.env.SITE_API_URL+'users/verify_email/'+encryptedID;
+                var templateBody=template.mt_body;
+                templateBody=templateBody.replace("[CNAME]", req.body["User email"]);
+                templateBody=templateBody.replace("[VLINK]", vlink);
+                const message = {
+                    from: "Socialbrands1@gmail.com",
+                    to: req.body["User email"],
+                    subject: template.mt_subject,
+                    html: templateBody
+                };
+                mailer.sendMail(message);
+            } catch (error) {
+                console.log(error);
+            }
 		}
             res.status(201).send({			    
                 message: "User Added Successfully",
@@ -361,6 +365,7 @@ exports.updateUser = async (req, res) => {
 				u_id: id
 			}
 		});
+        try {
 		const encryptedID = cryptr.encrypt(id);
 		const vlink=process.env.SITE_API_URL+'users/verify_email/'+encryptedID;
 		var templateBody=template.mt_body;
@@ -373,6 +378,9 @@ exports.updateUser = async (req, res) => {
             html: templateBody
         };
         mailer.sendMail(message);
+    } catch (error) {
+        console.log(error);
+    }
 		res.status(200).send({
 			u_id:id,
             message: "Email verification Send to email"
@@ -855,6 +863,7 @@ exports.forgetPassword = async (req, res) => {
         }).then(data => {
             res.status(200).end();
         });
+        try {
         const template = await mail_templates.findOne({
         where: {
             mt_name: 'forget_password'
@@ -870,6 +879,9 @@ exports.forgetPassword = async (req, res) => {
             html: templateBody
         };
         mailer.sendMail(message);
+    } catch (error) {
+        console.log(error);
+    }
     }
 };
 
@@ -1014,6 +1026,7 @@ exports.checkUserExits = async (req, res) => {
 		   });
 		   return;
 		}else{
+            try {
 		const template = await mail_templates.findOne({
 			where: {
 			mt_name: 'verify_email'
@@ -1031,6 +1044,9 @@ exports.checkUserExits = async (req, res) => {
 				html: templateBody
 			};
         mailer.sendMail(message);
+    } catch (error) {
+        console.log(error);
+    }
 		res.status(200).send({
             message: "Already Exist and not verified"
 		    });
@@ -1097,6 +1113,7 @@ exports.emailVerifyMail = async (req, res) => {
 		   });
 		   return;
 		}else{
+            try {
 		const template = await mail_templates.findOne({
 			where: {
 			mt_name: 'verify_email'
@@ -1115,6 +1132,12 @@ exports.emailVerifyMail = async (req, res) => {
 				html: templateBody
 			};
         mailer.sendMail(message);
+    } catch (error) {
+        res.status(500).send({
+            message: "Email error"
+		    });
+		   return;
+    }
             res.status(200).send({
             message: "Email send"
 		    });
