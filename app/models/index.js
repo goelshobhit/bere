@@ -346,4 +346,4 @@ db.brandscore_increase.belongsTo(db.brandscore_engagement_type, {foreignKey: 'ev
 
 db.migrator = migrator;
 db.seeder = seeder;
-module.exports = db;+
+module.exports = db;
