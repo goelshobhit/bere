@@ -280,6 +280,7 @@ require("./app/routes/faq.routes")(app);
 require("./app/routes/tips.routes")(app);
 require("./app/routes/terms_conditions.routes")(app);
 require("./app/routes/autocomplete_place.routes")(app);
+require("./app/routes/users_invitation.routes")(app);
 server.listen(PORT, function () {
   console.log(`Server is running on port ${PORT}.`)
 });
