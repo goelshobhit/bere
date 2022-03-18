@@ -1180,6 +1180,39 @@ exports.listingContest = async (req, res) => {
  */
 exports.userTasksState = async (req, res) => {
     const Uid = req.header(process.env.UKEY_HEADER || "x-api-key");
+    var invitation_options = {
+        order: [
+            ['users_invitation_id', 'DESC']
+        ],
+        attributes: ["users_invitation_recipient_user_id","users_invitation_object_id", "users_invitation_action_id", "users_invitation_page_id"],
+        where: {}
+    };
+    
+      invitation_options['where'] = {
+        users_invitation_user_id: Uid
+    }
+    const user_invitation_listing = await db.users_invitation.findAll(invitation_options);
+    var bonus_task_data = {};
+    var survey_data = {};
+    var all_user_ids = [];
+    var all_bonus_task_userids = [];
+    if (user_invitation_listing.length) {
+        for (var user_invitation_key in user_invitation_listing) {
+            if (user_invitation_listing[user_invitation_key].users_invitation_object_id == 1 ) {    // survey
+                survey_data[user_invitation_listing[user_invitation_key].users_invitation_recipient_user_id] = user_invitation_listing[user_invitation_key].users_invitation_action_id;
+            }
+            if (user_invitation_listing[user_invitation_key].users_invitation_object_id == 5 ) {    // bonus task
+                bonus_task_data[user_invitation_listing[user_invitation_key].users_invitation_recipient_user_id] = user_invitation_listing[user_invitation_key].users_invitation_action_id;
+            }
+        }
+        var user_ids = Object.keys(survey_data);
+        all_user_ids = user_ids.concat(Uid);
+        var bonus_user_ids = Object.keys(bonus_task_data);
+        all_bonus_task_userids = bonus_user_ids.concat(Uid);
+    } else {
+        all_user_ids = [Uid];
+        all_bonus_task_userids = [Uid];
+    }
     var options = {
         attributes: [["sr_hashtags", "task_hashtag"],["sr_enddate_time", "task_endtime"], "sr_title"],
         where: {}
@@ -1190,7 +1223,7 @@ exports.userTasksState = async (req, res) => {
          attributes:[["sr_id", "task_event_id"],["sr_completed", "task_status"],["sr_uid", "user_id"]],
           where : {
             sr_completed: 0,
-            sr_uid: Uid
+            sr_uid: all_user_ids
           }
         }
       ]
@@ -1209,7 +1242,12 @@ exports.userTasksState = async (req, res) => {
             surveyDetail['task_title'] = survey_user_state[survey_key].dataValues.sr_title;
             surveyDetail['task_status'] = survey_user_state[survey_key].dataValues.survey_user_completes[0].dataValues.task_status;
             surveyDetail['user_id'] = survey_user_state[survey_key].dataValues.survey_user_completes[0].dataValues.user_id;
-            surveyDetail['task_hashtag'] = hashtag.join(hashtag);
+            if (hashtag.length && Array.isArray(hashtag)) {
+                surveyDetail['task_hashtag'] = hashtag.join();
+            } else {
+                surveyDetail['task_hashtag'] = '';
+            }
+           
             surveyDetail['task_endtime'] = survey_user_state[survey_key].dataValues.task_endtime;
             surveyDetail['task_event_type'] = 'Survey';
             surveyData.push(surveyDetail);
@@ -1218,7 +1256,7 @@ exports.userTasksState = async (req, res) => {
     }
     var bonus_options = {
         attributes: [["bonus_task_id", "task_event_id"], ["bonus_task_completion_date", "task_title"], ["bonus_task_is_finished", "task_status"],["bonus_task_usr_id", "user_id"],["bonus_task_hashtag", "task_hashtag"],["bonus_task_completion_date", "task_endtime"]],
-        where: {bonus_task_is_finished: 0}
+        where: {bonus_task_is_finished: 0, bonus_task_usr_id : all_bonus_task_userids}
     };
     const bonus_task_result = await db.bonus_task.findAll(bonus_options);
     if (bonus_task_result.length) {
