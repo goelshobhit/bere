@@ -52,6 +52,7 @@ db.Sequelize = Sequelize;
 db.sequelize = sequelize;
 
 //Modesl/Tables
+db.users_invitation = require("./users_invitation.model")(sequelize, Sequelize);
 db.tips = require("./tips.model")(sequelize, Sequelize);
 db.terms_conditions = require("./terms_conditions.model")(sequelize, Sequelize);
 db.faq = require("./frequently_asked_questions.model")(sequelize, Sequelize);
@@ -254,6 +255,9 @@ db.energy_award.belongsTo(db.user_profile, {foreignKey: 'energy_userid', targetK
 db.voting.belongsTo(db.user_profile, {foreignKey: 'voter_usr_id', targetKey: 'u_id'});
 db.voting.belongsTo(db.brands, {foreignKey: 'voting_brand_id', targetKey: 'cr_co_id'});
 
+db.users_invitation.belongsTo(db.user_profile, {foreignKey: 'users_invitation_user_id', targetKey: 'u_id'});
+db.users_invitation.belongsTo(db.user_profile, {foreignKey: 'users_invitation_recipient_user_id', targetKey: 'u_id'});
+db.users_invitation.belongsTo(db.page_location, {foreignKey: 'users_invitation_page_id', targetKey: 'page_id'});
 
 db.brand_score.belongsTo(db.user_profile, {foreignKey: 'brandscore_user_id', targetKey: 'u_id'});
 db.brand_score.belongsTo(db.tasks, {foreignKey: 'brandscore_task_id', targetKey: 'ta_task_id'});
