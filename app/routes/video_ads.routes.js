@@ -77,34 +77,32 @@ module.exports = app => {
    *                schema:
    *                    type: object
    *                    properties:
-   *                        Brand Id:
+   *                        cr_co_id:
    *                           type: integer
-   *                        Ads Name:
+   *                        video_ads_name:
    *                           type: integer
-   *                        Ads Url:
+   *                        video_ads_url:
    *                           type: integer
-   *                        Ads Timestamp:
-   *                            format: date-time
-   *                            example: 2020-09-30
-   *                        Ads Lenght Secs:
+   *                        video_ads_timestamp:
+   *                           format: date-time
+   *                           example: 2020-09-30
+   *                        video_ads_status:
    *                           type: integer
-   *                        Ads Status:
-   *                           type: integer
-   *                        Ads Brand Tier:
+   *                        video_ads_brand_tier:
    *                            type: integer
-   *                        Ads Campaign Type:
+   *                        video_ads_campaign_type:
    *                             type: integer
-   *                        Ads Budget:
+   *                        video_ads_budget:
    *                             type: integer
-   *                        Budget Left:
+   *                        video_budget_left:
    *                           type: integer
-   *                        Tokens Given:
+   *                        video_tokens_given:
    *                           type: integer
-   *                        Stars Given:
+   *                        video_stars_given:
    *                           type: integer
-   *                        Tokens Given Value:
+   *                        video_tokens_given_value:
    *                           type: integer
-   *                        Stars Given Value:
+   *                        video_stars_given_value:
    *                           type: integer
    *     parameters:
    *         - name: videoAdsId
@@ -224,6 +222,46 @@ module.exports = app => {
    */
     router.get("/video_ads/:videoAdsId",auth, VideoAds.videoAdsDetails);
   /**
+   * @swagger
+   * /api/video_ads/brand/{crCoId}:
+   *   get:
+   *     parameters:
+   *         - name: crCoId
+   *           in: path
+   *           required: true
+   *           schema:
+   *              type: string
+   *         - name: pageSize
+   *           in: query
+   *           required: false
+   *           schema:
+   *              type: integer
+   *         - name: pageNumber
+   *           in: query
+   *           required: false
+   *           schema:
+   *              type: integer
+   *     tags:
+   *       - Video Ads
+   *     description: Retrieve a single Video Ad with crCoId
+   *     produces:
+   *       - application/json
+   *     responses:
+   *       200:
+   *         description: Details of a Video Ad
+   *       401:
+   *          description: Unauthorized
+   *          content:
+   *              application/json:
+   *                  schema:
+   *                      type: object
+   *                      properties:
+   *                          message:
+   *                              type: string
+   *                              example: Authorisation Required
+   */
+   router.get("/video_ads/brand/:crCoId",auth, VideoAds.videoAdsDetailsUsingCrCoId);
+    /**
    * @swagger
    * /api/video_ads/{videoAdsId}:
    *   delete:

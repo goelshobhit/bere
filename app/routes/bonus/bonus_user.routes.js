@@ -13,6 +13,8 @@ module.exports = app => {
      *                schema:
      *                    type: object
      *                    properties:
+     *                        Bonus User Id:
+     *                            type: integer
      *                        Bonus user Reddim Level:
      *                            type: integer
      *                        Bonus user Followers riddim:
@@ -109,11 +111,13 @@ module.exports = app => {
      *                schema:
      *                    type: object
      *                    properties:
-     *                        Bonus user Reddim Level:
+     *                        bonus_usr_id:
      *                            type: integer
-     *                        Bonus user Followers riddim:
+     *                        bonus_usr_riddim_level:
      *                            type: integer
-     *                        Bonus User History Not Won:
+     *                        bonus_usr_history_not_won:
+     *                            type: integer
+     *                        bonus_usr_followers_riddim:
      *                            type: integer
      *     tags:
      *       - Bonus User
@@ -170,5 +174,46 @@ module.exports = app => {
    *                              example: Authorisation Required
    */
   router.delete("/bonus_user/:bonusUserId", auth, BonusUser.deleteBonusUser); 
+
+   /**
+   * @swagger
+   * /api/bonus_user/{bonusUserId}:
+   *   get:
+   *     parameters:
+   *         - name: bonusUserId
+   *           in: path
+   *           required: true
+   *           schema:
+   *              type: integer
+   *         - name: pageSize
+   *           in: query
+   *           required: false
+   *           schema:
+   *              type: integer
+   *         - name: pageNumber
+   *           in: query
+   *           required: false
+   *           schema:
+   *              type: integer
+   *     tags:
+   *       - Bonus User
+   *     description: Retrieve a single Bonus User Detail with bonusUserId
+   *     produces:
+   *       - application/json
+   *     responses:
+   *       200:
+   *         description: Details of a Bonus User
+   *       401:
+   *          description: Unauthorized
+   *          content:
+   *              application/json:
+   *                  schema:
+   *                      type: object
+   *                      properties:
+   *                          message:
+   *                              type: string
+   *                              example: Authorisation Required
+   */
+  router.get("/bonus_user/:bonusUserId",auth, BonusUser.bonusUserDetails);
   app.use("/api", router);
 };

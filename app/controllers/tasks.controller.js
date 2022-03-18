@@ -14,9 +14,12 @@ const sharp = require('sharp');
 const common = require("../common");
 var ffmpeg = require('fluent-ffmpeg');
 const User_profile = db.user_profile;
+const levelTask = db.level_task;
+const sequelize= require('sequelize');
 const {
     validationResult
 } = require("express-validator");
+
 /**
  * Function to add new task
  * @param  {object}  req expressJs request object
@@ -145,6 +148,13 @@ exports.listing = async (req, res) => {
                     ['ucpl_added_by', 'ASC']
                 ]
             }
+            /*,
+            {
+                model: db.brand_task_closed,
+                attributes:
+                    ["brand_task_closed"],
+                required: false
+            } */
         ],
         limit: pageSize,
         offset: skipCount,
@@ -255,6 +265,46 @@ exports.jsonlisting = async (req, res) => {
         totalRecords: total,
         media_token: common.imageToken(Uid)
     });
+}
+
+/**
+ * Function to get Tasks details 
+ * @param  {object}  req expressJs request object
+ * @param  {object}  res expressJs response object
+ * @return {Promise}
+ */
+
+exports.taskJsonDetail = async (req, res) => {
+    console.log(req.query.pageSize + "pageSize");
+    const taskID = req.params.taskID;
+    var todayDate = new Date();
+    todayDate.toLocaleString('en-US', { timeZone: 'Asia/Calcutta' })
+    const task = await taskJson.findOne({
+        attributes: [["tj_type", "task_type"], ["tj_task_id", "task_id"], ["tj_data", "task_data"], ["tj_status", "task_status"]],
+        where: {
+            tj_data: {
+                ta_start_date: {
+                    [Op.lte]: todayDate
+                },
+                ta_end_date: {
+                    [Op.gte]: todayDate
+                }
+            },
+            tj_task_id: taskID,
+            is_autotakedown: 0
+        }
+    });
+    if (!task) {
+        res.status(500).send({
+            message: "task not found"
+        });
+        return
+    }
+    res.status(200).send({
+        data: task,
+        taskDetails: common.taskStatusArr()[task.task_status],
+        media_token: common.imageToken(taskID)
+    })
 }
 
 /**
@@ -707,6 +757,64 @@ exports.mediaUpload = async (req, res) => {
                 message: "file uploaded successfully"
             });
         }
+        if (req.body.tblAlias == "level_task") {
+            const levelTaskID = req.body.actionID;
+            const updateVals = {
+                [media_action]: req.files[0].filename
+            };
+            levelTask.update(updateVals, {
+                where: {
+                    level_task_id: levelTaskID
+                }
+            }).then(num => {
+                if (num == 1) {
+                    res.status(200).send({
+                        message: "task banner image uploaded successfully."
+                    });
+                    return;
+                } else {
+                    res.status(400).send({
+                        message: `Cannot update task banner image with id=${levelTaskID}. Maybe task level was not found or req.body is empty!`
+                    });
+                    return;
+                }
+            }).catch(err => {
+                logger.log("error", err + ":Error updating task banner image with id=" + levelTaskID);
+                res.status(500).send({
+                    message: err + " : task level id -" + levelTaskID
+                });
+                return;
+            });
+        }
+        if (req.body.tblAlias == "shipping_confirmation") {
+            const scId = req.body.actionID;
+            const updateVals = {
+                [media_action]: req.files[0].filename
+            };
+            levelTask.update(updateVals, {
+                where: {
+                    sc_id: scId
+                }
+            }).then(num => {
+                if (num == 1) {
+                    res.status(200).send({
+                        message: "shipping confirmation product image uploaded successfully."
+                    });
+                    return;
+                } else {
+                    res.status(400).send({
+                        message: `Cannot update shipping confirmation product image with id=${scId}. Maybe task level was not found or req.body is empty!`
+                    });
+                    return;
+                }
+            }).catch(err => {
+                logger.log("error", err + ":Error updating shipping confirmation product image with id=" + scId);
+                res.status(500).send({
+                    message: err + " : shipping confirmation id -" + scId
+                });
+                return;
+            });
+        }
         if (req.body.tblAlias == "user") {
             const userID = req.body.actionID;
             console.log(req.body);
@@ -748,6 +856,108 @@ exports.mediaUpload = async (req, res) => {
             message: `Error when trying upload many files: ${error}`
         });
     }
+}
+
+/**
+ * Function to upload media multiple files
+ * @param  {object}  req expressJs request object
+ * @param  {object}  res expressJs response object
+ * @return {Promise}
+ */
+// exports.imagesUpload = async (req, res) => {
+//     try {
+//         var files_name = [];
+//         var key_files = {};
+//         var x = [];
+//         let updateData = {};
+//         await upload(req, res);
+//         if (!req.body.media_key) {
+//             return res.status(400).send({
+//                 message: "media_key is required"
+//             });
+//         }
+//         if (req.files.length <= 0) {
+//             return res.status(400).send({
+//                 message: "At least one file required"
+//             });
+//         }
+//         for (i in req.files) {
+//             files_name.push(req.files[i].filename);
+//             const match = ["audio/mp3", "audio/mpeg", "audio/wav", "audio/mp4", "audio/aac", "audio/amr", "audio/flac", "audio/ts", "audio/m4a", "audio/mkv", "audio/ogg", "video/mov", "video/mp4", "video/3gp", "video/mkv", "video/webm", "video/m4v", "video/avi", "video/ts"];
+//             if (match.indexOf(req.files[i].mimetype) === -1) {
+//                 sharp(req.files[i].path).resize(465, 360).withMetadata().toFile('uploads/thumbnails/' + req.files[i].filename, (err, resizeImage) => {
+//                     if (err) {
+//                         logger.log("error", err + ":Error creating thumbnail for " + req.body.actionID + req.body.tblAlias);
+//                     }
+//                 });
+//             } else {
+//                 ffmpeg(req.files[i].path)
+//                     .on('end', function () {
+//                         console.log('thumbnail');
+//                     })
+//                     .on('error', function (err) {
+//                         logger.log("error", err + ":Error creating video thumbnail for " + req.body.actionID + req.body.tblAlias);
+//                     })
+//                     .screenshots({
+//                         count: 1,
+//                         folder: 'uploads/thumbnails',
+//                         filename: req.files[i].filename
+//                     });
+//             }
+//         }
+//         key_files[req.body.media_key] = files_name
+//         res.status(200).send({
+//             files_names: key_files
+//         });
+//         return;
+//     } catch (error) {
+//         if (error.code === "LIMIT_UNEXPECTED_FILE") {
+//             return res.status(400).send({
+//                 message: "Too many files to upload."
+//             });
+//         }
+//         return res.status(500).send({
+//             message: `Error when trying upload many files: ${error}`
+//         });
+//     }
+// }
+
+exports.imagesUpload = async (req, res) => {
+    try {
+        const myFile = req.file
+        return res.status(200).send({
+            req: req.file
+          })
+        if (!req.body.media_key) {
+            return res.status(400).send({
+                message: "media_key is required"
+            });
+        }
+        if (!req.file) {
+            return res.status(400).send({
+                message: "At least one file required"
+            });
+        }
+        myFile.originalname = `${Date.now()}-${myFile.originalname}`;
+        const imageUrl = await uploadImage(myFile)
+        const thumbnail = {
+            fieldname: myFile.fieldname,
+            originalname: `thumbnail/${myFile.originalname}`,
+            encoding: myFile.encoding,
+            mimetype: myFile.mimetype,
+            buffer: await sharp(myFile.buffer).resize(465, 360).toBuffer()
+          }
+        const imagethumbnailUrl = await uploadImage(thumbnail);
+        res.status(200).json({
+            message: "Upload was successful",
+            data: imageUrl,
+            thumbnail: imagethumbnailUrl
+          })
+      } catch (error) {
+        return res.status(500).send({
+                        message: `Error when trying  file: ${error}`
+                    });
+      }
 }
 /**
  * Function to add new contest
@@ -961,3 +1171,63 @@ exports.listingContest = async (req, res) => {
         totalRecords: total
     });
 }
+
+/**
+ * Function to get user all task which are in progress or pending. 
+ * @param  {object}  req expressJs request object
+ * @param  {object}  res expressJs response object
+ * @return {Promise}
+ */
+exports.userTasksState = async (req, res) => {
+    const Uid = req.header(process.env.UKEY_HEADER || "x-api-key");
+    var options = {
+        attributes: [["sr_hashtags", "task_hashtag"],["sr_enddate_time", "task_endtime"], "sr_title"],
+        where: {}
+    };
+    options['include'] = [
+        {
+          model: db.survey_user_complete,
+         attributes:[["sr_id", "task_event_id"],["sr_completed", "task_status"],["sr_uid", "user_id"]],
+          where : {
+            sr_completed: 0,
+            sr_uid: Uid
+          }
+        }
+      ]
+    
+    options['where'] = {
+        sr_status: 1
+    }
+    const survey_user_state = await db.survey.findAll(options);
+    var surveyData = [];
+    if (survey_user_state.length) {
+        for (var survey_key in survey_user_state) {
+            var surveyDetail = {};
+            var hashtag = survey_user_state[survey_key].dataValues.task_hashtag;
+            surveyDetail['task_event_id'] = survey_user_state[survey_key].dataValues.survey_user_completes[0].dataValues.task_event_id;
+            
+            surveyDetail['task_title'] = survey_user_state[survey_key].dataValues.sr_title;
+            surveyDetail['task_status'] = survey_user_state[survey_key].dataValues.survey_user_completes[0].dataValues.task_status;
+            surveyDetail['user_id'] = survey_user_state[survey_key].dataValues.survey_user_completes[0].dataValues.user_id;
+            surveyDetail['task_hashtag'] = hashtag.join(hashtag);
+            surveyDetail['task_endtime'] = survey_user_state[survey_key].dataValues.task_endtime;
+            surveyDetail['task_event_type'] = 'Survey';
+            surveyData.push(surveyDetail);
+
+        }
+    }
+    var bonus_options = {
+        attributes: [["bonus_task_id", "task_event_id"], ["bonus_task_completion_date", "task_title"], ["bonus_task_is_finished", "task_status"],["bonus_task_usr_id", "user_id"],["bonus_task_hashtag", "task_hashtag"],["bonus_task_completion_date", "task_endtime"]],
+        where: {bonus_task_is_finished: 0}
+    };
+    const bonus_task_result = await db.bonus_task.findAll(bonus_options);
+    if (bonus_task_result.length) {
+        for (var bonus_task_key in bonus_task_result) {
+            bonus_task_result[bonus_task_key].dataValues.task_event_type = "Bonus Task";
+        }
+    }
+    const result = bonus_task_result.concat(surveyData);
+    res.status(200).send({
+        data: result
+    });
+};

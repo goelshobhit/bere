@@ -18,9 +18,9 @@ module.exports = (sequelize, Sequelize) => {
       allowNull: false,
       type: Sequelize.INTEGER
     },
-    srs_srq_answer: {
+    srs_srq_answer_id: {
       allowNull: false,
-      type: Sequelize.TEXT
+      type: Sequelize.JSONB
     },
     srs_rewards_star: {
       allowNull: false,

@@ -113,37 +113,43 @@ exports.videoAdsDetails = async(req, res) => {
     });
 };
 /**
+ * Function to get single Video Ads
+ * @param  {object}  req expressJs request object
+ * @param  {object}  res expressJs response object
+ * @return {Promise}
+ */
+ exports.videoAdsDetailsUsingCrCoId = async(req, res) => {
+    const crCoId = req.params.crCoId;
+    var options = {
+        where: {
+            cr_co_id: crCoId
+        }
+    };
+    const videoAds = await VideoAds.findOne(options);
+    if(!videoAds){
+        res.status(500).send({
+            message: "Video Ads not found"
+        });
+        return
+    }
+    res.status(200).send({
+        data: videoAds
+    });
+};
+/**
  * Function to update single Video Ads
  * @param  {object}  req expressJs request object
  * @param  {object}  res expressJs response object
  * @return {Promise}
  */
 exports.updateVideoAds = async(req, res) => {
-    const body = req.body
     const id = req.params.videoAdsId;
     var VideoAdsDetails = await VideoAds.findOne({
         where: {
             video_ads_id: id
         }
     });
-    const videoAds = {
-        "cr_co_id": body.hasOwnProperty("Brand Id") ? body["Brand Id"] : 0,
-        "video_ads_name": body.hasOwnProperty("Ads Name") ? body["Ads Name"] : 0,
-        "video_ads_url": body.hasOwnProperty("Ads Url") ? body["Ads Url"] : "",
-        "video_ads_timestamp": body.hasOwnProperty("Ads Timestamp") ? body["Ads Timestamp"] : "",
-        "video_ads_lenght_secs": body.hasOwnProperty("Ads Lenght Secs") ? body["Ads Lenght Secs"] : 0,
-        "video_ads_status": body.hasOwnProperty("Ads Status") ? body["Ads Status"] : 0,
-        "video_ads_public": body.hasOwnProperty("Ads Public") ? body["Ads Public"] : 0,
-        "video_ads_brand_tier": body.hasOwnProperty("Ads Brand Tier") ? body["Ads Brand Tier"] : 0,
-        "video_ads_campaign_type": body.hasOwnProperty("Ads Campaign Type") ? body["Ads Campaign Type"] : 0,
-        "video_ads_budget": body.hasOwnProperty("Ads Budget") ? body["Ads Budget"] : 0,
-        "video_budget_left": body.hasOwnProperty("Budget Left") ? body["Budget Left"] : 0,
-        "video_tokens_given": body.hasOwnProperty("Tokens Given") ? body["Tokens Given"] : 0,
-        "video_stars_given": body.hasOwnProperty("Stars Given") ? body["Stars Given"] : 0,
-        "video_tokens_given_value": body.hasOwnProperty("Tokens Given Value") ? body["Tokens Given Value"] : 0,
-        "video_stars_given_value": body.hasOwnProperty("Stars Given Value") ? body["Stars Given Value"] : 0,
-        }
-    VideoAds.update(videoAds, {
+    VideoAds.update(req.body, {
 		returning:true,
         where: {
             video_ads_id: id

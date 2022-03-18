@@ -90,7 +90,7 @@ exports.updateBonusItemSummary = async (req, res) => {
     "bonus_summary_stars_balance": body.hasOwnProperty("Bonus Summary Stars Balance") ? body["Bonus Summary Stars Balance"] : '0',
     "bonus_summary_set_token_balance": body.hasOwnProperty("Bonus Summary Set Token Balance") ? body["Bonus Summary Set Token Balance"] : '0'
   }
-  bonus_summary.update(bonusSummaryData, {
+  bonus_summary.update(body, {
     returning: true,
     where: {
       bonus_summary_id: id

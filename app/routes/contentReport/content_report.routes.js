@@ -17,6 +17,12 @@ module.exports = app => {
      *                        Content Report Cat Id:
      *                            type: integer
      *                            required: true
+     *                        Content Id:
+     *                            type: integer
+     *                            required: true
+     *                        Content Type:
+     *                            type: string
+     *                            required: true
      *                        Content Report Name:
      *                            type: string
      *                        Content Report Type:
@@ -28,6 +34,8 @@ module.exports = app => {
      *                        Content Report Owner Id:
      *                            type: integer
      *                            required: true
+     *                        Content Report Page Id:
+     *                            type: integer
      *                        Content Report Reason:
      *                            type: string
      *     tags:
@@ -70,7 +78,7 @@ module.exports = app => {
      *            required: false
      *            schema:
      *                type: string
-     *                example: content_report_id,content_report_cat_id,content_report_name,content_report_type,content_report_cat_type_id,content_report_cat_owner_id,content_report_cat_reporter_id
+     *                example: content_id,content_type,content_report_id,content_report_cat_id,content_report_name,content_report_type,content_report_cat_type_id,content_report_cat_owner_id,content_report_cat_reporter_id
      *          - name: sortOrder
      *            in: query
      *            required: false

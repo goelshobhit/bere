@@ -58,13 +58,15 @@ module.exports = app => {
      *                schema:
      *                    type: object
      *                    properties:
-     *                        Bonus SM Name:
+     *                        bonus_sm_name:
      *                            type: string
-     *                        Bonus SM Share Timestamp:
+     *                        bonus_sm_share_user_id:
      *                            type: string
-     *                        Bonus SM Share Ack:
+     *                        bonus_sm_share_timestamp:
      *                            type: string
-     *                        Bonus Sm Share Url:
+     *                        bonus_sm_share_ack:
+     *                            type: string
+     *                        bonus_sm_share_url:
      *                            type: string
      *     tags:
      *       - Bonus Social Media Share

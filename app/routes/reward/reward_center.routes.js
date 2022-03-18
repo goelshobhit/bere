@@ -60,17 +60,15 @@ module.exports = app => {
    *                schema:
    *                    type: object
    *                    properties:
-   *                        Center Name:
+   *                        reward_center_name:
    *                            type: string
-   *                        Owner Id:
+   *                        reward_center_owner_id:
    *                            type: integer
-   *                        Location Id:
+   *                        reward_center_location_id:
    *                            type: integer
-   *                        Location Name:
+   *                        reward_center_reward_type:
    *                            type: integer
-   *                        Reward Type:
-   *                            type: integer
-   *                        Trigger Id:
+   *                        reward_center_reward_trigger_id:
    *                            type: integer
    *     parameters:
    *         - name: rewardCenterId
@@ -118,7 +116,7 @@ module.exports = app => {
    *           required: false
    *           schema:
    *              type: string
-   *              example: reward_center_name,reward_center_owner_id,reward_center_location_id,reward_center_location_name,reward_center_reward_type,reward_center_reward_trigger_id # Example of a parameter value
+   *              example: reward_center_name,reward_center_owner_id,reward_center_location_id,reward_center_reward_type,reward_center_reward_trigger_id # Example of a parameter value
    *         - name: sortOrder
    *           in: query
    *           required: false

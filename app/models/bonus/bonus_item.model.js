@@ -14,6 +14,15 @@ module.exports = (sequelize, Sequelize) => {
       allowNull: false,
       type: Sequelize.STRING(255)
     },
+    bonus_item_description: {
+      type: Sequelize.TEXT
+    },
+    bonus_item_icons: {
+      type: Sequelize.TEXT
+    },
+    bonus_product_images: {
+      type: Sequelize.TEXT
+    },
     bonus_item_qty: {
       allowNull: false,
       type: Sequelize.INTEGER

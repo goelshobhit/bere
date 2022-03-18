@@ -8,6 +8,7 @@ const adminSetting=db.admin_setting;
 const mail_templates=db.mail_templates;
 const accountBalance=db.account_balance;
 const ledgerTransactions = db.ledger_transactions;
+const mandrillapp = require("../middleware/mandrillapp.js");
 const mailer = require("../middleware/mailer.js");
 const Op = db.Sequelize.Op;
 const upload = require("../middleware/upload");
@@ -86,7 +87,6 @@ exports.createNewUser = async (req, res) => {
             u_email: req.body["User email"].toLowerCase()
         }
     });
-	
     if (UserDetails) {		
         res.status(200).send({
             message: "Aleary Registered"
@@ -100,7 +100,6 @@ exports.createNewUser = async (req, res) => {
             u_ymail_id: req.body["Ymail id"]
         }
     });
-	
     if (UserDetails) {		
         res.status(200).send({
             message: "Aleary Registered"
@@ -113,6 +112,19 @@ exports.createNewUser = async (req, res) => {
             mt_name: 'verify_email'
         }
     });
+    
+    const UserDetails = await Users.findOne({
+        where: {
+            u_login: req.body["User login"].toLowerCase()
+        }
+    });
+    if (UserDetails) {		
+        res.status(400).send({
+            message: "Username Aleary Exist"
+		});
+        return;
+    }
+    
     const data = {
 		"u_acct_type": body.hasOwnProperty("Account type") ? req.body["Account type"] : 0,
 		"u_referer_id": body.hasOwnProperty("Referer id") ? req.body["Referer id"] : 0,
@@ -145,18 +157,22 @@ exports.createNewUser = async (req, res) => {
 			});
             audit_log.saveAuditLog(data.u_id,'add','user_login',data.u_id,data.dataValues);
 		if(req.body["User email"]){
-		const encryptedID = cryptr.encrypt(data.u_id);
-		const vlink=process.env.SITE_API_URL+'users/verify_email/'+encryptedID;
-		var templateBody=template.mt_body;
-		templateBody=templateBody.replace("[CNAME]", req.body["User email"]);
-		templateBody=templateBody.replace("[VLINK]", vlink);
-        const message = {
-            from: "Socialbrands1@gmail.com",
-            to: req.body["User email"],
-            subject: template.mt_subject,
-            html: templateBody
-        };
-        mailer.sendMail(message);
+            try {
+                const encryptedID = cryptr.encrypt(data.u_id);
+                const vlink=process.env.SITE_API_URL+'users/verify_email/'+encryptedID;
+                var templateBody=template.mt_body;
+                templateBody=templateBody.replace("[CNAME]", req.body["User email"]);
+                templateBody=templateBody.replace("[VLINK]", vlink);
+                const message = {
+                    from: "Socialbrands1@gmail.com",
+                    to: req.body["User email"],
+                    subject: template.mt_subject,
+                    html: templateBody
+                };
+                mailer.sendMail(message);
+            } catch (error) {
+                console.log(error);
+            }
 		}
             res.status(201).send({			    
                 message: "User Added Successfully",
@@ -209,7 +225,7 @@ exports.listing = async (req, res) => {
         order: [
             [sortBy, sortOrder]
         ],
-		attributes:["u_id","u_referer_id","u_acct_type","u_act_sec","u_email","u_active","u_fb_username","u_fb_id","u_gmail_username","u_gmail_id","u_ymail_username","u_ymail_id","u_pref_login","u_instagram_username","u_instagram_id","u_created_at","u_updated_at","u_email_verify_status"],
+		attributes:["u_id","u_referer_id","u_acct_type","u_act_sec","u_email","u_active","u_fb_username","u_fb_id","u_gmail_username","u_gmail_id","u_ymail_username","u_ymail_id","u_pref_login","u_instagram_username","u_instagram_id","u_created_at","u_updated_at","u_email_verify_status", "is_user_deactivated", "is_user_hidden"],
         where: {
 			u_active:true
 		}
@@ -229,6 +245,8 @@ exports.listing = async (req, res) => {
             }
     }
     options['where']['is_autotakedown'] = 0;
+    options['where']['is_user_deactivated'] = 0;
+    options['where']['is_user_hidden'] = 0;
     var total = await Users.count({
         where: options['where']
     });
@@ -281,7 +299,7 @@ exports.userDetail = async (req, res) => {
 			],
 		}
 		],
-		attributes:["u_id","u_login","u_referer_id","u_acct_type","u_act_sec","u_email","u_active","u_pref_login","u_created_at","u_updated_at","u_email_verify_status",
+		attributes:["u_id","u_login","u_referer_id","u_acct_type","u_act_sec","u_email","u_active","u_pref_login","u_created_at","u_updated_at","u_email_verify_status", "is_user_deactivated", "is_user_hidden",
 		[db.sequelize.literal('(SELECT COUNT(*) FROM user_fan_following WHERE user_fan_following.faf_by = user_login.u_id)'), 'total_following'],
 		[db.sequelize.literal('(SELECT COUNT(*) FROM user_fan_following WHERE user_fan_following.faf_to = user_login.u_id )'), 'total_fans'],
 		[db.sequelize.literal('(SELECT COUNT(*)  FROM user_fan_following WHERE user_fan_following.faf_by = '+Uid+' and user_fan_following.faf_to = user_login.u_id)'), 'followed_by_me'],
@@ -289,6 +307,7 @@ exports.userDetail = async (req, res) => {
 		],
         where: {
             u_id: userID,
+            is_user_hidden: 0
         }
     });
     if (!User) {
@@ -297,6 +316,12 @@ exports.userDetail = async (req, res) => {
         });
         return
     }
+    if (User && User.is_user_deactivated == 1) {
+		res.status(500).send({
+            message: "User Is deactivated"
+        });
+        return
+	}
 	if(User && User.u_active!=true){
 		res.status(500).send({
             message: "User details not found"
@@ -340,6 +365,7 @@ exports.updateUser = async (req, res) => {
 				u_id: id
 			}
 		});
+        try {
 		const encryptedID = cryptr.encrypt(id);
 		const vlink=process.env.SITE_API_URL+'users/verify_email/'+encryptedID;
 		var templateBody=template.mt_body;
@@ -352,12 +378,16 @@ exports.updateUser = async (req, res) => {
             html: templateBody
         };
         mailer.sendMail(message);
+    } catch (error) {
+        console.log(error);
+    }
 		res.status(200).send({
 			u_id:id,
             message: "Email verification Send to email"
 		});
         return;
     }
+   
 	if(req.body['u_active']!==undefined){
 		console.log(req.body['u_active']+"U Active")
 	updateData = { ...updateData, u_deactive_me: req.header(process.env.UKEY_HEADER || "x-api-key") };
@@ -386,9 +416,10 @@ exports.updateUser = async (req, res) => {
 	if(req.body.u_login){
 	const UserDetails = await Users.findOne({
         where: {
-            u_login: req.body.u_login
+            u_login: req.body.u_login.toLowerCase()
         }
     });	
+    
 	const Userprofile = await User_profile.findOne({
         where: {
             u_display_name: req.body.u_login
@@ -742,11 +773,18 @@ default:
             required:false
 		}
 		],
-		attributes:["u_id","u_referer_id","u_acct_type","u_act_sec","u_email","u_active","u_fb_username","u_fb_id","u_gmail_username","u_gmail_id","u_ymail_username","u_ymail_id","u_pref_login","u_instagram_username","u_instagram_id","u_created_at","u_updated_at","u_email_verify_status"],
+		attributes:["u_id","u_referer_id","u_acct_type","u_act_sec","u_email","u_active","u_fb_username","u_fb_id","u_gmail_username","u_gmail_id","u_ymail_username","u_ymail_id","u_pref_login","u_instagram_username","u_instagram_id","u_created_at","u_updated_at","u_email_verify_status", "is_user_deactivated", "is_user_hidden"],
         where: {
             u_id: uID
         }
     });
+    /* Account Deactivated Check */
+    if (UserDetails.is_user_deactivated == 1) {
+        res.status(404).send({
+            message: "Your account is deactivated"
+        });
+        return;
+    }
 	if(UserDetails.u_active!==undefined && UserDetails.u_active!==true){
 	let updateData = { u_deactive_me: uID,u_active:true };
 	Users.update(updateData,
@@ -825,6 +863,7 @@ exports.forgetPassword = async (req, res) => {
         }).then(data => {
             res.status(200).end();
         });
+        try {
         const template = await mail_templates.findOne({
         where: {
             mt_name: 'forget_password'
@@ -840,6 +879,61 @@ exports.forgetPassword = async (req, res) => {
             html: templateBody
         };
         mailer.sendMail(message);
+    } catch (error) {
+        console.log(error);
+    }
+    }
+};
+
+/**
+ * [forgetPassword Function to change password of a user
+ * @param  {Object}  req expressJs request Object
+ * @param  {Object}  res expressJs request Object
+ * @return {Promise}
+ */
+ exports.forgetPasswordUsingMandrill = async (req, res) => {
+    if (!req.body.email) {
+        res.status(400).send({
+            message: "Email can not be empty!"
+        });
+        return;
+    }
+    var emailId = req.body.email.toLowerCase();
+	const resultData = await Users.authenticate(emailId,'u_email');
+	
+    if (!resultData) {
+        res.status(403).send({
+            message: " please enter valid user details"
+        });
+    } else {
+        var newpassword = crypto.randomBytes(8).toString("base64");
+		console.log(newpassword);
+        var new_salt = Users.generateSalt();
+        var gen_password = Users.encryptPassword(newpassword, new_salt);
+        const userData = {
+            u_pass: gen_password,
+            u_salt: new_salt
+        };
+        logger.log("info", "Forget email for emailId: "+emailId+" with password :"+newpassword);
+    
+        Users.update(userData, {
+            where: {
+                u_email: emailId
+            }
+        }).then(data => {
+            res.status(200).end();
+        });
+        const templateContent = [
+            {
+                "name": "new_code",
+                "content": newpassword
+            },
+            {
+                "name": "email",
+                "content": emailId
+            }
+        ]
+        mandrillapp.sendAnEmailUsingTemplate("forget-code", templateContent, emailId);
     }
 };
 /**
@@ -932,6 +1026,7 @@ exports.checkUserExits = async (req, res) => {
 		   });
 		   return;
 		}else{
+            try {
 		const template = await mail_templates.findOne({
 			where: {
 			mt_name: 'verify_email'
@@ -949,6 +1044,9 @@ exports.checkUserExits = async (req, res) => {
 				html: templateBody
 			};
         mailer.sendMail(message);
+    } catch (error) {
+        console.log(error);
+    }
 		res.status(200).send({
             message: "Already Exist and not verified"
 		    });
@@ -961,6 +1059,40 @@ exports.checkUserExits = async (req, res) => {
 	});
 	return;
 };
+
+/**
+ * check username exist or not
+ * @param  {[object]}  req request object
+ * @param  {[object]}  res response object
+ * @return {Promise}
+ */
+exports.checkUserNameExists = async (req, res) => {
+    if (!req.body["username"]) {
+        res.status(400).send({
+            msg:
+                "username is required"
+        });
+        return;
+    }
+    const UserDetails = await Users.findOne({
+        where: {
+            u_login: req.body["username"].toLowerCase()
+        },
+		attributes:["u_id"]
+    });	
+    if (UserDetails) {	
+        res.status(400).send({
+            message: "Already Exist"
+		   });
+		  return;
+        
+    }
+	res.status(200).send({
+	message: "Not Exist"
+	});
+	return;
+};
+
 /**
  * [check email or phone exits
  * @param  {[object]}  req request object
@@ -981,6 +1113,7 @@ exports.emailVerifyMail = async (req, res) => {
 		   });
 		   return;
 		}else{
+            try {
 		const template = await mail_templates.findOne({
 			where: {
 			mt_name: 'verify_email'
@@ -999,6 +1132,12 @@ exports.emailVerifyMail = async (req, res) => {
 				html: templateBody
 			};
         mailer.sendMail(message);
+    } catch (error) {
+        res.status(500).send({
+            message: "Email error"
+		    });
+		   return;
+    }
             res.status(200).send({
             message: "Email send"
 		    });
@@ -1515,4 +1654,74 @@ exports.user_debit_transactions = async (req, res) => {
 			});
 			return ;
 		});
+}
+
+/**
+ * Function to deactivate or hide unhide account
+ * @param  {object}  req expressJs request object
+ * @param  {object}  res expressJs response object
+ * @return {Promise}
+ */
+exports.userDeactivateOrHide = async (req, res) => {
+    const id = req.params.userID;
+	if(!id){
+		res.status(404).send({
+            message: "User with id not found"
+        });
+		return;
+    }
+	if(!req.body.u_action){
+		res.status(404).send({
+            message: "u_action is Required"
+        });
+		return;
+    }
+    let updateData = {};
+    if (req.body.u_action == 1) {
+        updateData = { is_user_hidden: 1 };
+    } else if (req.body.u_action == 2) {
+        updateData = { is_user_hidden: 0 };
+    } else if (req.body.u_action == 3) {
+        updateData = { is_user_deactivated: 1 };
+    } else if (req.body.u_action == 4) {
+        updateData = { is_user_deactivated: 0 };
+    }
+    const UserDetails = await Users.findOne({
+        where: {
+            u_id: id
+        }
+    });	
+    if (UserDetails.is_user_deactivated == 1 && UserDetails.is_user_hidden == 0 && req.body.u_action == 1) {
+        res.status(404).send({
+            message: "Account is deactive, Cound not update to hidden."
+        });
+		return;
+    }
+    if (UserDetails && updateData != undefined) {
+        Users.update(updateData, {
+            returning: true,
+            where: {
+                u_id: id
+            }
+        }).then(function([ num, [result] ]) {
+            if (num == 1) {
+                audit_log.saveAuditLog(req.header(process.env.UKEY_HEADER || "x-api-key"),'update','Users',id,result.dataValues,UserDetails);
+              
+                res.status(200).send({
+                    message: "User updated successfully."
+                });
+            } else {
+                res.status(400).send({
+                    message: `Cannot update Users with id=${id}. Maybe user was not found or req.body is empty!`
+                });
+            }
+        }).catch(err => {
+            logger.log("error", err+":updating User with id=" + id);
+            res.status(500).send({
+                message: err+"Error updating User with id=" + id
+            });
+            return;
+        });
+    }
+    
 }

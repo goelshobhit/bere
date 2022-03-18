@@ -5,6 +5,10 @@ module.exports = (sequelize, Sequelize) => {
             primaryKey: true,
             autoIncrement: true
         },
+        video_ads_id: {
+            type: Sequelize.INTEGER,
+            allowNull: false,
+        },
 		u_id: {
             type: Sequelize.INTEGER,
             allowNull: false,
@@ -19,7 +23,7 @@ module.exports = (sequelize, Sequelize) => {
         },
         video_ads_submit_timestamp: {
             type: Sequelize.STRING(255),
-            allowNull: false,
+            allowNull: true,
         },
         video_ads_submit_reward_ack: {
             type: Sequelize.INTEGER,

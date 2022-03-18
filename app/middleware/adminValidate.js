@@ -47,8 +47,7 @@ exports.validate = (method) => {
                 body('Brand ID', 'Invalid Brand').isNumeric(),
                 body('Survey title', 'Invalid Survey title').isLength({
                     min: 3
-                }).withMessage('Survey title must be of 3 characters long.'),
-                body('User Restriction', 'Invalid User Restriction').isNumeric()
+                }).withMessage('Survey title must be of 3 characters long.')
             ]
         }
         case 'create_survey_question': {
@@ -60,16 +59,27 @@ exports.validate = (method) => {
                 body('Question Status', 'Invalid Question Status').isNumeric()
             ]
         }
+        case 'create_survey_question_answer': {
+            return [
+                body('Survey ID', 'Invalid Survey').isNumeric(),
+                body('Survey Question Id', 'Invalid Survey').isNumeric(),
+                body('Question Answers', 'Invalid Survey Answer').isLength({
+                    min: 1
+                }).withMessage('Survey Answer must be Valid Array.')
+            ]
+        }
         case 'survey_submit': {
             return [
                 body('Survey ID', 'Invalid Survey').isNumeric(),
-                body('Question ID', 'Invalid Survey Question ID').isNumeric()
+                body('Question ID', 'Invalid Survey Question ID').isNumeric(),
+                body('Survey Answer Ids', 'Invalid Survey Answer Ids').isLength({
+                    min: 1
+                }).withMessage('Survey Answer Ids must be Valid Array.')
             ]
         }
         case 'survey_tracking': {
             return [
-                body('Survey ID', 'Invalid Survey').isNumeric(),
-                body('Survey Completed', 'Invalid Survey Completed').isNumeric()
+                body('Survey ID', 'Invalid Survey').isNumeric()
             ]
         }
     }

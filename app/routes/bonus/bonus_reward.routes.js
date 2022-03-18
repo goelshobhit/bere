@@ -29,10 +29,6 @@ module.exports = app => {
    *                            type: string
    *                        Confirmation Date:
    *                            type: string
-   *                        Video Url:
-   *                            type: integer
-   *                        Completion Date:
-   *                            type: integer
    *                        Additional Task Id:
    *                            type: integer
    *     tags:
@@ -70,27 +66,23 @@ module.exports = app => {
    *                schema:
    *                    type: object
    *                    properties:
-   *                        Bonus Summary:
+   *                        bonus_summary_id:
    *                            type: integer
-   *                        Bonus Set Id:
+   *                        bonus_rewards_bonus_setid:
    *                            type: integer
-   *                        User Id:
+   *                        bonus_rewards_usrid:
    *                            type: integer
-   *                        Item Id:
+   *                        bonus_rewards_item_id:
    *                            type: integer
-   *                        Item Name:
+   *                        bonus_rewards_item_name:
    *                            type: string
-   *                        Item Qty:
+   *                        bonus_rewards_item_qty:
    *                            type: integer
-   *                        Delivery Date:
+   *                        bonus_rewards_item_delivery_date:
    *                            type: string
-   *                        Confirmation Date:
+   *                        bonus_rewards_item_confirmation_date:
    *                            type: string
-   *                        Video Url:
-   *                            type: integer
-   *                        Completion Date:
-   *                            type: integer
-   *                        Additional Task Id:
+   *                        bonus_rewards_additional_task_id:
    *                            type: integer
    *     parameters:
    *         - name: bonusRewardsId

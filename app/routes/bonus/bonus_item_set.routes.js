@@ -15,15 +15,25 @@ module.exports = app => {
      *                    properties:
      *                        Bonus Set Brand Id:
      *                            type: integer
-     *                        Bonus Item id:
-     *                            type: integer
+     *                        Bonus Item ids:
+     *                            type: array
+     *                            items:
+     *                              oneOf:
+     *                               type: integer
+     *                            example: ["1","2"]
      *                        Bonus Set Item Name:
      *                            type: string
      *                        Bonus Set Item Qty:
      *                            type: integer
+     *                        Bonus Set Icons:
+     *                            type: string
+     *                        Bonus Set Images:
+     *                            type: string
      *                        Bonus Set Item Timestamp:
      *                            type: string
      *                        Bonus Set Status:
+     *                            type: integer
+     *                        Bonus Set Duration:
      *                            type: integer
      *     tags:
      *       - Bonus Item Set
@@ -61,17 +71,27 @@ module.exports = app => {
      *                schema:
      *                    type: object
      *                    properties:
-     *                        Bonus Set Brand Id:
+     *                        bonus_set_brand_id:
      *                            type: integer
-     *                        Bonus Item id:
-     *                            type: integer
-     *                        Bonus Set Item Name:
+     *                        bonus_item_id:
+     *                            type: array
+     *                            items:
+     *                              oneOf:
+     *                               type: integer
+     *                            example: ["1","2"]
+     *                        bonus_set_item_name:
      *                            type: string
-     *                        Bonus Set Item Qty:
+     *                        bonus_set_item_qty:
      *                            type: integer
-     *                        Bonus Set Item Timestamp:
+     *                        bonus_set_duration:
      *                            type: string
-     *                        Bonus Set Status:
+     *                        bonus_set_icons:
+     *                            type: string
+     *                        bonus_set_images:
+     *                            type: string
+     *                        bonus_set_item_timestamp:
+     *                            type: string
+     *                        bonus_set_status:
      *                            type: integer
      *     tags:
      *       - Bonus Item Set
@@ -136,6 +156,11 @@ module.exports = app => {
      *   get:
      *     parameters:
      *         - name: BonusSetId
+     *           in: query
+     *           required: false
+     *           schema:
+     *              type: integer
+     *         - name: BrandId
      *           in: query
      *           required: false
      *           schema:

@@ -42,6 +42,8 @@ module.exports = app => {
    *                           type: integer
    *                        Brand Id:
    *                           type: integer
+   *                        Notify Object Id:
+   *                           type: integer
    *     tags:
    *       - Sent Notify Triggers
    *     description: Add new Sent Notify Trigger
@@ -77,31 +79,33 @@ module.exports = app => {
    *                schema:
    *                    type: object
    *                    properties:
-   *                        Notify Trigger Id:
+   *                        notify_trig_id:
    *                           type: integer
-   *                        User Id:
+   *                        u_id:
    *                           type: integer
-   *                        Event Id:
+   *                        notify_event_id:
    *                           type: integer
-   *                        Method:
+   *                        notify_method:
    *                           type: integer
-   *                        Pushalert:
+   *                        notify_trig_pushalert:
    *                           type: integer
-   *                        Message:
+   *                        notify_trig_msg:
    *                           type: string
-   *                        Group Id:
+   *                        notify_trig_grp_id:
    *                           type: integer
-   *                        Group Name:
+   *                        notify_group_name:
    *                           type: integer
-   *                        Send Date:
+   *                        notify_send_date:
    *                           type: integer
-   *                        Ack:
+   *                        notify_ack:
    *                           type: integer
-   *                        Trigger Status:
+   *                        notify_trig_status:
    *                           type: integer
-   *                        Push Id:
+   *                        notify_trig_push_id:
    *                           type: integer
-   *                        Brand Id:
+   *                        cr_co_id:
+   *                           type: integer
+   *                        notify_object_id:
    *                           type: integer
    *     parameters:
    *         - name: notifySentTrigId
@@ -148,7 +152,7 @@ module.exports = app => {
    *           required: false
    *           schema:
    *              type: string
-   *              example: notify_sent_trig_id,u_id,notify_trig_id,notify_event_id,notify_method,notify_type,notify_trig_pushalert,notify_trig_msg,notify_trig_grp_id,notify_group_name,notify_send_date,notify_ack,notify_trig_status,notify_trig_push_id,cr_co_id # Example of a parameter value
+   *              example: notify_sent_trig_id,u_id,notify_trig_id,notify_event_id,notify_method,notify_type,notify_trig_pushalert,notify_trig_msg,notify_trig_grp_id,notify_group_name,notify_send_date,notify_ack,notify_trig_status,notify_trig_push_id,cr_co_id,notify_object_id # Example of a parameter value
    *         - name: sortOrder
    *           in: query
    *           required: false

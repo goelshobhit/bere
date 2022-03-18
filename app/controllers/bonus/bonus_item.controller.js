@@ -43,6 +43,34 @@ exports.bonusItemlisting = async (req, res) => {
     where: options['where']
   });
   const bonus_item_list = await bonus_item.findAll(options);
+  if (bonus_item_list) {
+    //var site_url = process.env.SITE_API_URL;
+    //var site_new_url = site_url.replace("/api", '');
+    for (const bonus_item_key in bonus_item_list) {
+      if (bonus_item_list[bonus_item_key].bonus_item_icons) {
+        var bonus_item_icons_arr = bonus_item_list[bonus_item_key].bonus_item_icons.split(",");
+        var icon_images = [];
+        if (bonus_item_icons_arr.length) {
+          for (const bonus_item_arr_key in bonus_item_icons_arr) {
+            icon_images.push(bonus_item_icons_arr[bonus_item_arr_key]);
+            //icon_images.push(site_new_url+bonus_item_icons_arr[bonus_item_arr_key]);
+          }
+        }
+        bonus_item_list[bonus_item_key].dataValues.bonus_item_icons = icon_images;
+      }
+      if (bonus_item_list[bonus_item_key].bonus_product_images) {
+        var bonus_product_images_arr = bonus_item_list[bonus_item_key].bonus_product_images.split(",");
+        var bonus_product_images = [];
+        if (bonus_product_images_arr.length) {
+          for (const bonus_item_arr_key in bonus_product_images_arr) {
+            bonus_product_images.push(bonus_product_images_arr[bonus_item_arr_key]);
+            //bonus_product_images.push(site_new_url+bonus_product_images_arr[bonus_item_arr_key]);
+          }
+        }
+        bonus_item_list[bonus_item_key].dataValues.bonus_product_images = bonus_product_images;
+      }
+    }
+  }
   res.status(200).send({
     data: bonus_item_list,
     totalRecords: total
@@ -68,9 +96,12 @@ exports.createBonusItem = async (req, res) => {
   var uid = req.header(process.env.UKEY_HEADER || "x-api-key");
   const data = {
     "bonus_item_brand_id": body.hasOwnProperty("Bonus Item Brand Id") ? req.body["Bonus Item Brand Id"] : "0",
-    "bonus_item_name": body.hasOwnProperty("Bonus Item Name") ? req.body["Bonus Item Name"] : "0",
-    "bonus_item_qty": body.hasOwnProperty("Bonus Item Qty") ? req.body["Bonus Item Qty"] : new Date().getTime(),
-    "bonus_item_remaining_qty": body.hasOwnProperty("Bonus Item Remaining Qty") ? req.body["Bonus Item Remaining Qty"] : "0",
+    "bonus_item_name": body.hasOwnProperty("Bonus Item Name") ? req.body["Bonus Item Name"] : "",
+    "bonus_item_description": body.hasOwnProperty("Bonus Item Description") ? req.body["Bonus Item Description"] : "",
+    "bonus_item_icons": body.hasOwnProperty("Bonus Item Icons") ? req.body["Bonus Item Icons"] : "",
+    "bonus_product_images": body.hasOwnProperty("Bonus Product Images") ? req.body["Bonus Product Images"] : "",
+    "bonus_item_qty": body.hasOwnProperty("Bonus Item Qty") ? req.body["Bonus Item Qty"] : 0,
+    "bonus_item_remaining_qty": body.hasOwnProperty("Bonus Item Remaining Qty") ? req.body["Bonus Item Remaining Qty"] : 0,
     "bonus_item_timestamp": body.hasOwnProperty("Bonus Item Timestamp") ? req.body["Bonus Item Timestamp"] : new Date().getTime()
   }
   bonus_item.create(data)
@@ -105,14 +136,7 @@ exports.updateBonusItem = async (req, res) => {
       bonus_item_id: id
     }
   });
-  const bonusItemData = {
-    "bonus_item_brand_id": body.hasOwnProperty("Bonus Item Brand Id") ? req.body["Bonus Item Brand Id"] : "0",
-    "bonus_item_name": body.hasOwnProperty("Bonus Item Name") ? req.body["Bonus Item Name"] : "0",
-    "bonus_item_qty": body.hasOwnProperty("Bonus Item Qty") ? req.body["Bonus Item Qty"] : new Date().getTime(),
-    "bonus_item_remaining_qty": body.hasOwnProperty("Bonus Item Remaining Qty") ? req.body["Bonus Item Remaining Qty"] : "0",
-    "bonus_item_timestamp": body.hasOwnProperty("Bonus Item Timestamp") ? req.body["Bonus Item Timestamp"] : new Date().getTime()
-  }
-  bonus_item.update(bonusItemData, {
+  bonus_item.update(body, {
     returning: true,
     where: {
       bonus_item_id: id

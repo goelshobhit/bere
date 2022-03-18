@@ -149,58 +149,12 @@ exports.rewardCenterDistDetails = async(req, res) => {
  */
 exports.updateRewardCenterDist = async(req, res) => {
     const id = req.params.rewardCenterDistId;
-    const body = req.body;
     var RewardCenterDistDetails = await RewardCenterDist.findOne({
         where: {
             reward_center_dist_id: id
         }
     });
-    const data = {
-        "reward_center_id": body.hasOwnProperty("Center Id") ? body["Center Id"] : 0,
-        "reward_center_dist_status": body.hasOwnProperty("Dist Status") ? body["Dist Status"] : 0,
-        "reward_center_name": body.hasOwnProperty("Center Name") ? body["Center Name"] : "",
-        "reward_center_dist_one_freq": body.hasOwnProperty("One Freq") ? body["One Freq"] : new Date(),
-        "reward_center_dist_one_total_token": body.hasOwnProperty("One Total Token") ? body["One Total Token"] : 0,
-        "reward_center_dist_one_segment_id": body.hasOwnProperty("Segment Id") ? body["Segment Id"] : "",
-        "reward_center_dist_one_name": body.hasOwnProperty("One Name") ? body["One Name"] : "",
-        "reward_center_dist_one_stars": body.hasOwnProperty("One Stars") ? body["One Stars"] : 0,
-        "reward_center_dist_one_stars_name": body.hasOwnProperty("Stars Name") ? body["Stars Name"] : "",
-        "reward_center_dist_one_stars_to_token": body.hasOwnProperty("Stars To Token") ? body["Stars To Token"] : 0,
-        "reward_center_dist_one_coins": body.hasOwnProperty("One Coins") ? body["One Coins"] : 0,
-        "reward_center_dist_one_coins_name": body.hasOwnProperty("Coins Name") ? body["Coins Name"] : "",
-        "reward_center_dist_one_coins_to_token": body.hasOwnProperty("Coins To Token") ? body["Coins To Token"] : 0,
-        "reward_center_dist_one_keys_name": body.hasOwnProperty("Keys Name") ? body["Keys Name"] : "",
-        "reward_center_dist_one_keys_to_token": body.hasOwnProperty("Keys To Token") ? body["Keys To Token"] : 0,
-        "reward_center_dist_one_booster": body.hasOwnProperty("One Booster") ? body["One Booster"] : 0,
-        "reward_center_dist_one_booster_name": body.hasOwnProperty("Booster Name") ? body["Booster Name"] : "",
-        "reward_center_dist_one_boster_to_token": body.hasOwnProperty("Boster To Token") ? body["Boster To Token"] : 0,
-        "reward_center_dist_one_card1_id": body.hasOwnProperty("Card 1 Id") ? body["Card 1 Id"] : 0,
-        "reward_center_dist_one_card2_id": body.hasOwnProperty("Card 2 Id") ? body["Card 2 Id"] : 0,
-        "reward_center_dist_one_card3_id": body.hasOwnProperty("Card 3 Id") ? body["Card 3 Id"] : 0,
-        "reward_center_dist_one_card4_id": body.hasOwnProperty("Card 4 Id") ? body["Card 4 Id"] : 0,
-        "reward_center_dist_one_card5_id": body.hasOwnProperty("Card 5 Id") ? body["Card 5 Id"] : 0,
-        "reward_center_dist_one_card6_id": body.hasOwnProperty("Card 6 Id") ? body["Card 6 Id"] : 0,
-        "reward_center_dist_one_card7_id": body.hasOwnProperty("Card 7 Id") ? body["Card 7 Id"] : 0,
-        "reward_center_dist_one_card1_name": body.hasOwnProperty("Card 1 Name") ? body["Card 1 Name"] : "",
-        "reward_center_dist_one_card2_name": body.hasOwnProperty("Card 2 Name") ? body["Card 2 Name"] : "",
-        "reward_center_dist_one_card3_name": body.hasOwnProperty("Card 3 Name") ? body["Card 3 Name"] : "",
-        "reward_center_dist_one_card4_name": body.hasOwnProperty("Card 4 Name") ? body["Card 4 Name"] : "",
-        "reward_center_dist_one_card5_name": body.hasOwnProperty("Card 5 Name") ? body["Card 5 Name"] : "",
-        "reward_center_dist_one_card6_name": body.hasOwnProperty("Card 6 Name") ? body["Card 6 Name"] : "",
-        "reward_center_dist_one_card7_name": body.hasOwnProperty("Card 7 Name") ? body["Card 7 Name"] : "",
-        "reward_center_dist_one_card1_value": body.hasOwnProperty("Card 1 Value") ? body["Card 1 Value"] : "",
-        "reward_center_dist_one_card2_value": body.hasOwnProperty("Card 2 Value") ? body["Card 2 Value"] : "",
-        "reward_center_dist_one_card3_value": body.hasOwnProperty("Card 3 Value") ? body["Card 3 Value"] : "",
-        "reward_center_dist_one_card4_value": body.hasOwnProperty("Card 4 Value") ? body["Card 4 Value"] : "",
-        "reward_center_dist_one_card5_value": body.hasOwnProperty("Card 5 Value") ? body["Card 5 Value"] : "",
-        "reward_center_dist_one_card6_value": body.hasOwnProperty("Card 6 Value") ? body["Card 6 Value"] : "",
-        "reward_center_dist_one_card7_value": body.hasOwnProperty("Card 7 Value") ? body["Card 7 Value"] : "",
-        "reward_center_dist_puzzle1_id": body.hasOwnProperty("Puzzle 1 Id") ? body["Puzzle 1 Id"] : 0,
-        "reward_center_distr_one_puzzle1_name": body.hasOwnProperty("Puzzle 1 Name") ? body["Puzzle 1 Name"] : "",
-        "reward_center_distr_one_puzzle1_value": body.hasOwnProperty("Puzzle 1 Value") ? body["Puzzle 1 Value"] : "",
-        "reward_center_spin_reward_id": body.hasOwnProperty("Spin Reward Id") ? body["Spin Reward Id"] : 0,
-    }
-    RewardCenterDist.update(data, {
+    RewardCenterDist.update(req.body, {
 		returning:true,
         where: {
             reward_center_dist_id: id

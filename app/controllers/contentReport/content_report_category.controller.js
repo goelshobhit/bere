@@ -117,13 +117,7 @@ exports.updateContentReportCategory = async (req, res) => {
     });
     return;
   }
-  const contentCategoryData = {
-    "content_report_cat_autotakedown": body.hasOwnProperty("Content Report Cat Autotakedown") ? body["Content Report Cat Autotakedown"] : 0,
-    "content_report_cat_name": body["Content Report Cat Name"],
-    "content_report_cat_hide": body.hasOwnProperty("Content Report Cat Hide") ? body["Content Report Cat Hide"] : 0,
-    "content_report_cat_usr_hide": body.hasOwnProperty("Content Report Cat Usr Hide") ? req.body["Content Report Cat Usr Hide"] : "0"
-  }
-  contentReportCategory.update(contentCategoryData, {
+  contentReportCategory.update(req.body, {
     returning: true,
     where: {
       content_report_cat_id: id

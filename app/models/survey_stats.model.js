@@ -14,9 +14,9 @@ module.exports = (sequelize, Sequelize) => {
       allowNull: false,
       type: Sequelize.INTEGER
     },
-    srq_answer: {
+    srq_answer_id: {
       allowNull: false,
-      type: Sequelize.TEXT
+      type: Sequelize.INTEGER
     },
     srq_answer_count: {
       allowNull: false,

@@ -10,6 +10,14 @@ module.exports = (sequelize, Sequelize) => {
       allowNull: false,
       type: Sequelize.INTEGER
     },
+    content_id: {
+      allowNull: false,
+      type: Sequelize.INTEGER
+    },
+    content_type: {
+      allowNull: false,
+      type: Sequelize.STRING
+    },
     content_report_name: {
       allowNull: false,
       type: Sequelize.STRING(255)
@@ -23,6 +31,9 @@ module.exports = (sequelize, Sequelize) => {
       type: Sequelize.INTEGER
     },
     content_report_owner_id: {
+      type: Sequelize.INTEGER
+    },
+    content_report_page_id: {
       type: Sequelize.INTEGER
     },
     content_report_reporter_id: {
