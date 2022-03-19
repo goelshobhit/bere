@@ -1,3 +1,15 @@
+var cluster = require('cluster');
+if (cluster.isMaster) {
+   var i = 0;
+   for (i; i< 4; i++){
+     cluster.fork();
+   }
+   cluster.on('exit', function(instance){
+      console.log('NodeJs Cluster: Instance ' + instance.id + ' went into an incident now an another instance will be created.');
+      cluster.fork();
+   });
+}
+else {
 const express = require("express");
 
 const bodyParser = require("body-parser");
@@ -123,6 +135,11 @@ app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 // simple route
 app.get("/", (req, res) => {
   res.json({ message: "Welcome to Social App api application." });
+});
+//global exception handler
+process.on('uncaughtException', function (err) {
+  console.log('Instance: This instance went into trouble and will be terminated then an another instance will be started');
+  console.log('Instance: There is an uncaught exception', err);
 });
 // simple schedule for task 
 const Op = db.Sequelize.Op;
@@ -287,3 +304,4 @@ server.listen(PORT, function () {
 });
 common.mkdirpath(appConfig[env].FILE_UPLOAD_DIR);
 common.mkdirpath('uploads/thumbnails');
+}
