@@ -30,7 +30,7 @@ exports.createRewardCenter = async(req, res) => {
         "reward_center_reward_trigger_id": body.hasOwnProperty("Trigger Id") ? body["Trigger Id"] : 0,
     }
     RewardCenter.create(data).then(data => {
-            audit_log.saveAuditLog(req.header(process.env.UKEY_HEADER || "x-api-key"),'add','todayTimeStamp',data.reward_center_id,data.dataValues);
+            audit_log.saveAuditLog(req.header(process.env.UKEY_HEADER || "x-api-key"),'add','reward_center',data.reward_center_id,data.dataValues);
             var rewardCenterDistData = body.hasOwnProperty("Reward Center Dists") ? body["Reward Center Dists"] : '';
             if (rewardCenterDistData.length) {
                 for (const rewardCenterDist in rewardCenterDistData) {
@@ -81,7 +81,7 @@ exports.createRewardCenter = async(req, res) => {
                         "reward_center_distr_one_puzzle1_value": rewardCenterDistDetail.hasOwnProperty("Puzzle 1 Value") ? rewardCenterDistDetail["Puzzle 1 Value"] : "",
                         "reward_center_spin_reward_id": rewardCenterDistDetail.hasOwnProperty("Spin Reward Id") ? rewardCenterDistDetail["Spin Reward Id"] : 0
                     }).then(reward_dist_data => {
-                        audit_log.saveAuditLog(req.header(process.env.UKEY_HEADER || "x-api-key"),'add','todayTimeStamp',reward_dist_data.reward_center_dist_id,reward_dist_data.dataValues);
+                        audit_log.saveAuditLog(req.header(process.env.UKEY_HEADER || "x-api-key"),'add','reward_center_dist',reward_dist_data.reward_center_dist_id,reward_dist_data.dataValues);
                     })
                         .catch(err => {
                             logger.log("error", "Some error occurred while creating the Reward Center Dist=" + err);
@@ -199,14 +199,64 @@ exports.updateRewardCenter = async(req, res) => {
             reward_center_id: id
         }
     });
-    RewardCenter.update(req.body, {
+    var requested_body = JSON.parse(JSON.stringify(req.body));
+    if (requested_body.hasOwnProperty('reward_center_dists')) {
+        delete requested_body['reward_center_dists'];
+    }
+    RewardCenter.update(requested_body, {
 		returning:true,
         where: {
             reward_center_id: id
         }
     }).then(function([ num, [result] ]) {
         if (num == 1) {
-            audit_log.saveAuditLog(req.header(process.env.UKEY_HEADER || "x-api-key"),'update','RewardCenter',id,result.dataValues,RewardCenterDetails);
+            audit_log.saveAuditLog(req.header(process.env.UKEY_HEADER || "x-api-key"),'update','reward_center',id,result.dataValues,RewardCenterDetails);
+            var reward_center_dists = req.body.hasOwnProperty("reward_center_dists") ? req.body["reward_center_dists"] : '';
+            if (reward_center_dists.length) {
+                for (const reward_center_dists_key in reward_center_dists) {
+                    var rewardCenterDistDetail = reward_center_dists[reward_center_dists_key];
+                    if (rewardCenterDistDetail['reward_center_dist_id'] != undefined) {
+                        
+                        var reward_center_dist_id = rewardCenterDistDetail['reward_center_dist_id'];
+                        RewardCenterDistributor.update(rewardCenterDistDetail, {
+                            returning: true,
+                            where: {
+                                reward_center_dist_id: reward_center_dist_id
+                            }
+                        }).then(function ([reward_dis_num, [reward_center_result]]) {
+                            if (reward_dis_num == 1) {
+                                audit_log.saveAuditLog(req.header(process.env.UKEY_HEADER || "x-api-key"), 'add', 'reward_center_dist', reward_center_result.dataValues.reward_center_dist_id, reward_center_result.dataValues);
+                            } else {
+                                /* return res.status(400).send({
+                                    message: `Cannot update Reward Center Distributor with id=${reward_center_dist_id}. Maybe Reward Center Distributor was not found or req.body is empty!`
+                                }); */
+                            }
+
+                        }) .catch(err => {
+                                logger.log("error", err + ":Error updating Reward Center Distributor with id=" + reward_center_dist_id);
+                                console.log(err)
+                                /* return res.status(500).send({
+                                    message: "Error updating Reward Center Distributor with id=" + reward_center_dist_id
+                                }); */
+                            });
+                    } else {
+                        rewardCenterDistDetail['reward_center_id'] = id;
+                        rewardCenterDistDetail['reward_center_name'] = RewardCenterDetails.reward_center_name;
+                        RewardCenterDistributor.create(rewardCenterDistDetail).then(reward_center_data => {
+                            audit_log.saveAuditLog(req.header(process.env.UKEY_HEADER || "x-api-key"), 'add', 'reward_center_dist', reward_center_data.reward_center_dist_id, reward_center_data.dataValues);
+                        })
+                            .catch(err => {
+                                logger.log("error", "Some error occurred while creating the Reward Center Distributor=" + err);
+                                /* return res.status(500).send({
+                                    message:
+                                        err.message || "Some error occurred while creating the Reward Center Distributor."
+                                }); */
+                            });
+                    }
+
+                }
+            }
+
             res.status(200).send({
                 message: "Reward Center updated successfully."
             });

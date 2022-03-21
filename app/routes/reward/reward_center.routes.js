@@ -152,6 +152,8 @@ module.exports = app => {
    *                    properties:
    *                        reward_center_name:
    *                            type: string
+   *                        reward_center_image:
+   *                            type: string
    *                        reward_center_owner_id:
    *                            type: integer
    *                        reward_center_location_id:
@@ -160,6 +162,95 @@ module.exports = app => {
    *                            type: integer
    *                        reward_center_reward_trigger_id:
    *                            type: integer
+   *                        reward_center_dists:
+   *                          type: array
+   *                          items:
+   *                             type: object
+   *                             properties:  
+   *                                 reward_center_dist_status:
+   *                                     type: integer  
+   *                                 reward_center_dist_one_freq:
+   *                                     type: integer
+   *                                 reward_center_dist_one_total_token:
+   *                                     type: integer
+   *                                 reward_center_dist_one_segment_id:
+   *                                     type: integer
+   *                                 reward_center_dist_one_name:
+   *                                     type: string
+   *                                 reward_center_dist_one_stars:
+   *                                     type: integer
+   *                                 reward_center_dist_one_stars_name:
+   *                                     type: string
+   *                                 reward_center_dist_one_stars_to_token:
+   *                                     type: integer
+   *                                 reward_center_dist_one_coins:
+   *                                     type: integer
+   *                                 reward_center_dist_one_coins_name:
+   *                                     type: string
+   *                                 reward_center_dist_one_coins_to_token:
+   *                                     type: integer
+   *                                 reward_center_dist_one_keys:
+   *                                     type: integer
+   *                                 reward_center_dist_one_keys_name:
+   *                                     type: string
+   *                                 reward_center_dist_one_keys_to_token:
+   *                                     type: integer
+   *                                 reward_center_dist_one_booster:
+   *                                     type: integer
+   *                                 reward_center_dist_one_booster_name:
+   *                                     type: string
+   *                                 reward_center_dist_one_boster_to_token:
+   *                                     type: integer
+   *                                 reward_center_dist_one_card1_id:
+   *                                     type: integer
+   *                                 reward_center_dist_one_card2_id:
+   *                                     type: integer
+   *                                 reward_center_dist_one_card3_id:
+   *                                     type: integer
+   *                                 reward_center_dist_one_card4_id:
+   *                                     type: integer
+   *                                 reward_center_dist_one_card5_id:
+   *                                     type: integer
+   *                                 reward_center_dist_one_card6_id:
+   *                                     type: integer
+   *                                 reward_center_dist_one_card7_id:
+   *                                     type: integer
+   *                                 reward_center_dist_one_card1_name:
+   *                                     type: string
+   *                                 reward_center_dist_one_card2_name:
+   *                                     type: string
+   *                                 reward_center_dist_one_card3_name:
+   *                                     type: string
+   *                                 reward_center_dist_one_card4_name:
+   *                                     type: string
+   *                                 reward_center_dist_one_card5_name:
+   *                                     type: string
+   *                                 reward_center_dist_one_card6_name:
+   *                                     type: string
+   *                                 reward_center_dist_one_card7_name:
+   *                                     type: string
+   *                                 reward_center_dist_one_card1_value:
+   *                                     type: string
+   *                                 reward_center_dist_one_card2_value:
+   *                                     type: string
+   *                                 reward_center_dist_one_card3_value:
+   *                                     type: string
+   *                                 reward_center_dist_one_card4_value:
+   *                                     type: string
+   *                                 reward_center_dist_one_card5_value:
+   *                                     type: string
+   *                                 reward_center_dist_one_card6_value:
+   *                                     type: string
+   *                                 reward_center_dist_one_card7_value:
+   *                                     type: string
+   *                                 reward_center_dist_puzzle1_id:
+   *                                     type: integer
+   *                                 reward_center_distr_one_puzzle1_name:
+   *                                     type: string
+   *                                 reward_center_distr_one_puzzle1_value:
+   *                                     type: string
+   *                                 reward_center_spin_reward_id:
+   *                                     type: integer
    *     parameters:
    *         - name: rewardCenterId
    *           in: path
