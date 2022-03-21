@@ -19,8 +19,6 @@ module.exports = app => {
    *                            type: integer
    *                        Location Id:
    *                            type: integer
-   *                        Location Name:
-   *                            type: integer
    *                        Reward Type:
    *                            type: integer
    *                        Trigger Id:
