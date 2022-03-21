@@ -162,6 +162,10 @@ exports.rewardCenterDetails = async(req, res) => {
     var options = {
         include: [
             {
+                model: RewardCenterDistributor,
+                required: false
+            },
+            {
               model: db.page_location,
               attributes: ['page_id', 'page_name'],
               required: false
