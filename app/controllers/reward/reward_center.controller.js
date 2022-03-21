@@ -1,5 +1,6 @@
 const db = require("../../models");
 const RewardCenter = db.reward_center;
+const RewardCenterDistributor = db.reward_center_dist;
 const audit_log = db.audit_log
 const logger = require("../../middleware/logger");
 const {
@@ -22,6 +23,7 @@ exports.createRewardCenter = async(req, res) => {
     }
     const data = {
         "reward_center_name": body.hasOwnProperty("Center Name") ? body["Center Name"] : 0,
+        "reward_center_image": body.hasOwnProperty("Center Image") ? body["Center Image"] : '',
         "reward_center_owner_id": body.hasOwnProperty("Owner Id") ? body["Owner Id"] : "",
         "reward_center_location_id": body.hasOwnProperty("Location Id") ? body["Location Id"] : 0,
         "reward_center_reward_type": body.hasOwnProperty("Reward Type") ? body["Reward Type"] : 0,
@@ -29,7 +31,68 @@ exports.createRewardCenter = async(req, res) => {
     }
     RewardCenter.create(data).then(data => {
             audit_log.saveAuditLog(req.header(process.env.UKEY_HEADER || "x-api-key"),'add','todayTimeStamp',data.reward_center_id,data.dataValues);
-        res.status(201).send({			
+            var rewardCenterDistData = body.hasOwnProperty("Reward Center Dists") ? body["Reward Center Dists"] : '';
+            if (rewardCenterDistData.length) {
+                for (const rewardCenterDist in rewardCenterDistData) {
+                    var rewardCenterDistDetail = rewardCenterDistData[rewardCenterDist];
+                    RewardCenterDistributor.create({
+                        "reward_center_id": data.reward_center_id,
+                        "reward_center_dist_status": rewardCenterDistDetail.hasOwnProperty("Dist Status") ? rewardCenterDistDetail["Dist Status"] : 0,
+                        "reward_center_name": data.reward_center_name,
+                        "reward_center_dist_one_freq": rewardCenterDistDetail.hasOwnProperty("One Freq") ? rewardCenterDistDetail["One Freq"] : 0,
+                        "reward_center_dist_one_total_token": rewardCenterDistDetail.hasOwnProperty("One Total Token") ? rewardCenterDistDetail["One Total Token"] : 0,
+                        "reward_center_dist_one_segment_id": rewardCenterDistDetail.hasOwnProperty("Segment Id") ? rewardCenterDistDetail["Segment Id"] : "",
+                        "reward_center_dist_one_name": rewardCenterDistDetail.hasOwnProperty("One Name") ? rewardCenterDistDetail["One Name"] : "",
+                        "reward_center_dist_one_stars": rewardCenterDistDetail.hasOwnProperty("One Stars") ? rewardCenterDistDetail["One Stars"] : 0,
+                        "reward_center_dist_one_stars_name": rewardCenterDistDetail.hasOwnProperty("Stars Name") ? rewardCenterDistDetail["Stars Name"] : "",
+                        "reward_center_dist_one_stars_to_token": rewardCenterDistDetail.hasOwnProperty("Stars To Token") ? rewardCenterDistDetail["Stars To Token"] : 0,
+                        "reward_center_dist_one_coins": rewardCenterDistDetail.hasOwnProperty("One Coins") ? rewardCenterDistDetail["One Coins"] : 0,
+                        "reward_center_dist_one_coins_name": rewardCenterDistDetail.hasOwnProperty("Coins Name") ? rewardCenterDistDetail["Coins Name"] : "",
+                        "reward_center_dist_one_coins_to_token": rewardCenterDistDetail.hasOwnProperty("Coins To Token") ? rewardCenterDistDetail["Coins To Token"] : 0,
+                        "reward_center_dist_one_keys": rewardCenterDistDetail.hasOwnProperty("One Keys") ? rewardCenterDistDetail["One Keys"] : "",
+                        "reward_center_dist_one_keys_name": rewardCenterDistDetail.hasOwnProperty("Keys Name") ? rewardCenterDistDetail["Keys Name"] : "",
+                        "reward_center_dist_one_keys_to_token": rewardCenterDistDetail.hasOwnProperty("Keys To Token") ? rewardCenterDistDetail["Keys To Token"] : 0,
+                        "reward_center_dist_one_booster": rewardCenterDistDetail.hasOwnProperty("One Booster") ? rewardCenterDistDetail["One Booster"] : 0,
+                        "reward_center_dist_one_booster_name": rewardCenterDistDetail.hasOwnProperty("Booster Name") ? rewardCenterDistDetail["Booster Name"] : "",
+                        "reward_center_dist_one_boster_to_token": rewardCenterDistDetail.hasOwnProperty("Boster To Token") ? rewardCenterDistDetail["Boster To Token"] : 0,
+                        "reward_center_dist_one_card1_id": rewardCenterDistDetail.hasOwnProperty("Card 1 Id") ? rewardCenterDistDetail["Card 1 Id"] : 0,
+                        "reward_center_dist_one_card2_id": rewardCenterDistDetail.hasOwnProperty("Card 2 Id") ? rewardCenterDistDetail["Card 2 Id"] : 0,
+                        "reward_center_dist_one_card3_id": rewardCenterDistDetail.hasOwnProperty("Card 3 Id") ? rewardCenterDistDetail["Card 3 Id"] : 0,
+                        "reward_center_dist_one_card4_id": rewardCenterDistDetail.hasOwnProperty("Card 4 Id") ? rewardCenterDistDetail["Card 4 Id"] : 0,
+                        "reward_center_dist_one_card5_id": rewardCenterDistDetail.hasOwnProperty("Card 5 Id") ? rewardCenterDistDetail["Card 5 Id"] : 0,
+                        "reward_center_dist_one_card6_id": rewardCenterDistDetail.hasOwnProperty("Card 6 Id") ? rewardCenterDistDetail["Card 6 Id"] : 0,
+                        "reward_center_dist_one_card7_id": rewardCenterDistDetail.hasOwnProperty("Card 7 Id") ? rewardCenterDistDetail["Card 7 Id"] : 0,
+                        "reward_center_dist_one_card1_name": rewardCenterDistDetail.hasOwnProperty("Card 1 Name") ? rewardCenterDistDetail["Card 1 Name"] : "",
+                        "reward_center_dist_one_card2_name": rewardCenterDistDetail.hasOwnProperty("Card 2 Name") ? rewardCenterDistDetail["Card 2 Name"] : "",
+                        "reward_center_dist_one_card3_name": rewardCenterDistDetail.hasOwnProperty("Card 3 Name") ? rewardCenterDistDetail["Card 3 Name"] : "",
+                        "reward_center_dist_one_card4_name": rewardCenterDistDetail.hasOwnProperty("Card 4 Name") ? rewardCenterDistDetail["Card 4 Name"] : "",
+                        "reward_center_dist_one_card5_name": rewardCenterDistDetail.hasOwnProperty("Card 5 Name") ? rewardCenterDistDetail["Card 5 Name"] : "",
+                        "reward_center_dist_one_card6_name": rewardCenterDistDetail.hasOwnProperty("Card 6 Name") ? rewardCenterDistDetail["Card 6 Name"] : "",
+                        "reward_center_dist_one_card7_name": rewardCenterDistDetail.hasOwnProperty("Card 7 Name") ? rewardCenterDistDetail["Card 7 Name"] : "",
+                        "reward_center_dist_one_card1_value": rewardCenterDistDetail.hasOwnProperty("Card 1 Value") ? rewardCenterDistDetail["Card 1 Value"] : "",
+                        "reward_center_dist_one_card2_value": rewardCenterDistDetail.hasOwnProperty("Card 2 Value") ? rewardCenterDistDetail["Card 2 Value"] : "",
+                        "reward_center_dist_one_card3_value": rewardCenterDistDetail.hasOwnProperty("Card 3 Value") ? rewardCenterDistDetail["Card 3 Value"] : "",
+                        "reward_center_dist_one_card4_value": rewardCenterDistDetail.hasOwnProperty("Card 4 Value") ? rewardCenterDistDetail["Card 4 Value"] : "",
+                        "reward_center_dist_one_card5_value": rewardCenterDistDetail.hasOwnProperty("Card 5 Value") ? rewardCenterDistDetail["Card 5 Value"] : "",
+                        "reward_center_dist_one_card6_value": rewardCenterDistDetail.hasOwnProperty("Card 6 Value") ? rewardCenterDistDetail["Card 6 Value"] : "",
+                        "reward_center_dist_one_card7_value": rewardCenterDistDetail.hasOwnProperty("Card 7 Value") ? rewardCenterDistDetail["Card 7 Value"] : "",
+                        "reward_center_dist_puzzle1_id": rewardCenterDistDetail.hasOwnProperty("Puzzle 1 Id") ? rewardCenterDistDetail["Puzzle 1 Id"] : 0,
+                        "reward_center_distr_one_puzzle1_name": rewardCenterDistDetail.hasOwnProperty("Puzzle 1 Name") ? rewardCenterDistDetail["Puzzle 1 Name"] : "",
+                        "reward_center_distr_one_puzzle1_value": rewardCenterDistDetail.hasOwnProperty("Puzzle 1 Value") ? rewardCenterDistDetail["Puzzle 1 Value"] : "",
+                        "reward_center_spin_reward_id": rewardCenterDistDetail.hasOwnProperty("Spin Reward Id") ? rewardCenterDistDetail["Spin Reward Id"] : 0
+                    }).then(reward_dist_data => {
+                        audit_log.saveAuditLog(req.header(process.env.UKEY_HEADER || "x-api-key"),'add','todayTimeStamp',reward_dist_data.reward_center_dist_id,reward_dist_data.dataValues);
+                    })
+                        .catch(err => {
+                            logger.log("error", "Some error occurred while creating the Reward Center Dist=" + err);
+                            /* return res.status(500).send({
+                                message:
+                                    err.message || "Some error occurred while creating the Reward Center Dist."
+                            }); */
+                        });
+                }
+            }
+        return res.status(201).send({			
             msg: "Reward Center Created Successfully",
             RewardCenterId: data.reward_center_id
         });
@@ -56,6 +119,10 @@ exports.rewardCenterListing = async(req, res) => {
     
     var options = {
         include: [
+            {
+              model: RewardCenterDistributor,
+              required: false
+            },
             {
               model: db.page_location,
               attributes: ['page_id', 'page_name'],

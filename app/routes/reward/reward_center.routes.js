@@ -15,6 +15,8 @@ module.exports = app => {
    *                    properties:
    *                        Center Name:
    *                            type: string
+   *                        Center Image:
+   *                            type: string
    *                        Owner Id:
    *                            type: integer
    *                        Location Id:
@@ -23,6 +25,96 @@ module.exports = app => {
    *                            type: integer
    *                        Trigger Id:
    *                            type: integer
+   *                        Reward Center Dists:
+   *                          type: array
+   *                          items:
+   *                             type: object
+   *                             properties:  
+   *                                 Dist Status:
+   *                                     type: integer  
+   *                                 One Freq:
+   *                                     type: integer
+   *                                 One Total Token:
+   *                                     type: integer
+   *                                 Segment Id:
+   *                                     type: integer
+   *                                 One Name:
+   *                                     type: string
+   *                                 One Stars:
+   *                                     type: integer
+   *                                 Stars Name:
+   *                                     type: integer
+   *                                 Stars To Token:
+   *                                     type: integer
+   *                                 One Coins:
+   *                                     type: integer
+   *                                 Coins Name:
+   *                                     type: string
+   *                                 Coins To Token:
+   *                                     type: integer
+   *                                 One Keys:
+   *                                     type: integer
+   *                                 Keys Name:
+   *                                     type: string
+   *                                 Keys To Token:
+   *                                     type: integer
+   *                                 One Booster:
+   *                                     type: integer
+   *                                 Booster Name:
+   *                                     type: string
+   *                                 Boster To Token:
+   *                                     type: integer
+   *                                 Card 1 Id:
+   *                                     type: integer
+   *                                 Card 2 Id:
+   *                                     type: integer
+   *                                 Card 3 Id:
+   *                                     type: integer
+   *                                 Card 4 Id:
+   *                                     type: integer
+   *                                 Card 5 Id:
+   *                                     type: integer
+   *                                 Card 6 Id:
+   *                                     type: integer
+   *                                 Card 7 Id:
+   *                                     type: integer
+   *                                 Card 1 Name:
+   *                                     type: string
+   *                                 Card 2 Name:
+   *                                     type: string
+   *                                 Card 3 Name:
+   *                                     type: string
+   *                                 Card 4 Name:
+   *                                     type: string
+   *                                 Card 5 Name:
+   *                                     type: string
+   *                                 Card 6 Name:
+   *                                     type: string
+   *                                 Card 7 Name:
+   *                                     type: string
+   *                                 Card 1 Value:
+   *                                     type: string
+   *                                 Card 2 Value:
+   *                                     type: string
+   *                                 Card 3 Value:
+   *                                     type: string
+   *                                 Card 4 Value:
+   *                                     type: string
+   *                                 Card 5 Value:
+   *                                     type: string
+   *                                 Card 6 Value:
+   *                                     type: string
+   *                                 Card 7 Value:
+   *                                     type: string
+   *                                 Puzzle 1 Id:
+   *                                     type: integer
+   *                                 Puzzle 1 Name:
+   *                                     type: string
+   *                                 Puzzle 1 Value:
+   *                                     type: string
+   *                                 Spin Reward Id:
+   *                                     type: integer
+   * 
    *     tags:
    *       - Reward Center
    *     description: Add new Reward Center
@@ -114,7 +206,7 @@ module.exports = app => {
    *           required: false
    *           schema:
    *              type: string
-   *              example: reward_center_name,reward_center_owner_id,reward_center_location_id,reward_center_reward_type,reward_center_reward_trigger_id # Example of a parameter value
+   *              example: reward_center_name,reward_center_image,reward_center_owner_id,reward_center_location_id,reward_center_reward_type,reward_center_reward_trigger_id # Example of a parameter value
    *         - name: sortOrder
    *           in: query
    *           required: false
