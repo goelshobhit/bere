@@ -140,6 +140,7 @@ db.rewards_given = require("./reward/rewards_given.model")(sequelize, Sequelize)
 db.rewards_balance = require("./reward/rewards_balance.model")(sequelize, Sequelize);
 db.rewards_credit = require("./reward/rewards_credit.model")(sequelize, Sequelize);
 db.reward_random_winner = require("./reward/reward_random_winner.model")(sequelize, Sequelize);
+db.reward_settings = require("./reward/reward_settings.model")(sequelize, Sequelize);
 
 db.brand_score = require("./brand_score.model")(sequelize, Sequelize);
 db.brandscore_task = require("./brandscore_task.model")(sequelize, Sequelize);

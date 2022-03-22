@@ -261,6 +261,7 @@ require("./app/routes/reward/rewards_event_request.routes")(app);
 require("./app/routes/reward/rewards_request.routes")(app);
 require("./app/routes/reward/rewards_given.routes")(app);
 require("./app/routes/reward/rewards_selection.routes")(app);
+require("./app/routes/reward/reward_settings.routes")(app);
 require("./app/routes/user_inbox_settings.routes")(app);
 require("./app/routes/energy.routes")(app);
 require("./app/routes/brand_score.routes")(app);
