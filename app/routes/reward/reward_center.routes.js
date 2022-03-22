@@ -398,7 +398,34 @@ module.exports = app => {
    *                              type: string
    *                              example: Authorisation Required
    */
-    router.delete("/reward_center/:rewardCenterId", auth, RewardCenter.deleteRewardCenter); 
+    router.delete("/reward_center/:rewardCenterId", auth, RewardCenter.deleteRewardCenter);
+
+      /**
+   * @swagger
+   * /api/reward_tokens:
+   *   get:
+   *     parameters:
+   *     tags:
+   *       - Reward Center
+   *     description: Returns all Reward Center Reward Type Tokens
+   *     produces:
+   *       - application/json
+   *     responses:
+   *       200:
+   *         description: A list of Reward Center Reward Type Tokens
+   *       401:
+   *          description: Unauthorized
+   *          content:
+   *              application/json:
+   *                  schema:
+   *                      type: object
+   *                      properties:
+   *                          message:
+   *                              type: string
+   *                              example: Authorisation Required
+   */
+  router.get('/reward_tokens',auth, RewardCenter.rewardTokenListing);
+
     app.use("/api", router);
 };
   

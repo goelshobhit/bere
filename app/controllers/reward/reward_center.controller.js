@@ -3,6 +3,8 @@ const RewardCenter = db.reward_center;
 const RewardCenterDistributor = db.reward_center_dist;
 const audit_log = db.audit_log
 const logger = require("../../middleware/logger");
+const Op = db.Sequelize.Op;
+const sequelize= require('sequelize');
 const {
     validationResult
 } = require("express-validator");
@@ -39,6 +41,7 @@ exports.createRewardCenter = async(req, res) => {
                         "reward_center_id": data.reward_center_id,
                         "reward_center_dist_status": rewardCenterDistDetail.hasOwnProperty("Dist Status") ? rewardCenterDistDetail["Dist Status"] : 0,
                         "reward_center_name": data.reward_center_name,
+                        "reward_center_reward_type": body.hasOwnProperty("Reward Type") ? body["Reward Type"] : 0,
                         "reward_center_dist_one_freq": rewardCenterDistDetail.hasOwnProperty("One Freq") ? rewardCenterDistDetail["One Freq"] : 0,
                         "reward_center_dist_one_total_token": rewardCenterDistDetail.hasOwnProperty("One Total Token") ? rewardCenterDistDetail["One Total Token"] : 0,
                         "reward_center_dist_one_segment_id": rewardCenterDistDetail.hasOwnProperty("Segment Id") ? rewardCenterDistDetail["Segment Id"] : "",
@@ -218,6 +221,8 @@ exports.updateRewardCenter = async(req, res) => {
                     if (rewardCenterDistDetail['reward_center_dist_id'] != undefined) {
                         
                         var reward_center_dist_id = rewardCenterDistDetail['reward_center_dist_id'];
+                        rewardCenterDistDetail.reward_center_name = requested_body.hasOwnProperty('reward_center_name') ? requested_body.reward_center_name : RewardCenterDetails.reward_center_name;
+                        rewardCenterDistDetail.reward_center_reward_type = requested_body.hasOwnProperty('reward_center_reward_type') ? requested_body.reward_center_reward_type : RewardCenterDetails.reward_center_reward_type;
                         RewardCenterDistributor.update(rewardCenterDistDetail, {
                             returning: true,
                             where: {
@@ -241,7 +246,8 @@ exports.updateRewardCenter = async(req, res) => {
                             });
                     } else {
                         rewardCenterDistDetail['reward_center_id'] = id;
-                        rewardCenterDistDetail['reward_center_name'] = RewardCenterDetails.reward_center_name;
+                        rewardCenterDistDetail['reward_center_name'] = requested_body.hasOwnProperty('reward_center_name') ? requested_body.reward_center_name : RewardCenterDetails.reward_center_name;
+                        rewardCenterDistDetail['reward_center_reward_type'] = requested_body.hasOwnProperty('reward_center_reward_type') ? requested_body.reward_center_reward_type : RewardCenterDetails.reward_center_reward_type;
                         RewardCenterDistributor.create(rewardCenterDistDetail).then(reward_center_data => {
                             audit_log.saveAuditLog(req.header(process.env.UKEY_HEADER || "x-api-key"), 'add', 'reward_center_dist', reward_center_data.reward_center_dist_id, reward_center_data.dataValues);
                         })
@@ -310,3 +316,30 @@ exports.updateRewardCenter = async(req, res) => {
           return;
         });
     }
+
+/**
+ * Function to get Reward Type Tokens
+ * @param  {object}  req expressJs request object
+ * @param  {object}  res expressJs response object
+ * @return {Promise}
+ */
+exports.rewardTokenListing = async (req, res) => {
+    var options = {
+        where: {
+          
+      },
+        attributes: [
+          'reward_center_reward_type',
+          [sequelize.fn('SUM', sequelize.col('reward_center_dist_one_total_token')), 'total_token']
+        ],
+        group: ['reward_center_reward_type']
+      };
+      // var total = await rewardGiven.count({
+      //   where: options['where']
+      // });
+      const rewards_request_list = await RewardCenterDistributor.findAll(options);
+      res.status(200).send({
+        data: rewards_request_list
+        //totalRecords: total
+      });
+  }
