@@ -116,10 +116,10 @@ module.exports = app => {
 *                    type: object
 *                    properties:
 *                        token_value_in_usd:
-*                            format: integer
-*                        star_values_in_tokens:
 *                            type: integer
-*                        key_values_in_tokens:
+*                        star_value_in_tokens:
+*                            type: integer
+*                        key_value_in_tokens:
 *                            type: integer
 *                        booster_value_in_tokens:
 *                            type: integer
