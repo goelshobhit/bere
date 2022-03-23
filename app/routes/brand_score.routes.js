@@ -256,7 +256,7 @@ module.exports = app => {
      *           in: path
      *           required: true
      *           schema:
-     *              type: string
+     *              type: integer
      *      tags:
      *          - Brand Score
      *      description: Update brand Engagement Type
@@ -487,7 +487,7 @@ module.exports = app => {
      *           in: path
      *           required: true
      *           schema:
-     *              type: string
+     *              type: integer
      *      tags:
      *          - Brand Score
      *      description: Update Brand Engagement Settings
@@ -700,7 +700,7 @@ module.exports = app => {
      *           in: path
      *           required: true
      *           schema:
-     *              type: string
+     *              type: integer
      *      tags:
      *          - Brand Score
      *      description: Update Brand Score Increase

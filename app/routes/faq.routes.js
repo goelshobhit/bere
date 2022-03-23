@@ -108,7 +108,7 @@ module.exports = app => {
    *           in: path
    *           required: true
    *           schema:
-   *              type: string
+   *              type: integer
    *     tags:
    *       - Faq
    *     description: Retrieve FAQ with faqId
@@ -150,7 +150,7 @@ module.exports = app => {
  *           in: path
  *           required: true
  *           schema:
- *              type: string
+ *              type: integer
  *     tags:
  *       - Faq
  *     description: Update FAQ

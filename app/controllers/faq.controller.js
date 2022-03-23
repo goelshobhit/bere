@@ -5,7 +5,7 @@ const logger = require("../middleware/logger");
 const { isNull } = require("util");
 const Op = db.Sequelize.Op;
 /**
- * Function to add Page Location
+ * Function to add FAQ
  * @param  {object}  req expressJs request object
  * @param  {object}  res expressJs response object
  * @return {Promise}
