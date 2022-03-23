@@ -160,7 +160,9 @@ module.exports = params => {
 	*                              type: string
 	*                              example: Authorisation Required
 	*/
-	router.get('/users/social_login/snapchat', passport.authenticate('snapchat'));
+	router.get('/users/social_login/snapchat', passport.authenticate('snapchat', { scope : ['https://auth.snapchat.com/oauth2/api/user.display_name', 
+	'https://auth.snapchat.com/oauth2/api/user.external_id',
+	'https://auth.snapchat.com/oauth2/api/user.bitmoji.avatar'] }) );
 	router.get('/users/social_login/snapchat/callback', function(req, res, next) {
 		passport.authenticate("snapchat", function (err, user) {
 			if (err) { 

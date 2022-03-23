@@ -234,7 +234,7 @@ const passport = require('passport');
 app.use(passport.initialize());
 require("./app/middleware/socialLogin/passportFacebook")(passport);
 require("./app/middleware/socialLogin/passportInstagram")(passport);
-// require("./app/middleware/socialLogin/passportSnapchat")(passport);
+require("./app/middleware/socialLogin/passportSnapchat")(passport);
 // require("./app/middleware/socialLogin/passportPinterest")(passport);
 // const session = require("express-session");
 // app.use(session({

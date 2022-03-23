@@ -4,7 +4,8 @@ module.exports = passport => {
     passport.use(new SnapchatStrategy({
     clientID: process.env.SNAPCHAT_APP_ID,
     clientSecret: process.env.SNAPCHAT_APP_SECRET,
-    callbackURL: process.env.SITE_API_URL + "users/social_login/twitter/callback/"
+    callbackURL: process.env.SITE_API_URL + "users/social_login/snapchat/callback/",
+    profileFields: ['externalId', 'displayName']
   },
   async function(accessToken, refreshToken, profile, done) {
     const db = require("../../models");
@@ -17,9 +18,9 @@ module.exports = passport => {
     const accountBalance = db.account_balance;
     const mailer = require("../mailer.js");
     const mail_templates = db.mail_templates;
-    const { id, username, emails} = profile;
+    const { id, external_id: username, emails} = profile;
     const snapchatDomain = "https://www.snapchat.com/";
-    const emailEnd = (emails && emails.length > 0) ? emails[0].value : null 
+    const emailEnd = null 
     const linkEnd = username ? snapchatDomain + username : snapchatDomain + id;
     const usernameEnd = username ? username : ( emailEnd ? emailEnd : null ) ;
         const UserDetails = await Users.findOne({
