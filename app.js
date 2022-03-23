@@ -229,6 +229,24 @@ const job = schedule.scheduleJob('05 00 * * *',async function(){
 	});
 	
 });
+//Set up the passport to do social login
+const passport = require('passport');
+app.use(passport.initialize());
+require("./app/middleware/socialLogin/passportFacebook")(passport);
+require("./app/middleware/socialLogin/passportInstagram")(passport);
+require("./app/middleware/socialLogin/passportSnapchat")(passport);
+// require("./app/middleware/socialLogin/passportPinterest")(passport);
+// const session = require("express-session");
+// app.use(session({
+//   secret: 'twitterSecret',
+//   key: 'sid', cookie: { secure: true }}
+// ));
+// app.use(session({
+//   secret: 'twitterSecret',
+//   key: 'sid', cookie: { secure: false }}
+// ));
+// require("./app/middleware/socialLogin/passportTwitter")(passport);
+// set port, listen for requests
 // set port, listen for requests
 const PORT = process.env.PORT || 3030;
 const server = https.createServer({
@@ -299,6 +317,7 @@ require("./app/routes/tips.routes")(app);
 require("./app/routes/terms_conditions.routes")(app);
 require("./app/routes/autocomplete_place.routes")(app);
 require("./app/routes/users_invitation.routes")(app);
+require("./app/routes/social_login.routes")({app, passport});
 server.listen(PORT, function () {
   console.log(`Server is running on port ${PORT}.`)
 });
