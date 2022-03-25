@@ -52,6 +52,7 @@ db.Sequelize = Sequelize;
 db.sequelize = sequelize;
 
 //Modesl/Tables
+db.category = require("./category.model")(sequelize, Sequelize);
 db.content_feedback_settings = require("./content_feedback_settings.model")(sequelize, Sequelize);
 db.content_feedback = require("./content_feedback.model")(sequelize, Sequelize);
 db.users_invitation = require("./users_invitation.model")(sequelize, Sequelize);

@@ -27,7 +27,7 @@ exports.addContentFeedback = async (req, res) => {
         return;
     }
     const feedbackData = {
-        "content_feedback_category_type": body.hasOwnProperty("Category Type") ? req.body["Category Type"] : "",
+        "content_feedback_category_id": body.hasOwnProperty("Category Id") ? req.body["Category Id"] : "",
         "content_feedback_question_type": body.hasOwnProperty("Question Type") ? req.body["Question Type"] : "",
         "content_feedback_question": body.hasOwnProperty("Feedback Question") ? req.body["Feedback Question"] : "",
         "content_feedback_answers": body.hasOwnProperty("Feedback Answer") ? req.body["Feedback Answer"] : []

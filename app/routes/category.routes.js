@@ -1,11 +1,11 @@
 module.exports = app => {
-    const content_feedback = require("../controllers/content_feedback.controller.js");
+    const category = require("../controllers/category.controller.js");
     var router = require("express").Router();
     const auth = require("../middleware/auth");
 
     /**
    * @swagger
-   * /api/content_feedback:
+   * /api/category:
    *   post:
    *     requestBody:
    *        required: false
@@ -14,26 +14,20 @@ module.exports = app => {
    *                schema:
    *                    type: object
    *                    properties:
-   *                        Category Id:
-   *                           type: integer
-   *                        Question Type:
-   *                           type: integer
-   *                        Feedback Question:
+   *                        Category Name:
    *                           type: string
-   *                        Feedback Answer:
-     *                            type: array
-     *                            items:
-     *                              oneOf:
-     *                               type: string
-  *                               example: ["Answer 1","Answer 2"]
+   *                        Category Type:
+   *                           type: string
+   *                        Category Status:
+   *                           type: integer
    *     tags:
-   *       - Content Feedback 
-   *     description: Add Content Feedback 
+   *       - Category
+   *     description: Add Category
    *     produces:
    *       - application/json
    *     responses:
    *       201:
-   *         description: Add Content Feedback 
+   *         description: Add Category
    *       422:
    *         description: validation errors
    *       500:
@@ -49,17 +43,17 @@ module.exports = app => {
    *                              type: string
    *                              example: Authorisation Required
    */
-    router.post("/content_feedback", auth, content_feedback.addContentFeedback);
+    router.post("/category", auth, category.addCategory);
 
     
 
-    // Retrieve all Content Feedback Listing
+    // Retrieve all Category Listing
     /**
      * @swagger
-     * /api/content_feedback:
+     * /api/category:
      *   get:
      *     parameters:
-     *         - name: contentFeedbackId
+     *         - name: categoryId
      *           in: query
      *           required: false
      *           schema:
@@ -74,7 +68,7 @@ module.exports = app => {
      *           required: false
      *           schema:
      *              type: string
-     *              example: content_feedback_id,content_feedback_category_id,content_feedback_question_type,content_feedback_question,content_feedback_answers    # Example of a parameter value
+     *              example: category_id,category_name,category_type,category_status    # Example of a parameter value
      *         - name: sortOrder
      *           in: query
      *           required: false
@@ -87,13 +81,13 @@ module.exports = app => {
      *           schema:
      *              type: string
      *     tags:
-     *       - Content Feedback 
-     *     description: Returns all Content Feedback 
+     *       - Category
+     *     description: Returns all Categories
      *     produces:
      *       - application/json
      *     responses:
      *       200:
-     *         description: A list of Content Feedback
+     *         description: A list of Categories
      *       401:
      *          description: Unauthorized
      *          content:
@@ -105,12 +99,42 @@ module.exports = app => {
      *                              type: string
      *                              example: Authorisation Required
      */
-    router.get('/content_feedback', auth, content_feedback.feedbackListing);
+    router.get('/category', auth, category.categoryListing);
 
+    /**
+   * @swagger
+   * /api/category/{categoryId}:
+   *   get:
+   *     parameters:
+   *         - name: categoryId
+   *           in: path
+   *           required: true
+   *           schema:
+   *              type: integer
+   *     tags:
+   *       - Category
+   *     description: Retrieve Category with categoryId
+   *     produces:
+   *       - application/json
+   *     responses:
+   *       200:
+   *         description: Details of a Category
+   *       401:
+   *          description: Unauthorized
+   *          content:
+   *              application/json:
+   *                  schema:
+   *                      type: object
+   *                      properties:
+   *                          message:
+   *                              type: string
+   *                              example: Authorisation Required
+   */
+  router.get("/category/:categoryId",auth, category.categoryDetails);
 
   /**
  * @swagger
- * /api/content_feedback/{contentFeedbackId}:
+ * /api/category/{categoryId}:
  *   put:
  *     requestBody:
  *        required: false
@@ -119,32 +143,26 @@ module.exports = app => {
  *                schema:
  *                    type: object
  *                    properties:
- *                        content_feedback_category_id:
- *                            type: integer
- *                        content_feedback_question_type:
- *                            type: integer
- *                        content_feedback_question:
+ *                        category_name:
+ *                            format: string
+ *                        category_type:
  *                            type: string
- *                        content_feedback_answers:
-     *                            type: array
-     *                            items:
-     *                              oneOf:
-     *                               type: string
-  *                               example: ["Answer 1","Answer 2"]
+ *                        category_status:
+ *                            type: interger
  *     parameters:
- *         - name: contentFeedbackId
+ *         - name: categoryId
  *           in: path
  *           required: true
  *           schema:
  *              type: integer
  *     tags:
- *       - Content Feedback 
- *     description: Update Content Feedback 
+ *       - Category
+ *     description: Update Category
  *     produces:
  *       - application/json
  *     responses:
  *       201:
- *         description: Content Feedback  updated
+ *         description: Category updated
  *       422:
  *         description: validation errors
  *       500:
@@ -160,26 +178,26 @@ module.exports = app => {
  *                              type: string
  *                              example: Authorisation Required
  */
- router.put("/content_feedback/:contentFeedbackId",auth, content_feedback.updateContentFeedback);
+ router.put("/category/:categoryId",auth, category.updateCategory);
 
  /**
  * @swagger
- * /api/content_feedback/{contentFeedbackId}:
+ * /api/category/{categoryId}:
  *   delete:
  *     parameters:
- *         - name: contentFeedbackId
+ *         - name: categoryId
  *           in: path
  *           required: true
  *           schema:
  *              type: integer
  *     tags:
- *      - Content Feedback
- *     description: Delete Content Feedback  with id
+ *      - Category
+ *     description: Delete Category with id
  *     produces:
  *       - application/json
  *     responses:
  *       200:
- *         description: Delete Content Feedback 
+ *         description: Delete Category
  *       401:
  *          description: Unauthorized
  *          content:
@@ -191,7 +209,7 @@ module.exports = app => {
  *                              type: string
  *                              example: Authorisation Required
  */
-router.delete("/content_feedback/:contentFeedbackId", auth, content_feedback.deleteContentFeedback);
+router.delete("/category/:categoryId", auth, category.deleteCategory);
     
   app.use("/api", router);
 };

@@ -6,7 +6,7 @@ module.exports = (sequelize, Sequelize) => {
       primaryKey: true,
       type: Sequelize.INTEGER
     },
-    content_feedback_category_type: {   // category tag based on post
+    content_feedback_category_id: {   // category id based on post
       type: Sequelize.INTEGER
     },
     content_feedback_question_type: {   // 1 = single, 2= multiple, 3 = rating
