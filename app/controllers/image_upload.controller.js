@@ -15,7 +15,7 @@ exports.imagesUpload = async (req, res) => {
                 message: "media_key is required"
             });
         }
-        if (!req.files) {
+        if (!req.files || !req.files.length) {
             return res.status(400).send({
                 message: "At least one file required"
             });

@@ -135,6 +135,37 @@ module.exports = app => {
    */
   router.put("/brandscore_task/:brandScoreId",auth, BrandScore.updateBrandScoreTask);
 
+    /**
+   * @swagger
+   * /api/brandscore_task/{brandScoreId}:
+   *   get:
+   *     parameters:
+   *         - name: brandScoreId
+   *           in: path
+   *           required: true
+   *           schema:
+   *              type: integer
+   *     tags:
+   *       - Brand Score
+   *     description: Retrieve Brand Score Task with brandScoreId
+   *     produces:
+   *       - application/json
+   *     responses:
+   *       200:
+   *         description: Details of a Brand Score Task
+   *       401:
+   *          description: Unauthorized
+   *          content:
+   *              application/json:
+   *                  schema:
+   *                      type: object
+   *                      properties:
+   *                          message:
+   *                              type: string
+   *                              example: Authorisation Required
+   */
+  router.get("/brandscore_task/:brandScoreId",auth, BrandScore.brandScoreTaskDetails);
+
   // Retrieve all Brandscore task
     /**
      * @swagger
@@ -256,7 +287,7 @@ module.exports = app => {
      *           in: path
      *           required: true
      *           schema:
-     *              type: string
+     *              type: integer
      *      tags:
      *          - Brand Score
      *      description: Update brand Engagement Type
@@ -282,6 +313,37 @@ module.exports = app => {
     */
 
    router.put("/brandscore_engagement_type/:engagementId",auth,BrandScore.updateEngagementType)
+
+   /**
+   * @swagger
+   * /api/brandscore_engagement_type/{engagementId}:
+   *   get:
+   *     parameters:
+   *         - name: engagementId
+   *           in: path
+   *           required: true
+   *           schema:
+   *              type: integer
+   *     tags:
+   *       - Brand Score
+   *     description: Retrieve Brand Score Engagement Type with engagementId
+   *     produces:
+   *       - application/json
+   *     responses:
+   *       200:
+   *         description: Details of a Brand Score Engagement Type
+   *       401:
+   *          description: Unauthorized
+   *          content:
+   *              application/json:
+   *                  schema:
+   *                      type: object
+   *                      properties:
+   *                          message:
+   *                              type: string
+   *                              example: Authorisation Required
+   */
+  router.get("/brandscore_engagement_type/:engagementId",auth, BrandScore.engagementTypeDetails);
 
    /**
    * @swagger
@@ -487,7 +549,7 @@ module.exports = app => {
      *           in: path
      *           required: true
      *           schema:
-     *              type: string
+     *              type: integer
      *      tags:
      *          - Brand Score
      *      description: Update Brand Engagement Settings
@@ -513,6 +575,37 @@ module.exports = app => {
     */
 
    router.put("/brandscore_engagement_settings/:engagementSettingId",auth,BrandScore.updateEngagementSettings)
+
+   /**
+   * @swagger
+   * /api/brandscore_engagement_settings/{engagementSettingId}:
+   *   get:
+   *     parameters:
+   *         - name: engagementSettingId
+   *           in: path
+   *           required: true
+   *           schema:
+   *              type: integer
+   *     tags:
+   *       - Brand Score
+   *     description: Retrieve Brand Score Engagement Settings with engagementSettingId
+   *     produces:
+   *       - application/json
+   *     responses:
+   *       200:
+   *         description: Details of a Brand Score Engagement Settings
+   *       401:
+   *          description: Unauthorized
+   *          content:
+   *              application/json:
+   *                  schema:
+   *                      type: object
+   *                      properties:
+   *                          message:
+   *                              type: string
+   *                              example: Authorisation Required
+   */
+  router.get("/brandscore_engagement_settings/:engagementSettingId",auth, BrandScore.engagementSettingsDetails);
 
    /**
    * @swagger
@@ -700,7 +793,7 @@ module.exports = app => {
      *           in: path
      *           required: true
      *           schema:
-     *              type: string
+     *              type: integer
      *      tags:
      *          - Brand Score
      *      description: Update Brand Score Increase
@@ -726,6 +819,36 @@ module.exports = app => {
     */
 
    router.put("/brandscore_increase/:brandscoreIncreaseId",auth,BrandScore.updateIncreaseBrandScore)
+   /**
+   * @swagger
+   * /api/brandscore_increase/{brandscoreIncreaseId}:
+   *   get:
+   *     parameters:
+   *         - name: brandscoreIncreaseId
+   *           in: path
+   *           required: true
+   *           schema:
+   *              type: integer
+   *     tags:
+   *       - Brand Score
+   *     description: Retrieve Increase Brandscore detail with brandscoreIncreaseId
+   *     produces:
+   *       - application/json
+   *     responses:
+   *       200:
+   *         description: Details of a Increase Brandscore
+   *       401:
+   *          description: Unauthorized
+   *          content:
+   *              application/json:
+   *                  schema:
+   *                      type: object
+   *                      properties:
+   *                          message:
+   *                              type: string
+   *                              example: Authorisation Required
+   */
+  router.get("/brandscore_increase/:brandscoreIncreaseId",auth, BrandScore.increaseBrandScoreDetails);
  
   /**
    * @swagger
@@ -886,6 +1009,37 @@ module.exports = app => {
    *                              example: Authorisation Required
    */
   router.put("/brandscore/:brandScoreId",auth, BrandScore.updateBrandScore);
+
+   /**
+   * @swagger
+   * /api/brandscore/{brandScoreId}:
+   *   get:
+   *     parameters:
+   *         - name: brandScoreId
+   *           in: path
+   *           required: true
+   *           schema:
+   *              type: integer
+   *     tags:
+   *       - Brand Score
+   *     description: Retrieve Brand Score detail with brandScoreId
+   *     produces:
+   *       - application/json
+   *     responses:
+   *       200:
+   *         description: Details of a Brand Score
+   *       401:
+   *          description: Unauthorized
+   *          content:
+   *              application/json:
+   *                  schema:
+   *                      type: object
+   *                      properties:
+   *                          message:
+   *                              type: string
+   *                              example: Authorisation Required
+   */
+  router.get("/brandscore/:brandScoreId",auth, BrandScore.brandScoreDetails);
   
   // Retrieve all Brandscore
     /**

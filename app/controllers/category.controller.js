@@ -1,65 +1,59 @@
 const db = require("../models");
-const faq = db.faq;
+const Category = db.category;
 const audit_log = db.audit_log
 const logger = require("../middleware/logger");
 const { isNull } = require("util");
 const Op = db.Sequelize.Op;
 /**
- * Function to add FAQ
+ * Function to add Category
  * @param  {object}  req expressJs request object
  * @param  {object}  res expressJs response object
  * @return {Promise}
  */
 
-exports.addFAQ = async (req, res) => {
+exports.addCategory = async (req, res) => {
     const body = req.body;
-    if (!req.body["FAQ Question"]) {
+    if (!req.body["Category Name"]) {
         res.status(400).send({
             msg:
-                "FAQ Question is required"
+                "Category Name is required"
         });
         return;
     }
-    if (!req.body["FAQ Answer"]) {
-        res.status(400).send({
-            msg:
-                "FAQ Answer is required"
-        });
-        return;
+    const categoryData = {
+        "category_name": body.hasOwnProperty("Category Name") ? req.body["Category Name"] : '',
+        "category_type": body.hasOwnProperty("Category Type") ? req.body["Category Type"] : "POST",
+        "category_status": body.hasOwnProperty("Category Status") ? req.body["Category Status"] : 1
     }
-    const faqData = {
-        "faq_question": body.hasOwnProperty("FAQ Question") ? req.body["FAQ Question"] : '',
-        "faq_answer": body.hasOwnProperty("FAQ Answer") ? req.body["FAQ Answer"] : ""
-    }
-    faq.create(faqData)
+    Category.create(categoryData)
         .then(data => {
-            audit_log.saveAuditLog(req.header(process.env.UKEY_HEADER || "x-api-key"), 'add', 'FAQ', data.faq_id, data.dataValues);
+            audit_log.saveAuditLog(req.header(process.env.UKEY_HEADER || "x-api-key"), 'add', 'Category', data.category_id, data.dataValues);
             res.status(201).send({
-                msg: "FAQ Added Successfully",
-                faqID: data.faq_id
+                msg: "Category Added Successfully",
+                categoryId: data.category_id
             });
         })
         .catch(err => {
-            logger.log("error", "Some error occurred while adding the FAQ=" + err);
+            logger.log("error", "Some error occurred while adding the Category=" + err);
             res.status(500).send({
                 message:
-                    err.message || "Some error occurred while adding the FAQ."
+                    err.message || "Some error occurred while adding the Category."
             });
         });
 }
 
 
 /**
- * Function to get all FAQs
+ * Function to get all Categorys
  * @param  {object}  req expressJs request object
  * @param  {object}  res expressJs response object
  * @return {Promise}
  */
-exports.faqListing = async (req, res) => {
+exports.categoryListing = async (req, res) => {
     const pageSize = parseInt(req.query.pageSize || 10);
     const pageNumber = parseInt(req.query.pageNumber || 1);
     const skipCount = (pageNumber - 1) * pageSize;
-    const sortBy = req.query.sortBy || 'faq_id'
+    const sortBy = req.query.sortBy || 'category_id'
     const sortOrder = req.query.sortOrder || 'DESC'
     var options = {
         limit: pageSize,
@@ -80,35 +74,35 @@ exports.faqListing = async (req, res) => {
             ]
         } : null;
     }
-    if (req.query.faqId) {
-        options['where']['faq_id'] = req.query.faqId;
+    if (req.query.categoryId) {
+        options['where']['category_id'] = req.query.categoryId;
     }
-    var total = await faq.count({
+    var total = await Category.count({
         where: options['where']
     });
-    const faq_list = await faq.findAll(options);
+    const category_list = await Category.findAll(options);
     res.status(200).send({
-        data: faq_list,
+        data: category_list,
         totalRecords: total
     });
 }
 
 /**
- * Function to get FAQ Detail
+ * Function to get Category Detail
  * @param  {object}  req expressJs request object
  * @param  {object}  res expressJs response object
  * @return {Promise}
  */
-exports.faqDetails = async(req, res) => {
+exports.categoryDetails = async(req, res) => {
     var options = {
         where: {
-            faq_id: req.params.faqId
+            category_id: req.params.categoryId
         }
     };
-    const faqDetail = await faq.findOne(options);
+    const faqDetail = await Category.findOne(options);
     if(!faqDetail){
         res.status(500).send({
-            message: "FAQ not found"
+            message: "Category not found"
         });
         return
     }
@@ -118,74 +112,74 @@ exports.faqDetails = async(req, res) => {
 };
 
 /**
- * Function to update FAQ
+ * Function to update Category
  * @param  {object}  req expressJs request object
  * @param  {object}  res expressJs response object
  * @return {Promise}
  */
-exports.updateFAQ = async(req, res) => {
-    const id = req.params.faqId;
-    var faqDetails = await faq.findOne({
+exports.updateCategory = async(req, res) => {
+    const id = req.params.categoryId;
+    var faqDetails = await Category.findOne({
         where: {
-            faq_id: id
+            category_id: id
         }
     });
-    faq.update(req.body, {
+    Category.update(req.body, {
 		returning:true,
         where: {
-            faq_id: id
+            category_id: id
         }
     }).then(function([ num, [result] ]) {
         if (num == 1) {
-            audit_log.saveAuditLog(req.header(process.env.UKEY_HEADER || "x-api-key"),'update','FAQ',id,result.dataValues,faqDetails);
+            audit_log.saveAuditLog(req.header(process.env.UKEY_HEADER || "x-api-key"),'update','Category',id,result.dataValues,faqDetails);
             res.status(200).send({
-                message: "FAQ updated successfully."
+                message: "Category updated successfully."
             });
         } else {
             res.status(400).send({
-                message: `Cannot update FAQ with id=${id}. Maybe FAQ was not found or req.body is empty!`
+                message: `Cannot update Category with id=${id}. Maybe Category was not found or req.body is empty!`
             });
         }
     }).catch(err => {
-        logger.log("error", err+":Error updating FAQ with id=" + id);
+        logger.log("error", err+":Error updating Category with id=" + id);
         res.status(500).send({
-            message: "Error updating FAQ with id=" + id
+            message: "Error updating Category with id=" + id
         });
     });
 };
 
 /**
- * Function to delete FAQ
+ * Function to delete Category
  * @param  {object}  req expressJs request object
  * @param  {object}  res expressJs response object
  * @return {Promise}
  */
-exports.deleteFAQ = async (req, res) => {
-    const faqDetails = await faq.findOne({
+exports.deleteCategory = async (req, res) => {
+    const faqDetails = await Category.findOne({
             where: {
-                faq_id: req.params.faqId
+                category_id: req.params.categoryId
             }
         });
     if(!faqDetails){
         res.status(500).send({
-            message: "Could not delete FAQ with id=" + req.params.faqId
+            message: "Could not delete Category with id=" + req.params.categoryId
           });
           return;
     }
-    faq.destroy({
+    Category.destroy({
         where: { 
-            faq_id: req.params.faqId
+            category_id: req.params.categoryId
         }
       })
         .then(num => {
         res.status(200).send({
-              message: "FAQ deleted successfully!"
+              message: "Category deleted successfully!"
         });
             return;
         })
         .catch(err => {
           res.status(500).send({
-            message: "Could not delete FAQ with id=" + req.params.faqId
+            message: "Could not delete Category with id=" + req.params.categoryId
           });
           return;
         });

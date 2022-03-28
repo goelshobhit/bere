@@ -123,7 +123,7 @@ module.exports = app => {
    *           in: path
    *           required: true
    *           schema:
-   *              type: string
+   *              type: integer
    *      tags:
    *          - Content Report
    *      description: Update Content Report Category
