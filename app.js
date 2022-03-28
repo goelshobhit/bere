@@ -230,11 +230,11 @@ const job = schedule.scheduleJob('05 00 * * *',async function(){
 	
 });
 //Set up the passport to do social login
-const passport = require('passport');
-app.use(passport.initialize());
-require("./app/middleware/socialLogin/passportFacebook")(passport);
-require("./app/middleware/socialLogin/passportInstagram")(passport);
-require("./app/middleware/socialLogin/passportSnapchat")(passport);
+// const passport = require('passport');
+// app.use(passport.initialize());
+// require("./app/middleware/socialLogin/passportFacebook")(passport);
+// require("./app/middleware/socialLogin/passportInstagram")(passport);
+// require("./app/middleware/socialLogin/passportSnapchat")(passport);
 // require("./app/middleware/socialLogin/passportPinterest")(passport);
 // const session = require("express-session");
 // app.use(session({
@@ -318,7 +318,7 @@ require("./app/routes/tips.routes")(app);
 require("./app/routes/terms_conditions.routes")(app);
 require("./app/routes/autocomplete_place.routes")(app);
 require("./app/routes/users_invitation.routes")(app);
-require("./app/routes/social_login.routes")({app, passport});
+// require("./app/routes/social_login.routes")({app, passport});
 require("./app/routes/content_feedback_settings.routes")(app);
 require("./app/routes/content_feedback.routes")(app);
 require("./app/routes/category.routes")(app);
