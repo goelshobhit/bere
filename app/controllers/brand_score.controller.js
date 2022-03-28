@@ -411,13 +411,6 @@ exports.brandscoreIncreaselisting = async (req, res) => {
                 where: {
                     is_autotakedown: 0
                 }
-            },
-            {
-                model: db.tasks,
-                required: false,
-                attributes: [
-                    ["ta_name", "Task Name"]
-                ]
             }
         ],
         limit: pageSize,

@@ -368,11 +368,6 @@ exports.userDetailForAdmin = async (req, res) => {
 		}
 		],
 		attributes:["u_id","u_login","u_referer_id","u_acct_type","u_act_sec","u_email","u_active","u_pref_login","u_created_at","u_updated_at","u_email_verify_status", "is_user_deactivated", "is_user_hidden",
-		
-		
-		
-		
-		
 		[db.sequelize.literal('0'), 'Total Reach'],
 		[db.sequelize.literal('0'), 'Average Enagagement Rate'],
 		[db.sequelize.literal('0'), 'Rewards Token Earned'],
