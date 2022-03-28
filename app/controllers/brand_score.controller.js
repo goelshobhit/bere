@@ -92,6 +92,30 @@ exports.updateEngagementType = async(req, res) => {
  }
 
  /**
+ * Function to get Engagement Type Detail
+ * @param  {object}  req expressJs request object
+ * @param  {object}  res expressJs response object
+ * @return {Promise}
+ */
+exports.engagementTypeDetails = async(req, res) => {
+    var options = {
+        where: {
+            engagement_id: req.params.engagementId
+        }
+    };
+    const engagementTypeDetail = await EngagementType.findOne(options);
+    if(!engagementTypeDetail){
+        res.status(500).send({
+            message: "BrandScore Engagement Type Detail not found"
+        });
+        return
+    }
+    res.status(200).send({
+        data: engagementTypeDetail
+    });
+};
+
+ /**
  * Function to delete Engagement Type
  * @param  {object}  req expressJs request object
  * @param  {object}  res expressJs response object
@@ -297,6 +321,30 @@ exports.updateEngagementSettings = async(req, res) => {
  }
 
  /**
+ * Function to get Engagement Settings Detail
+ * @param  {object}  req expressJs request object
+ * @param  {object}  res expressJs response object
+ * @return {Promise}
+ */
+exports.engagementSettingsDetails = async(req, res) => {
+    var options = {
+        where: {
+            bes_id: req.params.engagementSettingId
+        }
+    };
+    const engagementSettingDetail = await EngagementSettings.findOne(options);
+    if(!engagementSettingDetail){
+        res.status(500).send({
+            message: "BrandScore Engagement Settings Detail not found"
+        });
+        return
+    }
+    res.status(200).send({
+        data: engagementSettingDetail
+    });
+};
+
+ /**
  * Function to delete Engagement Setting
  * @param  {object}  req expressJs request object
  * @param  {object}  res expressJs response object
@@ -486,6 +534,30 @@ exports.updateIncreaseBrandScore = async(req, res) => {
     });
  }
 
+ /**
+ * Function to get Increase Brandscore Detail
+ * @param  {object}  req expressJs request object
+ * @param  {object}  res expressJs response object
+ * @return {Promise}
+ */
+exports.increaseBrandScoreDetails = async(req, res) => {
+    var options = {
+        where: {
+            brandscore_increase_id: req.params.brandscoreIncreaseId
+        }
+    };
+    const increaseBrandScoreDetail = await brandscoreIncrease.findOne(options);
+    if(!increaseBrandScoreDetail){
+        res.status(500).send({
+            message: "Increase Brandscore Detail not found"
+        });
+        return
+    }
+    res.status(200).send({
+        data: increaseBrandScoreDetail
+    });
+};
+
 /**
  * Function to add Brand Score task
  * @param  {object}  req expressJs request object
@@ -595,6 +667,75 @@ exports.brandScoreTasklisting = async (req, res) => {
 };
 
 /**
+ * Function to update Brand Score Task
+ * @param  {object}  req expressJs request object
+ * @param  {object}  res expressJs response object
+ * @return {Promise}
+ */
+exports.updateBrandScoreTask = async (req, res) => {
+    const id = req.params.brandScoreId;
+    var brandScoreDetails = await BrandScoretask.findOne({
+        where: {
+            brandscore_id: id
+        }
+    });
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        res.status(422).json({
+            errors: errors.array()
+        });
+        return;
+    }
+    BrandScoretask.update(req.body, {
+        returning: true,
+        where: {
+            brandscore_id: id
+        }
+    }).then(function ([num, [result]]) {
+        if (num == 1) {
+            audit_log.saveAuditLog(req.header(process.env.UKEY_HEADER || "x-api-key"), 'update', 'brandscore_task', id, result.dataValues, brandScoreDetails);
+            res.status(200).send({
+                message: "Brand Score Task Updated successfully."
+            });
+        } else {
+            res.status(400).send({
+                message: `Cannot update Brand Score Task with id=${id}. Maybe Brand Score Task was not found or req.body is empty!`
+            });
+        }
+    }).catch(err => {
+        logger.log("error", err + ":Error updating Brand Score Task with id=" + id);
+        console.log(err)
+        res.status(500).send({
+            message: "Error updating Brand Score Task with id=" + id
+        });
+    });
+};
+
+/**
+ * Function to get Brand Score Task Detail
+ * @param  {object}  req expressJs request object
+ * @param  {object}  res expressJs response object
+ * @return {Promise}
+ */
+exports.brandScoreTaskDetails = async(req, res) => {
+    var options = {
+        where: {
+            brandscore_id: req.params.brandScoreId
+        }
+    };
+    const brandScoreTaskDetail = await brandscore_task.findOne(options);
+    if(!brandScoreTaskDetail){
+        res.status(500).send({
+            message: "Brand Score Task not found"
+        });
+        return
+    }
+    res.status(200).send({
+        data: brandScoreTaskDetail
+    });
+};
+
+/**
  * Function to get all brandScore Task listing
  * @param  {object}  req expressJs request object
  * @param  {object}  res expressJs response object
@@ -656,6 +797,7 @@ exports.brandScoreListing = async (req, res) => {
     });
 };
 
+
 /**
  * Function to add Brand Score
  * @param  {object}  req expressJs request object
@@ -713,51 +855,6 @@ exports.AddBrandScore = async (req, res) => {
 }
 
 /**
- * Function to update Brand Score Task
- * @param  {object}  req expressJs request object
- * @param  {object}  res expressJs response object
- * @return {Promise}
- */
-exports.updateBrandScoreTask = async (req, res) => {
-    const id = req.params.brandScoreId;
-    var brandScoreDetails = await BrandScoretask.findOne({
-        where: {
-            brandscore_id: id
-        }
-    });
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-        res.status(422).json({
-            errors: errors.array()
-        });
-        return;
-    }
-    BrandScoretask.update(req.body, {
-        returning: true,
-        where: {
-            brandscore_id: id
-        }
-    }).then(function ([num, [result]]) {
-        if (num == 1) {
-            audit_log.saveAuditLog(req.header(process.env.UKEY_HEADER || "x-api-key"), 'update', 'brandscore_task', id, result.dataValues, brandScoreDetails);
-            res.status(200).send({
-                message: "Brand Score Task Updated successfully."
-            });
-        } else {
-            res.status(400).send({
-                message: `Cannot update Brand Score Task with id=${id}. Maybe Brand Score Task was not found or req.body is empty!`
-            });
-        }
-    }).catch(err => {
-        logger.log("error", err + ":Error updating Brand Score Task with id=" + id);
-        console.log(err)
-        res.status(500).send({
-            message: "Error updating Brand Score Task with id=" + id
-        });
-    });
-};
-
-/**
 * Function to update Brand Score
 * @param  {object}  req expressJs request object
 * @param  {object}  res expressJs response object
@@ -801,6 +898,31 @@ exports.updateBrandScore = async (req, res) => {
         });
     });
 };
+
+/**
+ * Function to get Brand Score Detail
+ * @param  {object}  req expressJs request object
+ * @param  {object}  res expressJs response object
+ * @return {Promise}
+ */
+exports.brandScoreDetails = async(req, res) => {
+    var options = {
+        where: {
+            brandscore_id: req.params.brandScoreId
+        }
+    };
+    const brandScoreDetail = await BrandScore.findOne(options);
+    if(!brandScoreDetail){
+        res.status(500).send({
+            message: "Brand Score Detail not found"
+        });
+        return
+    }
+    res.status(200).send({
+        data: brandScoreDetail
+    });
+};
+
 /**
  * Function to delete Brand Score Task
  * @param  {object}  req expressJs request object

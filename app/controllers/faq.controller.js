@@ -108,7 +108,7 @@ exports.faqDetails = async(req, res) => {
     const faqDetail = await faq.findOne(options);
     if(!faqDetail){
         res.status(500).send({
-            message: "Category not found"
+            message: "FAQ not found"
         });
         return
     }
