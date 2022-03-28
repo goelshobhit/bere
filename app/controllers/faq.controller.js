@@ -5,7 +5,7 @@ const logger = require("../middleware/logger");
 const { isNull } = require("util");
 const Op = db.Sequelize.Op;
 /**
- * Function to add FAQ
+ * Function to add Page Location
  * @param  {object}  req expressJs request object
  * @param  {object}  res expressJs response object
  * @return {Promise}
@@ -108,7 +108,7 @@ exports.faqDetails = async(req, res) => {
     const faqDetail = await faq.findOne(options);
     if(!faqDetail){
         res.status(500).send({
-            message: "FAQ not found"
+            message: "Page Location not found"
         });
         return
     }

@@ -88,7 +88,6 @@ module.exports = app => {
  *                            type: integer
  *                        users_invitation_object_id:
  *                            type: integer
- *                            example: "1: Survey,2: Task,3: Contest, 4: App, 5= Bonus Task"
  *                        users_invitation_action_id:
  *                            type: integer
  *                        users_invitation_recipient_email:
@@ -120,7 +119,7 @@ module.exports = app => {
  *           in: path
  *           required: true
  *           schema:
- *              type: integer
+ *              type: string
  *     tags:
  *       - Users Invitation
  *     description: Update User Invitation
@@ -154,11 +153,6 @@ module.exports = app => {
      *   get:
      *     parameters:
      *         - name: invitationID
-     *           in: query
-     *           required: false
-     *           schema:
-     *              type: integer
-     *         - name: userID
      *           in: query
      *           required: false
      *           schema:
@@ -210,47 +204,6 @@ module.exports = app => {
      *                              example: Authorisation Required
      */
     router.get('/users_invitation', auth, users_invitation.userInvitationListing)
-
-    /**
-   * @swagger
-   * /api/users_invitation/{userId}:
-   *   get:
-   *     parameters:
-   *         - name: userId
-   *           in: path
-   *           required: true
-   *           schema:
-   *              type: integer
-   *         - name: pageSize
-   *           in: query
-   *           required: false
-   *           schema:
-   *              type: integer
-   *         - name: pageNumber
-   *           in: query
-   *           required: false
-   *           schema:
-   *              type: integer
-   *     tags:
-   *       - Users Invitation
-   *     description: Retrieve listing with userId
-   *     produces:
-   *       - application/json
-   *     responses:
-   *       200:
-   *         description: Listing to see which invited user has started or completed the task
-   *       401:
-   *          description: Unauthorized
-   *          content:
-   *              application/json:
-   *                  schema:
-   *                      type: object
-   *                      properties:
-   *                          message:
-   *                              type: string
-   *                              example: Authorisation Required
-   */
-  router.get("/users_invitation/:userId",auth, users_invitation.usersInvitationUserbasedListing);
 
     
   app.use("/api", router);

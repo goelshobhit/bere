@@ -17,10 +17,6 @@ module.exports = (sequelize, Sequelize) => {
             type: Sequelize.TEXT,
             allowNull: false,
         },
-        reward_center_reward_type: {
-            type: Sequelize.INTEGER,
-            allowNull: false,
-        },
         reward_center_dist_one_freq: {
 			type: Sequelize.INTEGER,
             allowNull: false,

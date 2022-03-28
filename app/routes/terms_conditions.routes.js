@@ -116,7 +116,7 @@ module.exports = app => {
  *           in: path
  *           required: true
  *           schema:
- *              type: integer
+ *              type: string
  *     tags:
  *       - Terms & Conditions
  *     description: Update Terms & Conditions

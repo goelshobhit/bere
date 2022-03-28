@@ -2,8 +2,6 @@ const db = require("../../models");
 const rewardGiven = db.rewards_given;
 const rewardRequest = db.rewards_request;
 const reward = require("../../reward");
-const Op = db.Sequelize.Op;
-const sequelize= require('sequelize');
 
 /**
  * Function to give reward to user.
@@ -144,43 +142,4 @@ exports.rewardGivenlisting = async (req, res) => {
     totalRecords: total
   });
 }
-
-/**
- * Function to get Reward listing for users reward given in last 7 days
- * @param  {object}  req expressJs request object
- * @param  {object}  res expressJs response object
- * @return {Promise}
- */
-exports.rewardListing = async (req, res) => {
-  var todayDate = new Date();
-  var sevenDaybeforeDate = todayDate.setDate(todayDate.getDate() - 7);
-  sevenDaybeforeDate.toLocaleString('en-US', { timeZone: 'Asia/Calcutta' })
-  let sevenDayDate = new Date(sevenDaybeforeDate);
-  var options = {
-    where: {
-      created_at: {
-          [Op.gte]: sevenDayDate
-      }
-  },
-    attributes: [
-      'rewards_award_name',
-      'rewards_award_event_type',
-      [sequelize.fn('COUNT', sequelize.col('rewards_award_user_id')), 'user_ids'],
-      [sequelize.fn('SUM', sequelize.col('rewards_award_token')), 'rewards_award_tokens']
-    ],
-    group: ['rewards_award_name', 'rewards_award_event_type']
-  };
-  if (req.query.rewardsAwardName) {
-    options['where']['rewards_award_name'] = req.query.rewardsAwardName;
-  }
-  // var total = await rewardGiven.count({
-  //   where: options['where']
-  // });
-  const rewards_request_list = await rewardGiven.findAll(options);
-  res.status(200).send({
-    data: rewards_request_list
-    //totalRecords: total
-  });
-}
-
 

@@ -159,7 +159,7 @@ module.exports = app => {
  *           in: path
  *           required: true
  *           schema:
- *              type: integer
+ *              type: string
  *     tags:
  *       - Page Location
  *     description: Update Page Location

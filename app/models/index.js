@@ -52,9 +52,6 @@ db.Sequelize = Sequelize;
 db.sequelize = sequelize;
 
 //Modesl/Tables
-db.category = require("./category.model")(sequelize, Sequelize);
-db.content_feedback_settings = require("./content_feedback_settings.model")(sequelize, Sequelize);
-db.content_feedback = require("./content_feedback.model")(sequelize, Sequelize);
 db.users_invitation = require("./users_invitation.model")(sequelize, Sequelize);
 db.tips = require("./tips.model")(sequelize, Sequelize);
 db.terms_conditions = require("./terms_conditions.model")(sequelize, Sequelize);
@@ -143,7 +140,6 @@ db.rewards_given = require("./reward/rewards_given.model")(sequelize, Sequelize)
 db.rewards_balance = require("./reward/rewards_balance.model")(sequelize, Sequelize);
 db.rewards_credit = require("./reward/rewards_credit.model")(sequelize, Sequelize);
 db.reward_random_winner = require("./reward/reward_random_winner.model")(sequelize, Sequelize);
-db.reward_settings = require("./reward/reward_settings.model")(sequelize, Sequelize);
 
 db.brand_score = require("./brand_score.model")(sequelize, Sequelize);
 db.brandscore_task = require("./brandscore_task.model")(sequelize, Sequelize);

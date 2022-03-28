@@ -158,38 +158,6 @@ module.exports = app => {
 	*                              example: Authorisation Required
 	*/
 	router.get("/users/:userID", auth,Users.userDetail);
-
-	/**
-	* @swagger
-	* /api/user_details/{userID}:
-	*   get:
-	*     parameters:
-	*         - name: userID
-	*           in: path
-	*           required: true
-	*           schema:
-	*              type: string
-	*     tags:
-	*       - Users
-	*     description: Retrieve a single User details to use in CMS
-	*     produces:
-	*       - application/json
-	*     responses:
-	*       200:
-	*         description: Details of a User details
-	*       401:
-	*          description: Unauthorized
-	*          content:
-	*              application/json:
-	*                  schema:
-	*                      type: object
-	*                      properties:
-	*                          message:
-	*                              type: string
-	*                              example: Authorisation Required
-	*/
-	router.get("/user_details/:userID", auth,Users.userDetailForAdmin);
-
   /**
    * @swagger
    * /api/users/{userID}:

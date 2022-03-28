@@ -60,7 +60,7 @@ module.exports = app => {
     */
     router.post("/rewards-engine/awards", auth, rewardGiven.giveReward);
 
-    // Retrieve all rewards given listing
+    // Retrieve all rewards request
     /**
      * @swagger
      * /api/rewards-engine/awards:
@@ -113,37 +113,5 @@ module.exports = app => {
      *                              example: Authorisation Required
      */
     router.get('/rewards-engine/awards', auth, rewardGiven.rewardGivenlisting);
-
-    // Retrieve all rewards Listing
-    /**
-     * @swagger
-     * /api/rewards-engine/reward_listing:
-     *   get:
-     *     parameters:
-     *         - name: rewardsAwardName
-     *           in: query
-     *           required: false
-     *           schema:
-     *              type: string
-     *     tags:
-     *       - Rewards-Engine
-     *     description: Returns all Users Reward given in last 7 days
-     *     produces:
-     *       - application/json
-     *     responses:
-     *       200:
-     *         description: A list of User Reward Given  in last 7 days
-     *       401:
-     *          description: Unauthorized
-     *          content:
-     *              application/json:
-     *                  schema:
-     *                      type: object
-     *                      properties:
-     *                          message:
-     *                              type: string
-     *                              example: Authorisation Required
-     */
-    router.get('/rewards-engine/reward_listing', auth, rewardGiven.rewardListing);
     app.use("/api", router);
 };

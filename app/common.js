@@ -305,11 +305,11 @@ function Common() {
     });
     if (userAccount) {
       if (trx_type === 'credit') {
-        coins = parseFloat(userAccount.ac_balance) + parseFloat(coins);
+        coins = userAccount.ac_balance + coins;
         stars = parseFloat(userAccount.ac_balance_stars) + parseFloat(stars);
       } else {
-        coins = parseFloat(userAccount.ac_balance) - parseFloat(coins);
-        stars = parseFloat(userAccount.ac_balance_stars) - parseFloat(stars);
+        coins = userAccount.ac_balance - coins;
+        stars = userAccount.ac_balance_stars - stars;
       }
 
       accountBalance.update({ ac_balance: coins, ac_balance_stars: stars }, {

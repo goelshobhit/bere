@@ -76,7 +76,7 @@ module.exports = app => {
      *           in: path
      *           required: true
      *           schema:
-     *              type: integer
+     *              type: string
      *     tags:
      *       - Task Level
      *     description: Update  task level
@@ -284,7 +284,7 @@ module.exports = app => {
      *           in: path
      *           required: true
      *           schema:
-     *              type: integer
+     *              type: string
      *     tags:
      *       - Task Level
      *     description: Update User Task level Action

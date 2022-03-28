@@ -8,9 +8,6 @@ module.exports = (sequelize, Sequelize) => {
 		reward_center_name:{
             type: Sequelize.TEXT,
 		},
-		reward_center_image:{
-            type: Sequelize.STRING(100)
-		},
         reward_center_owner_id: {
 			type: Sequelize.INTEGER,
             allowNull: false,
