@@ -221,7 +221,7 @@ module.exports = app => {
      *           in: path
      *           required: true
      *           schema:
-     *              type: string
+     *              type: integer
      *      tags:
      *          - Survey
      *      description: Update survey

@@ -303,7 +303,7 @@ exports.userDetail = async (req, res) => {
 		[db.sequelize.literal('(SELECT COUNT(*) FROM user_fan_following WHERE user_fan_following.faf_by = user_login.u_id)'), 'total_following'],
 		[db.sequelize.literal('(SELECT COUNT(*) FROM user_fan_following WHERE user_fan_following.faf_to = user_login.u_id )'), 'total_fans'],
 		[db.sequelize.literal('(SELECT COUNT(*)  FROM user_fan_following WHERE user_fan_following.faf_by = '+Uid+' and user_fan_following.faf_to = user_login.u_id)'), 'followed_by_me'],
-		[db.sequelize.literal('(SELECT COUNT(*) FROM user_fan_following WHERE user_fan_following.faf_to = '+Uid+' and user_fan_following.faf_by = user_login.u_id )'), 'following_me'],
+		[db.sequelize.literal('(SELECT COUNT(*) FROM user_fan_following WHERE user_fan_following.faf_to = '+Uid+' and user_fan_following.faf_by = user_login.u_id )'), 'following_me']
 		],
         where: {
             u_id: userID,
@@ -333,6 +333,106 @@ exports.userDetail = async (req, res) => {
 		media_token:common.imageToken(userID)
     })
 }
+
+/**
+ * Function to get admin Role details
+ * @param  {object}  req expressJs request object
+ * @param  {object}  res expressJs response object
+ * @return {Promise}
+ */
+exports.userDetailForAdmin = async (req, res) => {
+	const pageSize = parseInt(req.query.pageSize || 10);
+	const pageNumber = parseInt(req.query.pageNumber || 1);
+	const skipCount = (pageNumber - 1) * pageSize;
+    const userID = req.params.userID;
+	const Uid=req.header(process.env.UKEY_HEADER || "x-api-key");
+    const User = await Users.findOne({
+		include: [{
+            model: db.user_profile
+        },
+		{
+            model: db.user_social_ext
+        },
+		{
+			model: db.user_content_post,
+            attributes: ["ucpl_content_data",['ucpl_id','post_id'],'ta_task_id'],
+            required:false,
+			where: {
+				ucpl_status:1
+			},
+			limit: pageSize,
+			offset: skipCount,
+			order: [
+			['ucpl_id', "DESC"]
+			],
+		}
+		],
+		attributes:["u_id","u_login","u_referer_id","u_acct_type","u_act_sec","u_email","u_active","u_pref_login","u_created_at","u_updated_at","u_email_verify_status", "is_user_deactivated", "is_user_hidden",
+		[db.sequelize.literal('0'), 'Total Reach'],
+		[db.sequelize.literal('0'), 'Average Enagagement Rate'],
+		[db.sequelize.literal('0'), 'Rewards Token Earned'],
+		[db.sequelize.literal('0'), 'Tokens Balance'],
+		[db.sequelize.literal('0'), 'Star Earned'],
+		[db.sequelize.literal('0'), 'Riddim Level'],
+		[db.sequelize.literal('0'), 'Tickets Earned'],
+		[db.sequelize.literal('0'), 'Presents Earned'],
+		[db.sequelize.literal('0'), 'Lottery Wheels'],
+		[db.sequelize.literal('0'), 'Easter Eggs'],
+		[db.sequelize.literal('0'), 'Chests Earned'],
+        [db.sequelize.literal('0'), 'Bonuses Won'],
+        [db.sequelize.literal('(SELECT COUNT(*) FROM bonus_task WHERE bonus_task.bonus_task_usr_id = '+userID+' and bonus_task.bonus_task_usr_id = user_login.u_id and bonus_task_is_finished = 1 )'), 'Bonus Tasks Completed'],
+		[db.sequelize.literal('0'), 'Tasks Entered'],
+		[db.sequelize.literal('0'), 'Contests Entered'],
+		[db.sequelize.literal('0'), 'Content Entered'],
+        [db.sequelize.literal('(SELECT COUNT(*) FROM survey_user_complete WHERE survey_user_complete.sr_uid = '+userID+' and survey_user_complete.sr_uid = user_login.u_id )'), 'Surveys'],
+        [db.sequelize.literal('(SELECT COUNT(*) FROM user_fan_following WHERE user_fan_following.faf_by = '+userID+')'), 'Following'],
+        [db.sequelize.literal('(SELECT COUNT(*) FROM user_fan_following WHERE user_fan_following.faf_to = '+userID+')'), 'Followers'],
+        [db.sequelize.literal('(SELECT COUNT(*) FROM video_ads_submit WHERE video_ads_submit.u_id = '+userID+' and video_ads_submit.u_id = user_login.u_id )'), 'Ads Watched'],
+        [db.sequelize.literal('(SELECT SUM(pc_comment_likes) FROM post_comment WHERE post_comment.pc_commenter_uid = '+userID+'  )'), 'Liked Comments'],
+		[db.sequelize.literal('(SELECT SUM(pc_comment_unlikes) FROM post_comment WHERE post_comment.pc_commenter_uid = '+userID+'  )'), 'Disliked Comments'],
+        [db.sequelize.literal('0'), 'Reactions Received'],
+        [db.sequelize.literal('0'), 'Reactions Given'],
+        [db.sequelize.literal('0'), 'Reported Content'],
+        [db.sequelize.literal('0'), 'Number of Brands'],
+        [db.sequelize.literal('0'), 'Tier 2 Sent'],
+        [db.sequelize.literal('0'), 'Tier 2 Incomplete'],
+        [db.sequelize.literal('0'), 'Tier 2 Declined'],
+        [db.sequelize.literal('0'), 'Tier 3 Completed'],
+        [db.sequelize.literal('0'), 'Tier 3 Sent'],
+        [db.sequelize.literal('0'), 'Tier 3 Incomplete'],
+        [db.sequelize.literal('0'), 'Tier 3 Declined'],
+        [db.sequelize.literal('0'), 'Tier 3 Completed'],
+        [db.sequelize.literal('null'), 'Brands Participated'],
+		],
+        where: {
+            u_id: userID,
+            is_user_hidden: 0
+        }
+    });
+    if (!User) {
+        res.status(500).send({
+            message: "User not found"
+        });
+        return
+    }
+    if (User && User.is_user_deactivated == 1) {
+		res.status(500).send({
+            message: "User Is deactivated"
+        });
+        return
+	}
+	if(User && User.u_active!=true){
+		res.status(500).send({
+            message: "User details not found"
+        });
+        return
+	}
+    res.status(200).send({
+        user_details: User,
+		media_token:common.imageToken(userID)
+    })
+}
+
 /**
  * Function to update user details
  * @param  {object}  req expressJs request object

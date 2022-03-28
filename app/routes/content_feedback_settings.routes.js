@@ -1,11 +1,11 @@
 module.exports = app => {
-    const pageLocation = require("../controllers/page_location.controller.js");
+    const content_feedback_settings = require("../controllers/content_feedback_settings.controller.js");
     var router = require("express").Router();
     const auth = require("../middleware/auth");
 
     /**
    * @swagger
-   * /api/page_location:
+   * /api/content_feedback_settings:
    *   post:
    *     requestBody:
    *        required: false
@@ -14,20 +14,18 @@ module.exports = app => {
    *                schema:
    *                    type: object
    *                    properties:
-   *                        Page Name:
-   *                           type: string
-   *                        Page Description:
-   *                           type: string
-   *                        Page Image Path:
-   *                           type: string
+   *                        User Percentage:
+   *                           type: number
+   *                        Shown Days:
+   *                           type: integer
    *     tags:
-   *       - Page Location
-   *     description: Add Page Location
+   *       - Content Feedback Settings
+   *     description: Add Content Feedback Settings
    *     produces:
    *       - application/json
    *     responses:
    *       201:
-   *         description: Add Page Location
+   *         description: Add Content Feedback Settings
    *       422:
    *         description: validation errors
    *       500:
@@ -43,26 +41,21 @@ module.exports = app => {
    *                              type: string
    *                              example: Authorisation Required
    */
-    router.post("/page_location", auth, pageLocation.addPageLocation);
+    router.post("/content_feedback_settings", auth, content_feedback_settings.addContentFeedbackSettings);
 
     
 
-    // Retrieve all task level listing
+    // Retrieve all Content Feedback Settings Listing
     /**
      * @swagger
-     * /api/page_location:
+     * /api/content_feedback_settings:
      *   get:
      *     parameters:
-     *         - name: pageId
+     *         - name: cfsId
      *           in: query
      *           required: false
      *           schema:
      *              type: integer
-     *         - name: pageName
-     *           in: query
-     *           required: false
-     *           schema:
-     *              type: string
      *         - name: pageNumber
      *           in: query
      *           required: false
@@ -73,7 +66,7 @@ module.exports = app => {
      *           required: false
      *           schema:
      *              type: string
-     *              example: page_id,page_name,page_description,page_image_path,pl_created_at,pl_updated_at    # Example of a parameter value
+     *              example: cfs_id,popup_shown_user_percentage,popup_shown_days    # Example of a parameter value
      *         - name: sortOrder
      *           in: query
      *           required: false
@@ -86,13 +79,13 @@ module.exports = app => {
      *           schema:
      *              type: string
      *     tags:
-     *       - Page Location
-     *     description: Returns all Page Locations
+     *       - Content Feedback Settings
+     *     description: Returns all Content Feedback Settings
      *     produces:
      *       - application/json
      *     responses:
      *       200:
-     *         description: A list of Votes
+     *         description: A list of Content Feedback Settings
      *       401:
      *          description: Unauthorized
      *          content:
@@ -104,42 +97,12 @@ module.exports = app => {
      *                              type: string
      *                              example: Authorisation Required
      */
-    router.get('/page_location', auth, pageLocation.pageLocationListing);
+    router.get('/content_feedback_settings', auth, content_feedback_settings.feedbackSettingListing);
 
-    /**
-   * @swagger
-   * /api/page_location/{pageId}:
-   *   get:
-   *     parameters:
-   *         - name: pageId
-   *           in: path
-   *           required: true
-   *           schema:
-   *              type: string
-   *     tags:
-   *       - Page Location
-   *     description: Retrieve a Page Location with pageId
-   *     produces:
-   *       - application/json
-   *     responses:
-   *       200:
-   *         description: Details of a Page Location
-   *       401:
-   *          description: Unauthorized
-   *          content:
-   *              application/json:
-   *                  schema:
-   *                      type: object
-   *                      properties:
-   *                          message:
-   *                              type: string
-   *                              example: Authorisation Required
-   */
-  router.get("/page_location/:pageId",auth, pageLocation.pageLocationDetails);
 
   /**
  * @swagger
- * /api/page_location/{pageId}:
+ * /api/content_feedback_settings/{cfsId}:
  *   put:
  *     requestBody:
  *        required: false
@@ -148,26 +111,24 @@ module.exports = app => {
  *                schema:
  *                    type: object
  *                    properties:
- *                        page_name:
- *                            format: string
- *                        page_description:
- *                            type: string
- *                        page_image_path:
- *                            format: string
+ *                        popup_shown_user_percentage:
+ *                            type: number
+ *                        popup_shown_days:
+ *                            type: integer
  *     parameters:
- *         - name: pageId
+ *         - name: cfsId
  *           in: path
  *           required: true
  *           schema:
  *              type: integer
  *     tags:
- *       - Page Location
- *     description: Update Page Location
+ *       - Content Feedback Settings
+ *     description: Update Content Feedback Settings
  *     produces:
  *       - application/json
  *     responses:
  *       201:
- *         description: Page Location updated
+ *         description: Content Feedback Settings updated
  *       422:
  *         description: validation errors
  *       500:
@@ -183,26 +144,26 @@ module.exports = app => {
  *                              type: string
  *                              example: Authorisation Required
  */
- router.put("/page_location/:pageId",auth, pageLocation.updatepageLocation);
+ router.put("/content_feedback_settings/:cfsId",auth, content_feedback_settings.updateFeedbackSettings);
 
  /**
  * @swagger
- * /api/page_location/{pageId}:
+ * /api/content_feedback_settings/{cfsId}:
  *   delete:
  *     parameters:
- *         - name: pageId
+ *         - name: cfsId
  *           in: path
  *           required: true
  *           schema:
  *              type: integer
  *     tags:
- *      - Page Location
- *     description: Delete Page Location with id
+ *      - Content Feedback Settings
+ *     description: Delete Content Feedback Settings with id
  *     produces:
  *       - application/json
  *     responses:
  *       200:
- *         description: Delete Page Location
+ *         description: Delete Content Feedback Settings
  *       401:
  *          description: Unauthorized
  *          content:
@@ -214,7 +175,7 @@ module.exports = app => {
  *                              type: string
  *                              example: Authorisation Required
  */
-router.delete("/page_location/:pageId", auth, pageLocation.deletePageLocation);
+router.delete("/content_feedback_settings/:cfsId", auth, content_feedback_settings.deleteFeedbackSettings);
     
   app.use("/api", router);
 };
