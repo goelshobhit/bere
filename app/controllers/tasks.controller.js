@@ -859,107 +859,6 @@ exports.mediaUpload = async (req, res) => {
 }
 
 /**
- * Function to upload media multiple files
- * @param  {object}  req expressJs request object
- * @param  {object}  res expressJs response object
- * @return {Promise}
- */
-// exports.imagesUpload = async (req, res) => {
-//     try {
-//         var files_name = [];
-//         var key_files = {};
-//         var x = [];
-//         let updateData = {};
-//         await upload(req, res);
-//         if (!req.body.media_key) {
-//             return res.status(400).send({
-//                 message: "media_key is required"
-//             });
-//         }
-//         if (req.files.length <= 0) {
-//             return res.status(400).send({
-//                 message: "At least one file required"
-//             });
-//         }
-//         for (i in req.files) {
-//             files_name.push(req.files[i].filename);
-//             const match = ["audio/mp3", "audio/mpeg", "audio/wav", "audio/mp4", "audio/aac", "audio/amr", "audio/flac", "audio/ts", "audio/m4a", "audio/mkv", "audio/ogg", "video/mov", "video/mp4", "video/3gp", "video/mkv", "video/webm", "video/m4v", "video/avi", "video/ts"];
-//             if (match.indexOf(req.files[i].mimetype) === -1) {
-//                 sharp(req.files[i].path).resize(465, 360).withMetadata().toFile('uploads/thumbnails/' + req.files[i].filename, (err, resizeImage) => {
-//                     if (err) {
-//                         logger.log("error", err + ":Error creating thumbnail for " + req.body.actionID + req.body.tblAlias);
-//                     }
-//                 });
-//             } else {
-//                 ffmpeg(req.files[i].path)
-//                     .on('end', function () {
-//                         console.log('thumbnail');
-//                     })
-//                     .on('error', function (err) {
-//                         logger.log("error", err + ":Error creating video thumbnail for " + req.body.actionID + req.body.tblAlias);
-//                     })
-//                     .screenshots({
-//                         count: 1,
-//                         folder: 'uploads/thumbnails',
-//                         filename: req.files[i].filename
-//                     });
-//             }
-//         }
-//         key_files[req.body.media_key] = files_name
-//         res.status(200).send({
-//             files_names: key_files
-//         });
-//         return;
-//     } catch (error) {
-//         if (error.code === "LIMIT_UNEXPECTED_FILE") {
-//             return res.status(400).send({
-//                 message: "Too many files to upload."
-//             });
-//         }
-//         return res.status(500).send({
-//             message: `Error when trying upload many files: ${error}`
-//         });
-//     }
-// }
-
-exports.imagesUpload = async (req, res) => {
-    try {
-        const myFile = req.file
-        return res.status(200).send({
-            req: req.file
-          })
-        if (!req.body.media_key) {
-            return res.status(400).send({
-                message: "media_key is required"
-            });
-        }
-        if (!req.file) {
-            return res.status(400).send({
-                message: "At least one file required"
-            });
-        }
-        myFile.originalname = `${Date.now()}-${myFile.originalname}`;
-        const imageUrl = await uploadImage(myFile)
-        const thumbnail = {
-            fieldname: myFile.fieldname,
-            originalname: `thumbnail/${myFile.originalname}`,
-            encoding: myFile.encoding,
-            mimetype: myFile.mimetype,
-            buffer: await sharp(myFile.buffer).resize(465, 360).toBuffer()
-          }
-        const imagethumbnailUrl = await uploadImage(thumbnail);
-        res.status(200).json({
-            message: "Upload was successful",
-            data: imageUrl,
-            thumbnail: imagethumbnailUrl
-          })
-      } catch (error) {
-        return res.status(500).send({
-                        message: `Error when trying  file: ${error}`
-                    });
-      }
-}
-/**
  * Function to add new contest
  * @param  {object}  req expressJs request object
  * @param  {object}  res expressJs response object
@@ -1180,6 +1079,39 @@ exports.listingContest = async (req, res) => {
  */
 exports.userTasksState = async (req, res) => {
     const Uid = req.header(process.env.UKEY_HEADER || "x-api-key");
+    var invitation_options = {
+        order: [
+            ['users_invitation_id', 'DESC']
+        ],
+        attributes: ["users_invitation_recipient_user_id","users_invitation_object_id", "users_invitation_action_id", "users_invitation_page_id"],
+        where: {}
+    };
+    
+      invitation_options['where'] = {
+        users_invitation_user_id: Uid
+    }
+    const user_invitation_listing = await db.users_invitation.findAll(invitation_options);
+    var bonus_task_data = {};
+    var survey_data = {};
+    var all_user_ids = [];
+    var all_bonus_task_userids = [];
+    if (user_invitation_listing.length) {
+        for (var user_invitation_key in user_invitation_listing) {
+            if (user_invitation_listing[user_invitation_key].users_invitation_object_id == 1 ) {    // survey
+                survey_data[user_invitation_listing[user_invitation_key].users_invitation_recipient_user_id] = user_invitation_listing[user_invitation_key].users_invitation_action_id;
+            }
+            if (user_invitation_listing[user_invitation_key].users_invitation_object_id == 5 ) {    // bonus task
+                bonus_task_data[user_invitation_listing[user_invitation_key].users_invitation_recipient_user_id] = user_invitation_listing[user_invitation_key].users_invitation_action_id;
+            }
+        }
+        var user_ids = Object.keys(survey_data);
+        all_user_ids = user_ids.concat(Uid);
+        var bonus_user_ids = Object.keys(bonus_task_data);
+        all_bonus_task_userids = bonus_user_ids.concat(Uid);
+    } else {
+        all_user_ids = [Uid];
+        all_bonus_task_userids = [Uid];
+    }
     var options = {
         attributes: [["sr_hashtags", "task_hashtag"],["sr_enddate_time", "task_endtime"], "sr_title"],
         where: {}
@@ -1190,7 +1122,7 @@ exports.userTasksState = async (req, res) => {
          attributes:[["sr_id", "task_event_id"],["sr_completed", "task_status"],["sr_uid", "user_id"]],
           where : {
             sr_completed: 0,
-            sr_uid: Uid
+            sr_uid: all_user_ids
           }
         }
       ]
@@ -1209,7 +1141,12 @@ exports.userTasksState = async (req, res) => {
             surveyDetail['task_title'] = survey_user_state[survey_key].dataValues.sr_title;
             surveyDetail['task_status'] = survey_user_state[survey_key].dataValues.survey_user_completes[0].dataValues.task_status;
             surveyDetail['user_id'] = survey_user_state[survey_key].dataValues.survey_user_completes[0].dataValues.user_id;
-            surveyDetail['task_hashtag'] = hashtag.join(hashtag);
+            if (hashtag.length && Array.isArray(hashtag)) {
+                surveyDetail['task_hashtag'] = hashtag.join();
+            } else {
+                surveyDetail['task_hashtag'] = '';
+            }
+           
             surveyDetail['task_endtime'] = survey_user_state[survey_key].dataValues.task_endtime;
             surveyDetail['task_event_type'] = 'Survey';
             surveyData.push(surveyDetail);
@@ -1218,7 +1155,7 @@ exports.userTasksState = async (req, res) => {
     }
     var bonus_options = {
         attributes: [["bonus_task_id", "task_event_id"], ["bonus_task_completion_date", "task_title"], ["bonus_task_is_finished", "task_status"],["bonus_task_usr_id", "user_id"],["bonus_task_hashtag", "task_hashtag"],["bonus_task_completion_date", "task_endtime"]],
-        where: {bonus_task_is_finished: 0}
+        where: {bonus_task_is_finished: 0, bonus_task_usr_id : all_bonus_task_userids}
     };
     const bonus_task_result = await db.bonus_task.findAll(bonus_options);
     if (bonus_task_result.length) {

@@ -1,11 +1,11 @@
 module.exports = app => {
-    const pageLocation = require("../controllers/page_location.controller.js");
+    const category = require("../controllers/category.controller.js");
     var router = require("express").Router();
     const auth = require("../middleware/auth");
 
     /**
    * @swagger
-   * /api/page_location:
+   * /api/category:
    *   post:
    *     requestBody:
    *        required: false
@@ -14,20 +14,20 @@ module.exports = app => {
    *                schema:
    *                    type: object
    *                    properties:
-   *                        Page Name:
+   *                        Category Name:
    *                           type: string
-   *                        Page Description:
+   *                        Category Type:
    *                           type: string
-   *                        Page Image Path:
-   *                           type: string
+   *                        Category Status:
+   *                           type: integer
    *     tags:
-   *       - Page Location
-   *     description: Add Page Location
+   *       - Category
+   *     description: Add Category
    *     produces:
    *       - application/json
    *     responses:
    *       201:
-   *         description: Add Page Location
+   *         description: Add Category
    *       422:
    *         description: validation errors
    *       500:
@@ -43,26 +43,21 @@ module.exports = app => {
    *                              type: string
    *                              example: Authorisation Required
    */
-    router.post("/page_location", auth, pageLocation.addPageLocation);
+    router.post("/category", auth, category.addCategory);
 
     
 
-    // Retrieve all task level listing
+    // Retrieve all Category Listing
     /**
      * @swagger
-     * /api/page_location:
+     * /api/category:
      *   get:
      *     parameters:
-     *         - name: pageId
+     *         - name: categoryId
      *           in: query
      *           required: false
      *           schema:
      *              type: integer
-     *         - name: pageName
-     *           in: query
-     *           required: false
-     *           schema:
-     *              type: string
      *         - name: pageNumber
      *           in: query
      *           required: false
@@ -73,7 +68,7 @@ module.exports = app => {
      *           required: false
      *           schema:
      *              type: string
-     *              example: page_id,page_name,page_description,page_image_path,pl_created_at,pl_updated_at    # Example of a parameter value
+     *              example: category_id,category_name,category_type,category_status    # Example of a parameter value
      *         - name: sortOrder
      *           in: query
      *           required: false
@@ -86,13 +81,13 @@ module.exports = app => {
      *           schema:
      *              type: string
      *     tags:
-     *       - Page Location
-     *     description: Returns all Page Locations
+     *       - Category
+     *     description: Returns all Categories
      *     produces:
      *       - application/json
      *     responses:
      *       200:
-     *         description: A list of Votes
+     *         description: A list of Categories
      *       401:
      *          description: Unauthorized
      *          content:
@@ -104,26 +99,26 @@ module.exports = app => {
      *                              type: string
      *                              example: Authorisation Required
      */
-    router.get('/page_location', auth, pageLocation.pageLocationListing);
+    router.get('/category', auth, category.categoryListing);
 
     /**
    * @swagger
-   * /api/page_location/{pageId}:
+   * /api/category/{categoryId}:
    *   get:
    *     parameters:
-   *         - name: pageId
+   *         - name: categoryId
    *           in: path
    *           required: true
    *           schema:
-   *              type: string
+   *              type: integer
    *     tags:
-   *       - Page Location
-   *     description: Retrieve a Page Location with pageId
+   *       - Category
+   *     description: Retrieve Category with categoryId
    *     produces:
    *       - application/json
    *     responses:
    *       200:
-   *         description: Details of a Page Location
+   *         description: Details of a Category
    *       401:
    *          description: Unauthorized
    *          content:
@@ -135,11 +130,11 @@ module.exports = app => {
    *                              type: string
    *                              example: Authorisation Required
    */
-  router.get("/page_location/:pageId",auth, pageLocation.pageLocationDetails);
+  router.get("/category/:categoryId",auth, category.categoryDetails);
 
   /**
  * @swagger
- * /api/page_location/{pageId}:
+ * /api/category/{categoryId}:
  *   put:
  *     requestBody:
  *        required: false
@@ -148,26 +143,26 @@ module.exports = app => {
  *                schema:
  *                    type: object
  *                    properties:
- *                        page_name:
+ *                        category_name:
  *                            format: string
- *                        page_description:
+ *                        category_type:
  *                            type: string
- *                        page_image_path:
- *                            format: string
+ *                        category_status:
+ *                            type: interger
  *     parameters:
- *         - name: pageId
+ *         - name: categoryId
  *           in: path
  *           required: true
  *           schema:
  *              type: integer
  *     tags:
- *       - Page Location
- *     description: Update Page Location
+ *       - Category
+ *     description: Update Category
  *     produces:
  *       - application/json
  *     responses:
  *       201:
- *         description: Page Location updated
+ *         description: Category updated
  *       422:
  *         description: validation errors
  *       500:
@@ -183,26 +178,26 @@ module.exports = app => {
  *                              type: string
  *                              example: Authorisation Required
  */
- router.put("/page_location/:pageId",auth, pageLocation.updatepageLocation);
+ router.put("/category/:categoryId",auth, category.updateCategory);
 
  /**
  * @swagger
- * /api/page_location/{pageId}:
+ * /api/category/{categoryId}:
  *   delete:
  *     parameters:
- *         - name: pageId
+ *         - name: categoryId
  *           in: path
  *           required: true
  *           schema:
  *              type: integer
  *     tags:
- *      - Page Location
- *     description: Delete Page Location with id
+ *      - Category
+ *     description: Delete Category with id
  *     produces:
  *       - application/json
  *     responses:
  *       200:
- *         description: Delete Page Location
+ *         description: Delete Category
  *       401:
  *          description: Unauthorized
  *          content:
@@ -214,7 +209,7 @@ module.exports = app => {
  *                              type: string
  *                              example: Authorisation Required
  */
-router.delete("/page_location/:pageId", auth, pageLocation.deletePageLocation);
+router.delete("/category/:categoryId", auth, category.deleteCategory);
     
   app.use("/api", router);
 };

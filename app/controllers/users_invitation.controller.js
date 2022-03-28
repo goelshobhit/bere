@@ -142,13 +142,128 @@ exports.userInvitationListing = async (req, res) => {
     if (req.query.recipientUserID) {
         options['where']['users_invitation_recipient_user_id'] = req.query.recipientUserID;
     }
+    if (req.query.userID) {
+        options['where']['users_invitation_user_id'] = req.query.userID;
+    }
     var total = await users_invitation.count({
         where: options['where']
     });
-    const users_invitation_list = await users_invitation.findAll(options);
+    const user_invitation_listing = await users_invitation.findAll(options);
     res.status(200).send({
-        data: users_invitation_list,
+        data: user_invitation_listing,
         totalRecords: total
+    });
+}
+
+/**
+ * Function to get specific user invitation listing
+ * @param  {object}  req expressJs request object
+ * @param  {object}  res expressJs response object
+ * @return {Promise}
+ */
+exports.usersInvitationUserbasedListing = async (req, res) => {
+    const sortBy = req.query.sortBy || 'users_invitation_id'
+    const sortOrder = req.query.sortOrder || 'DESC'
+    var options = {
+        include: [
+            {
+              model: db.user_profile,
+              attributes: ["u_id", ["u_display_name", "username"], ["u_prof_img_path", "user_imgpath"]],
+              required: false
+            },
+            {
+                model: db.page_location,
+                attributes: ['page_id', 'page_name'],
+                required: false
+            }
+        ],
+        order: [
+            [sortBy, sortOrder]
+        ],
+        where: {}
+    };
+    if (req.query.sortVal) {
+        var sortValue = req.query.sortVal.trim();
+        options.where = sortValue ? {
+            [Op.or]: [{
+                cr_co_name: {
+                    [Op.iLike]: `%${sortValue}%`
+                }
+            }
+            ]
+        } : null;
+    }
+    options['where']['users_invitation_user_id'] = req.params.userId;
+    const user_invitation_listing = await users_invitation.findAll(options);
+    var bonus_task_data = {};
+    var survey_data = {};
+    if (user_invitation_listing.length) {
+        for (var user_invitation_key in user_invitation_listing) {
+            if (user_invitation_listing[user_invitation_key].users_invitation_object_id == 1 ) {    // survey
+                survey_data[user_invitation_listing[user_invitation_key].users_invitation_recipient_user_id] = user_invitation_listing[user_invitation_key].users_invitation_action_id;
+            }
+            if (user_invitation_listing[user_invitation_key].users_invitation_object_id == 5 ) {    // bonus task
+                bonus_task_data[user_invitation_listing[user_invitation_key].users_invitation_recipient_user_id] = user_invitation_listing[user_invitation_key].users_invitation_action_id;
+            }
+        }
+        var user_ids = Object.keys(survey_data);
+        var bonus_user_ids = Object.keys(bonus_task_data);
+        var options = {
+            attributes: [["sr_hashtags", "task_hashtag"],["sr_enddate_time", "task_endtime"], "sr_title"],
+            where: {}
+        };
+        options['include'] = [
+            {
+              model: db.survey_user_complete,
+             attributes:[["sr_id", "task_event_id"],["sr_completed", "task_status"],["sr_uid", "user_id"]],
+              where : {
+                sr_uid: user_ids
+              }
+            }
+          ]
+        const survey_user_state = await db.survey.findAll(options);
+        var allTaskData = {};
+        if (survey_user_state.length) {
+            for (var survey_key in survey_user_state) {
+                var surveyDetail = {};
+                var hashtag = survey_user_state[survey_key].dataValues.task_hashtag;
+                surveyDetail['task_event_id'] = survey_user_state[survey_key].dataValues.survey_user_completes[0].dataValues.task_event_id;
+                
+                surveyDetail['task_title'] = survey_user_state[survey_key].dataValues.sr_title;
+                surveyDetail['task_status'] = survey_user_state[survey_key].dataValues.survey_user_completes[0].dataValues.task_status;
+                surveyDetail['user_id'] = survey_user_state[survey_key].dataValues.survey_user_completes[0].dataValues.user_id;
+                if (hashtag.length && Array.isArray(hashtag)) {
+                    surveyDetail['task_hashtag'] = hashtag.join();
+                } else {
+                    surveyDetail['task_hashtag'] = '';
+                }
+               
+                surveyDetail['task_endtime'] = survey_user_state[survey_key].dataValues.task_endtime;
+                surveyDetail['task_event_type'] = 'Survey';
+                allTaskData[surveyDetail['user_id']+'_'+surveyDetail['task_event_id']] = surveyDetail;
+    
+            }
+        }
+        var bonus_options = {
+            attributes: [["bonus_task_id", "task_event_id"], ["bonus_task_completion_date", "task_title"], ["bonus_task_is_finished", "task_status"],["bonus_task_usr_id", "user_id"],["bonus_task_hashtag", "task_hashtag"],["bonus_task_completion_date", "task_endtime"]],
+            where: {bonus_task_usr_id : bonus_user_ids}
+        };
+        const bonus_task_result = await db.bonus_task.findAll(bonus_options);
+        if (bonus_task_result.length) {
+            for (var bonus_task_key in bonus_task_result) {
+                bonus_task_result[bonus_task_key].dataValues.task_event_type = "Bonus Task";
+                allTaskData[bonus_task_result[bonus_task_key].dataValues.user_id+'_'+bonus_task_result[bonus_task_key].dataValues.task_event_id] = bonus_task_result[bonus_task_key].dataValues;
+            }
+        }
+        for (var user_invitation_key in user_invitation_listing) {
+            var user_action_index = user_invitation_listing[user_invitation_key].users_invitation_recipient_user_id+'_'+user_invitation_listing[user_invitation_key].users_invitation_action_id;
+            if (allTaskData[user_action_index] != undefined) {
+                user_invitation_listing[user_invitation_key].dataValues.invited_tasks = allTaskData[user_action_index];
+            }
+        }
+    }
+    res.status(200).send({
+        data: user_invitation_listing
     });
 }
 

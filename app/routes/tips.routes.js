@@ -23,7 +23,7 @@ module.exports = app => {
    *                        Image:
    *                           type: string
    *     tags:
-   *       - tips
+   *       - Tips
    *     description: Add tips
    *     produces:
    *       - application/json
@@ -81,7 +81,7 @@ module.exports = app => {
      *           schema:
      *              type: string
      *     tags:
-     *       - tips
+     *       - Tips
      *     description: Returns all Tips
      *     produces:
      *       - application/json
@@ -112,7 +112,7 @@ module.exports = app => {
    *           in: path
    *           required: true
    *           schema:
-   *              type: string
+   *              type: integer
    *     tags:
    *       - tips
    *     description: Retrieve tips with tipId
@@ -154,9 +154,9 @@ module.exports = app => {
  *           in: path
  *           required: true
  *           schema:
- *              type: string
+ *              type: integer
  *     tags:
- *       - tips
+ *       - Tips
  *     description: Update tips
  *     produces:
  *       - application/json
@@ -191,7 +191,7 @@ module.exports = app => {
  *           schema:
  *              type: integer
  *     tags:
- *      - tips
+ *      - Tips
  *     description: Delete tips with id
  *     produces:
  *       - application/json

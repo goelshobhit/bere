@@ -73,7 +73,7 @@ app.use(bodyParser.urlencoded({extended: false}))
    *           in: path
    *           required: true
    *           schema:
-   *              type: integer
+   *              type: string
    *     tags:
    *       - File Upload
    *     description: Delete Image From GCP

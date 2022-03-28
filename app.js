@@ -297,6 +297,7 @@ require("./app/routes/reward/rewards_event_request.routes")(app);
 require("./app/routes/reward/rewards_request.routes")(app);
 require("./app/routes/reward/rewards_given.routes")(app);
 require("./app/routes/reward/rewards_selection.routes")(app);
+require("./app/routes/reward/reward_settings.routes")(app);
 require("./app/routes/user_inbox_settings.routes")(app);
 require("./app/routes/energy.routes")(app);
 require("./app/routes/brand_score.routes")(app);
@@ -318,6 +319,9 @@ require("./app/routes/terms_conditions.routes")(app);
 require("./app/routes/autocomplete_place.routes")(app);
 require("./app/routes/users_invitation.routes")(app);
 require("./app/routes/social_login.routes")({app, passport});
+require("./app/routes/content_feedback_settings.routes")(app);
+require("./app/routes/content_feedback.routes")(app);
+require("./app/routes/category.routes")(app);
 server.listen(PORT, function () {
   console.log(`Server is running on port ${PORT}.`)
 });
