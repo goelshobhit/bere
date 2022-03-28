@@ -56,6 +56,8 @@ exports.submitContentReport = async (req, res) => {
     "content_report_cat_id": body["Content Report Cat Id"],
     "content_report_name": body["Content Report Name"],
     "content_report_task_id": body["Content Report Type"],
+    "content_id": body["Content Id"],
+    "content_type": body["Content Type"],
     "content_report_type": body.hasOwnProperty("Content Report Type") ? body["Content Report Type"] : "",
     "content_report_type_id": body.hasOwnProperty("Content Report Type Id") ? req.body["Content Report Type Id"] : "",
     "content_report_owner_id": body.hasOwnProperty("Content Report Owner Id") ? req.body["Content Report Owner Id"] : "",

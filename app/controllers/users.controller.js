@@ -299,7 +299,7 @@ exports.userDetail = async (req, res) => {
 			],
 		}
 		],
-		attributes:["u_id","u_login","u_referer_id","u_acct_type","u_act_sec","u_email","u_active","u_pref_login","u_created_at","u_updated_at","u_email_verify_status", "is_user_deactivated", "is_user_hidden",
+		attributes:["u_id","u_login","u_referer_id","u_acct_type","u_act_sec","u_email","u_active","u_pref_login","u_created_at","u_updated_at","u_email_verify_status", "is_user_deactivated", "is_user_hidden","u_fb_username","u_fb_id","u_gmail_username","u_gmail_id","u_ymail_username","u_ymail_id","u_pref_login","u_instagram_username","u_instagram_id",
 		[db.sequelize.literal('(SELECT COUNT(*) FROM user_fan_following WHERE user_fan_following.faf_by = user_login.u_id)'), 'total_following'],
 		[db.sequelize.literal('(SELECT COUNT(*) FROM user_fan_following WHERE user_fan_following.faf_to = user_login.u_id )'), 'total_fans'],
 		[db.sequelize.literal('(SELECT COUNT(*)  FROM user_fan_following WHERE user_fan_following.faf_by = '+Uid+' and user_fan_following.faf_to = user_login.u_id)'), 'followed_by_me'],

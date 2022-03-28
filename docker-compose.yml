@@ -1,0 +1,58 @@
+version: "3.8"
+services:
+  nodejs:
+    image: $DOCKER_NAMESPACE/social-app-api:$TAG
+    container_name: nodejs
+    restart: unless-stopped
+    env_file: .env
+    networks:
+      - app-network
+
+  webserver:
+    image: nginx:mainline-alpine
+    container_name: webserver
+    restart: always
+    volumes:
+      - web-root:/var/www/html
+      - ./nginx-conf:/etc/nginx/conf.d
+      - certbot-etc:/etc/letsencrypt
+      - certbot-var:/var/lib/letsencrypt
+      - dhparam:/etc/ssl/certs
+    depends_on:
+      - nodejs
+    ports:
+      - 80:80
+      - 443:443
+    networks:
+      - app-network
+  
+  certbot:
+    image: certbot/certbot
+    container_name: certbot
+    volumes:
+      - certbot-etc:/etc/letsencrypt
+      - certbot-var:/var/lib/letsencrypt
+      - web-root:/var/www/html
+    depends_on:
+      - webserver
+    command: certonly --webroot --webroot-path=/var/www/html --email socialbrands1@gmail.com --agree-tos --no-eff-email --force-renewal -d api.riddim.com  -d www.api.riddim.com
+
+volumes:
+  certbot-etc:
+  certbot-var:
+  web-root:
+    driver: local
+    driver_opts:
+      type: none
+      device: /app/public
+      o: bind
+  dhparam:
+    driver: local
+    driver_opts:
+      type: none
+      device: /app/dhparam
+      o: bind
+
+networks:
+  app-network:
+    driver: bridge
