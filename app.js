@@ -1,3 +1,15 @@
+var cluster = require('cluster');
+if (cluster.isMaster) {
+   var i = 0;
+   for (i; i< 4; i++){
+     cluster.fork();
+   }
+   cluster.on('exit', function(instance){
+      console.log('NodeJs Cluster: Instance ' + instance.id + ' went into an incident now an another instance will be created.');
+      cluster.fork();
+   });
+}
+else {
 const express = require("express");
 
 const bodyParser = require("body-parser");
@@ -118,10 +130,16 @@ const swaggerOptions = {
    __dirname + "/app/routes/reward/*.js"]
 };
 const swaggerDocs = swaggerJsDoc(swaggerOptions);
+// app.use("/", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 // simple route
 app.get("/", (req, res) => {
   res.json({ message: "Welcome to Social App api application." });
+});
+//global exception handler
+process.on('uncaughtException', function (err) {
+  console.log('Instance: This instance went into trouble and will be terminated then an another instance will be started');
+  console.log('Instance: There is an uncaught exception', err);
 });
 // simple schedule for task 
 const Op = db.Sequelize.Op;
@@ -211,6 +229,24 @@ const job = schedule.scheduleJob('05 00 * * *',async function(){
 	});
 	
 });
+//Set up the passport to do social login
+// const passport = require('passport');
+// app.use(passport.initialize());
+// require("./app/middleware/socialLogin/passportFacebook")(passport);
+// require("./app/middleware/socialLogin/passportInstagram")(passport);
+// require("./app/middleware/socialLogin/passportSnapchat")(passport);
+// require("./app/middleware/socialLogin/passportPinterest")(passport);
+// const session = require("express-session");
+// app.use(session({
+//   secret: 'twitterSecret',
+//   key: 'sid', cookie: { secure: true }}
+// ));
+// app.use(session({
+//   secret: 'twitterSecret',
+//   key: 'sid', cookie: { secure: false }}
+// ));
+// require("./app/middleware/socialLogin/passportTwitter")(passport);
+// set port, listen for requests
 // set port, listen for requests
 const PORT = process.env.PORT || 3030;
 const server = https.createServer({
@@ -282,6 +318,7 @@ require("./app/routes/tips.routes")(app);
 require("./app/routes/terms_conditions.routes")(app);
 require("./app/routes/autocomplete_place.routes")(app);
 require("./app/routes/users_invitation.routes")(app);
+// require("./app/routes/social_login.routes")({app, passport});
 require("./app/routes/content_feedback_settings.routes")(app);
 require("./app/routes/content_feedback.routes")(app);
 require("./app/routes/category.routes")(app);
@@ -290,3 +327,4 @@ server.listen(PORT, function () {
 });
 common.mkdirpath(appConfig[env].FILE_UPLOAD_DIR);
 common.mkdirpath('uploads/thumbnails');
+}
