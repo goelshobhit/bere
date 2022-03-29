@@ -176,18 +176,11 @@ exports.postUserTaskLevelAction = async (req, res) => {
         });
         return;
     }
-    if (!req.body["User CTA Action"]) {
-        res.status(400).send({
-            msg:
-                "User CTA Action is required"
-        });
-        return;
-    }
     var UserId = req.header(process.env.UKEY_HEADER || "x-api-key");
     const userLevelTaskData = {
         "task_id": body.hasOwnProperty("Task Id") ? req.body["Task Id"] : 0,
         "task_type": body.hasOwnProperty("Task Type") ? req.body["Task Type"] : 0,
-        "user_cta_action": body.hasOwnProperty("User CTA Action") ? req.body["User CTA Action"] : "",
+        "user_cta_action": body.hasOwnProperty("User CTA Action") ? req.body["User CTA Action"] : 0,
         "user_cta_reasons": body.hasOwnProperty("User CTA Reasons") ? req.body["User CTA Reasons"] : 0,
         "task_user_id": body.hasOwnProperty("Task User Id") ? req.body["Task User Id"] : UserId,
         "time_allowance": body.hasOwnProperty("Time Allowance") ? req.body["Time Allowance"] : 0,
@@ -200,7 +193,7 @@ exports.postUserTaskLevelAction = async (req, res) => {
             if (body["Usr Brandscore Penalty"]) {
                 db.user_profile.decrement('u_brandscore', { by: body["Usr Brandscore Penalty"], where: { u_id: UserId } });
             }
-            audit_log.saveAuditLog(req.header(process.env.UKEY_HEADER || "x-api-key"), 'add', 'task_level', data.level_task_id, data.dataValues);
+            audit_log.saveAuditLog(req.header(process.env.UKEY_HEADER || "x-api-key"), 'add', 'task_level', data.user_level_task_action_id, data.dataValues);
             res.status(201).send({
                 msg: "Level Task Added Successfully",
                 userLevelTaskActionID: data.user_level_task_action_id

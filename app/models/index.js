@@ -293,6 +293,7 @@ db.tasks.hasOne(db.brand_task_closed, {foreignKey: 'task_id', targetKey: 'ta_tas
 
 db.user_level_task_action.belongsTo(db.user_profile, {foreignKey: 'task_user_id', targetKey: 'u_id'});
 db.user_level_task_action.belongsTo(db.tasks, {foreignKey: 'task_id', targetKey: 'ta_task_id'});
+db.user_level_task_action.belongsTo(db.level_task, {foreignKey: 'task_id', targetKey: 'task_id'});
 
 db.tickets_distribution.belongsTo(db.user_profile, {foreignKey: 'tickets_distribution_user_id', targetKey: 'u_id'});
 db.winner_algo.belongsTo(db.user_profile, {foreignKey: 'winner_user_id', targetKey: 'u_id'});

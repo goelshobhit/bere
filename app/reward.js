@@ -45,7 +45,7 @@ function Reward() {
         where: {
           ta_task_id: event_id
         },
-        attributes: ["ta_name", "ta_total_available", "ta_token_budget", "ta_budget_per_user", "ta_hearts_per_user", "ta_remaining_budget", "ta_task_id"]
+        attributes: ["ta_name", "ta_total_available", "ta_token_budget", "ta_budget_per_user", "ta_stars_per_user", "ta_remaining_budget", "ta_task_id"]
       });
     } else if (rewards_event_type == 'Contest') {
       tj_type = 'Contest';
@@ -58,7 +58,7 @@ function Reward() {
           ct_id: event_id
         },
         attributes: [
-          ["ct_name", "ta_name"], ["ct_total_available", "ta_total_available"], ["ct_token_budget", "ta_token_budget"], ["ct_budget_per_user", "ta_budget_per_user"], ["ct_hearts_per_user", "ta_hearts_per_user"], ["ct_id", "ta_task_id"]
+          ["ct_name", "ta_name"], ["ct_total_available", "ta_total_available"], ["ct_token_budget", "ta_token_budget"], ["ct_budget_per_user", "ta_budget_per_user"], ["ct_hearts_per_user", "ta_stars_per_user"], ["ct_id", "ta_task_id"]
         ]
       });
     }
@@ -81,7 +81,7 @@ function Reward() {
         ['rewards_balance_id', 'DESC']
       ]
     });
-    var userProfile = await User_profile.findOne({ attributes: ['u_hearts', 'u_budget'], where: { u_id: uid } });
+    var userProfile = await User_profile.findOne({ attributes: ['u_stars', 'u_budget'], where: { u_id: uid } });
 
     const data = {
       "rewards_request_id": reward_request_id ? reward_request_id : 0,
@@ -107,7 +107,7 @@ function Reward() {
           logo: BrandDetails.cr_co_logo_path
         };
         const profileData = {
-          u_hearts: userProfile.u_hearts ? parseInt(userProfile.u_hearts) + parseInt(heartPerUser) : heartPerUser,
+          u_stars: userProfile.u_stars ? parseInt(userProfile.u_stars) + parseInt(heartPerUser) : heartPerUser,
           u_budget: userProfile.u_budget ? parseInt(userProfile.u_budget) + parseInt(budgetPerUser) : budgetPerUser
         };
         User_profile.update(profileData, {
@@ -115,7 +115,7 @@ function Reward() {
             u_id: uid
           }
         }).catch(err => {
-          logger.log("error", err + ": Error occurred while updating the u_hearts for user:" + uid);
+          logger.log("error", err + ": Error occurred while updating the u_stars for user:" + uid);
         });
         var rewardsAwardCoinsBal = 0;
         var rewardsAwardStarBal = 0;

@@ -345,7 +345,18 @@ exports.userDetailForAdmin = async (req, res) => {
 	const pageNumber = parseInt(req.query.pageNumber || 1);
 	const skipCount = (pageNumber - 1) * pageSize;
     const userID = req.params.userID;
-	const Uid=req.header(process.env.UKEY_HEADER || "x-api-key");
+    const Uid=req.header(process.env.UKEY_HEADER || "x-api-key");
+    var level_options = {
+        include: [
+            {
+                model: db.level_task
+            }
+        ],
+        where: {
+            task_user_id: userID
+        }
+    };
+    const user_level_listing = await db.user_level_task_action.findAll(level_options);
     const User = await Users.findOne({
 		include: [{
             model: db.user_profile
@@ -355,7 +366,7 @@ exports.userDetailForAdmin = async (req, res) => {
         },
 		{
 			model: db.user_content_post,
-            attributes: ["ucpl_content_data",['ucpl_id','post_id'],'ta_task_id'],
+            attributes: ["ucpl_content_data",['ucpl_id','post_id'],'ta_task_id', 'ucpl_content_type', 'upcl_brand_details'],
             required:false,
 			where: {
 				ucpl_status:1
@@ -373,26 +384,26 @@ exports.userDetailForAdmin = async (req, res) => {
 		[db.sequelize.literal('0'), 'Rewards Token Earned'],
 		[db.sequelize.literal('0'), 'Tokens Balance'],
 		[db.sequelize.literal('0'), 'Star Earned'],
-		[db.sequelize.literal('0'), 'Riddim Level'],
+		//[db.sequelize.literal('(SELECT SUM(bonus_usr_riddim_level) FROM bonus_usr WHERE bonus_usr.bonus_usr_id = '+userID+'  )'), 'Riddim Level'],
 		[db.sequelize.literal('0'), 'Tickets Earned'],
 		[db.sequelize.literal('0'), 'Presents Earned'],
 		[db.sequelize.literal('0'), 'Lottery Wheels'],
 		[db.sequelize.literal('0'), 'Easter Eggs'],
 		[db.sequelize.literal('0'), 'Chests Earned'],
-        [db.sequelize.literal('0'), 'Bonuses Won'],
-        [db.sequelize.literal('(SELECT COUNT(*) FROM bonus_task WHERE bonus_task.bonus_task_usr_id = '+userID+' and bonus_task.bonus_task_usr_id = user_login.u_id and bonus_task_is_finished = 1 )'), 'Bonus Tasks Completed'],
+        [db.sequelize.literal('(SELECT COUNT(*) FROM bonus_rewards WHERE bonus_rewards.bonus_rewards_usrid = '+userID+')'), 'Bonuses Won'],
+        [db.sequelize.literal('(SELECT COUNT(*) FROM bonus_task WHERE bonus_task.bonus_task_usr_id = '+userID+' and bonus_task_is_finished = 1 )'), 'Bonus Tasks Completed'],
 		[db.sequelize.literal('0'), 'Tasks Entered'],
 		[db.sequelize.literal('0'), 'Contests Entered'],
 		[db.sequelize.literal('0'), 'Content Entered'],
-        [db.sequelize.literal('(SELECT COUNT(*) FROM survey_user_complete WHERE survey_user_complete.sr_uid = '+userID+' and survey_user_complete.sr_uid = user_login.u_id )'), 'Surveys'],
+        [db.sequelize.literal('(SELECT COUNT(*) FROM survey_user_complete WHERE survey_user_complete.sr_uid = '+userID+')'), 'Surveys'],
         [db.sequelize.literal('(SELECT COUNT(*) FROM user_fan_following WHERE user_fan_following.faf_by = '+userID+')'), 'Following'],
         [db.sequelize.literal('(SELECT COUNT(*) FROM user_fan_following WHERE user_fan_following.faf_to = '+userID+')'), 'Followers'],
         [db.sequelize.literal('(SELECT COUNT(*) FROM video_ads_submit WHERE video_ads_submit.u_id = '+userID+' and video_ads_submit.u_id = user_login.u_id )'), 'Ads Watched'],
         [db.sequelize.literal('(SELECT SUM(pc_comment_likes) FROM post_comment WHERE post_comment.pc_commenter_uid = '+userID+'  )'), 'Liked Comments'],
 		[db.sequelize.literal('(SELECT SUM(pc_comment_unlikes) FROM post_comment WHERE post_comment.pc_commenter_uid = '+userID+'  )'), 'Disliked Comments'],
-        [db.sequelize.literal('0'), 'Reactions Received'],
-        [db.sequelize.literal('0'), 'Reactions Given'],
-        [db.sequelize.literal('0'), 'Reported Content'],
+        [db.sequelize.literal('(SELECT SUM(ucpl_reaction_counter) FROM user_content_post WHERE user_content_post.ucpl_u_id = '+userID+'  )'), 'Reactions Received'],
+        [db.sequelize.literal('(SELECT COUNT(*) FROM post_user_reactions WHERE post_user_reactions.u_id = '+userID+')'), 'Reactions Given'],
+        [db.sequelize.literal('(SELECT COUNT(*) FROM content_report WHERE content_report.content_report_owner_id = '+userID+')'), 'Reported Content'],
         [db.sequelize.literal('0'), 'Number of Brands'],
         [db.sequelize.literal('0'), 'Tier 2 Sent'],
         [db.sequelize.literal('0'), 'Tier 2 Incomplete'],
@@ -426,7 +437,93 @@ exports.userDetailForAdmin = async (req, res) => {
             message: "User details not found"
         });
         return
-	}
+    }
+    if (user_level_listing.length) {
+        var taskLevelTwoCount = [];
+        var taskLevelThreeCount = [];
+        var tasklevelTwoDecline = [];
+        var tasklevelThreeDecline = [];
+        var tasklevelTwoComplete = [];
+        var tasklevelThreeComplete = [];
+        var tasklevelTwoInComplete = [];
+        var tasklevelThreeInComplete = [];
+        for (const user_level_key in user_level_listing) {
+            if (user_level_listing[user_level_key].level_task.task_level == 2) {
+                taskLevelTwoCount.push(user_level_listing[user_level_key].task_id);
+                if (user_level_listing[user_level_key].user_cta_action == 0) { // decline
+                    tasklevelTwoDecline.push(user_level_listing[user_level_key].task_id); 
+                } else if (user_level_listing[user_level_key].user_cta_action == 1) { // accept
+                    tasklevelTwoComplete.push(user_level_listing[user_level_key].task_id); 
+                }
+                if (user_level_listing[user_level_key].task_status == 0) { 
+                    tasklevelTwoInComplete.push(user_level_listing[user_level_key].task_id); 
+                }
+            } else if (user_level_listing[user_level_key].level_task.task_level == 3) {
+                taskLevelThreeCount.push(user_level_listing[user_level_key].task_id); 
+                if (user_level_listing[user_level_key].user_cta_action == 0) {
+                    tasklevelThreeDecline.push(user_level_listing[user_level_key].task_id); 
+                } else if (user_level_listing[user_level_key].user_cta_action == 1) { // accept
+                    tasklevelThreeComplete.push(user_level_listing[user_level_key].task_id); 
+                }
+                if (user_level_listing[user_level_key].task_status == 0) {
+                    tasklevelThreeInComplete.push(user_level_listing[user_level_key].task_id); 
+                }
+            }
+        }
+       
+        User['dataValues']['Tier 2 Sent'] = taskLevelTwoCount.length;
+        User['dataValues']['Tier 3 Sent'] = taskLevelThreeCount.length;
+        User['dataValues']['Tier 2 Incomplete'] = tasklevelTwoInComplete.length;
+        User['dataValues']['Tier 3 Incomplete'] = tasklevelThreeInComplete.length;
+        User['dataValues']['Tier 2 Completed'] = tasklevelTwoComplete.length;
+        User['dataValues']['Tier 3 Completed'] = tasklevelThreeComplete.length;
+        User['dataValues']['Tier 2 Declined'] = tasklevelTwoDecline.length;
+        User['dataValues']['Tier 3 Declined'] = tasklevelThreeDecline.length;
+        
+
+    }
+    if (User.user_content_posts.length) {
+        var taskIds = [];
+        var contestIds = [];
+        var contentData = [];
+        var brandIds = [];
+        var brandNames = [];
+        var userContentPosts = User.user_content_posts;
+        for (const userContentKey in userContentPosts) {
+            contentData.push(userContentPosts[userContentKey].ta_task_id);
+            if (userContentPosts[userContentKey].ucpl_content_type == 1) {
+                taskIds.push(userContentPosts[userContentKey].ta_task_id);
+            } else if(userContentPosts[userContentKey].ucpl_content_type == 2) {
+                contestIds.push(userContentPosts[userContentKey].ta_task_id);
+            }
+            if (userContentPosts[userContentKey].upcl_brand_details.length) {
+                brandIds.push(userContentPosts[userContentKey].upcl_brand_details.id);
+                brandNames.push(userContentPosts[userContentKey].upcl_brand_details.name);
+            }
+        }
+        if (brandIds.length) {
+            var brandUniqueIds = brandIds.filter((v, i, a) => a.indexOf(v) === i);
+            User['dataValues']['Number of Brands'] = brandUniqueIds.length;
+        }
+        if (brandNames.length) {
+            var brandUniqueNames = brandNames.filter((v, i, a) => a.indexOf(v) === i);
+            User['dataValues']['Brands Participated'] = brandUniqueNames;
+        }
+        if (taskIds.length) {
+            var taskUniqueIds = taskIds.filter((v, i, a) => a.indexOf(v) === i);
+            User['dataValues']['Tasks Entered'] = taskUniqueIds.length;
+            User['dataValues']['Contests Entered'] = taskUniqueIds.length;
+        }
+        if (contestIds.length) {
+            var taskUniqueIds = contestIds.filter((v, i, a) => a.indexOf(v) === i);
+            User['dataValues']['Contests Entered'] = taskUniqueIds.length;
+        }
+        if (contentData.length) {
+            User['dataValues']['Content Entered'] = contentData.length;
+        }
+    }
+    User['dataValues']['Star Earned'] = User.user_profile.u_stars;
+    
     res.status(200).send({
         user_details: User,
 		media_token:common.imageToken(userID)

@@ -76,7 +76,7 @@ module.exports = (sequelize, Sequelize) => {
 		u_vin:{
 			type: Sequelize.JSONB
 		},
-        u_hearts:{
+        u_stars:{
 			 type: Sequelize.INTEGER
 		},
         u_budget:{

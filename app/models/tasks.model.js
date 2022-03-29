@@ -26,7 +26,7 @@ module.exports = (sequelize, Sequelize) => {
         ta_budget_per_user:{
             type: Sequelize.INTEGER
         },
-        ta_hearts_per_user:{
+        ta_stars_per_user:{
             type: Sequelize.INTEGER
         },
         ta_total_available:{

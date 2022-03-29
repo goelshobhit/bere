@@ -55,7 +55,7 @@ exports.createNewPost = async (req, res) => {
             where: {
                 ta_task_id: req.body["Task id"]
             },
-            attributes: ["ta_name", "ta_total_available", "ta_budget_per_user", "ta_hearts_per_user", "ta_remaining_budget", "ta_task_id"]
+            attributes: ["ta_name", "ta_total_available", "ta_budget_per_user", "ta_stars_per_user", "ta_remaining_budget", "ta_task_id"]
         });
         if (!TaskDetails || !TaskDetails.campaign.cr_co_id) {
             res.status(400).send({
@@ -79,16 +79,16 @@ exports.createNewPost = async (req, res) => {
         };
 
         var available_budget = TaskDetails.ta_remaining_budget ? parseInt(TaskDetails.ta_remaining_budget) - parseInt(TaskDetails.ta_budget_per_user) : parseInt(TaskDetails.ta_total_available) - parseInt(TaskDetails.ta_budget_per_user);
-        var userProfile = await User_profile.findOne({ attributes: ['u_hearts', 'u_budget'], where: { u_id: userId } });
+        var userProfile = await User_profile.findOne({ attributes: ['u_stars', 'u_budget'], where: { u_id: userId } });
         const profileData = {
-            u_hearts: userProfile.u_hearts ? parseInt(userProfile.u_hearts) + parseInt(TaskDetails.ta_hearts_per_user) : TaskDetails.ta_hearts_per_user,
+            u_stars: userProfile.u_stars ? parseInt(userProfile.u_stars) + parseInt(TaskDetails.ta_stars_per_user) : TaskDetails.ta_stars_per_user,
             u_budget: userProfile.u_budget ? parseInt(userProfile.u_budget) + parseInt(TaskDetails.ta_budget_per_user) : TaskDetails.ta_budget_per_user
         };
         budgetHistory.create({
             u_id: userId,
             ta_task_id: req.body["Task id"],
             bud_budget: TaskDetails.ta_budget_per_user,
-            bud_heart: TaskDetails.ta_hearts_per_user,
+            bud_heart: TaskDetails.ta_stars_per_user,
             bud_available: available_budget
         }).catch(err => {
             logger.log("error", err + ": Error occurred while creating the budgetHistory for user:" + userId);
@@ -98,7 +98,7 @@ exports.createNewPost = async (req, res) => {
                 u_id: userId
             }
         }).catch(err => {
-            logger.log("error", err + ": Error occurred while updating the u_hearts for user:" + userId);
+            logger.log("error", err + ": Error occurred while updating the u_stars for user:" + userId);
         });
         Tasks.update({ ta_remaining_budget: available_budget }, {
             where: {
@@ -136,7 +136,7 @@ exports.createNewPost = async (req, res) => {
                     trx_unique_id: data.ucpl_id + "-" + userId + "-" + new Date().getTime(),
                     trx_type: 1,
                     trx_coins: TaskDetails.ta_budget_per_user,
-                    trx_stars: TaskDetails.ta_hearts_per_user,
+                    trx_stars: TaskDetails.ta_stars_per_user,
                     trx_date_timestamp: new Date().getTime(),
                     trx_source: {
                         "brand_details": brandView,
@@ -152,7 +152,7 @@ exports.createNewPost = async (req, res) => {
                 ledgerTransactions.create(trData).catch(err => {
                     logger.log("error", err + ": Error occurred while ledgerTransactions for :" + userId);
                 });
-                common.manageUserAccount(userId, TaskDetails.ta_budget_per_user, TaskDetails.ta_hearts_per_user, 'credit');
+                common.manageUserAccount(userId, TaskDetails.ta_budget_per_user, TaskDetails.ta_stars_per_user, 'credit');
                 res.status(201).send({
                     content_id: contentId,
                     message: "Posts Added Successfully"
@@ -175,7 +175,7 @@ exports.createNewPost = async (req, res) => {
                 ct_id: req.body["Task id"]
             },
             attributes: [
-                ["ct_name", "ta_name"], ["ct_total_available", "ta_total_available"], ["ct_budget_per_user", "ta_budget_per_user"], ["ct_hearts_per_user", "ta_hearts_per_user"], ["ct_id", "ta_task_id"]
+                ["ct_name", "ta_name"], ["ct_total_available", "ta_total_available"], ["ct_budget_per_user", "ta_budget_per_user"], ["ct_stars_per_user", "ta_stars_per_user"], ["ct_id", "ta_task_id"]
             ]
         });
         if (!TaskDetails || !TaskDetails.campaign.cr_co_id) {
@@ -200,16 +200,16 @@ exports.createNewPost = async (req, res) => {
         };
 
         var available_budget = TaskDetails.dataValues.ta_remaining_budget ? parseInt(TaskDetails.dataValues.ta_remaining_budget) - parseInt(TaskDetails.dataValues.ta_budget_per_user) : parseInt(TaskDetails.dataValues.ta_total_available) - parseInt(TaskDetails.dataValues.ta_budget_per_user);
-        var userProfile = await User_profile.findOne({ attributes: ['u_hearts', 'u_budget'], where: { u_id: userId } });
+        var userProfile = await User_profile.findOne({ attributes: ['u_stars', 'u_budget'], where: { u_id: userId } });
         let profileData = {
-            u_hearts: userProfile.u_hearts && parseInt(userProfile.u_hearts) > 0 ? parseInt(userProfile.u_hearts) + parseInt(TaskDetails.dataValues.ta_hearts_per_user) : TaskDetails.dataValues.ta_hearts_per_user,
+            u_stars: userProfile.u_stars && parseInt(userProfile.u_stars) > 0 ? parseInt(userProfile.u_stars) + parseInt(TaskDetails.dataValues.ta_stars_per_user) : TaskDetails.dataValues.ta_stars_per_user,
             u_budget: userProfile.u_budget && parseInt(userProfile.u_budget) > 0 ? parseInt(userProfile.u_budget) + parseInt(TaskDetails.dataValues.ta_budget_per_user) : TaskDetails.dataValues.ta_budget_per_user
         };
         budgetHistory.create({
             u_id: userId,
             ta_task_id: req.body["Task id"],
             bud_budget: TaskDetails.dataValues.ta_budget_per_user,
-            bud_heart: TaskDetails.dataValues.ta_hearts_per_user,
+            bud_heart: TaskDetails.dataValues.ta_stars_per_user,
             bud_available: available_budget
         }).catch(err => {
             logger.log("error", err + ": Error occurred while creating the budgetHistory for user:" + userId);
@@ -219,7 +219,7 @@ exports.createNewPost = async (req, res) => {
                 u_id: userId
             }
         }).catch(err => {
-            logger.log("error", err + ": Error occurred while creating the  u_hearts for user:" + userId);
+            logger.log("error", err + ": Error occurred while creating the  u_stars for user:" + userId);
         });
         var contentId = content_id + "_" + req.header(process.env.UKEY_HEADER || "x-api-key") + "_" + new Date().getTime();
         const data = {
@@ -248,7 +248,7 @@ exports.createNewPost = async (req, res) => {
                     trx_unique_id: data.ucpl_id + "-" + userId + "-" + new Date().getTime(),
                     trx_type: 1,
                     trx_coins: 0,
-                    trx_stars: TaskDetails.dataValues.ta_hearts_per_user,
+                    trx_stars: TaskDetails.dataValues.ta_stars_per_user,
                     trx_date_timestamp: new Date().getTime(),
                     trx_source: {
                         brand_details: brandView,
@@ -262,7 +262,7 @@ exports.createNewPost = async (req, res) => {
                 }).catch(err => {
                     logger.log("error", err + ": Error occurred while creating the ledgerTransactions for user:" + userId);
                 });
-                common.manageUserAccount(userId, 0, TaskDetails.dataValues.ta_hearts_per_user, 'credit');
+                common.manageUserAccount(userId, 0, TaskDetails.dataValues.ta_stars_per_user, 'credit');
                 common.jsonTask(req.body["Task id"], 'Contest', 'update');
                 audit_log.saveAuditLog(userId, 'add', 'user_content_post', data.ucpl_id, data.dataValues);
                 res.status(201).send({
