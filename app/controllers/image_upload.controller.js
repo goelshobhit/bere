@@ -26,19 +26,25 @@ exports.imagesUpload = async (req, res) => {
             var myFile = myFiles[i];
             myFile.originalname = `${Date.now()}-${myFile.originalname}`;
             const imageUrl = await uploadImage(myFile)
-            const thumbnail = {
-                fieldname: myFile.fieldname,
-                originalname: `thumbnail/${myFile.originalname}`,
-                encoding: myFile.encoding,
-                mimetype: myFile.mimetype,
-                buffer: await sharp(myFile.buffer).resize(465, 360).toBuffer()
-            }
-            const imagethumbnailUrl = await uploadImage(thumbnail);
             var url_parts = imageUrl.split('/');
             var imageName = url_parts.pop();  
-            imageData['image_name'] = imageName;
-            imageData['image_url'] = imageUrl;
-            imageData['thumbnail_url'] = imagethumbnailUrl;
+            
+            if (myFile.mimetype != 'video/mp4') {
+                imageData['image_name'] = imageName;
+                imageData['image_url'] = imageUrl;
+                const thumbnail = {
+                    fieldname: myFile.fieldname,
+                    originalname: `thumbnail/${myFile.originalname}`,
+                    encoding: myFile.encoding,
+                    mimetype: myFile.mimetype,
+                    buffer: await sharp(myFile.buffer).resize(465, 360).toBuffer()
+                }
+                const imagethumbnailUrl = await uploadImage(thumbnail);
+                imageData['thumbnail_url'] = imagethumbnailUrl;
+            } else {
+                imageData['video_name'] = imageName;
+                imageData['video_url'] = imageUrl;
+            }
             imageAllData.push(imageData);
         }
         
@@ -59,9 +65,18 @@ exports.deleteImage = async (req, res) => {
         var fileName = req.params.imageName;
         var thumbnailfileName = `thumbnail/${fileName}`
         await bucket.file(fileName).delete();
-        await bucket.file(thumbnailfileName).delete();
+        var image_parts = fileName.split('.');
+        var imageType = image_parts.pop();
+        var imageMsg = ''; 
+        if (imageType != "mp4") {
+            console.log("sdddddddddddddddddddddddddd");
+            imageMsg = "Image deleted";
+            await bucket.file(thumbnailfileName).delete();
+        } else {
+            imageMsg = "Video deleted"
+        }
         res.status(200).json({
-            message: "image deleted"
+            message: imageMsg
           });
     } catch (error) {
         return res.status(500).send({

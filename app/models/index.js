@@ -52,6 +52,7 @@ db.Sequelize = Sequelize;
 db.sequelize = sequelize;
 
 //Modesl/Tables
+db.brand_user_share = require("./brand_user_share.model")(sequelize, Sequelize);
 db.category = require("./category.model")(sequelize, Sequelize);
 db.content_feedback_settings = require("./content_feedback_settings.model")(sequelize, Sequelize);
 db.content_feedback = require("./content_feedback.model")(sequelize, Sequelize);
@@ -290,6 +291,9 @@ db.level_task.belongsTo(db.brands, {foreignKey: 'brand_id', targetKey: 'cr_co_id
 db.brand_task_closed.belongsTo(db.tasks, {foreignKey: 'task_id', targetKey: 'ta_task_id'});
 db.brand_task_closed.belongsTo(db.brands, {foreignKey: 'brand_id', targetKey: 'cr_co_id'});
 db.tasks.hasOne(db.brand_task_closed, {foreignKey: 'task_id', targetKey: 'ta_task_id'});
+
+db.brand_user_share.belongsTo(db.user_profile, {foreignKey: 'user_id', targetKey: 'u_id'});
+db.brand_user_share.belongsTo(db.brands, {foreignKey: 'brand_id', targetKey: 'cr_co_id'});
 
 db.user_level_task_action.belongsTo(db.user_profile, {foreignKey: 'task_user_id', targetKey: 'u_id'});
 db.user_level_task_action.belongsTo(db.tasks, {foreignKey: 'task_id', targetKey: 'ta_task_id'});

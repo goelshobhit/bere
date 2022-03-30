@@ -259,6 +259,7 @@ const io = socketIO(server, {
   }
 });
 require("./app/routes/brand.routes")(app);
+require("./app/routes/brand_user.routes")(app);
 require("./app/routes/campaign.routes")(app);
 require("./app/routes/hashtag.routes")(app);
 require("./app/routes/tasks.routes")(app);
