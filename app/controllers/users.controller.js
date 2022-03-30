@@ -379,11 +379,6 @@ exports.userDetailForAdmin = async (req, res) => {
 		}
 		],
 		attributes:["u_id","u_login","u_referer_id","u_acct_type","u_act_sec","u_email","u_active","u_pref_login","u_created_at","u_updated_at","u_email_verify_status", "is_user_deactivated", "is_user_hidden",
-		[db.sequelize.literal('0'), 'Total Reach'],
-		[db.sequelize.literal('0'), 'Average Enagagement Rate'],
-		[db.sequelize.literal('0'), 'Rewards Token Earned'],
-		[db.sequelize.literal('0'), 'Tokens Balance'],
-		[db.sequelize.literal('0'), 'Star Earned'],
 		//[db.sequelize.literal('(SELECT SUM(bonus_usr_riddim_level) FROM bonus_usr WHERE bonus_usr.bonus_usr_id = '+userID+'  )'), 'Riddim Level'],
 		[db.sequelize.literal('0'), 'Tickets Earned'],
 		[db.sequelize.literal('0'), 'Presents Earned'],
@@ -496,9 +491,10 @@ exports.userDetailForAdmin = async (req, res) => {
             } else if(userContentPosts[userContentKey].ucpl_content_type == 2) {
                 contestIds.push(userContentPosts[userContentKey].ta_task_id);
             }
-            if (userContentPosts[userContentKey].upcl_brand_details.length) {
-                brandIds.push(userContentPosts[userContentKey].upcl_brand_details.id);
-                brandNames.push(userContentPosts[userContentKey].upcl_brand_details.name);
+            console.log(userContentPosts[userContentKey]);
+            if (userContentPosts[userContentKey].dataValues.upcl_brand_details) {
+                brandIds.push(userContentPosts[userContentKey].dataValues.upcl_brand_details.id);
+                brandNames.push(userContentPosts[userContentKey].dataValues.upcl_brand_details.name);
             }
         }
         if (brandIds.length) {
@@ -515,8 +511,8 @@ exports.userDetailForAdmin = async (req, res) => {
             User['dataValues']['Contests Entered'] = taskUniqueIds.length;
         }
         if (contestIds.length) {
-            var taskUniqueIds = contestIds.filter((v, i, a) => a.indexOf(v) === i);
-            User['dataValues']['Contests Entered'] = taskUniqueIds.length;
+            var contestUniqueIds = contestIds.filter((v, i, a) => a.indexOf(v) === i);
+            User['dataValues']['Contests Entered'] = contestUniqueIds.length;
         }
         if (contentData.length) {
             User['dataValues']['Content Entered'] = contentData.length;
@@ -524,10 +520,10 @@ exports.userDetailForAdmin = async (req, res) => {
     }
     User['dataValues']['Star Earned'] = User.user_profile.u_stars;
     
-    res.status(200).send({
+   return res.status(200).send({
         user_details: User,
 		media_token:common.imageToken(userID)
-    })
+    });
 }
 
 /**
