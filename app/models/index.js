@@ -159,8 +159,8 @@ db.brandscore_engagement_type = require("./brandscore_engagement_type.model")(se
 db.brandscore_engagement_settings = require("./brandscore_engagement_settings.model")(sequelize, Sequelize);
 db.brandscore_increase = require("./brandscore_increase.model")(sequelize, Sequelize);
 
-db.additional_info_heading = require("./reward/additional_info_heading.model")(sequelize, Sequelize);
-db.additional_info_data = require("./reward/additional_info_data.model")(sequelize, Sequelize);
+db.additional_info_heading = require("./additional_info_heading.model")(sequelize, Sequelize);
+db.additional_info_data = require("./additional_info_data.model")(sequelize, Sequelize);
 
 //Relations
 db.users.hasMany(db.bonus_ticket, {foreignKey: 'u_id', targetKey: 'bonus_ticket_usrid'});
@@ -178,8 +178,8 @@ db.bonus_task_user_state.belongsTo(db.user_profile, {foreignKey: 'bonus_task_usr
 db.bonus_task_user_state.belongsTo(db.users, {foreignKey: 'bonus_task_usr_id', targetKey: 'u_id'});
 db.bonus_task_user_state.belongsTo(db.bonus_task, {foreignKey: 'bonus_task_id', targetKey: 'bonus_task_id'});
 
-db.additional_info_heading.hasMany(db.video_ads, {foreignKey: 'ad_info_id', targetKey: 'ad_info_id'});
-db.additional_info_data.belongsTo(db.brands, {foreignKey: 'ad_info_id', targetKey: 'ad_info_id'});
+db.additional_info_heading.hasMany(db.additional_info_data, {foreignKey: 'ad_info_id', targetKey: 'ad_info_id'});
+db.additional_info_data.belongsTo(db.additional_info_heading, {foreignKey: 'ad_info_id', targetKey: 'ad_info_id'});
 
 db.brands.hasMany(db.video_ads, {foreignKey: 'cr_co_id', targetKey: 'cr_co_id'});
 db.video_ads.belongsTo(db.brands, {foreignKey: 'cr_co_id', targetKey: 'cr_co_id'});

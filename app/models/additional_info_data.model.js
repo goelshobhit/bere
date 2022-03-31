@@ -6,8 +6,7 @@ module.exports = (sequelize, Sequelize) => {
             autoIncrement: true
         },
         ad_info_id: {
-            type: Sequelize.INTEGER,
-            autoIncrement: true
+            type: Sequelize.INTEGER
         },
         ad_info_data_name: {
             type: Sequelize.STRING(50)
