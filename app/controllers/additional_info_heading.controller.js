@@ -42,7 +42,7 @@ exports.createNewAdditionalInfoHeading = async(req, res) => {
 }
 
 /**
- * Function to get all brands
+ * Function to get all heading
  * @param  {object}  req expressJs request object
  * @param  {object}  res expressJs response object
  * @return {Promise}
@@ -51,14 +51,14 @@ exports.listing = async(req, res) => {
     const pageSize = parseInt(req.query.pageSize || 10);
 	const pageNumber = parseInt(req.query.pageNumber || 1);
 	const skipCount = (pageNumber - 1) * pageSize;
-	const sortBy = req.query.sortBy || 'ad_info_data_id'
+	const sortBy = req.query.sortBy || 'ad_info_id'
 	const sortOrder = req.query.sortOrder || 'DESC'
-    const type = req.params.type;
+    const type = req.query.type;
     var options = {
         include: [
             {
                 model: db.additional_info_data,
-                required: false
+                required: true,
             }
         ],
         limit: pageSize,
@@ -68,6 +68,9 @@ exports.listing = async(req, res) => {
         ],
         where: {}
     };
+    if (type) {
+        options['where']['ad_info_type_name'] = type;
+    }
     if(req.query.sortVal){
         var sortValue=req.query.sortVal.trim();
 		options.where = sortValue ? {
@@ -79,13 +82,11 @@ exports.listing = async(req, res) => {
             ]
         } : null;			
     }
-    if (type) {
-        options['where']['ad_info_type_name'] =  type
-    }
     var total = await AdditionalInfoHeading.count({
         where: options['where']
     });
-    const additionalHeading = await AdditionalInfoHeading.findAll(options);
+    const additionalHeading =  await AdditionalInfoHeading.findAll(options);
+    
     res.status(200).send({
         data: additionalHeading,
 		totalRecords:total

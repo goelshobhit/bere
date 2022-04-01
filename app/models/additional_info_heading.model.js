@@ -6,7 +6,7 @@ module.exports = (sequelize, Sequelize) => {
             autoIncrement: true
         },
         ad_info_name: {
-            type: Sequelize.STRING(50)
+            type: Sequelize.TEXT
         },
         ad_info_type_name: {
             type: Sequelize.STRING(50)

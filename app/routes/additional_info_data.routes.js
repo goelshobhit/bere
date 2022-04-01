@@ -74,7 +74,7 @@ module.exports = app => {
      *           schema:
      *              type: string
      *     tags:
-     *       - Brand
+     *       - Additional Info Data
      *     description: Update  Data
      *     produces:
      *       - application/json
@@ -114,12 +114,12 @@ module.exports = app => {
      *           schema:
      *              type: string
      *              example: ad_info_id,ad_info_data_name,ad_info_data_description,ad_info_data_image  # Example of a parameter value
-     *         - name: ad_info_id
+     *         - name: type
      *           in: query
      *           required: false
      *           schema:
-     *              type: integer
-     *              example: 1  # Example of a parameter value
+     *              type: string
+     *              example: Tips, FAQ, Rules  # Example of a parameter value
      *         - name: sortOrder
      *           in: query
      *           required: false
@@ -182,5 +182,35 @@ module.exports = app => {
      */
     router.get("/addtionalInfoData/:adInfoDataId", auth, AdditionalInfoData.addtionalInfoDataDetail);
 
+ /**
+ * @swagger
+ * /api/addtionalInfoData/{id}:
+ *   delete:
+ *     parameters:
+ *         - name: id
+ *           in: path
+ *           required: true
+ *           schema:
+ *              type: integer
+ *     tags:
+ *      - Additional Info Data
+ *     description: Delete data with id
+ *     produces:
+ *       - application/json
+ *     responses:
+ *       200:
+ *         description: Delete data
+ *       401:
+ *          description: Unauthorized
+ *          content:
+ *              application/json:
+ *                  schema:
+ *                      type: object
+ *                      properties:
+ *                          message:
+ *                              type: string
+ *                              example: Authorisation Required
+ */
+  router.delete("/addtionalInfoData/:id", auth, AdditionalInfoData.deleteData);
     app.use("/api", router);
 };

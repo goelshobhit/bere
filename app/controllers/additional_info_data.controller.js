@@ -44,7 +44,7 @@ exports.createNewAdditionalInfoData = async(req, res) => {
 }
 
 /**
- * Function to get all brands
+ * Function to get all data
  * @param  {object}  req expressJs request object
  * @param  {object}  res expressJs response object
  * @return {Promise}
@@ -55,7 +55,7 @@ exports.listing = async(req, res) => {
 	const skipCount = (pageNumber - 1) * pageSize;
 	const sortBy = req.query.sortBy || 'ad_info_data_id'
 	const sortOrder = req.query.sortOrder || 'DESC'
-    const ad_info_id = req.params.adInfoId;
+    const type = req.query.type;
     var options = {
         include: [
             {
@@ -70,6 +70,23 @@ exports.listing = async(req, res) => {
         ],
         where: {}
     };
+    if (type) {
+        var options = {
+            include: [
+                {
+                    model: db.additional_info_heading,
+                    required: true,
+                    where: { ad_info_type_name: type }
+                }
+            ],
+            limit: pageSize,
+            offset: skipCount,
+            order: [
+                [sortBy, sortOrder]
+            ],
+            where: {}
+        };
+    }
     if(req.query.sortVal){
         var sortValue=req.query.sortVal.trim();
 		options.where = sortValue ? {
@@ -81,9 +98,7 @@ exports.listing = async(req, res) => {
             ]
         } : null;			
     }
-    if (ad_info_id) {
-        options['where']['ad_info_id'] =  ad_info_id
-    }
+    
     var total = await AdditionalInfoData.count({
         where: options['where']
     });
@@ -95,7 +110,7 @@ exports.listing = async(req, res) => {
 }
 
 /**
- * Function to get brand details
+ * Function to get data details
  * @param  {object}  req expressJs request object
  * @param  {object}  res expressJs response object
  * @return {Promise}

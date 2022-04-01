@@ -9,10 +9,10 @@ module.exports = (sequelize, Sequelize) => {
             type: Sequelize.INTEGER
         },
         ad_info_data_name: {
-            type: Sequelize.STRING(50)
+            type: Sequelize.TEXT
         },
         ad_info_data_description: {
-            type: Sequelize.STRING(50)
+            type: Sequelize.TEXT
         },
         ad_info_data_image: {
             type: Sequelize.TEXT

@@ -41,7 +41,7 @@ module.exports = app => {
      *                              type: string
      *                              example: Authorisation Required
      */
-    router.post("/addtionalInfoHeading", AdditionalInfoHeading.createNewAdditionalInfoHeading);
+    router.post("/addtionalInfoHeading",auth, AdditionalInfoHeading.createNewAdditionalInfoHeading);
 
     // Update a Heading with id
     /**
@@ -100,18 +100,18 @@ module.exports = app => {
      *           required: false
      *           schema:
      *              type: integer
-     *         - name: sortBy
-     *           in: query
-     *           required: false
-     *           schema:
-     *              type: string
-     *              example: ad_info_id,ad_info_name,ad_info_type_name  # Example of a parameter value
      *         - name: type
      *           in: query
      *           required: false
      *           schema:
      *              type: string
      *              example: Tips, FAQ, Rules  # Example of a parameter value
+     *         - name: sortBy
+     *           in: query
+     *           required: false
+     *           schema:
+     *              type: string
+     *              example: ad_info_id,ad_info_name,ad_info_type_name  # Example of a parameter value
      *         - name: sortOrder
      *           in: query
      *           required: false
@@ -174,5 +174,35 @@ module.exports = app => {
      */
     router.get("/addtionalInfoHeading/:adInfoId", auth, AdditionalInfoHeading.addtionalInfoHeadingDetail);
 
+ /**
+ * @swagger
+ * /api/addtionalInfoHeading/{id}:
+ *   delete:
+ *     parameters:
+ *         - name: id
+ *           in: path
+ *           required: true
+ *           schema:
+ *              type: integer
+ *     tags:
+ *      - Additional Info Heading
+ *     description: Delete heading with id
+ *     produces:
+ *       - application/json
+ *     responses:
+ *       200:
+ *         description: Delete heading
+ *       401:
+ *          description: Unauthorized
+ *          content:
+ *              application/json:
+ *                  schema:
+ *                      type: object
+ *                      properties:
+ *                          message:
+ *                              type: string
+ *                              example: Authorisation Required
+ */
+  router.delete("/addtionalInfoHeading/:id", auth, AdditionalInfoHeading.deleteHeading);
     app.use("/api", router);
 };
