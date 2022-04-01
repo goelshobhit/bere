@@ -47,10 +47,10 @@ module.exports = app => {
      */
     router.post("/addtionalInfoData", AdditionalInfoData.createNewAdditionalInfoData);
 
-    // Update a Heading with id
+    // Update a Data with id
     /**
      * @swagger
-     * /api/addtionalInfoData/{adInfoDataId}:
+     * /api/additionalInfoData/{adInfoDataId}:
      *   put:
      *     requestBody:
      *        required: false
@@ -153,7 +153,7 @@ module.exports = app => {
     router.get('/addtionalInfoData', auth, AdditionalInfoData.listing)
     /**
      * @swagger
-     * /api/addtionalInfoData/{adInfoDataId}:
+     * /api/additionalInfoData/{adInfoDataId}:
      *   get:
      *     parameters:
      *         - name: adInfoDataId
@@ -180,11 +180,11 @@ module.exports = app => {
      *                              type: string
      *                              example: Authorisation Required
      */
-    router.get("/addtionalInfoData/:adInfoDataId", auth, AdditionalInfoData.addtionalInfoDataDetail);
+    router.get("/additionalInfoData/:adInfoDataId", auth, AdditionalInfoData.addtionalInfoDataDetail);
 
  /**
  * @swagger
- * /api/addtionalInfoData/{id}:
+ * /api/additionalInfoData/{id}:
  *   delete:
  *     parameters:
  *         - name: id
@@ -211,6 +211,6 @@ module.exports = app => {
  *                              type: string
  *                              example: Authorisation Required
  */
-  router.delete("/addtionalInfoData/:id", auth, AdditionalInfoData.deleteData);
+  router.delete("/additionalInfoData/:id", auth, AdditionalInfoData.deleteData);
     app.use("/api", router);
 };

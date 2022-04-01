@@ -138,7 +138,7 @@ exports.addtionalInfoDataDetail = async(req, res) => {
     }
     res.status(200).send({
         data: additionData,
-		media_token: common.imageToken(adInfoId)
+		media_token: common.imageToken(adInfoDataId)
     })
 }
 
@@ -151,7 +151,7 @@ exports.addtionalInfoDataDetail = async(req, res) => {
 
  exports.updateAddtionalInfoData = async(req, res) => {
     const id = req.params.adInfoDataId;
-    var AdditionalInfoData = await AdditionalInfoData.findOne({
+    var additionalInfoData = await AdditionalInfoData.findOne({
         where: {
             ad_info_data_id: id
         }
@@ -163,7 +163,7 @@ exports.addtionalInfoDataDetail = async(req, res) => {
         }
     }).then(function([ num, [result] ]) {
         if (num == 1) {
-            audit_log.saveAuditLog(req.header(process.env.UKEY_HEADER || "x-api-key"),'update','ad_info_data_id',id,result.dataValues,AdditionalInfoData);
+            audit_log.saveAuditLog(req.header(process.env.UKEY_HEADER || "x-api-key"),'update','ad_info_data_id',id,result.dataValues,additionalInfoData);
             res.status(200).send({
                 message: "Additional Info Data updated successfully."
             });
