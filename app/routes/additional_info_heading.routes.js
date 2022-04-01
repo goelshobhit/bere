@@ -66,7 +66,7 @@ module.exports = app => {
      *           schema:
      *              type: string
      *     tags:
-     *       - Brand
+     *       - Additional Info Heading
      *     description: Update  Heading
      *     produces:
      *       - application/json
