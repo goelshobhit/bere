@@ -323,6 +323,8 @@ require("./app/routes/users_invitation.routes")(app);
 require("./app/routes/content_feedback_settings.routes")(app);
 require("./app/routes/content_feedback.routes")(app);
 require("./app/routes/category.routes")(app);
+require("./app/routes/additional_info_data.routes")(app);
+require("./app/routes/additional_info_heading.routes")(app);
 server.listen(PORT, function () {
   console.log(`Server is running on port ${PORT}.`)
 });

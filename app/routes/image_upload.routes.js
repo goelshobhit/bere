@@ -40,7 +40,7 @@ app.use(bodyParser.urlencoded({extended: false}))
 	*                             format: binary
 	*                        media_key:
 	*                            type: string
-	*                            example: "bonus_item:bonus_item_icons,bonus_product_images,bonus_set:bonus_set_icons,bonus_set_images"
+	*                            example: "additional_info_data,bonus_item:bonus_item_icons,bonus_product_images,bonus_set:bonus_set_icons,bonus_set_images"
 	*     tags:
 	*       - File Upload
 	*     description: upload media like image
