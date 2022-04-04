@@ -258,6 +258,7 @@ const io = socketIO(server, {
     origin: '*',
   }
 });
+require("./app/routes/app_suggestion.routes")(app);
 require("./app/routes/brand.routes")(app);
 require("./app/routes/brand_user.routes")(app);
 require("./app/routes/campaign.routes")(app);
