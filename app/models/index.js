@@ -132,6 +132,8 @@ db.bonus_item = require("./bonus/bonus_item.model")(sequelize, Sequelize);
 db.bonus_set = require("./bonus/bonus_set.model")(sequelize, Sequelize);
 db.bonus_summary = require("./bonus/bonus_summary.model")(sequelize, Sequelize);
 
+db.app_suggestion = require("./app_suggestion.model")(sequelize, Sequelize);
+
 db.blacklisted = require("./blacklisted.model")(sequelize, Sequelize);
 db.energy = require("./energy.model")(sequelize, Sequelize);
 db.energy_award = require("./energy_award.model")(sequelize, Sequelize);
@@ -257,6 +259,7 @@ db.content_report_moderate.belongsTo(db.content_report, {foreignKey: 'content_re
 db.content_report.belongsTo(db.page_location, {foreignKey: 'content_report_page_id', targetKey: 'page_id'});
 db.reward_center.belongsTo(db.page_location, {foreignKey: 'reward_center_location_id', targetKey: 'page_id'});
 
+db.app_suggestion.belongsTo(db.user_profile, {foreignKey: 'u_id', targetKey: 'u_id'});
 
 db.task_caption.belongsTo(db.user_profile, {foreignKey: 'task_caption_user_id', targetKey: 'u_id'});
 db.bonus_usr.belongsTo(db.user_profile, {foreignKey: 'bonus_usr_id', targetKey: 'u_id'});
