@@ -113,9 +113,27 @@ exports.createNewUser = async (req, res) => {
         }
     });
 
+    // const UserDetails = await Users.findOne({
+    //     where: {
+    //         u_login: req.body["User login"].toLowerCase()
+    //     }
+    // });
+    // if (UserDetails) {
+    //     res.status(400).send({
+    //         message: "Username Aleary Exist"
+    //     });
+    //     return;
+    // }
     const UserDetails = await Users.findOne({
         where: {
-            u_login: req.body["User login"].toLowerCase()
+           // u_login: req.body["User login"],
+            [Op.or]: [{
+                u_login: req.body["User login"].toLowerCase()
+         },
+            {
+                    u_login: req.body["User login"]
+            }
+        ]
         }
     });
     if (UserDetails) {
