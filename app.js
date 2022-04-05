@@ -258,6 +258,7 @@ const io = socketIO(server, {
     origin: '*',
   }
 });
+require("./app/routes/app_suggestion.routes")(app);
 require("./app/routes/brand.routes")(app);
 require("./app/routes/brand_user.routes")(app);
 require("./app/routes/campaign.routes")(app);
@@ -323,6 +324,8 @@ require("./app/routes/users_invitation.routes")(app);
 require("./app/routes/content_feedback_settings.routes")(app);
 require("./app/routes/content_feedback.routes")(app);
 require("./app/routes/category.routes")(app);
+require("./app/routes/additional_info_data.routes")(app);
+require("./app/routes/additional_info_heading.routes")(app);
 server.listen(PORT, function () {
   console.log(`Server is running on port ${PORT}.`)
 });

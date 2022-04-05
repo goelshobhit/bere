@@ -132,6 +132,8 @@ db.bonus_item = require("./bonus/bonus_item.model")(sequelize, Sequelize);
 db.bonus_set = require("./bonus/bonus_set.model")(sequelize, Sequelize);
 db.bonus_summary = require("./bonus/bonus_summary.model")(sequelize, Sequelize);
 
+db.app_suggestion = require("./app_suggestion.model")(sequelize, Sequelize);
+
 db.blacklisted = require("./blacklisted.model")(sequelize, Sequelize);
 db.energy = require("./energy.model")(sequelize, Sequelize);
 db.energy_award = require("./energy_award.model")(sequelize, Sequelize);
@@ -159,6 +161,8 @@ db.brandscore_engagement_type = require("./brandscore_engagement_type.model")(se
 db.brandscore_engagement_settings = require("./brandscore_engagement_settings.model")(sequelize, Sequelize);
 db.brandscore_increase = require("./brandscore_increase.model")(sequelize, Sequelize);
 
+db.additional_info_heading = require("./additional_info_heading.model")(sequelize, Sequelize);
+db.additional_info_data = require("./additional_info_data.model")(sequelize, Sequelize);
 
 //Relations
 db.users.hasMany(db.bonus_ticket, {foreignKey: 'u_id', targetKey: 'bonus_ticket_usrid'});
@@ -175,6 +179,9 @@ db.bonus_task.belongsTo(db.users, {foreignKey: 'bonus_task_usr_id', targetKey: '
 db.bonus_task_user_state.belongsTo(db.user_profile, {foreignKey: 'bonus_task_usr_id', targetKey: 'u_id'});
 db.bonus_task_user_state.belongsTo(db.users, {foreignKey: 'bonus_task_usr_id', targetKey: 'u_id'});
 db.bonus_task_user_state.belongsTo(db.bonus_task, {foreignKey: 'bonus_task_id', targetKey: 'bonus_task_id'});
+
+db.additional_info_heading.hasMany(db.additional_info_data, {foreignKey: 'ad_info_id', targetKey: 'ad_info_id'});
+db.additional_info_data.belongsTo(db.additional_info_heading, {foreignKey: 'ad_info_id', targetKey: 'ad_info_id'});
 
 db.brands.hasMany(db.video_ads, {foreignKey: 'cr_co_id', targetKey: 'cr_co_id'});
 db.video_ads.belongsTo(db.brands, {foreignKey: 'cr_co_id', targetKey: 'cr_co_id'});
@@ -252,6 +259,7 @@ db.content_report_moderate.belongsTo(db.content_report, {foreignKey: 'content_re
 db.content_report.belongsTo(db.page_location, {foreignKey: 'content_report_page_id', targetKey: 'page_id'});
 db.reward_center.belongsTo(db.page_location, {foreignKey: 'reward_center_location_id', targetKey: 'page_id'});
 
+db.app_suggestion.belongsTo(db.user_profile, {foreignKey: 'u_id', targetKey: 'u_id'});
 
 db.task_caption.belongsTo(db.user_profile, {foreignKey: 'task_caption_user_id', targetKey: 'u_id'});
 db.bonus_usr.belongsTo(db.user_profile, {foreignKey: 'bonus_usr_id', targetKey: 'u_id'});
