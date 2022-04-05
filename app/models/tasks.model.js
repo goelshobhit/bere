@@ -14,6 +14,21 @@ module.exports = (sequelize, Sequelize) => {
         ta_type: {
             type: Sequelize.STRING(10)
         },
+        reward_type: {                      //1: tokens- fixed per entry,2: available presents (token value here),3: available chests (token value here ),4: Contest (tokens to winner only)
+            type: Sequelize.INTEGER
+        },
+        reward_center_id: {
+            type: Sequelize.INTEGER
+        },
+        audience: {                         //1: public, 2: tier 2,3: tier3, 4: bonus task winner,5: specific group
+            type: Sequelize.INTEGER
+        },
+        bonus_reward_type: {                //1: add prizes,2: bonus sets,3: single price,4: no bonus
+            type: Sequelize.INTEGER
+        },
+        bonus_set_id: {
+            type: Sequelize.INTEGER
+        },
         ta_post_insp_image: {
             type: Sequelize.JSONB
         },

@@ -27,6 +27,19 @@ module.exports = app => {
    *                        Task type:
    *                            type: integer
    *                            example: "1: Questions/ instruction,2: Reference Picture,3: Reference video,4: Reference audio"
+   *                        Reward Type:
+   *                            type: integer
+   *                            example: "1: tokens- fixed per entry,2: available presents (token value here),3: available chests (token value here ),4: Contest (tokens to winner only"
+   *                        Reward Center Id:
+   *                            type: integer
+   *                        Audience:
+   *                            type: integer
+   *                            example: "1: public , 2: tier 2,3: tier3, 4: bonus task winner,5: specific group "
+   *                        Bonus Reward Type:
+   *                            type: integer
+   *                            example: "1: add prizes , 2: bonus sets, 3: single price, 4: no bonus"
+   *                        Bonus Set Id:
+   *                            type: integer
    *                        Task description:
    *                            type: string
    *                        Task oneline summary:
@@ -127,6 +140,19 @@ module.exports = app => {
    *                        Task type:
    *                            type: integer
    *                            example: "1: Questions/ instruction,2: Reference Picture,3: Reference video,4: Reference audio"
+   *                        Reward Type:
+   *                            type: integer
+   *                            example: "1: tokens- fixed per entry,2: available presents (token value here),3: available chests (token value here ),4: Contest (tokens to winner only)"
+   *                        Reward Center Id:
+   *                            type: integer
+   *                        Audience:
+   *                            type: integer
+   *                            example: "1: public , 2: tier 2,3: tier3, 4: bonus task winner,5: specific group "
+   *                        Bonus Reward Type:
+   *                            type: integer
+   *                            example: "1: add prizes , 2: bonus sets, 3: single price, 4: no bonus"
+   *                        Bonus Set Id:
+   *                            type: integer
    *                        Task description:
    *                            type: string
    *                        Task oneline summary:
@@ -476,6 +502,19 @@ module.exports = app => {
   *                        ta_type:
   *                            type: integer
   *                            example: "1: Questions/ instruction,2: Reference Picture,3: Reference video,4: Reference audio"
+  *                        reward_type:
+  *                            type: integer
+  *                            example: "1: tokens- fixed per entry,2: available presents (token value here),3: available chests (token value here ),4: Contest (tokens to winner only"
+  *                        reward_center_id:
+  *                            type: integer
+  *                        audience:
+  *                            type: integer
+  *                            example: "1: public , 2: tier 2,3: tier3, 4: bonus task winner,5: specific group "
+  *                        bonus_reward_type:
+  *                            type: integer
+  *                            example: "1: add prizes , 2: bonus sets, 3: single price, 4: no bonus"
+  *                        bonus_set_id:
+  *                            type: integer
   *                        ta_desc:
   *                            type: string
   *                        ta_hashtag:
@@ -630,6 +669,19 @@ module.exports = app => {
   *                        ct_type:
   *                            type: integer
   *                            example: "1: Questions/ instruction,2: Reference Picture,3: Reference video,4: Reference audio"
+  *                        reward_type:
+  *                            type: integer
+  *                            example: "1: tokens- fixed per entry,2: available presents (token value here),3: available chests (token value here ),4: Contest (tokens to winner only"
+  *                        reward_center_id:
+  *                            type: integer
+  *                        audience:
+  *                            type: integer
+  *                            example: "1: public , 2: tier 2,3: tier3, 4: bonus task winner,5: specific group "
+  *                        bonus_reward_type:
+  *                            type: integer
+  *                            example: "1: add prizes , 2: bonus sets, 3: single price, 4: no bonus"
+  *                        bonus_set_id:
+  *                            type: integer
   *                        ct_desc:
   *                            type: string
   *                        ct_hashtag:
