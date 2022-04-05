@@ -189,6 +189,42 @@ module.exports = app => {
 	*                              example: Authorisation Required
 	*/
 	router.get("/user_details/:userID", auth,Users.userDetailForAdmin);
+	
+	/**
+	* @swagger
+	* /api/user_brand_task_detail/{userID}:
+	*   get:
+	*     parameters:
+	*         - name: userID
+	*           in: path
+	*           required: true
+	*           schema:
+	*              type: string
+	*         - name: brandId
+	*           in: query
+	*           required: false
+	*           schema:
+	*              type: integer
+	*     tags:
+	*       - Users
+	*     description: Retrieve Brand Task details for Single User
+	*     produces:
+	*       - application/json
+	*     responses:
+	*       200:
+	*         description: Brand Task Listing for User.
+	*       401:
+	*          description: Unauthorized
+	*          content:
+	*              application/json:
+	*                  schema:
+	*                      type: object
+	*                      properties:
+	*                          message:
+	*                              type: string
+	*                              example: Authorisation Required
+	*/
+	router.get("/user_brand_task_detail/:userID", auth,Users.userBrandTaskDetails);
 
   /**
    * @swagger

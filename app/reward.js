@@ -31,6 +31,7 @@ function Reward() {
     var reward_request_id = rewardGivendetail.reward_request_id;
     var event_id = rewardGivendetail.event_id;
     var rewards_event_type = rewardGivendetail.rewards_event_type;
+    var reward_center_id = rewardGivendetail.reward_center_id;
     let TaskDetails = {};
     let givenResponse = {};
     let tj_type = '';
@@ -86,6 +87,8 @@ function Reward() {
     const data = {
       "rewards_request_id": reward_request_id ? reward_request_id : 0,
       "rewards_award_event_id": event_id,
+      "reward_center_id": reward_center_id,
+      "rewards_brand_id": TaskDetails.campaign.cr_co_id,
       "rewards_award_event_type": rewards_event_type,
       "rewards_award_user_id": uid,
       "rewards_award_name": rewardName,

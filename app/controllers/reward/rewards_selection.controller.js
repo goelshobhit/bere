@@ -170,6 +170,7 @@ exports.rewardUserSelection = async (req, res) => {
       "reward_request_id": 0,
       "event_id": body["Rewards Event Id"],
       "rewards_event_type": body["Rewards Event Type"],
+      "reward_center_id": body["Rewards Center Id"]
     };
     const givenResponse = await reward.giveRewardtoUser(rewardGivendetail);
     if (givenResponse && givenResponse.error_message) {

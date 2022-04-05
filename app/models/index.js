@@ -345,6 +345,8 @@ db.brands.hasMany(db.bonus_set, {foreignKey: 'bonus_set_brand_id', targetKey: 'c
 db.bonus_set.belongsTo(db.brands, {foreignKey: 'bonus_set_brand_id', targetKey: 'cr_co_id'});
 
 db.reward_center.hasMany(db.reward_center_dist, {foreignKey: 'reward_center_id', targetKey: 'reward_center_id'});
+db.reward_center.hasMany(db.rewards_given, {foreignKey: 'reward_center_id', targetKey: 'reward_center_id'});
+db.rewards_given.belongsTo(db.reward_center, {foreignKey: 'reward_center_id', targetKey: 'reward_center_id'});
 db.reward_center_dist.belongsTo(db.reward_center, {foreignKey: 'reward_center_id', targetKey: 'reward_center_id'});
 db.users.hasMany(db.reward_count, {foreignKey: 'u_id', targetKey: 'reward_count_usr_id'});
 db.reward_count.belongsTo(db.users, {foreignKey: 'reward_count_usr_id', targetKey: 'u_id'});

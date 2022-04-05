@@ -53,6 +53,7 @@ exports.giveReward = async (req, res) => {
   var rewardName = body["Rewards Award Name"] ? body["Rewards Award Name"] : '';
   var uid = body["Rewards Award UserId"];
   var reward_request_id = body["Rewards Request Id"] ? body["Rewards Request Id"] : 0;
+  var reward_center_id = body["Rewards Center Id"] ? body["Rewards Center Id"] : 0;
 
   var budgetPerUser = body["Rewards Award Coins"] ? body["Rewards Award Coins"] : (rewardRequestDetail.rewards_request_coins ? rewardRequestDetail.rewards_request_coins : 0);
   var heartPerUser = body["Rewards Award Stars"] ? body["Rewards Award Stars"] : (rewardRequestDetail.rewards_request_stars ? rewardRequestDetail.rewards_request_stars : 0);
@@ -72,6 +73,7 @@ exports.giveReward = async (req, res) => {
     "reward_request_id": reward_request_id,
     "event_id": event_id,
     "rewards_event_type": rewards_event_type,
+    "reward_center_id": reward_center_id
   };
   const givenResponse = await reward.giveRewardtoUser(rewardGivendetail);
    if (givenResponse && givenResponse.error_message) {

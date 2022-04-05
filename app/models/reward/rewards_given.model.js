@@ -9,6 +9,12 @@ module.exports = (sequelize, Sequelize) => {
     rewards_request_id: {
       type: Sequelize.INTEGER
     },
+    reward_center_id: {
+      type: Sequelize.INTEGER
+    },
+    rewards_brand_id: {
+      type: Sequelize.INTEGER
+    },
     rewards_award_event_id: {
       type: Sequelize.INTEGER
     },

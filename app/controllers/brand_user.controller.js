@@ -1,13 +1,8 @@
 const db = require("../models");
-const Brand = db.brands
-const brands_budget = db.brands_budget
 const brandUserShare = db.brand_user_share;
 const audit_log = db.audit_log
 const logger = require("../middleware/logger");
 const Op = db.Sequelize.Op;
-const common = require("../common");
-const taskJson = db.tasks_json
-const Task = db.tasks
 
 exports.BrandUserShare = async(req, res) => {
     const body = req.body;

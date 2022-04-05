@@ -19,7 +19,7 @@ module.exports = (sequelize, Sequelize) => {
 			type: Sequelize.INTEGER,
             allowNull: false,
         },
-        reward_center_reward_type: {
+        reward_center_reward_type: {    // 0= Easter Egg, 1 = Present, 2= Chest, 3= Lottery Wheel 
             type: Sequelize.INTEGER,
             allowNull: false,
         },
