@@ -129,7 +129,7 @@ exports.createNewUser = async (req, res) => {
            // u_login: req.body["User login"],
             [Op.or]: [{
                 u_login: req.body["User login"].toLowerCase()
-         },
+            },
             {
                     u_login: req.body["User login"]
             }
