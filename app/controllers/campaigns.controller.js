@@ -128,6 +128,11 @@ exports.campaignListing = async(req, res) => {
                 attributes: [
                     ["cr_co_name", "Brand Name"]
                 ],
+                include: [{
+                    model: db.brands_budget,
+                    attributes:
+                        ["cr_bu_amount", "cr_bu_note","cr_bu_created_at"]
+                }],
                 where:{is_autotakedown:0}
             }
         ],
