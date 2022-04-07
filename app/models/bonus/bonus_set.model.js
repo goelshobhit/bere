@@ -35,6 +35,12 @@ module.exports = (sequelize, Sequelize) => {
     bonus_set_images: {
       type: Sequelize.TEXT
     },
+    bonus_set_start_date:{
+      type: Sequelize.DATE
+    },
+    bonus_set_default:{
+      type: Sequelize.INTEGER
+   },
     bonus_set_item_timestamp: {
       allowNull: false,
       type: Sequelize.STRING(50)

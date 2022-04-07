@@ -29,6 +29,12 @@ module.exports = app => {
      *                            type: string
      *                        Bonus Set Images:
      *                            type: string
+     *                        Bonus Set Start Date:
+     *                            type: string
+     *                            format: date-time
+     *                            example: 2022-04-07
+     *                        Bonus Set Default:
+     *                            type: integer
      *                        Bonus Set Item Timestamp:
      *                            type: string
      *                        Bonus Set Status:
@@ -68,7 +74,7 @@ module.exports = app => {
     
    /**
      * @swagger
-     * /api/bonus_set/{BonusSetId}:
+     * /api/bonus_set/{bonusSetId}:
      *   put:
      *     requestBody:
      *        required: false
@@ -101,6 +107,12 @@ module.exports = app => {
      *                            type: string
      *                        bonus_set_images:
      *                            type: string
+     *                        bonus_set_start_date:
+     *                            type: string
+     *                            format: date-time
+     *                            example: 2022-04-07
+     *                        bonus_set_default:
+     *                            type: integer
      *                        bonus_set_item_timestamp:
      *                            type: string
      *                        bonus_set_status:
@@ -128,14 +140,14 @@ module.exports = app => {
      *                              type: string
      *                              example: Authorisation Required
      */
-    router.put("/bonus_set/:BonusSetId",auth,BonusItemSet.updateBonusSet);
+    router.put("/bonus_set/:bonusSetId",auth,BonusItemSet.updateBonusSet);
 
     /**
    * @swagger
-   * /api/bonus_set/{BonusSetId}:
+   * /api/bonus_set/{bonusSetId}:
    *   delete:
    *     parameters:
-   *         - name: BonusSetId
+   *         - name: bonusSetId
    *           in: path
    *           required: true
    *           schema:
@@ -159,7 +171,7 @@ module.exports = app => {
    *                              type: string
    *                              example: Authorisation Required
    */
-  router.delete("/bonus_set/:BonusSetId", auth, BonusItemSet.deleteBonusSet); 
+  router.delete("/bonus_set/:bonusSetId", auth, BonusItemSet.deleteBonusSet); 
 
     // Retrieve all Bonus sets
     /**
@@ -167,12 +179,17 @@ module.exports = app => {
      * /api/bonus_set:
      *   get:
      *     parameters:
-     *         - name: BonusSetId
+     *         - name: bonusSetId
      *           in: query
      *           required: false
      *           schema:
      *              type: integer
-     *         - name: BrandId
+     *         - name: bonusSetDefault
+     *           in: query
+     *           required: false
+     *           schema:
+     *              type: integer
+     *         - name: brandId
      *           in: query
      *           required: false
      *           schema:

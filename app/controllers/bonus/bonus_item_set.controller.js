@@ -37,13 +37,16 @@ exports.bonusSetlisting = async (req, res) => {
       [sortBy]: `${sortValue}`
     } : null;
   }
-  if (req.query.BonusSetId) {
+  if (req.query.bonusSetId) {
     options['where'] = {
-      bonus_set_id: req.query.BonusSetId
+      bonus_set_id: req.query.bonusSetId
     }
   }
-  if (req.query.BrandId) {
-    options['where']['bonus_set_brand_id'] = req.query.BrandId;
+  if (req.query.bonusSetDefault) {
+    options['where']['bonus_set_default'] =  req.query.bonusSetDefault;
+  }
+  if (req.query.brandId) {
+    options['where']['bonus_set_brand_id'] = req.query.brandId;
   }
   var total = await bonus_set.count({
     where: options['where']
@@ -167,6 +170,8 @@ exports.createBonusItemSet = async (req, res) => {
     "bonus_set_item_qty": body.hasOwnProperty("Bonus Set Item Qty") ? body["Bonus Set Item Qty"] : 0,
     "bonus_set_icons": body.hasOwnProperty("Bonus Set Icons") ? req.body["Bonus Set Icons"] : "",
     "bonus_set_images": body.hasOwnProperty("Bonus Set Images") ? req.body["Bonus Set Images"] : "",
+    "bonus_set_start_date": body.hasOwnProperty("Bonus Set Start Date") ? req.body["Bonus Set Start Date"] : "",
+    "bonus_set_default": body.hasOwnProperty("Bonus Set Default") ? req.body["Bonus Set Default"] : "0",
     "bonus_set_item_timestamp": (body.hasOwnProperty("Bonus Set Item Timestamp") && body["Bonus Set Item Timestamp"]) ? body["Bonus Set Item Timestamp"] : '',
     "bonus_set_status": body.hasOwnProperty("Bonus Set Status") ? body["Bonus Set Status"] : 0,
     "bonus_set_duration": body.hasOwnProperty("Bonus Set Duration") ? body["Bonus Set Duration"] : 30,
@@ -177,7 +182,7 @@ exports.createBonusItemSet = async (req, res) => {
       audit_log.saveAuditLog(uid, 'add', 'bonus_set', data.bonus_set_id, data.dataValues);
       res.status(201).send({
         msg: "Bonus Set Added Successfully",
-        BonusSetId: data.bonus_set_id
+        bonusSetId: data.bonus_set_id
       });
     })
     .catch(err => {
@@ -198,7 +203,7 @@ exports.createBonusItemSet = async (req, res) => {
 exports.updateBonusSet = async (req, res) => {
 
   const body = req.body;
-  const id = req.params.BonusSetId;
+  const id = req.params.bonusSetId;
   var bonusSetDetails = await bonus_set.findOne({
     where: {
       bonus_set_id: id
@@ -245,18 +250,18 @@ exports.updateBonusSet = async (req, res) => {
 exports.deleteBonusSet = async (req, res) => {
   const BonusItemDetails = await bonus_set.findOne({
     where: {
-      bonus_set_id: req.params.BonusSetId
+      bonus_set_id: req.params.bonusSetId
     }
   });
   if (!BonusItemDetails) {
     res.status(500).send({
-      message: "Could not delete Bonus set with id=" + req.params.BonusSetId
+      message: "Could not delete Bonus set with id=" + req.params.bonusSetId
     });
     return;
   }
   bonus_set.destroy({
     where: {
-      bonus_set_id: req.params.BonusSetId
+      bonus_set_id: req.params.bonusSetId
     }
   })
     .then(num => {
@@ -267,7 +272,7 @@ exports.deleteBonusSet = async (req, res) => {
     })
     .catch(err => {
       res.status(500).send({
-        message: "Could not delete Bonus set with id=" + req.params.BonusSetId
+        message: "Could not delete Bonus set with id=" + req.params.bonusSetId
       });
       return;
     });
