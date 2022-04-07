@@ -29,6 +29,12 @@ module.exports = (sequelize, Sequelize) => {
         bonus_set_id: {
             type: Sequelize.INTEGER
         },
+        tickets_per_task_submissions: {
+            type: Sequelize.INTEGER
+        },
+        ct_media: {
+            type: Sequelize.JSONB
+        },
         ct_post_insp_image: {
             type: Sequelize.JSONB
         },

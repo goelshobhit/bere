@@ -167,9 +167,10 @@ exports.createBonusItemSet = async (req, res) => {
     "bonus_set_item_qty": body.hasOwnProperty("Bonus Set Item Qty") ? body["Bonus Set Item Qty"] : 0,
     "bonus_set_icons": body.hasOwnProperty("Bonus Set Icons") ? req.body["Bonus Set Icons"] : "",
     "bonus_set_images": body.hasOwnProperty("Bonus Set Images") ? req.body["Bonus Set Images"] : "",
-    "bonus_set_item_timestamp": (body.hasOwnProperty("Bonus Set Item Timestamp") && body["Bonus Set Item Timestamp"]) ? body["Bonus Set Item Timestamp"] : new Date().getTime(),
+    "bonus_set_item_timestamp": (body.hasOwnProperty("Bonus Set Item Timestamp") && body["Bonus Set Item Timestamp"]) ? body["Bonus Set Item Timestamp"] : '',
     "bonus_set_status": body.hasOwnProperty("Bonus Set Status") ? body["Bonus Set Status"] : 0,
-    "bonus_set_duration": body.hasOwnProperty("Bonus Set Duration") ? body["Bonus Set Duration"] : 30
+    "bonus_set_duration": body.hasOwnProperty("Bonus Set Duration") ? body["Bonus Set Duration"] : 30,
+    "bonus_tickets_rules_ids": body.hasOwnProperty("Bonus Rule Ids") ? body["Bonus Rule Ids"] : []
   }
   bonus_set.create(data)
     .then(data => {
@@ -209,15 +210,6 @@ exports.updateBonusSet = async (req, res) => {
         "bonus_item_id must be array"
     });
     return;
-  }
-  const bonusSetData = {
-    "bonus_set_brand_id": body.hasOwnProperty("Bonus Set Brand Id") ? body["Bonus Set Brand Id"] : "0",
-    "bonus_item_id": body.hasOwnProperty("Bonus Item ids") ? body["Bonus Item ids"] : "",
-    "bonus_set_item_name": body.hasOwnProperty("Bonus Set Item Name") ? body["Bonus Set Item Name"] : "0",
-    "bonus_set_item_qty": body.hasOwnProperty("Bonus Set Item Qty") ? body["Bonus Set Item Qty"] : 0,
-    "bonus_set_icons": body.hasOwnProperty("Bonus Set Icons") ? req.body["Bonus Set Icons"] : "",
-    "bonus_set_images": body.hasOwnProperty("Bonus Set Images") ? req.body["Bonus Set Images"] : "",
-    "bonus_set_item_timestamp": (body.hasOwnProperty("Bonus Set Item Timestamp") && body["Bonus Set Item Timestamp"]) ? body["Bonus Set Item Timestamp"] : new Date().getTime()
   }
   bonus_set.update(req.body, {
     returning: true,

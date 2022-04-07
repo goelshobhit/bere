@@ -232,7 +232,7 @@ exports.submitContentReport = async (req, res) => {
     "content_report_type_id": body.hasOwnProperty("Content Report Type Id") ? req.body["Content Report Type Id"] : "",
     "content_report_owner_id": body.hasOwnProperty("Content Report Owner Id") ? req.body["Content Report Owner Id"] : "",
     "content_report_reporter_id": body.hasOwnProperty("Content Report Reporter Id") ? req.body["Content Report Reporter Id"] : userId,
-    "content_report_timestamp": body.hasOwnProperty("Content Report Timestamp") ? req.body["Content Report Timestamp"] : new Date().getTime(),
+    "content_report_timestamp": body.hasOwnProperty("Content Report Timestamp") ? req.body["Content Report Timestamp"] : '',
     "content_report_reason": body.hasOwnProperty("Content Report Reason") ? req.body["Content Report Reason"] : "",
     "content_report_autotakedown": contentReportCategorydetail.content_report_cat_autotakedown
   }

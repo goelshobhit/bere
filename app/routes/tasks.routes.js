@@ -40,6 +40,14 @@ module.exports = app => {
    *                            example: "1: add prizes , 2: bonus sets, 3: single price, 4: no bonus"
    *                        Bonus Set Id:
    *                            type: integer
+   *                        Tickets Per Submissions:
+   *                            type: integer
+   *                        Task Media:
+   *                            type: array
+   *                            items:
+   *                              oneOf:
+   *                               type: string
+   *                            example: ["xyz.png","abc.mp4"]
    *                        Task description:
    *                            type: string
    *                        Task oneline summary:
@@ -153,6 +161,14 @@ module.exports = app => {
    *                            example: "1: add prizes , 2: bonus sets, 3: single price, 4: no bonus"
    *                        Bonus Set Id:
    *                            type: integer
+   *                        Tickets Per Submissions:
+   *                            type: integer
+   *                        Task Media:
+   *                            type: array
+   *                            items:
+   *                              oneOf:
+   *                               type: string
+   *                            example: ["xyz.png","abc.mp4"]
    *                        Task description:
    *                            type: string
    *                        Task oneline summary:
@@ -515,6 +531,14 @@ module.exports = app => {
   *                            example: "1: add prizes , 2: bonus sets, 3: single price, 4: no bonus"
   *                        bonus_set_id:
   *                            type: integer
+  *                        tickets_per_task_submissions:
+  *                            type: integer
+  *                        ta_media:
+  *                            type: array
+  *                            items:
+  *                              oneOf:
+  *                               type: string
+  *                            example: ["xyz.png","abc.mp4"]
   *                        ta_desc:
   *                            type: string
   *                        ta_hashtag:
@@ -682,6 +706,14 @@ module.exports = app => {
   *                            example: "1: add prizes , 2: bonus sets, 3: single price, 4: no bonus"
   *                        bonus_set_id:
   *                            type: integer
+  *                        tickets_per_task_submissions:
+  *                            type: integer
+  *                        ct_media:
+  *                            type: array
+  *                            items:
+  *                              oneOf:
+  *                               type: string
+  *                            example: ["xyz.png","abc.mp4"]
   *                        ct_desc:
   *                            type: string
   *                        ct_hashtag:

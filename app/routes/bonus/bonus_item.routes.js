@@ -23,12 +23,16 @@ module.exports = app => {
      *                            type: string
      *                        Bonus Product Images:
      *                            type: string
+     *                        Bonus Item Dollar Value:
+     *                            type: number
      *                        Bonus Item Qty:
      *                            type: integer
      *                        Bonus Item Remaining Qty:
      *                            type: integer
      *                        Bonus item Timestamp:
      *                            type: string
+     *                        Bonus Item Active:
+     *                            type: integer
      *     tags:
      *       - Bonus Item
      *     description: Add bonus Item
@@ -75,12 +79,16 @@ module.exports = app => {
      *                            type: string
      *                        bonus_product_images:
      *                            type: string
+     *                        bonus_product_dollar_value:
+     *                            type: number
      *                        bonus_item_qty:
      *                            type: integer
      *                        bonus_item_remaining_qty:
      *                            type: integer
      *                        bonus_item_timestamp:
      *                            type: string
+     *                        bonus_item_is_active:
+     *                            type: integer
      *     tags:
      *       - Bonus Item
      *     description: Update bonus Item

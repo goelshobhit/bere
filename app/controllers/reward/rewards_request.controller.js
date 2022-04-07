@@ -45,7 +45,7 @@ exports.createRewardRequest = async (req, res) => {
   }
   const data = {
     "rewards_id": body["Rewards Id"] ? body["Rewards Id"] : "0",
-    "rewards_timestamp": body["Rewards Timestamp"] ? body["Rewards Timestamp"] : new Date().getTime(),
+    "rewards_timestamp": body["Rewards Timestamp"] ? body["Rewards Timestamp"] : '',
     "rewards_user_id": uid,
     "rewards_event_owner_id": body["Rewards Event Owner Id"] ? body["Rewards Event Owner Id"] : "0",
     "rewards_request_token": body["Rewards Request Token"] ? body["Rewards Request Token"] : 0,

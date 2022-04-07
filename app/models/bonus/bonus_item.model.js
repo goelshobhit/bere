@@ -23,6 +23,9 @@ module.exports = (sequelize, Sequelize) => {
     bonus_product_images: {
       type: Sequelize.TEXT
     },
+    bonus_item_dollar_value: {
+      type: Sequelize.DECIMAL(10,2)
+    },
     bonus_item_qty: {
       allowNull: false,
       type: Sequelize.INTEGER
@@ -34,6 +37,10 @@ module.exports = (sequelize, Sequelize) => {
     bonus_item_timestamp: {
       allowNull: false,
       type: Sequelize.STRING(50)
+    },
+    bonus_item_is_active: {
+      defaultValue: 1,
+      type: Sequelize.INTEGER
     }
   }, {
       createdAt: 'bonus_item_created_at',

@@ -22,6 +22,9 @@ module.exports = (sequelize, Sequelize) => {
       allowNull: false,
       type: Sequelize.INTEGER
     },
+    bonus_tickets_rules_ids: {
+      type: Sequelize.JSONB
+    },
     bonus_set_duration: {
       defaultValue: 30,
       type: Sequelize.INTEGER

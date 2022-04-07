@@ -30,10 +30,10 @@ exports.createBonusItemSummary = async (req, res) => {
     "bonus_item_id": body.hasOwnProperty("Bonus Item id") ? body["Bonus Item id"] : "0",
     "bonus_summary_name": body.hasOwnProperty("Bonus Summary Name") ? body["Bonus Summary Name"] : "0",
     "bonus_summary_hashtag": body.hasOwnProperty("Bonus Summary_Hashtag") ? body["Bonus Summary_Hashtag"] : '',
-    "bonus_summary_timestamp": (body.hasOwnProperty("Bonus Summary Timestamp") && body["Bonus Summary Timestamp"]) ? body["Bonus Summary Timestamp"] : new Date().getTime(),
-    "bonus_summary_start_timestamp": (body.hasOwnProperty("Bonus Summary Start Timestamp") && body["Bonus Summary Start Timestamp"]) ? body["Bonus Summary Start Timestamp"] : new Date().getTime(),
-    "bonus_summary_entryclose_time": (body.hasOwnProperty("Bonus Summary Entryclose Time") && body["Bonus Summary Entryclose Time"]) ? body["Bonus_Summary Entryclose Time"] : new Date().getTime(),
-    "bonus_summary_end_date": (body.hasOwnProperty("Bonus Summary End Date") && body["Bonus Summary End Date"]) ? body["Bonus Summary End Date"] : new Date().getTime(),
+    "bonus_summary_timestamp": (body.hasOwnProperty("Bonus Summary Timestamp") && body["Bonus Summary Timestamp"]) ? body["Bonus Summary Timestamp"] : '',
+    "bonus_summary_start_timestamp": (body.hasOwnProperty("Bonus Summary Start Timestamp") && body["Bonus Summary Start Timestamp"]) ? body["Bonus Summary Start Timestamp"] : '',
+    "bonus_summary_entryclose_time": (body.hasOwnProperty("Bonus Summary Entryclose Time") && body["Bonus Summary Entryclose Time"]) ? body["Bonus_Summary Entryclose Time"] : '',
+    "bonus_summary_end_date": (body.hasOwnProperty("Bonus Summary End Date") && body["Bonus Summary End Date"]) ? body["Bonus Summary End Date"] : '',
     "bonus_summary_set_id": body.hasOwnProperty("Bonus Summary Set Id") ? body["Bonus Summary Set Id"] : '0',
     "bonus_summary_set_items": body.hasOwnProperty("Bonus Summary Set Items") ? body["Bonus Summary Set Items"] : '',
     "bonus_summary_set_items_qty": body.hasOwnProperty("Bonus Summary Set Items Qty") ? body["Bonus Summary Set Items Qty"] : '',
@@ -74,22 +74,6 @@ exports.updateBonusItemSummary = async (req, res) => {
       bonus_summary_id: id
     }
   });
-  const bonusSummaryData = {
-    "bonus_item_id": body.hasOwnProperty("Bonus Item id") ? body["Bonus Item id"] : "0",
-    "bonus_summary_name": body.hasOwnProperty("Bonus Summary Name") ? body["Bonus Summary Name"] : "0",
-    "bonus_summary_hashtag": body.hasOwnProperty("Bonus Summary_Hashtag") ? body["Bonus Summary_Hashtag"] : '',
-    "bonus_summary_timestamp": (body.hasOwnProperty("Bonus Summary Timestamp") && body["Bonus Summary Timestamp"]) ? body["Bonus Summary Timestamp"] : new Date().getTime(),
-    "bonus_summary_start_timestamp": (body.hasOwnProperty("Bonus Summary Start Timestamp") && body["Bonus Summary Start Timestamp"]) ? body["Bonus Summary Start Timestamp"] : new Date().getTime(),
-    "bonus_summary_entryclose_time": (body.hasOwnProperty("Bonus Summary Entryclose Time") && body["Bonus Summary Entryclose Time"]) ? body["Bonus_Summary Entryclose Time"] : new Date().getTime(),
-    "bonus_summary_end_date": (body.hasOwnProperty("Bonus Summary End Date") && body["Bonus Summary End Date"]) ? body["Bonus Summary End Date"] : new Date().getTime(),
-    "bonus_summary_set_id": body.hasOwnProperty("Bonus Summary Set Id") ? body["Bonus Summary Set Id"] : '0',
-    "bonus_summary_set_items": body.hasOwnProperty("Bonus Summary Set Items") ? body["Bonus Summary Set Items"] : '',
-    "bonus_summary_set_items_qty": body.hasOwnProperty("Bonus Summary Set Items Qty") ? body["Bonus Summary Set Items Qty"] : '',
-    "bonus_summary_total_token": body.hasOwnProperty("Bonus Summary Total Token") ? body["Bonus Summary Total Token"] : '0',
-    "bonus_summary_total_stars": body.hasOwnProperty("Bonus Summary Total Stars") ? body["Bonus Summary Total Stars"] : '0',
-    "bonus_summary_stars_balance": body.hasOwnProperty("Bonus Summary Stars Balance") ? body["Bonus Summary Stars Balance"] : '0',
-    "bonus_summary_set_token_balance": body.hasOwnProperty("Bonus Summary Set Token Balance") ? body["Bonus Summary Set Token Balance"] : '0'
-  }
   bonus_summary.update(body, {
     returning: true,
     where: {

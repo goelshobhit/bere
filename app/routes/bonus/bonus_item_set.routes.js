@@ -35,6 +35,12 @@ module.exports = app => {
      *                            type: integer
      *                        Bonus Set Duration:
      *                            type: integer
+     *                        Bonus Rule Ids:
+     *                            type: array
+     *                            items:
+     *                              oneOf:
+     *                               type: integer
+     *                            example: ["1","2"]
      *     tags:
      *       - Bonus Item Set
      *     description: Add bonus Item Set
@@ -85,6 +91,12 @@ module.exports = app => {
      *                            type: integer
      *                        bonus_set_duration:
      *                            type: string
+     *                        bonus_tickets_rules_ids:
+     *                            type: array
+     *                            items:
+     *                              oneOf:
+     *                               type: integer
+     *                            example: ["1","2"]
      *                        bonus_set_icons:
      *                            type: string
      *                        bonus_set_images:
