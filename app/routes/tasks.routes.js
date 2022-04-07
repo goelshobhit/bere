@@ -22,6 +22,8 @@ module.exports = app => {
    *                    properties:
    *                        Task name:
    *                            type: string
+   *                        Task Header Image:
+   *                            type: string
    *                        Campaign id:
    *                            type: integer
    *                        Task type:
