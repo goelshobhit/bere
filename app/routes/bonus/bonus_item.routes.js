@@ -33,6 +33,12 @@ module.exports = app => {
      *                            type: string
      *                        Bonus Item Active:
      *                            type: integer
+     *                        Bonus Item Giveaway Type:
+     *                            type: integer
+     *                        Brand Task:
+     *                            type: integer
+     *                        Number Of Task Available:
+     *                            type: integer
      *     tags:
      *       - Bonus Item
      *     description: Add bonus Item

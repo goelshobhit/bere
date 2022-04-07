@@ -41,6 +41,15 @@ module.exports = (sequelize, Sequelize) => {
     bonus_item_is_active: {
       defaultValue: 1,
       type: Sequelize.INTEGER
+    },
+    bonus_item_giveaway_type: {
+      type: Sequelize.INTEGER   //2 = level 2, 3 = level 3, 4 = brand prize set, 5= task specific 
+    },
+    brand_task: {         // 1= on, 0 = off
+      type: Sequelize.INTEGER
+    },
+    number_of_tasks_available: {
+      type: Sequelize.INTEGER
     }
   }, {
       createdAt: 'bonus_item_created_at',

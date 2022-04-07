@@ -104,7 +104,10 @@ exports.createBonusItem = async (req, res) => {
     "bonus_item_qty": body.hasOwnProperty("Bonus Item Qty") ? req.body["Bonus Item Qty"] : 0,
     "bonus_item_remaining_qty": body.hasOwnProperty("Bonus Item Remaining Qty") ? req.body["Bonus Item Remaining Qty"] : 0,
     "bonus_item_timestamp": body.hasOwnProperty("Bonus Item Timestamp") ? req.body["Bonus Item Timestamp"] : '',
-    "bonus_item_is_active": body.hasOwnProperty("Bonus Item Active") ? req.body["Bonus Item Active"] : 1
+    "bonus_item_is_active": body.hasOwnProperty("Bonus Item Active") ? req.body["Bonus Item Active"] : 1,
+    "bonus_item_giveaway_type": body.hasOwnProperty("Bonus Item Giveaway Type") ? req.body["Bonus Item Giveaway Type"] : 0,
+    "brand_task": body.hasOwnProperty("Brand Task") ? req.body["Brand Task"] : 0,
+    "number_of_tasks_available": body.hasOwnProperty("Number Of Task Available") ? req.body["Number Of Task Available"] : 0
   }
   bonus_item.create(data)
     .then(data => {
