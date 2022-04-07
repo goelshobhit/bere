@@ -877,7 +877,7 @@ exports.createNewContest = async (req, res) => {
         "ct_name": body.hasOwnProperty("Task name") ? req.body["Task name"] : "",
         "cp_campaign_id": body.hasOwnProperty("Campaign id") ? req.body["Campaign id"] : "",
         "ct_type": body.hasOwnProperty("Task type") ? req.body["Task type"] : "",
-        "reward_type": body.hasOwnProperty("Reward Type") ? req.body["Reward Type"] : "",
+        "reward_type": body.hasOwnProperty("Reward Type") ? req.body["Reward Type"] : 0,
         "reward_center_id": body.hasOwnProperty("Reward Center Id") ? req.body["Reward Center Id"] : 0,
         "audience": body.hasOwnProperty("Audience") ? req.body["Audience"] : 0,
         "bonus_reward_type": body.hasOwnProperty("Bonus Reward Type") ? req.body["Bonus Reward Type"] : 0,
