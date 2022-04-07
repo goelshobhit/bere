@@ -55,6 +55,7 @@ exports.createNewTask = async (req, res) => {
         "ta_total_available": body.hasOwnProperty("Task total available") ? req.body["Task total available"] : 0,
         "ta_remaining_budget": body.hasOwnProperty("Task total available") ? req.body["Task total available"] : 0,
         "ta_estimated_user": body.hasOwnProperty("Task estimated user") ? req.body["Task estimated user"] : 0,
+        "ta_header_image": body.hasOwnProperty("Task Header Image") ? req.body["Task Header Image"] : '',
         "ta_do": body.hasOwnProperty("Task do") ? req.body["Task do"] : "",
         "ta_dont_do": body.hasOwnProperty("Task dont do") ? req.body["Task dont do"] : "",
         "ta_insta_question": body.hasOwnProperty("Task insta question") ? req.body["Task insta question"] : "",
