@@ -50,6 +50,9 @@ module.exports = (sequelize, Sequelize) => {
         ta_stars_per_user:{
             type: Sequelize.INTEGER
         },
+        ta_energy_per_user:{
+            type: Sequelize.INTEGER
+        },
         ta_total_available:{
             type:Sequelize.INTEGER
         },

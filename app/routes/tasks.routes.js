@@ -66,6 +66,8 @@ module.exports = app => {
    *                            type: integer
    *                        Task stars per user:
    *                            type: integer
+   *                        Task energy per user:
+   *                            type: integer
    *                        Task total available:
    *                            type: integer
    *                        Continue after budget spend:
@@ -186,6 +188,8 @@ module.exports = app => {
    *                        Task budget per user:
    *                            type: integer
    *                        Task stars per user:
+   *                            type: integer
+   *                        Task energy per user:
    *                            type: integer
    *                        Task total available:
    *                            type: integer
@@ -567,6 +571,8 @@ module.exports = app => {
   *                            type: integer
   *                        ta_stars_per_user:
   *                            type: integer
+  *                        ta_energy_per_user:
+  *                            type: integer
   *                        ta_total_available:
   *                            type: integer
   *                        ta_estimated_user:
@@ -741,6 +747,8 @@ module.exports = app => {
   *                        ct_budget_per_user:
   *                            type: integer
   *                        ct_stars_per_user:
+  *                            type: integer
+  *                        ct_energy_per_user:
   *                            type: integer
   *                        ct_total_available:
   *                            type: integer
