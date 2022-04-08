@@ -57,7 +57,7 @@ module.exports = (sequelize, Sequelize) => {
             type: Sequelize.INTEGER
         },
         ta_header_image: {
-            type: Sequelize.STRING(50)
+            type: Sequelize.TEXT
         },
         ta_do: {
             type: Sequelize.JSONB
