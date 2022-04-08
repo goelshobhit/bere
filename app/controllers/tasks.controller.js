@@ -250,20 +250,31 @@ exports.jsonlisting = async (req, res) => {
         ],
         attributes: [["tj_type", "task_type"], ["tj_task_id", "task_id"], ["tj_data", "task_data"], ["tj_status", "task_status"]],
         where: {
-            tj_data: {
+            /* tj_data: {
                 ta_start_date: {
                     [Op.lte]: todayDate
                 },
                 ta_end_date: {
                     [Op.gte]: todayDate
                 }
-            },
+            }, */
             tj_task_id: {
                 [Op.not]: taskIdsValues
             },
             is_autotakedown: 0
         }
     };
+    if (!req.query.isAdmin || req.query.isAdmin == 0) {
+        options['where']['tj_data'] = {
+            ta_start_date: {
+                [Op.lte]: todayDate
+            },
+            ta_end_date: {
+                [Op.gte]: todayDate
+            }
+        };
+    }
+
     var total = await taskJson.count({
         where: options['where']
     });
@@ -287,21 +298,33 @@ exports.taskJsonDetail = async (req, res) => {
     const taskID = req.params.taskID;
     var todayDate = new Date();
     todayDate.toLocaleString('en-US', { timeZone: 'Asia/Calcutta' })
-    const task = await taskJson.findOne({
+    var options = {
         attributes: [["tj_type", "task_type"], ["tj_task_id", "task_id"], ["tj_data", "task_data"], ["tj_status", "task_status"]],
         where: {
-            tj_data: {
+            /* tj_data: {
                 ta_start_date: {
                     [Op.lte]: todayDate
                 },
                 ta_end_date: {
                     [Op.gte]: todayDate
                 }
-            },
+            }, */
             tj_task_id: taskID,
             is_autotakedown: 0
         }
-    });
+    };
+    if (!req.query.isAdmin || req.query.isAdmin == 0) {
+        options['where']['tj_data'] = {
+            ta_start_date: {
+                [Op.lte]: todayDate
+            },
+            ta_end_date: {
+                [Op.gte]: todayDate
+            }
+        };
+    }
+    const task = await taskJson.findOne(options);
+    
     if (!task) {
         res.status(500).send({
             message: "task not found"

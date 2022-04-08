@@ -324,6 +324,11 @@ module.exports = app => {
     *           required: false
     *           schema:
     *              type: integer
+    *         - name: isAdmin
+    *           in: query
+    *           required: false
+    *           schema:
+    *              type: integer
     *     tags:
     *       - Tasks
     *     description: Returns all tasks json array
@@ -355,6 +360,11 @@ module.exports = app => {
    *           required: true
    *           schema:
    *              type: string
+   *         - name: isAdmin
+   *           in: query
+   *           required: false
+   *           schema:
+   *              type: integer 
    *     tags:
    *       - Tasks
    *     description: Retrieve a single task detail with taskID
@@ -514,6 +524,8 @@ module.exports = app => {
   *                    type: object
   *                    properties:
   *                        ta_name:
+  *                            type: string
+  *                        task_header_image:
   *                            type: string
   *                        cp_campaign_id:
   *                            type: integer
