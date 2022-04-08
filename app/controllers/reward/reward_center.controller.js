@@ -30,6 +30,7 @@ exports.createRewardCenter = async(req, res) => {
         "reward_center_location_id": body.hasOwnProperty("Location Id") ? body["Location Id"] : 0,
         "reward_center_reward_type": body.hasOwnProperty("Reward Type") ? body["Reward Type"] : 0,
         "reward_center_reward_trigger_id": body.hasOwnProperty("Trigger Id") ? body["Trigger Id"] : 0,
+        "average_token_value": body.hasOwnProperty("Average Token Value") ? body["Average Token Value"] : 0,
     }
     RewardCenter.create(data).then(data => {
             audit_log.saveAuditLog(req.header(process.env.UKEY_HEADER || "x-api-key"),'add','reward_center',data.reward_center_id,data.dataValues);

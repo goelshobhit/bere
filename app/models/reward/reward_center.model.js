@@ -26,6 +26,9 @@ module.exports = (sequelize, Sequelize) => {
         reward_center_reward_trigger_id: {
             type: Sequelize.INTEGER,
             allowNull: false,
+        },
+        average_token_value: {
+            type: Sequelize.INTEGER
         }
     }, {
         createdAt: 'reward_center_created_at',

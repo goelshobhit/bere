@@ -25,6 +25,8 @@ module.exports = app => {
    *                            type: integer
    *                        Trigger Id:
    *                            type: integer
+   *                        Average Token Value:
+   *                            type: integer
    *                        Reward Center Dists:
    *                          type: array
    *                          items:
@@ -161,6 +163,8 @@ module.exports = app => {
    *                        reward_center_reward_type:
    *                            type: integer
    *                        reward_center_reward_trigger_id:
+   *                            type: integer
+   *                        average_token_value:
    *                            type: integer
    *                        reward_center_dists:
    *                          type: array
