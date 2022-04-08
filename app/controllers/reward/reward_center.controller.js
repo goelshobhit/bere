@@ -145,6 +145,9 @@ exports.rewardCenterListing = async(req, res) => {
             [sortBy]: `${sortValue}`
         } : null;
     }
+    if(req.query.rewardCenterRewardType) {
+        options['where']['reward_center_reward_type'] = req.query.rewardCenterRewardType;
+    }
     var total = await RewardCenter.count({
         where: options['where']
     });

@@ -287,6 +287,11 @@ module.exports = app => {
    * /api/reward_center:
    *   get:
    *     parameters:
+   *         - name: rewardCenterRewardType
+   *           in: query
+   *           required: false
+   *           schema:
+   *              type: integer
    *         - name: pageNumber
    *           in: query
    *           required: false
