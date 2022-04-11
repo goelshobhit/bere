@@ -1,6 +1,6 @@
 const util = require('util')
 const gc = require('../gc-config/')
-const bucket = gc.bucket('dev-server-image-bucket')
+const bucket = gc.bucket('dev-server-images-bucket')
 
 const { format } = util
 

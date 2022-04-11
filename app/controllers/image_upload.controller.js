@@ -4,7 +4,7 @@ const sharp = require('sharp');
 const uploadImage = require('../helpers/image_helpers');
 const { data } = require('../middleware/logger');
 const gc = require('../gc-config/')
-const bucket = gc.bucket('dev-server-image-bucket')
+const bucket = gc.bucket('dev-server-images-bucket')
 
 
 exports.imagesUpload = async (req, res) => {
