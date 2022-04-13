@@ -39,7 +39,9 @@ exports.createNewTask = async (req, res) => {
     const data = {
         "ta_name": body.hasOwnProperty("Task name") ? req.body["Task name"] : "",
         "cp_campaign_id": body.hasOwnProperty("Campaign id") ? req.body["Campaign id"] : "",
+        "brand_id": body.hasOwnProperty("Brand Id") ? req.body["Brand Id"] : 0,
         "ta_type": body.hasOwnProperty("Task type") ? req.body["Task type"] : "",
+        "media_type": body.hasOwnProperty("Media type") ? req.body["Media type"] : "",
         "reward_type": body.hasOwnProperty("Reward Type") ? req.body["Reward Type"] : 0,
         "reward_center_id": body.hasOwnProperty("Reward Center Id") ? req.body["Reward Center Id"] : 0,
         "audience": body.hasOwnProperty("Audience") ? req.body["Audience"] : 0,
@@ -355,6 +357,10 @@ exports.taskDetail = async (req, res) => {
     const task = await Tasks.findOne({
         include: [
             {
+                model: db.brands,
+                attributes: [["cr_co_id", 'brand_id'], ["cr_co_name", 'brand_name'], ["cr_co_logo_path", 'brand_logo']]
+            },
+            {
                 model: db.campaigns,
                 attributes: [["cp_campaign_name", "campaign_name"]],
                 include: [{
@@ -406,6 +412,10 @@ exports.contestDetail = async (req, res) => {
     const taskID = req.params.ct_id;
     const task = await Contest.findOne({
         include: [
+            {
+                model: db.brands,
+                attributes: [["cr_co_id", 'brand_id'], ["cr_co_name", 'brand_name'], ["cr_co_logo_path", 'brand_logo']]
+            },
             {
                 model: db.campaigns,
                 attributes: [["cp_campaign_name", "campaign_name"]],
@@ -901,7 +911,9 @@ exports.createNewContest = async (req, res) => {
     const data = {
         "ct_name": body.hasOwnProperty("Task name") ? req.body["Task name"] : "",
         "cp_campaign_id": body.hasOwnProperty("Campaign id") ? req.body["Campaign id"] : "",
+        "brand_id": body.hasOwnProperty("Brand Id") ? req.body["Brand Id"] : 0,
         "ct_type": body.hasOwnProperty("Task type") ? req.body["Task type"] : "",
+        "media_type": body.hasOwnProperty("Media type") ? req.body["Media type"] : 0,
         "reward_type": body.hasOwnProperty("Reward Type") ? req.body["Reward Type"] : 0,
         "reward_center_id": body.hasOwnProperty("Reward Center Id") ? req.body["Reward Center Id"] : 0,
         "audience": body.hasOwnProperty("Audience") ? req.body["Audience"] : 0,

@@ -207,8 +207,16 @@ db.campaigns.belongsTo(db.brands, {foreignKey: 'cr_co_id', targetKey: 'cr_co_id'
 db.brands.hasMany(db.campaigns, {foreignKey: 'cr_co_id', targetKey: 'cr_co_id'});
 db.campaigns.hasMany(db.tasks, {foreignKey: 'cp_campaign_id', targetKey: 'cp_campaign_id'});
 db.tasks.belongsTo(db.campaigns, {foreignKey: 'cp_campaign_id', targetKey: 'cp_campaign_id'});
+
+db.brands.hasMany(db.tasks, {foreignKey: 'brand_id', targetKey: 'cr_co_id'});
+db.tasks.belongsTo(db.brands, {foreignKey: 'brand_id', targetKey: 'cr_co_id'});
+
 db.campaigns.hasMany(db.contest_task, {foreignKey: 'cp_campaign_id', targetKey: 'cp_campaign_id'});
 db.contest_task.belongsTo(db.campaigns, {foreignKey: 'cp_campaign_id', targetKey: 'cp_campaign_id'});
+
+db.brands.hasMany(db.contest_task, {foreignKey: 'brand_id', targetKey: 'cr_co_id'});
+db.contest_task.belongsTo(db.brands, {foreignKey: 'brand_id', targetKey: 'cr_co_id'});
+
 db.bonus_set.hasMany(db.bonus_rewards, {foreignKey: 'bonus_set_id', targetKey: 'bonus_rewards_bonus_setid'});
 db.bonus_rewards.belongsTo(db.bonus_set, {foreignKey: 'bonus_rewards_bonus_setid', targetKey: 'bonus_set_id'});
 db.bonus_item.hasMany(db.bonus_rewards, {foreignKey: 'bonus_item_id', targetKey: 'bonus_rewards_item_id'});

@@ -11,8 +11,14 @@ module.exports = (sequelize, Sequelize) => {
         cp_campaign_id: {
             type: Sequelize.INTEGER
         },
+        brand_id: {
+            type: Sequelize.INTEGER
+        },
         ct_type: {
             type: Sequelize.STRING(10)
+        },
+        media_type: {
+            type: Sequelize.INTEGER
         },
         reward_type: {                      //1: tokens- fixed per entry,2: available presents (token value here),3: available chests (token value here ),4: Contest (tokens to winner only)
             type: Sequelize.INTEGER

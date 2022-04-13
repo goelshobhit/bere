@@ -330,6 +330,10 @@ function Common() {
         Tasks.findOne({
           include: [
             {
+              model: db.brands,
+              attributes: [["cr_co_id", 'brand_id'], ["cr_co_name", 'brand_name'], ["cr_co_logo_path", 'brand_logo']],
+            },
+            {
               model: db.campaigns,
               attributes: [["cp_campaign_name", "campaign_name"]],
               include: [{
@@ -365,6 +369,10 @@ function Common() {
       } else {
         Tasks.findOne({
           include: [
+            {
+              model: db.brands,
+              attributes: [["cr_co_id", 'brand_id'], ["cr_co_name", 'brand_name'], ["cr_co_logo_path", 'brand_logo']],
+            },
             {
               model: db.campaigns,
               attributes: [["cp_campaign_name", "campaign_name"]],

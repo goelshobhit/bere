@@ -1,5 +1,5 @@
 var cluster = require('cluster');
-if (cluster.isMaster) {
+if (cluster.isMaster && 0) {
    var i = 0;
    for (i; i< 4; i++){
      cluster.fork();
