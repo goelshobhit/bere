@@ -138,6 +138,7 @@ exports.listing = async (req, res) => {
         include: [
             {
                 model: db.campaigns,
+                required: false,
                 attributes: [
                     ["cp_campaign_name", "Campaign Name"]
                 ],
@@ -1061,6 +1062,7 @@ exports.listingContest = async (req, res) => {
     var options = {
         include: [{
             model: db.campaigns,
+            required : false,
             attributes: [
                 ["cp_campaign_name", "Campaign Name"]
             ],

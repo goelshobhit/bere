@@ -27,9 +27,8 @@ exports.imagesUpload = async (req, res) => {
             myFile.originalname = `${Date.now()}-${myFile.originalname}`;
             const imageUrl = await uploadImage(myFile)
             var url_parts = imageUrl.split('/');
-            var imageName = url_parts.pop();  
-            
-            if (myFile.mimetype != 'video/mp4') {
+            var imageName = url_parts.pop();
+            if (myFile.mimetype != 'video/mp4' && myFile.mimetype.includes('audio') == false) {
                 imageData['image_name'] = imageName;
                 imageData['image_url'] = imageUrl;
                 const thumbnail = {
@@ -42,8 +41,14 @@ exports.imagesUpload = async (req, res) => {
                 const imagethumbnailUrl = await uploadImage(thumbnail);
                 imageData['thumbnail_url'] = imagethumbnailUrl;
             } else {
-                imageData['video_name'] = imageName;
-                imageData['video_url'] = imageUrl;
+                if (myFile.mimetype.includes('audio') == true) {
+                    imageData['audio_name'] = imageName;
+                    imageData['audio_url'] = imageUrl;
+                } else {
+                    imageData['video_name'] = imageName;
+                    imageData['video_url'] = imageUrl;
+                }
+                
             }
             imageAllData.push(imageData);
         }
@@ -68,10 +73,11 @@ exports.deleteImage = async (req, res) => {
         var image_parts = fileName.split('.');
         var imageType = image_parts.pop();
         var imageMsg = ''; 
-        if (imageType != "mp4") {
-            console.log("sdddddddddddddddddddddddddd");
+        if (imageType != "mp4" && imageType != "mp3") {
             imageMsg = "Image deleted";
             await bucket.file(thumbnailfileName).delete();
+        } else if (imageType == "mp3") {
+            imageMsg = "Audio deleted"
         } else {
             imageMsg = "Video deleted"
         }
