@@ -101,6 +101,7 @@ exports.createBonusItem = async (req, res) => {
     "bonus_item_icons": body.hasOwnProperty("Bonus Item Icons") ? req.body["Bonus Item Icons"] : "",
     "bonus_product_images": body.hasOwnProperty("Bonus Product Images") ? req.body["Bonus Product Images"] : "",
     "bonus_item_dollar_value": body.hasOwnProperty("Bonus Item Dollar Value") ? req.body["Bonus Item Dollar Value"] : "0",
+    "user_token_value_not_accepting": body.hasOwnProperty("User Token Value Not Accepting") ? req.body["User Token Value Not Accepting"] : "0",
     "bonus_item_qty": body.hasOwnProperty("Bonus Item Qty") ? req.body["Bonus Item Qty"] : 0,
     "bonus_item_remaining_qty": body.hasOwnProperty("Bonus Item Remaining Qty") ? req.body["Bonus Item Remaining Qty"] : 0,
     "bonus_item_timestamp": body.hasOwnProperty("Bonus Item Timestamp") ? req.body["Bonus Item Timestamp"] : '',

@@ -25,6 +25,8 @@ module.exports = app => {
      *                            type: string
      *                        Bonus Item Dollar Value:
      *                            type: number
+     *                        User Token Value Not Accepting:
+     *                            type: integer
      *                        Bonus Item Qty:
      *                            type: integer
      *                        Bonus Item Remaining Qty:
@@ -35,6 +37,7 @@ module.exports = app => {
      *                            type: integer
      *                        Bonus Item Giveaway Type:
      *                            type: integer
+     *                            example: "2: level 2,3: level 3,4: brand prize set ,5: task specific"
      *                        Brand Task:
      *                            type: integer
      *                        Number Of Task Available:
@@ -66,7 +69,7 @@ module.exports = app => {
 
     /**
      * @swagger
-     * /api/bonus_item/{BonusSummaryId}:
+     * /api/bonus_item/{bonusItemId}:
      *   put:
      *     requestBody:
      *        required: false
@@ -85,8 +88,10 @@ module.exports = app => {
      *                            type: string
      *                        bonus_product_images:
      *                            type: string
-     *                        bonus_product_dollar_value:
+     *                        bonus_item_dollar_value:
      *                            type: number
+     *                        user_token_value_not_accepting:
+     *                            type: integer
      *                        bonus_item_qty:
      *                            type: integer
      *                        bonus_item_remaining_qty:
@@ -94,6 +99,13 @@ module.exports = app => {
      *                        bonus_item_timestamp:
      *                            type: string
      *                        bonus_item_is_active:
+     *                            type: integer
+     *                        bonus_item_giveaway_type:
+     *                            type: integer
+     *                            example: "2: level 2,3: level 3,4: brand prize set ,5: task specific"
+     *                        brand_task:
+     *                            type: integer
+     *                        number_of_tasks_available:
      *                            type: integer
      *     tags:
      *       - Bonus Item
@@ -172,7 +184,7 @@ module.exports = app => {
      *           required: false
      *           schema:
      *              type: string
-     *              example: bonus_item_id,bonus_item_brand_id,bonus_item_name,bonus_item_qty,bonus_item_remaining_qty,bonus_item_timestamp    # Example of a parameter value
+     *              example: bonus_item_id,bonus_item_brand_id,bonus_item_name,bonus_item_qty,bonus_item_remaining_qty,bonus_item_timestamp,bonus_item_is_active,bonus_item_giveaway_type,brand_task,number_of_tasks_available    # Example of a parameter value
      *         - name: sortOrder
      *           in: query
      *           required: false

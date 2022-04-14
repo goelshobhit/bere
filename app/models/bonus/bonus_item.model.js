@@ -26,6 +26,9 @@ module.exports = (sequelize, Sequelize) => {
     bonus_item_dollar_value: {
       type: Sequelize.DECIMAL(10,2)
     },
+    user_token_value_not_accepting: {
+      type: Sequelize.INTEGER
+    },
     bonus_item_qty: {
       allowNull: false,
       type: Sequelize.INTEGER
