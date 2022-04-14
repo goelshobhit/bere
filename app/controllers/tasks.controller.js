@@ -38,7 +38,7 @@ exports.createNewTask = async (req, res) => {
     console.log(body);
     const data = {
         "ta_name": body.hasOwnProperty("Task name") ? req.body["Task name"] : "",
-        "cp_campaign_id": body.hasOwnProperty("Campaign id") ? req.body["Campaign id"] : "",
+        //"cp_campaign_id": body.hasOwnProperty("Campaign id") ? req.body["Campaign id"] : "",
         "brand_id": body.hasOwnProperty("Brand Id") ? req.body["Brand Id"] : 0,
         "ta_type": body.hasOwnProperty("Task type") ? req.body["Task type"] : "",
         "media_type": body.hasOwnProperty("Media type") ? req.body["Media type"] : "",

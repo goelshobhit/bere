@@ -35,7 +35,8 @@ exports.validate = (method) => {
         }
 		case 'create_task': {
             return [
-                body('Campaign id', 'Invalid Campaign').isNumeric(),
+                body('Brand Id', 'Invalid Brand').isNumeric(),
+                //body('Campaign id', 'Invalid Campaign').isNumeric(),
                 body('Task name', 'Invalid Task name').isLength({
                     min: 3
                 }).withMessage('Task Name must be of 3 characters long.'),
