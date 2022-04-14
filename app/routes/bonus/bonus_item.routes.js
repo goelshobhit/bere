@@ -34,12 +34,12 @@ module.exports = app => {
      *                        Bonus item Timestamp:
      *                            type: string
      *                        Bonus Item Active:
-     *                            type: integer
+     *                            type: boolean
      *                        Bonus Item Giveaway Type:
      *                            type: integer
      *                            example: "2: level 2,3: level 3,4: brand prize set ,5: task specific"
      *                        Brand Task:
-     *                            type: integer
+     *                            type: boolean
      *                        Number Of Task Available:
      *                            type: integer
      *     tags:
@@ -99,12 +99,12 @@ module.exports = app => {
      *                        bonus_item_timestamp:
      *                            type: string
      *                        bonus_item_is_active:
-     *                            type: integer
+     *                            type: boolean
      *                        bonus_item_giveaway_type:
      *                            type: integer
      *                            example: "2: level 2,3: level 3,4: brand prize set ,5: task specific"
      *                        brand_task:
-     *                            type: integer
+     *                            type: boolean
      *                        number_of_tasks_available:
      *                            type: integer
      *     tags:
@@ -131,6 +131,37 @@ module.exports = app => {
      *                              example: Authorisation Required
      */
     router.put("/bonus_item/:bonusItemId",auth,BonusItem.updateBonusItem);
+
+     /**
+   * @swagger
+   * /api/bonus_item/{bonusItemId}:
+   *   get:
+   *     parameters:
+   *         - name: bonusItemId
+   *           in: path
+   *           required: true
+   *           schema:
+   *              type: integer
+   *     tags:
+   *       - Bonus Item
+   *     description: Retrieve Bonus Item with bonusItemId
+   *     produces:
+   *       - application/json
+   *     responses:
+   *       200:
+   *         description: Details of a bonus Item
+   *       401:
+   *          description: Unauthorized
+   *          content:
+   *              application/json:
+   *                  schema:
+   *                      type: object
+   *                      properties:
+   *                          message:
+   *                              type: string
+   *                              example: Authorisation Required
+   */
+  router.get("/bonus_item/:bonusItemId",auth, BonusItem.bonusItemDetail);
 
   /**
    * @swagger

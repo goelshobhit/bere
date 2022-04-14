@@ -168,6 +168,30 @@ exports.updateBonusItem = async (req, res) => {
 };
 
 /**
+ * Function to get Bonus Item Detail
+ * @param  {object}  req expressJs request object
+ * @param  {object}  res expressJs response object
+ * @return {Promise}
+ */
+exports.bonusItemDetail = async(req, res) => {
+  var options = {
+      where: {
+        bonus_item_id: req.params.bonusItemId
+      }
+  };
+  const bonusItemDetail = await bonus_item.findOne(options);
+  if(!bonusItemDetail){
+      res.status(500).send({
+          message: "Bonus Item not found"
+      });
+      return
+  }
+  res.status(200).send({
+      data: bonusItemDetail
+  });
+};
+
+/**
  * Function to delete Bonus Item
  * @param  {object}  req expressJs request object
  * @param  {object}  res expressJs response object
