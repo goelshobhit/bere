@@ -13,8 +13,8 @@ module.exports = {
       }
       if (!tableDefinition['bonus_item_is_active']) {
         promises.push(queryInterface.addColumn(tableName, 'bonus_item_is_active', {
-          type: Sequelize.JSONB,        
-          defaultValue: 1        
+          type: Sequelize.BOOLEAN,        
+          defaultValue: true        
         }));
       }
       if (promises.length) {
