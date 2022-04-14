@@ -41,7 +41,7 @@ exports.createNewTask = async (req, res) => {
         //"cp_campaign_id": body.hasOwnProperty("Campaign id") ? req.body["Campaign id"] : "",
         "brand_id": body.hasOwnProperty("Brand Id") ? req.body["Brand Id"] : 0,
         "ta_type": body.hasOwnProperty("Task type") ? req.body["Task type"] : "",
-        "media_type": body.hasOwnProperty("Media type") ? req.body["Media type"] : "",
+        "media_type": body.hasOwnProperty("Media type") ? req.body["Media type"] : 0,
         "reward_type": body.hasOwnProperty("Reward Type") ? req.body["Reward Type"] : 0,
         "reward_center_id": body.hasOwnProperty("Reward Center Id") ? req.body["Reward Center Id"] : 0,
         "audience": body.hasOwnProperty("Audience") ? req.body["Audience"] : 0,
@@ -910,7 +910,7 @@ exports.createNewContest = async (req, res) => {
     const body = req.body;
     const data = {
         "ct_name": body.hasOwnProperty("Task name") ? req.body["Task name"] : "",
-        "cp_campaign_id": body.hasOwnProperty("Campaign id") ? req.body["Campaign id"] : "",
+       // "cp_campaign_id": body.hasOwnProperty("Campaign id") ? req.body["Campaign id"] : "",
         "brand_id": body.hasOwnProperty("Brand Id") ? req.body["Brand Id"] : 0,
         "ct_type": body.hasOwnProperty("Task type") ? req.body["Task type"] : "",
         "media_type": body.hasOwnProperty("Media type") ? req.body["Media type"] : 0,
