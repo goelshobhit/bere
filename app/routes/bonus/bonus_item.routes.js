@@ -31,7 +31,7 @@ module.exports = app => {
      *                            type: integer
      *                        Bonus Item Remaining Qty:
      *                            type: integer
-     *                        Bonus item Timestamp:
+     *                        Bonus Item Timestamp:
      *                            type: string
      *                        Bonus Item Active:
      *                            type: boolean

@@ -722,6 +722,20 @@ function Common() {
       }]
     }
   };
+  Common.prototype.validateSortParameters = function (sortOrder, sortBy) {
+    sortOrder = sortOrder.toLowerCase();
+    var error_message = '';
+  if (sortOrder && sortOrder != 'asc' && sortOrder != 'desc') {
+    error_message = 'Invalid sortOrder';
+  }
+  if (sortBy) {
+    var isValid = /^[a-zA-Z0-9,_]*$/.test(sortBy);
+    if (!isValid) {
+     error_message = 'Invalid sortBy';
+    }
+    return error_message;
+  }
+  };
 
 }
 module.exports = new Common();

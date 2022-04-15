@@ -1,6 +1,8 @@
 const db = require("../../models");
 const audit_log = db.audit_log
 const logger = require("../../middleware/logger");
+const { comments_likes } = require("../../models");
+const common = require("../../common");
 const bonus_item = db.bonus_item;
 
 /**
@@ -14,8 +16,16 @@ exports.bonusItemlisting = async (req, res) => {
   const pageNumber = parseInt(req.query.pageNumber || 1);
   const skipCount = (pageNumber - 1) * pageSize;
   const sortBy = req.query.sortBy || 'bonus_item_id'
-  const sortOrder = req.query.sortOrder || 'DESC'
-
+  var sortOrder = req.query.sortOrder || 'DESC'
+  sortOrder = sortOrder.trim();
+  const errorMessage = common.validateSortParameters(sortOrder, sortBy);
+  if (errorMessage) {
+    res.status(400).send({
+      msg:
+        errorMessage
+    });
+    return;
+  }
   var options = {
     include: [{
       model: db.brands,
@@ -24,7 +34,8 @@ exports.bonusItemlisting = async (req, res) => {
     limit: pageSize,
     offset: skipCount,
     order: [
-      [sortBy, sortOrder]
+      //[sortBy, sortOrder]
+      [[db.sequelize.literal(sortBy), sortOrder]]
     ],
     where: {}
   };
@@ -39,42 +50,57 @@ exports.bonusItemlisting = async (req, res) => {
       bonus_item_id: req.query.bonusItemId
     }
   }
+  var isError = 0;
   var total = await bonus_item.count({
     where: options['where']
+  }).catch(errorMsg => {
+    isError = 1;
+    res.status(500).send({
+      message: 'Something Went Wrong'
+    });
   });
-  const bonus_item_list = await bonus_item.findAll(options);
-  if (bonus_item_list) {
-    //var site_url = process.env.SITE_API_URL;
-    //var site_new_url = site_url.replace("/api", '');
-    for (const bonus_item_key in bonus_item_list) {
-      if (bonus_item_list[bonus_item_key].bonus_item_icons) {
-        var bonus_item_icons_arr = bonus_item_list[bonus_item_key].bonus_item_icons.split(",");
-        var icon_images = [];
-        if (bonus_item_icons_arr.length) {
-          for (const bonus_item_arr_key in bonus_item_icons_arr) {
-            icon_images.push(bonus_item_icons_arr[bonus_item_arr_key]);
-            //icon_images.push(site_new_url+bonus_item_icons_arr[bonus_item_arr_key]);
+  if (isError == 0) {
+    await bonus_item.findAll(options).then(bonus_item_list => {
+      if (bonus_item_list) {
+        //var site_url = process.env.SITE_API_URL;
+        //var site_new_url = site_url.replace("/api", '');
+        for (const bonus_item_key in bonus_item_list) {
+          if (bonus_item_list[bonus_item_key].bonus_item_icons) {
+            var bonus_item_icons_arr = bonus_item_list[bonus_item_key].bonus_item_icons.split(",");
+            var icon_images = [];
+            if (bonus_item_icons_arr.length) {
+              for (const bonus_item_arr_key in bonus_item_icons_arr) {
+                icon_images.push(bonus_item_icons_arr[bonus_item_arr_key]);
+                //icon_images.push(site_new_url+bonus_item_icons_arr[bonus_item_arr_key]);
+              }
+            }
+            bonus_item_list[bonus_item_key].dataValues.bonus_item_icons = icon_images;
+          }
+          if (bonus_item_list[bonus_item_key].bonus_product_images) {
+            var bonus_product_images_arr = bonus_item_list[bonus_item_key].bonus_product_images.split(",");
+            var bonus_product_images = [];
+            if (bonus_product_images_arr.length) {
+              for (const bonus_item_arr_key in bonus_product_images_arr) {
+                bonus_product_images.push(bonus_product_images_arr[bonus_item_arr_key]);
+                //bonus_product_images.push(site_new_url+bonus_product_images_arr[bonus_item_arr_key]);
+              }
+            }
+            bonus_item_list[bonus_item_key].dataValues.bonus_product_images = bonus_product_images;
           }
         }
-        bonus_item_list[bonus_item_key].dataValues.bonus_item_icons = icon_images;
       }
-      if (bonus_item_list[bonus_item_key].bonus_product_images) {
-        var bonus_product_images_arr = bonus_item_list[bonus_item_key].bonus_product_images.split(",");
-        var bonus_product_images = [];
-        if (bonus_product_images_arr.length) {
-          for (const bonus_item_arr_key in bonus_product_images_arr) {
-            bonus_product_images.push(bonus_product_images_arr[bonus_item_arr_key]);
-            //bonus_product_images.push(site_new_url+bonus_product_images_arr[bonus_item_arr_key]);
-          }
-        }
-        bonus_item_list[bonus_item_key].dataValues.bonus_product_images = bonus_product_images;
-      }
-    }
+      res.status(200).send({
+        data: bonus_item_list,
+        totalRecords: total
+      });
+    }).catch(errorMsg => {
+      res.status(500).send({
+        message: 'Something Went Wrong.'
+      });
+    });
   }
-  res.status(200).send({
-    data: bonus_item_list,
-    totalRecords: total
-  });
+
+
 }
 
 /**
@@ -173,21 +199,21 @@ exports.updateBonusItem = async (req, res) => {
  * @param  {object}  res expressJs response object
  * @return {Promise}
  */
-exports.bonusItemDetail = async(req, res) => {
+exports.bonusItemDetail = async (req, res) => {
   var options = {
-      where: {
-        bonus_item_id: req.params.bonusItemId
-      }
+    where: {
+      bonus_item_id: req.params.bonusItemId
+    }
   };
   const bonusItemDetail = await bonus_item.findOne(options);
-  if(!bonusItemDetail){
-      res.status(500).send({
-          message: "Bonus Item not found"
-      });
-      return
+  if (!bonusItemDetail) {
+    res.status(500).send({
+      message: "Bonus Item not found"
+    });
+    return
   }
   res.status(200).send({
-      data: bonusItemDetail
+    data: bonusItemDetail
   });
 };
 
