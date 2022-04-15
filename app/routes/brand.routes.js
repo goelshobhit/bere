@@ -496,5 +496,64 @@ module.exports = app => {
      */
     router.get('/brand_task_closed', auth, Brands.brandTaskClosedListing)
 
+    // Retrieve all Brand task closed
+    /**
+     * @swagger
+     * /api/brand_user_task_closed/{brandID}:
+     *   get:
+     *     parameters:
+     *         - name: brandId
+     *           in: query
+     *           required: false
+     *           schema:
+     *              type: integer
+     *         - name: taskId
+     *           in: query
+     *           required: false
+     *           schema:
+     *              type: integer
+     *         - name: pageNumber
+     *           in: query
+     *           required: false
+     *           schema:
+     *              type: integer
+     *         - name: sortBy
+     *           in: query
+     *           required: false
+     *           schema:
+     *              type: string
+     *              example: ta_task_id    # Example of a parameter value
+     *         - name: sortOrder
+     *           in: query
+     *           required: false
+     *           schema:
+     *              type: string
+     *              example: ASC,DESC    # Example of a parameter value
+     *         - name: sortVal
+     *           in: query
+     *           required: false
+     *           schema:
+     *              type: string
+     *     tags:
+     *       - Brand
+     *     description: Returns all brands User task closed
+     *     produces:
+     *       - application/json
+     *     responses:
+     *       200:
+     *         description: A list of brands User task closed
+     *       401:
+     *          description: Unauthorized
+     *          content:
+     *              application/json:
+     *                  schema:
+     *                      type: object
+     *                      properties:
+     *                          message:
+     *                              type: string
+     *                              example: Authorisation Required
+     */
+    router.get('/brand_user_task_closed/:brandID', auth, Brands.brandUserTaskClosedListing)
+
     app.use("/api", router);
 };

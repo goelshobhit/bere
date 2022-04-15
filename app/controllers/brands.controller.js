@@ -563,5 +563,190 @@ exports.brandTaskClosedListing = async(req, res) => {
     });
 }
 
+/**
+ * Function to get user brand closed tasks
+ * @param  {object}  req expressJs request object
+ * @param  {object}  res expressJs response object
+ * @return {Promise}
+ */
+// exports.brandUserTaskClosedListing = async(req, res) => {
+// 	const pageSize = parseInt(req.query.pageSize || 10);
+//     const pageNumber = parseInt(req.query.pageNumber || 1);
+//     const skipCount = (pageNumber - 1) * pageSize;
+//     const sortBy = req.query.sortBy || 'tj_id'
+//     const sortOrder = req.query.sortOrder || 'DESC'
+//     const sortVal = req.query.sortVal;
+//     const Uid = req.header(process.env.UKEY_HEADER || "x-api-key");
+//     var todayDate = new Date();
+//     todayDate.toLocaleString('en-US', { timeZone: 'Asia/Calcutta' })
+//     const contentUserTaskIds = await common.getContentReportUser(['Task'], Uid);
+//     let taskIdsValues = [];
+//     if (contentUserTaskIds.length) {
+//         contentUserTaskIds.forEach(element => {
+//             taskIdsValues.push('' + element.content_report_type_id + '');
+//         });
+//     }
+//     const brandID = req.params.brandID;
+//     var options = {
+//         include: [
+//             {
+//                 model: db.user_content_post,
+//                 attributes: [["ucpl_content_id", "ucpl_content_id"], ["ucpl_id", "post_id"], ['ucpl_content_data', 'post_data']],
+//                 required: true,
+//                 // limit: pageSize,
+//                 // offset: skipCount,
+//                 where: {
+//                     ucpl_status: 1
+//                 },
+//                 order: [
+//                     ['ucpl_added_by', 'ASC']
+//                 ]
+//             }
+//         ],
+//         limit: pageSize,
+//         offset: skipCount,
+//         order: [
+//             [sortBy, sortOrder]
+//         ],
+//         attributes: [["tj_type", "task_type"], ["tj_task_id", "task_id"], ["tj_data", "task_data"], ["tj_status", "task_status"]],
+//         where:{
+// 			tj_data:{
+// 			 brand: {
+// 				  brand_id: brandID
+// 			  }
+// 			},
+//             tj_task_id: {
+//                 [Op.not]: taskIdsValues
+//             },
+//             is_autotakedown : 0		 
+// 		}
+//     };
+//     // if (!req.query.isAdmin || req.query.isAdmin == 0) {
+//     //     options['where']['tj_data'] = {
+//     //         ta_start_date: {
+//     //             [Op.lte]: todayDate
+//     //         },
+//     //         ta_end_date: {
+//     //             [Op.gte]: todayDate
+//     //         }
+//     //     };
+//     // }
+
+//     var total = await taskJson.count({
+//         where: options['where']
+//     });
+//     const tasks_list = await taskJson.findAll(options);
+//     res.status(200).send({
+//         data: tasks_list,
+//         totalRecords: total,
+//         media_token: common.imageToken(Uid)
+//     });
+// }
+
+/**
+ * Function to get user brand closed tasks
+ * @param  {object}  req expressJs request object
+ * @param  {object}  res expressJs response object
+ * @return {Promise}
+ */
+exports.brandUserTaskClosedListing = async(req, res) => {
+    const brandID = req.params.brandID;
+	const pageSize = parseInt(req.query.pageSize || 10);
+    const pageNumber = parseInt(req.query.pageNumber || 1);
+    const skipCount = (pageNumber - 1) * pageSize;
+    const sortBy = req.query.sortBy || 'ta_task_id'
+    const sortOrder = req.query.sortOrder || 'ASC'
+    var UserId = req.header(process.env.UKEY_HEADER || "x-api-key");
+    //var todayDate = new Date();
+    //var lastDate = todayDate.setDate(todayDate.getDate() - 1);
+    //lastDate.toLocaleString('en-US', { timeZone: 'Asia/Calcutta' })
+    //let lastCreatedDate = new Date(lastDate);
+    const contentUserTaskIds = await common.getContentReportUser(['Task', 'Campaign', 'User Task Post'], UserId);
+    let taskIdsValues = [];
+    let userTaskPostIdsValues = [];
+    if (contentUserTaskIds.length) {
+        contentUserTaskIds.forEach(element => {
+            if (element.content_report_type == 'Task') {
+                taskIdsValues.push(element.content_report_type_id);
+            }
+            if (element.content_report_type == 'User Task Post') {
+                userTaskPostIdsValues.push(element.content_report_type_id);
+            }
+        });
+    }
+
+    var options = {
+        include: [
+            {
+                model: db.brands,
+                required: false,
+                attributes: [
+                    ["cr_co_id", 'brand_id'], ["cr_co_name", 'brand_name'], ["cr_co_logo_path", 'brand_logo'],
+                ],
+                where: { is_autotakedown: 0 }
+            },
+            {
+                model: db.user_content_post,
+                where: {
+                    // ucpl_created_at: {
+                    //     [Op.lte]: lastCreatedDate
+                    // },
+                    ucpl_status: 1,
+                    is_autotakedown: 0,
+                    ucpl_id: {
+                        [Op.not]: userTaskPostIdsValues
+                    }
+                },
+                order: [
+                    ['ucpl_added_by', 'ASC']
+                ]
+            }
+        ],
+        limit: pageSize,
+        offset: skipCount,
+        order: [
+            [sortBy, sortOrder]
+        ],
+        where: {
+            ta_status: 2,
+            brand_id: brandID
+        }
+    };
+    if (req.query.sortVal && (req.query.sortBy == "ta_name" || req.query.sortBy == "ta_type")) {
+        var sortValue = req.query.sortVal.trim();
+        options.where = {
+            [sortBy]: {
+                [Op.iLike]: `%${sortValue}%`
+            }
+        }
+    } else if (req.query.sortVal && req.query.sortBy == "ta_hashtag") {
+        var sortValue = req.query.sortVal.trim();
+        options.where = {
+            [sortBy]: {
+                [Op.contains]: [sortValue]
+            }
+        }
+    } else if (req.query.sortVal) {
+        var sortValue = req.query.sortVal.trim();
+        options.where = {
+            [sortBy]: `${sortValue}`
+        }
+    }
+    if (taskIdsValues.length) {
+        options['where']['ta_task_id'] = {
+            [Op.not]: taskIdsValues
+        }
+    }
+    options['where']['is_autotakedown'] = 0;
+    // var total = await db.tasks.count({
+    //     where: options['where']
+    // });
+    const tasks_list = await db.tasks.findAll(options);
+    res.status(200).send({
+        data: tasks_list,
+        totalRecords: tasks_list.length
+    });
+}
+
 
 
