@@ -92,6 +92,7 @@ db.post_report = require("./post_report.model")(sequelize, Sequelize);
 db.user_fan_following = require("./user_fan_following.model")(sequelize, Sequelize);
 db.budget_history=require("./budget_history.model")(sequelize,Sequelize);
 db.bonus_ticket = require("./bonus/bonus_ticket.model")(sequelize, Sequelize);
+db.bonus_ticket_details = require("./bonus/bonus_ticket_details.model")(sequelize, Sequelize);
 db.bonus_ticket_rule = require("./bonus/bonus_ticket_rule.model")(sequelize, Sequelize);
 db.bonus_ticket_rules = require("./bonus/bonus_ticket_rules.model")(sequelize, Sequelize);
 db.bonus_task = require("./bonus/bonus_task.model")(sequelize, Sequelize);
@@ -167,6 +168,8 @@ db.additional_info_data = require("./additional_info_data.model")(sequelize, Seq
 //Relations
 db.users.hasMany(db.bonus_ticket, {foreignKey: 'u_id', targetKey: 'bonus_ticket_usrid'});
 db.bonus_ticket.belongsTo(db.users, {foreignKey: 'bonus_ticket_usrid', targetKey: 'u_id'});
+db.bonus_ticket_details.belongsTo(db.user_profile, {foreignKey: 'user_id', targetKey: 'u_id'});
+
 db.bonus_summary.hasMany(db.bonus_ticket, {foreignKey: 'bonus_summary_id', targetKey: 'bonus_summary_id'});
 db.bonus_ticket.belongsTo(db.bonus_summary, {foreignKey: 'bonus_summary_id', targetKey: 'bonus_summary_id'});
 db.bonus_summary.hasMany(db.bonus_rewards, {foreignKey: 'bonus_summary_id', targetKey: 'bonus_summary_id'});

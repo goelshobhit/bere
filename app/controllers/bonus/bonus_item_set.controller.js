@@ -106,6 +106,13 @@ exports.bonusSetlisting = async (req, res) => {
           }
           bonus_set_list[bonus_set_key].dataValues.bonus_set_images = bonus_set_images;
         }
+        bonus_set_list[bonus_set_key].dataValues.average_dollar_value = 0;
+        bonus_set_list[bonus_set_key].dataValues.total_bonus_value = 0;
+        bonus_set_list[bonus_set_key].dataValues.winner_number = 0;
+        bonus_set_list[bonus_set_key].dataValues.bonus_task_completed = 0;
+        bonus_set_list[bonus_set_key].dataValues.total_participants = 0;
+        bonus_set_list[bonus_set_key].dataValues.total_tickets = 0;
+       
         bonus_set_list[bonus_set_key].dataValues.media_token = common.imageToken(bonus_set_list[bonus_set_key].bonus_set_id);
       }
     }
@@ -133,6 +140,7 @@ exports.bonusSetlisting = async (req, res) => {
             }
           }
         }
+        bonus_set_list[bonus_set_key].dataValues.total_bonus_items = bonus_set_list[bonus_set_key].bonus_item_id.length;
       }
 
     }

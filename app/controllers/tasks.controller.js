@@ -16,6 +16,11 @@ var ffmpeg = require('fluent-ffmpeg');
 const User_profile = db.user_profile;
 const levelTask = db.level_task;
 const sequelize= require('sequelize');
+const bonus_set = db.bonus_set;
+const BonusTicketRules = db.bonus_ticket_rules;
+const BonusTicketRule = db.bonus_ticket_rule;
+const bonusTicketDetails = db.bonus_ticket_details;
+const bonus_user = db.bonus_usr;
 const {
     validationResult
 } = require("express-validator");
@@ -393,7 +398,69 @@ exports.taskDetail = async (req, res) => {
         });
         return
     }
+    var is_bonus_set_active = 0;
+        if (task.bonus_reward_type == '2') {
+            var todayDate = new Date().getDate();
+            var bonusSetActiveDetails = {};
+            if (task.bonus_set_id) {
+                var bonusSetDetails = await bonus_set.findOne({
+                    where: {
+                        bonus_set_id: task.bonus_set_id
+                    }
+                });
+                if (bonusSetDetails) {
+                    if (bonusSetDetails.bonus_set_start_date) {
+                        var startDate = new Date(bonusSetDetails.bonus_set_start_date);
+                        var bonus_set_end_date = startDate.setDate(startDate.getDate() + bonusSetDetails.bonus_set_duration);
+                        bonus_set_end_date.toLocaleString('en-US', { timeZone: 'Asia/Calcutta' })
+                        let bonus_set_end_date_new = new Date(bonus_set_end_date);
+
+                        if (bonusSetDetails.bonus_set_start_date.getDate() <= todayDate && todayDate <= bonus_set_end_date_new) {
+                            is_bonus_set_active = 1;
+                            bonusSetActiveDetails = bonusSetDetails;
+                        } else {
+                            is_bonus_set_active = 0;
+                        }
+                    }
+
+                }
+            }
+            if (is_bonus_set_active == 0) {
+                const bonus_set_list = await bonus_set.findAll({
+                    where: {
+                        bonus_set_default: 1
+                    }
+                });
+                bonus_set_list.forEach(element => {
+                    if (element.bonus_set_start_date) {
+                        var startDate = new Date(element.bonus_set_start_date);
+                        var bonus_set_end_date = startDate.setDate(startDate.getDate() + element.bonus_set_duration);
+                        bonus_set_end_date.toLocaleString('en-US', { timeZone: 'Asia/Calcutta' })
+                        let bonus_set_end_date_new = new Date(bonus_set_end_date);
+                        if (bonusSetDetails.bonus_set_start_date.getDate() <= todayDate && todayDate <= bonus_set_end_date_new && is_bonus_set_active == 0) {
+                            is_bonus_set_active = 1;
+                            bonusSetActiveDetails = bonusSetDetails;
+                        }
+                    }
+                });
+
+            }
+        }
+        if (bonusSetActiveDetails) {
+            const total_tickets_detail = await bonusTicketDetails.findOne({
+                attributes: [
+                  'bonus_set_id',
+                  [sequelize.fn('sum', sequelize.col('tickets_earned')), 'total_tickets'],
+                ],
+                where: {bonus_set_id: bonusSetActiveDetails.bonus_set_id},
+                group: ['bonus_set_id'],
+                raw: true
+              });
+              task.dataValues.total_bonus_set_tickets =total_tickets_detail.total_tickets;
+        }
+        
     res.status(200).send({
+        bonusSetActiveDetails: bonusSetActiveDetails,
         data: task,
         taskDetails: common.taskStatusArr()[task.ta_status],
         media_token: common.imageToken(taskID)

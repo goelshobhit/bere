@@ -11,6 +11,11 @@ const Op = db.Sequelize.Op;
 const audit_log = db.audit_log
 const logger = require("../middleware/logger");
 const User_profile = db.user_profile;
+const bonus_set = db.bonus_set;
+const BonusTicketRules = db.bonus_ticket_rules;
+const BonusTicketRule = db.bonus_ticket_rule;
+const bonusTicketDetails = db.bonus_ticket_details;
+const bonus_user = db.bonus_usr;
 
 const common = require("../common");
 function makeid(length) {
@@ -55,7 +60,7 @@ exports.createNewPost = async (req, res) => {
             where: {
                 ta_task_id: req.body["Task id"]
             },
-            attributes: ["ta_name", "ta_total_available", "ta_budget_per_user", "ta_stars_per_user", "ta_remaining_budget", "ta_task_id"]
+            attributes: ["ta_name", "ta_total_available", "ta_budget_per_user", "ta_stars_per_user", "ta_remaining_budget", "ta_task_id", 'bonus_set_id', 'bonus_reward_type', 'tickets_per_task_submissions']
         });
         if (!TaskDetails || !TaskDetails.campaign.cr_co_id) {
             res.status(400).send({
@@ -127,7 +132,179 @@ exports.createNewPost = async (req, res) => {
             "upcl_brand_details": brandView,
             "ucpl_added_by": addedBY
         }
-        Posts.create(data)
+        var is_bonus_set_active = 0;
+        if (TaskDetails.bonus_reward_type == '2') {
+            var todayDate = new Date().getDate();
+            var bonusSetActiveDetails = {};
+            if (TaskDetails.bonus_set_id) {
+                var bonusSetDetails = await bonus_set.findOne({
+                    where: {
+                        bonus_set_id: TaskDetails.bonus_set_id
+                    }
+                });
+                if (bonusSetDetails) {
+                    if (bonusSetDetails.bonus_set_start_date) {
+                        var startDate = new Date(bonusSetDetails.bonus_set_start_date);
+                        var bonus_set_end_date = startDate.setDate(startDate.getDate() + bonusSetDetails.bonus_set_duration);
+                        bonus_set_end_date.toLocaleString('en-US', { timeZone: 'Asia/Calcutta' })
+                        let bonus_set_end_date_new = new Date(bonus_set_end_date);
+
+                        if (bonusSetDetails.bonus_set_start_date.getDate() <= todayDate && todayDate <= bonus_set_end_date_new) {
+                            is_bonus_set_active = 1;
+                            bonusSetActiveDetails = bonusSetDetails;
+                        } else {
+                            is_bonus_set_active = 0;
+                        }
+                    }
+
+                }
+            }
+            if (is_bonus_set_active == 0) {
+                const bonus_set_list = await bonus_set.findAll({
+                    where: {
+                        bonus_set_default: 1
+                    }
+                });
+                bonus_set_list.forEach(element => {
+                    if (element.bonus_set_start_date) {
+                        var startDate = new Date(element.bonus_set_start_date);
+                        var bonus_set_end_date = startDate.setDate(startDate.getDate() + element.bonus_set_duration);
+                        bonus_set_end_date.toLocaleString('en-US', { timeZone: 'Asia/Calcutta' })
+                        let bonus_set_end_date_new = new Date(bonus_set_end_date);
+                        if (bonusSetDetails.bonus_set_start_date.getDate() <= todayDate && todayDate <= bonus_set_end_date_new && is_bonus_set_active == 0) {
+                            is_bonus_set_active = 1;
+                            bonusSetActiveDetails = bonusSetDetails;
+                        }
+                    }
+                });
+
+            }
+        }
+        if (bonusSetActiveDetails) {
+            const bonusUserDetails = await bonus_user.findOne({
+                where: {
+                    bonus_usr_id: userId
+                }
+            });
+            if (bonusSetActiveDetails.bonus_tickets_rules_ids.length) {
+                var riddim_total_tickets = 0;
+                var followers_total_tickets = 0;
+                var not_won_total_tickets = 0;
+                var riddim_rule_id = 0;
+                var followers_rule_id = 0;
+                var not_won_rule_id = 0;
+                //var total_tickets = {};
+                const bonusTicketRules_list = await BonusTicketRules.findAll({
+                    include: [{
+                        model: BonusTicketRule,
+                        attributes: [
+                            'bonus_tickets_rule_name'
+                        ]
+                    }],
+                    where: {
+                        bonus_tickets_rules_autoid: bonusSetActiveDetails.bonus_tickets_rules_ids
+                    }
+                });
+                //    return res.status(200).send({
+                //         message : bonusTicketRules_list
+                //     });
+
+                if (bonusTicketRules_list.length) {
+                    bonusTicketRules_list.forEach(element => {
+                        if (element.bonus_ticket_rule.dataValues.bonus_tickets_rule_name == 'Riddim level' || element.bonus_ticket_rule.dataValues.bonus_tickets_rule_name == 'Followers' || element.bonus_ticket_rule.dataValues.bonus_tickets_rule_name == 'History (Not won)') {
+                            var riddimLevel = bonusUserDetails.bonus_usr_riddim_level;
+                            var followers = bonusUserDetails.bonus_usr_followers_riddim;
+                            var history_not_won = bonusUserDetails.bonus_usr_history_not_won;
+                            // return res.status(200).send({
+                            //     message : element.bonus_tickets_rules,
+                            //     level : riddimLevel
+                            // });
+
+                            if (element.bonus_tickets_rules) {
+                                for (const bonus_key in element.bonus_tickets_rules) {
+                                    var ranges = bonus_key.split("-");
+                                    const min_range = ranges[0].trim();
+                                    const max_range = ranges[1].trim();
+                                    if (element.bonus_ticket_rule.dataValues.bonus_tickets_rule_name == 'Riddim level' && min_range <= riddimLevel && riddimLevel <= max_range) {
+                                        riddim_total_tickets = element.bonus_tickets_rules[bonus_key];
+                                        riddim_rule_id = element.bonus_tickets_rules_autoid;
+                                        //total_tickets['riddim_total_tickets']['total_tickets'] =  element.bonus_tickets_rules[bonus_key];
+                                    }
+                                    if (element.bonus_ticket_rule.dataValues.bonus_tickets_rule_name == 'Followers' && min_range <= followers && followers <= max_range) {
+                                        followers_total_tickets = element.bonus_tickets_rules[bonus_key];
+                                        followers_rule_id = element.bonus_tickets_rules_autoid;
+                                        // total_tickets['followers_total_tickets']['total_tickets'] =  element.bonus_tickets_rules[bonus_key];
+                                    }
+
+                                    if (element.bonus_ticket_rule.dataValues.bonus_tickets_rule_name == 'History (Not won)' && min_range <= history_not_won && history_not_won <= max_range) {
+                                        not_won_total_tickets = element.bonus_tickets_rules[bonus_key];
+                                        not_won_rule_id = element.bonus_tickets_rules_autoid;
+                                        // total_tickets['not_won_total_tickets']['total_tickets'] =  element.bonus_tickets_rules[bonus_key];
+                                    }
+                                }
+                            }
+                        }
+                    });
+                    // return res.status(200).send({
+                    //     message: bonusTicketRules_list,
+                    //     bonusUserDetails: bonusUserDetails
+                    // });
+                    if (riddim_total_tickets) {
+                        bonusTicketDetails.create({
+                            user_id: userId,
+                            bonus_set_id: bonusSetActiveDetails.bonus_set_id,
+                            event_id: req.body["Task id"],
+                            event_type: 'Task',
+                            bonus_ticket_rules_id: riddim_rule_id,
+                            tickets_earned_for: 'Riddim level',
+                            tickets_earned: riddim_total_tickets
+                        }).catch(err => {
+                            logger.log("error", err + ": Error occurred while creating the bonus ticket details for user riddim level:" + userId);
+                        });
+                    }
+                    if (followers_total_tickets) {
+                        bonusTicketDetails.create({
+                            user_id: userId,
+                            bonus_set_id: bonusSetActiveDetails.bonus_set_id,
+                            event_id: req.body["Task id"],
+                            event_type: 'Task',
+                            bonus_ticket_rules_id: followers_rule_id,
+                            tickets_earned_for: 'Followers',
+                            tickets_earned: followers_total_tickets
+                        }).catch(err => {
+                            logger.log("error", err + ": Error occurred while creating the bonus ticket details for user riddim level:" + userId);
+                        });
+                    }
+                    if (not_won_total_tickets) {
+                        bonusTicketDetails.create({
+                            user_id: userId,
+                            bonus_set_id: bonusSetActiveDetails.bonus_set_id,
+                            event_id: req.body["Task id"],
+                            event_type: 'Task',
+                            bonus_ticket_rules_id: not_won_rule_id,
+                            tickets_earned_for: 'History (Not won)',
+                            tickets_earned: not_won_total_tickets
+                        }).catch(err => {
+                            logger.log("error", err + ": Error occurred while creating the bonus ticket details for user riddim level:" + userId);
+                        });
+                    }
+                }
+            }
+        }
+        if (TaskDetails.tickets_per_task_submissions) {
+            bonusTicketDetails.create({
+                user_id: userId,
+                bonus_set_id: 0,
+                event_id: req.body["Task id"],
+                event_type: 'Task',
+                bonus_ticket_rules_id: 0,
+                tickets_earned_for: 'Task Submission',
+                tickets_earned: TaskDetails.tickets_per_task_submissions
+            }).catch(err => {
+                logger.log("error", err + ": Error occurred while creating the bonus ticket details for user:" + userId);
+            });
+        }
+            Posts.create(data)
             .then(data => {
                 audit_log.saveAuditLog(userId, 'add', 'user_content_post', data.ucpl_id, data.dataValues);
                 common.jsonTask(req.body["Task id"], 'Single', 'update');
