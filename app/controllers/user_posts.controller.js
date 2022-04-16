@@ -55,25 +55,37 @@ exports.createNewPost = async (req, res) => {
         let TaskDetails = await Tasks.findOne({
             include: [{
                 model: db.campaigns,
+                required: false,
                 attributes: ["cr_co_id"]
-            }],
+            },
+            {
+                model: db.brands,
+                required: false,
+                attributes: ["cr_co_alias", "cr_co_name", "cr_co_logo_path", "cr_co_id"]
+            }
+        ],
             where: {
                 ta_task_id: req.body["Task id"]
             },
             attributes: ["ta_name", "ta_total_available", "ta_budget_per_user", "ta_stars_per_user", "ta_remaining_budget", "ta_task_id", 'bonus_set_id', 'bonus_reward_type', 'tickets_per_task_submissions']
         });
-        if (!TaskDetails || !TaskDetails.campaign.cr_co_id) {
+        if (!TaskDetails || ((TaskDetails.campaign && !TaskDetails.campaign.cr_co_id) && (TaskDetails.brand && !TaskDetails.brand.cr_co_id))) {
             res.status(400).send({
                 msg: "Invalid campaign"
             });
             return;
         }
-        const BrandDetails = await Brand.findOne({
-            where: {
-                cr_co_id: TaskDetails.campaign.cr_co_id
-            },
-            attributes: ["cr_co_alias", "cr_co_name", "cr_co_logo_path", "cr_co_id"]
-        });
+        let BrandDetails = {};
+        if (TaskDetails.campaign && TaskDetails.campaign.cr_co_id) {
+            BrandDetails = await Brand.findOne({
+                where: {
+                    cr_co_id: TaskDetails.campaign.cr_co_id
+                },
+                attributes: ["cr_co_alias", "cr_co_name", "cr_co_logo_path", "cr_co_id"]
+            });
+        } else {
+             BrandDetails = TaskDetails.brand;
+        }
         if (BrandDetails && BrandDetails.cr_co_alias && BrandDetails.cr_co_alias !== "null") {
             content_id = BrandDetails.cr_co_alias;
         }
