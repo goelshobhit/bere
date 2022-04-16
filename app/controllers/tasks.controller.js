@@ -400,7 +400,7 @@ exports.taskDetail = async (req, res) => {
     }
     var is_bonus_set_active = 0;
         if (task.bonus_reward_type == '2') {
-            var todayDate = new Date().getDate();
+            var todayDate = new Date().getTime();
             var bonusSetActiveDetails = {};
             if (task.bonus_set_id) {
                 var bonusSetDetails = await bonus_set.findOne({
@@ -414,8 +414,7 @@ exports.taskDetail = async (req, res) => {
                         var bonus_set_end_date = startDate.setDate(startDate.getDate() + bonusSetDetails.bonus_set_duration);
                         bonus_set_end_date.toLocaleString('en-US', { timeZone: 'Asia/Calcutta' })
                         let bonus_set_end_date_new = new Date(bonus_set_end_date);
-
-                        if (bonusSetDetails.bonus_set_start_date.getDate() <= todayDate && todayDate <= bonus_set_end_date_new) {
+                        if (bonusSetDetails.bonus_set_start_date.getTime() <= todayDate && todayDate <= bonus_set_end_date_new.getTime()) {
                             is_bonus_set_active = 1;
                             bonusSetActiveDetails = bonusSetDetails;
                         } else {
@@ -437,7 +436,7 @@ exports.taskDetail = async (req, res) => {
                         var bonus_set_end_date = startDate.setDate(startDate.getDate() + element.bonus_set_duration);
                         bonus_set_end_date.toLocaleString('en-US', { timeZone: 'Asia/Calcutta' })
                         let bonus_set_end_date_new = new Date(bonus_set_end_date);
-                        if (bonusSetDetails.bonus_set_start_date.getDate() <= todayDate && todayDate <= bonus_set_end_date_new && is_bonus_set_active == 0) {
+                        if (bonusSetDetails.bonus_set_start_date.getTime() <= todayDate && todayDate <= bonus_set_end_date_new.getTime() && is_bonus_set_active == 0) {
                             is_bonus_set_active = 1;
                             bonusSetActiveDetails = bonusSetDetails;
                         }
