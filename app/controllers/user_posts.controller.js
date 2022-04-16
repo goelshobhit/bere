@@ -197,7 +197,7 @@ exports.createNewPost = async (req, res) => {
                     bonus_usr_id: userId
                 }
             });
-            if (bonusSetActiveDetails.bonus_tickets_rules_ids.length) {
+            if (bonusSetActiveDetails.bonus_tickets_rules_ids && bonusSetActiveDetails.bonus_tickets_rules_ids.length) {
                 var riddim_total_tickets = 0;
                 var followers_total_tickets = 0;
                 var not_won_total_tickets = 0;
