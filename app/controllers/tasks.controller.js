@@ -446,6 +446,8 @@ exports.taskDetail = async (req, res) => {
 
             }
             if (bonusSetActiveDetails && bonusSetActiveDetails.bonus_set_id !=  undefined) {
+                console.log("bonus set checking-------------");
+                console.log(bonusSetActiveDetails);
                 const total_tickets_detail = await bonusTicketDetails.findOne({
                     attributes: [
                       'bonus_set_id',
