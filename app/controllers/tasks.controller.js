@@ -446,7 +446,7 @@ exports.taskDetail = async (req, res) => {
 
             }
         }
-        if (bonusSetActiveDetails) {
+        if (bonusSetActiveDetails && bonusSetActiveDetails.bonus_set_id) {
             const total_tickets_detail = await bonusTicketDetails.findOne({
                 attributes: [
                   'bonus_set_id',
