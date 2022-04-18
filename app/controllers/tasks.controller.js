@@ -398,6 +398,7 @@ exports.taskDetail = async (req, res) => {
         });
         return
     }
+    var UserId = req.header(process.env.UKEY_HEADER || "x-api-key");
     var is_bonus_set_active = 0;
         if (task.bonus_reward_type == '2') {
             var todayDate = new Date().getTime();
@@ -451,15 +452,15 @@ exports.taskDetail = async (req, res) => {
                   'bonus_set_id',
                   [sequelize.fn('sum', sequelize.col('tickets_earned')), 'total_tickets'],
                 ],
-                where: {bonus_set_id: bonusSetActiveDetails.bonus_set_id},
+                where: {bonus_set_id: bonusSetActiveDetails.bonus_set_id, user_id: UserId},
                 group: ['bonus_set_id'],
                 raw: true
               });
               task.dataValues.total_bonus_set_tickets =total_tickets_detail.total_tickets;
+              task.dataValues.bonus_set = bonusSetActiveDetails;
         }
         
     res.status(200).send({
-        bonusSetActiveDetails: bonusSetActiveDetails,
         data: task,
         taskDetails: common.taskStatusArr()[task.ta_status],
         media_token: common.imageToken(taskID)

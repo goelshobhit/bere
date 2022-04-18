@@ -301,7 +301,19 @@ exports.createNewPost = async (req, res) => {
                     }
                 }
             }
+            bonusTicketDetails.create({
+                user_id: userId,
+                bonus_set_id: bonusSetActiveDetails.bonus_set_id,
+                event_id: req.body["Task id"],
+                event_type: 'Task',
+                bonus_ticket_rules_id: 0,
+                tickets_earned_for: 'Task Entered',
+                tickets_earned: 0
+            }).catch(err => {
+                logger.log("error", err + ": Error occurred while creating the bonus ticket details for user:" + userId);
+            });
         }
+       
         if (TaskDetails.tickets_per_task_submissions) {
             bonusTicketDetails.create({
                 user_id: userId,

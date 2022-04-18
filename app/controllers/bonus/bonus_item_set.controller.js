@@ -4,6 +4,7 @@ const logger = require("../../middleware/logger");
 const bonus_set = db.bonus_set;
 const bonus_item = db.bonus_item;
 const common = require("../../common");
+const bonusTicketDetails = db.bonus_ticket_details;
 
 
 /**
@@ -73,10 +74,10 @@ exports.bonusSetlisting = async (req, res) => {
       });
     });
     if (bonus_set_list && isError == 0) {
-      var site_url = process.env.SITE_API_URL;
-      //var site_new_url = site_url.replace("/api", '');
       var bonus_item_all_ids = [];
+      var bonus_set_ids = [];
       for (const bonus_set_key in bonus_set_list) {
+        bonus_set_ids.push(bonus_set_list[bonus_set_key].bonus_set_id);
         if (bonus_set_list[bonus_set_key].bonus_item_id.length) {
           var bonus_item_ids = bonus_set_list[bonus_set_key].bonus_item_id;
           for (const bonus_item_id_key in bonus_item_ids) {
@@ -106,15 +107,26 @@ exports.bonusSetlisting = async (req, res) => {
           }
           bonus_set_list[bonus_set_key].dataValues.bonus_set_images = bonus_set_images;
         }
-        bonus_set_list[bonus_set_key].dataValues.average_dollar_value = 0;
-        bonus_set_list[bonus_set_key].dataValues.total_bonus_value = 0;
-        bonus_set_list[bonus_set_key].dataValues.winner_number = 0;
-        bonus_set_list[bonus_set_key].dataValues.bonus_task_completed = 0;
-        bonus_set_list[bonus_set_key].dataValues.total_participants = 0;
-        bonus_set_list[bonus_set_key].dataValues.total_tickets = 0;
-       
         bonus_set_list[bonus_set_key].dataValues.media_token = common.imageToken(bonus_set_list[bonus_set_key].bonus_set_id);
       }
+    }
+    var bonusTicketOptions =  {
+      where: { bonus_set_id: bonus_set_ids}
+    };
+    const bonus_ticket_details = await bonusTicketDetails.findAll(bonusTicketOptions);
+    var total_tickets = {};
+    var totalParticipents = {};
+    if (bonus_ticket_details && bonus_ticket_details.length) {
+      bonus_ticket_details.forEach(element => {
+        if (!total_tickets[element.bonus_set_id]) {
+          total_tickets[element.bonus_set_id] = 0;
+       } 
+        if (!totalParticipents[element.bonus_set_id]) {
+          totalParticipents[element.bonus_set_id] = [];
+       } 
+      total_tickets[element.bonus_set_id] +=  element.tickets_earned;
+      totalParticipents[element.bonus_set_id].push(element.user_id);
+      });
     }
     if (isError == 0 && bonus_item_all_ids.length) {
       var bonus_options = {
@@ -129,18 +141,29 @@ exports.bonusSetlisting = async (req, res) => {
           bonus_item_list_arr[bonus_item_list[bonus_item_list_key].bonus_item_id] = bonus_item_list[bonus_item_list_key];
         }
       }
+     
       for (const bonus_set_key in bonus_set_list) {
+        var dollarValues = [];
         bonus_set_list[bonus_set_key].dataValues.bonus_items = [];
         if (bonus_set_list[bonus_set_key].bonus_item_id.length) {
           var bonus_item_ids = bonus_set_list[bonus_set_key].bonus_item_id;
           for (const bonus_item_id_key in bonus_item_ids) {
             var bonus_item_id = bonus_item_ids[bonus_item_id_key];
             if (bonus_item_list_arr[bonus_item_id] != undefined) {
+              dollarValues.push(bonus_item_list_arr[bonus_item_id].bonus_item_dollar_value);
               bonus_set_list[bonus_set_key].dataValues.bonus_items.push(bonus_item_list_arr[bonus_item_id]);
             }
           }
         }
+        var total_bonus_items = bonus_set_list[bonus_set_key].bonus_item_id.length;
+        var totalDollarValue = dollarValues ? dollarValues.reduce((a, b) => parseFloat(a) + parseFloat(b), 0) : 0;
+        bonus_set_list[bonus_set_key].dataValues.average_dollar_value = totalDollarValue/total_bonus_items;
+        bonus_set_list[bonus_set_key].dataValues.total_bonus_value = totalDollarValue;
         bonus_set_list[bonus_set_key].dataValues.total_bonus_items = bonus_set_list[bonus_set_key].bonus_item_id.length;
+        bonus_set_list[bonus_set_key].dataValues.total_tickets = total_tickets[bonus_set_list[bonus_set_key].bonus_set_id] ? total_tickets[bonus_set_list[bonus_set_key].bonus_set_id] : 0;
+        bonus_set_list[bonus_set_key].dataValues.total_participants = totalParticipents[bonus_set_list[bonus_set_key].bonus_set_id] ? totalParticipents[bonus_set_list[bonus_set_key].bonus_set_id].filter((v, i, a) => a.indexOf(v) === i).length : 0;
+        bonus_set_list[bonus_set_key].dataValues.winner_number = 0;
+        bonus_set_list[bonus_set_key].dataValues.bonus_task_completed = 0;
       }
 
     }
