@@ -445,20 +445,21 @@ exports.taskDetail = async (req, res) => {
                 });
 
             }
+            if (bonusSetActiveDetails) {
+                const total_tickets_detail = await bonusTicketDetails.findOne({
+                    attributes: [
+                      'bonus_set_id',
+                      [sequelize.fn('sum', sequelize.col('tickets_earned')), 'total_tickets'],
+                    ],
+                    where: {bonus_set_id: bonusSetActiveDetails.bonus_set_id, user_id: UserId},
+                    group: ['bonus_set_id'],
+                    raw: true
+                  });
+                  task.dataValues.total_bonus_set_tickets =total_tickets_detail.total_tickets;
+                  task.dataValues.bonus_set = bonusSetActiveDetails;
+            }
         }
-        if (bonusSetActiveDetails && bonusSetActiveDetails.bonus_set_id) {
-            const total_tickets_detail = await bonusTicketDetails.findOne({
-                attributes: [
-                  'bonus_set_id',
-                  [sequelize.fn('sum', sequelize.col('tickets_earned')), 'total_tickets'],
-                ],
-                where: {bonus_set_id: bonusSetActiveDetails.bonus_set_id, user_id: UserId},
-                group: ['bonus_set_id'],
-                raw: true
-              });
-              task.dataValues.total_bonus_set_tickets =total_tickets_detail.total_tickets;
-              task.dataValues.bonus_set = bonusSetActiveDetails;
-        }
+        
         
     res.status(200).send({
         data: task,
