@@ -191,7 +191,7 @@ exports.createNewPost = async (req, res) => {
 
             }
         }
-        if (bonusSetActiveDetails) {
+        if (bonusSetActiveDetails && bonusSetActiveDetails.bonus_set_id) {
             const bonusUserDetails = await bonus_user.findOne({
                 where: {
                     bonus_usr_id: userId
