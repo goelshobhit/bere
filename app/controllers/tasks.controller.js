@@ -355,6 +355,7 @@ exports.taskJsonDetail = async (req, res) => {
  */
 
 exports.taskDetail = async (req, res) => {
+    console.log("hello start=============");
     console.log(req.query.pageSize + "pageSize");
     const pageSize = parseInt(req.query.pageSize || 9);
     const pageNumber = parseInt(req.query.pageNumber || 1);
@@ -401,6 +402,7 @@ exports.taskDetail = async (req, res) => {
     var UserId = req.header(process.env.UKEY_HEADER || "x-api-key");
     var is_bonus_set_active = 0;
         if (task.bonus_reward_type == '2') {
+            console.log("hello start 2=============");
             var todayDate = new Date().getTime();
             var bonusSetActiveDetails = {};
             if (task.bonus_set_id) {
@@ -445,6 +447,7 @@ exports.taskDetail = async (req, res) => {
                 });
 
             }
+            console.log("hello start 3=============");
             if (bonusSetActiveDetails && bonusSetActiveDetails.bonus_set_id !=  undefined) {
                 console.log("bonus set checking-------------");
                 console.log(bonusSetActiveDetails);
@@ -460,8 +463,9 @@ exports.taskDetail = async (req, res) => {
                   task.dataValues.total_bonus_set_tickets =total_tickets_detail.total_tickets;
                   task.dataValues.bonus_set = bonusSetActiveDetails;
             }
+            console.log("hello start 5=============");
         }
-        
+        console.log("hello start 6=============");
         
     res.status(200).send({
         data: task,
