@@ -360,7 +360,7 @@ db.user_content_post.belongsTo(db.contest_task, {as:'contestPosts',foreignKey: '
 db.user_content_post.belongsTo(db.tasks, {as:'taskPosts',foreignKey: 'ta_task_id', targetKey: 'ta_task_id'});
 
 //db.user_content_post.belongsTo(db.tasks_json, {foreignKey: 'ta_task_id', targetKey: 'tj_task_id'});
-db.tasks_json.hasMany(db.user_content_post, {foreignKey: 'ta_task_id', targetKey: 'tj_task_id'});
+//db.tasks_json.hasMany(db.user_content_post, {foreignKey: 'ta_task_id', targetKey: 'tj_task_id'});
 
 db.brands.hasMany(db.bonus_item, {foreignKey: 'bonus_item_brand_id', targetKey: 'cr_co_id'});
 db.bonus_item.belongsTo(db.brands, {foreignKey: 'bonus_item_brand_id', targetKey: 'cr_co_id'});

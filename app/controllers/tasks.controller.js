@@ -243,14 +243,32 @@ exports.jsonlisting = async (req, res) => {
     const sortVal = req.query.sortVal;
     const Uid = req.header(process.env.UKEY_HEADER || "x-api-key");
     var todayDate = new Date();
-    todayDate.toLocaleString('en-US', { timeZone: 'Asia/Calcutta' })
+    //todayDate.toLocaleString('en-US', { timeZone: 'Asia/Calcutta' });
     const contentUserTaskIds = await common.getContentReportUser(['Task'], Uid);
+    var userOptions = {
+        attributes: ["ta_task_id", "ucpl_created_at"],
+        where: {
+            ucpl_u_id: Uid,
+            task_end_date: {
+                [Op.lte]: todayDate
+            }
+            // ucpl_created_at: {
+            //     [Op.lte]: lastCreatedDate
+            // }
+        }
+    };
+    const posts_list = await Posts.findAll(userOptions);
+    var closedTaskIds = posts_list.map(function (item) {
+        return '' +item.ta_task_id+ ''
+      });
+    closedTaskIds = closedTaskIds.filter((v, i, a) => a.indexOf(v) === i);
     let taskIdsValues = [];
     if (contentUserTaskIds.length) {
         contentUserTaskIds.forEach(element => {
             taskIdsValues.push('' + element.content_report_type_id + '');
         });
     }
+    taskIdsValues = closedTaskIds.concat(taskIdsValues);
     var options = {
         limit: pageSize,
         offset: skipCount,
@@ -355,12 +373,25 @@ exports.taskJsonDetail = async (req, res) => {
  */
 
 exports.taskDetail = async (req, res) => {
-    console.log("hello start=============");
     console.log(req.query.pageSize + "pageSize");
     const pageSize = parseInt(req.query.pageSize || 9);
     const pageNumber = parseInt(req.query.pageNumber || 1);
     const skipCount = (pageNumber - 1) * pageSize;
     const taskID = req.params.taskID;
+    const Uid = req.header(process.env.UKEY_HEADER || "x-api-key");
+    const userTaskPost = await db.user_content_post.findOne({
+        where: {
+            ucpl_u_id: Uid,
+            ta_task_id: taskID
+        },
+        attributes: [["ucpl_content_id", "ucpl_content_id"], ["ucpl_id", "post_id"], ['ucpl_content_data', 'post_data'], 'ucpl_created_at', 'task_end_date'],
+    });
+    
+        // res.status(200).send({
+        //     message: userTaskPost
+        // });
+        // return
+    
     const task = await Tasks.findOne({
         include: [
             {
@@ -377,7 +408,7 @@ exports.taskDetail = async (req, res) => {
             },
             {
                 model: db.user_content_post,
-                attributes: [["ucpl_content_id", "ucpl_content_id"], ["ucpl_id", "post_id"], ['ucpl_content_data', 'post_data']],
+                attributes: [["ucpl_content_id", "ucpl_content_id"], ["ucpl_id", "post_id"], ['ucpl_content_data', 'post_data'], 'ucpl_created_at', 'task_end_date'],
                 required: false,
                 limit: pageSize,
                 offset: skipCount,
@@ -386,6 +417,7 @@ exports.taskDetail = async (req, res) => {
                 },
                 order: [
                     ['ucpl_added_by', 'ASC']
+                    //['ucpl_id', 'ASC']
                 ]
             }
         ],
@@ -399,10 +431,28 @@ exports.taskDetail = async (req, res) => {
         });
         return
     }
+    var endDate = '';
+    if (userTaskPost &&  userTaskPost.ucpl_created_at!= undefined) {
+        var todayDate = new Date();
+        if (userTaskPost.task_end_date) {
+            endDate = userTaskPost.task_end_date;
+        } else {
+            var endDateTimestamp = new Date().setDate(userTaskPost.ucpl_created_at.getDate() + 1);
+            endDate = new Date(endDateTimestamp);
+        }
+        //var leftTime = endDate.getTime() - todayDate.getTime();
+        task.dataValues.user_task_posted = 1;
+        task.dataValues.user_task_start_date = userTaskPost.ucpl_created_at;
+        task.dataValues.user_task_end_date = endDate;
+    } else {
+        task.dataValues.user_task_posted = 0;
+        task.dataValues.user_task_start_date = '';
+        task.dataValues.user_task_end_date = '';
+    }
+    
     var UserId = req.header(process.env.UKEY_HEADER || "x-api-key");
     var is_bonus_set_active = 0;
         if (task.bonus_reward_type == '2') {
-            console.log("hello start 2=============");
             var todayDate = new Date().getTime();
             var bonusSetActiveDetails = {};
             if (task.bonus_set_id) {
@@ -447,10 +497,7 @@ exports.taskDetail = async (req, res) => {
                 });
 
             }
-            console.log("hello start 3=============");
             if (bonusSetActiveDetails && bonusSetActiveDetails.bonus_set_id !=  undefined) {
-                console.log("bonus set checking-------------");
-                console.log(bonusSetActiveDetails);
                 const total_tickets_detail = await bonusTicketDetails.findOne({
                     attributes: [
                       'bonus_set_id',
@@ -463,10 +510,7 @@ exports.taskDetail = async (req, res) => {
                   task.dataValues.total_bonus_set_tickets =total_tickets_detail.total_tickets;
                   task.dataValues.bonus_set = bonusSetActiveDetails;
             }
-            console.log("hello start 5=============");
         }
-        console.log("hello start 6=============");
-        
     res.status(200).send({
         data: task,
         taskDetails: common.taskStatusArr()[task.ta_status],

@@ -125,6 +125,10 @@ exports.createNewPost = async (req, res) => {
             logger.log("error", err + ": Error occurred while ta_remaining_budget the Tasks:" + req.body["Task id"]);
         });
         var contentId = content_id + "_" + req.header(process.env.UKEY_HEADER || "x-api-key") + "_" + new Date().getTime();
+        var todayDate = new Date();
+        var nextDate = todayDate.setDate(todayDate.getDate() + 1);
+        nextDate.toLocaleString('en-US', { timeZone: 'Asia/Calcutta' })
+        let taskEndDate = new Date(nextDate);
         const data = {
             "ta_task_id": req.body["Task id"],
             "ucpl_content_hashtags": req.body["Post hashtags"],
@@ -142,7 +146,8 @@ exports.createNewPost = async (req, res) => {
             "ucpl_content_stars": 0,
             "ucpl_user_fav": [],
             "upcl_brand_details": brandView,
-            "ucpl_added_by": addedBY
+            "ucpl_added_by": addedBY,
+            "task_end_date": taskEndDate
         }
         var is_bonus_set_active = 0;
         if (TaskDetails.bonus_reward_type == '2') {
@@ -434,6 +439,10 @@ exports.createNewPost = async (req, res) => {
             logger.log("error", err + ": Error occurred while creating the  u_stars for user:" + userId);
         });
         var contentId = content_id + "_" + req.header(process.env.UKEY_HEADER || "x-api-key") + "_" + new Date().getTime();
+        var todayDate = new Date();
+        var nextDate = todayDate.setDate(todayDate.getDate() + 1);
+        nextDate.toLocaleString('en-US', { timeZone: 'Asia/Calcutta' })
+        let taskEndDate = new Date(nextDate);
         const data = {
             "ta_task_id": req.body["Task id"],
             "ucpl_content_hashtags": req.body["Post hashtags"],
@@ -451,7 +460,8 @@ exports.createNewPost = async (req, res) => {
             "ucpl_content_stars": 0,
             "ucpl_user_fav": [],
             "upcl_brand_details": brandView,
-            "ucpl_added_by": addedBY
+            "ucpl_added_by": addedBY,
+            "task_end_date": taskEndDate
         }
         Posts.create(data)
             .then(data => {

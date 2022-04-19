@@ -82,6 +82,9 @@ module.exports = (sequelize, Sequelize) => {
         },
         video_response: {
             type: Sequelize.STRING(255)
+        },
+        task_end_date: {
+            type: Sequelize.DATE
         }
     }, {
         createdAt: 'ucpl_created_at',
