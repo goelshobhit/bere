@@ -514,7 +514,7 @@ exports.taskDetail = async (req, res) => {
             }
         } else if (task.bonus_reward_type == '1') {
             if (task.bonus_item_id) {
-                const bonusItem = await db.bonus_item.findAll({
+                const bonusItem = await db.bonus_item.findOne({
                     where: {
                         bonus_item_id: task.bonus_item_id
                     }
