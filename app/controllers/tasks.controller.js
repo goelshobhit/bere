@@ -444,6 +444,7 @@ exports.taskDetail = async (req, res) => {
         task.dataValues.user_task_posted = 1;
         task.dataValues.user_task_start_date = userTaskPost.ucpl_created_at;
         task.dataValues.user_task_end_date = endDate;
+        task.dataValues.user_post_detail = userTaskPost;
     } else {
         task.dataValues.user_task_posted = 0;
         task.dataValues.user_task_start_date = '';
