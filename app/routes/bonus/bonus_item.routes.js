@@ -205,6 +205,11 @@ module.exports = app => {
      *           required: false
      *           schema:
      *              type: integer
+     *         - name: brandId
+     *           in: query
+     *           required: false
+     *           schema:
+     *              type: integer
      *         - name: pageNumber
      *           in: query
      *           required: false

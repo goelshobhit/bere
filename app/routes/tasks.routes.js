@@ -47,6 +47,8 @@ module.exports = app => {
    *                            example: "1: add prizes , 2: bonus sets, 3: single price, 4: no bonus"
    *                        Bonus Set Id:
    *                            type: integer
+   *                        Bonus Item Id:
+   *                            type: integer
    *                        Tickets Per Submissions:
    *                            type: integer
    *                        Task Media:
@@ -174,6 +176,8 @@ module.exports = app => {
    *                            type: integer
    *                            example: "1: add prizes , 2: bonus sets, 3: single price, 4: no bonus"
    *                        Bonus Set Id:
+   *                            type: integer
+   *                        Bonus Item Id:
    *                            type: integer
    *                        Tickets Per Submissions:
    *                            type: integer
@@ -564,6 +568,8 @@ module.exports = app => {
   *                            example: "1: add prizes , 2: bonus sets, 3: single price, 4: no bonus"
   *                        bonus_set_id:
   *                            type: integer
+  *                        bonus_item_id:
+  *                            type: integer
   *                        tickets_per_task_submissions:
   *                            type: integer
   *                        ta_media:
@@ -745,6 +751,8 @@ module.exports = app => {
   *                            type: integer
   *                            example: "1: add prizes , 2: bonus sets, 3: single price, 4: no bonus"
   *                        bonus_set_id:
+  *                            type: integer
+  *                        bonus_item_id:
   *                            type: integer
   *                        tickets_per_task_submissions:
   *                            type: integer

@@ -35,6 +35,9 @@ module.exports = (sequelize, Sequelize) => {
         bonus_set_id: {
             type: Sequelize.INTEGER
         },
+        bonus_item_id: {
+            type: Sequelize.INTEGER
+        },
         tickets_per_task_submissions: {
             type: Sequelize.INTEGER
         },

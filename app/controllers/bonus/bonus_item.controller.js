@@ -50,6 +50,9 @@ exports.bonusItemlisting = async (req, res) => {
       bonus_item_id: req.query.bonusItemId
     }
   }
+  if (req.query.brandId) {
+    options['where']['bonus_item_brand_id'] = req.query.brandId;
+  }
   var isError = 0;
   var total = await bonus_item.count({
     where: options['where']

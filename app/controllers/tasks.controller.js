@@ -52,6 +52,7 @@ exports.createNewTask = async (req, res) => {
         "audience": body.hasOwnProperty("Audience") ? req.body["Audience"] : 0,
         "bonus_reward_type": body.hasOwnProperty("Bonus Reward Type") ? req.body["Bonus Reward Type"] : 0,
         "bonus_set_id": body.hasOwnProperty("Bonus Set Id") ? req.body["Bonus Set Id"] : 0,
+        "bonus_item_id": body.hasOwnProperty("Bonus Item Id") ? req.body["Bonus Item Id"] : 0,
         "tickets_per_task_submissions": body.hasOwnProperty("Tickets Per Submissions") ? req.body["Tickets Per Submissions"] : 0,
         "ta_media": body.hasOwnProperty("Task Media") ? req.body["Task Media"] : [],
         "ta_desc": body.hasOwnProperty("Task description") ? req.body["Task description"] : "",
@@ -510,6 +511,15 @@ exports.taskDetail = async (req, res) => {
                   });
                   task.dataValues.total_bonus_set_tickets =total_tickets_detail.total_tickets;
                   task.dataValues.bonus_set = bonusSetActiveDetails;
+            }
+        } else if (task.bonus_reward_type == '1') {
+            if (task.bonus_item_id) {
+                const bonusItem = await db.bonus_item.findAll({
+                    where: {
+                        bonus_item_id: task.bonus_item_id
+                    }
+                });
+                task.dataValues.bonus_item = bonusItem;
             }
         }
     res.status(200).send({
@@ -1039,6 +1049,7 @@ exports.createNewContest = async (req, res) => {
         "audience": body.hasOwnProperty("Audience") ? req.body["Audience"] : 0,
         "bonus_reward_type": body.hasOwnProperty("Bonus Reward Type") ? req.body["Bonus Reward Type"] : 0,
         "bonus_set_id": body.hasOwnProperty("Bonus Set Id") ? req.body["Bonus Set Id"] : 0,
+        "bonus_item_id": body.hasOwnProperty("Bonus Item Id") ? req.body["Bonus Item Id"] : 0,
         "tickets_per_task_submissions": body.hasOwnProperty("Tickets Per Submissions") ? req.body["Tickets Per Submissions"] : 0,
         "ct_media": body.hasOwnProperty("Task Media") ? req.body["Task Media"] : [],
         "ct_desc": body.hasOwnProperty("Task description") ? req.body["Task description"] : "",
