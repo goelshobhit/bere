@@ -509,7 +509,7 @@ exports.taskDetail = async (req, res) => {
                     group: ['bonus_set_id'],
                     raw: true
                   });
-                  task.dataValues.total_bonus_set_tickets =total_tickets_detail.total_tickets;
+                  task.dataValues.total_bonus_set_tickets = total_tickets_detail ? total_tickets_detail.total_tickets : 0;
                   task.dataValues.bonus_set = bonusSetActiveDetails;
                   task.dataValues.active_bonus_set_id = bonusSetActiveDetails.bonus_set_id;
             }
