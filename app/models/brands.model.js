@@ -36,22 +36,22 @@ module.exports = (sequelize, Sequelize) => {
             type: Sequelize.STRING(255)
         },
         cr_co_fb_handle: {
-            type: Sequelize.STRING(50)
+            type: Sequelize.JSONB
         },
         cr_co_tw_handle: {
-            type: Sequelize.STRING(50)
+            type: Sequelize.JSONB
         },
         cr_co_pint_handle: {
-            type: Sequelize.STRING(50) //0 offline 1 online
+            type: Sequelize.JSONB //0 offline 1 online
         },
         cr_co_insta_handle: {
-            type: Sequelize.STRING(50) //0 offline 1 online
+            type: Sequelize.JSONB //0 offline 1 online
         },
         cr_co_snapchat_handle: {
-            type: Sequelize.STRING(255) 
+            type: Sequelize.JSONB
         },
         cr_co_tiktok_handle: {
-            type: Sequelize.STRING(255) 
+            type: Sequelize.JSONB
         },
         cr_co_who_we_are_looking_for: {
             type: Sequelize.STRING(255) 
@@ -66,7 +66,7 @@ module.exports = (sequelize, Sequelize) => {
             type: Sequelize.TEXT //0 offline 1 online
         },
         cr_co_website: {
-            type: Sequelize.STRING(50) //0 offline 1 online
+            type: Sequelize.JSONB //0 offline 1 online
         },
         cr_co_contact_pers: {
             type: Sequelize.STRING(50) //0 offline 1 online

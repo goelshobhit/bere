@@ -31,17 +31,41 @@ module.exports = app => {
      *                        Email:
      *                            type: string
      *                        Facbook Handle:
-     *                            type: string
+     *                            type: array
+     *                            items:
+     *                              oneOf:
+     *                               type: string
+     *                            example: ["xyz","abc"]
      *                        Twitter Handle:
-     *                            type: string
+     *                            type: array
+     *                            items:
+     *                              oneOf:
+     *                               type: string
+     *                            example: ["xyz","abc"]
      *                        Pintrest Handle:
-     *                            type: string
+     *                            type: array
+     *                            items:
+     *                              oneOf:
+     *                               type: string
+     *                            example: ["xyz","abc"]
      *                        Instagram Handle:
-     *                            type: string
+     *                            type: array
+     *                            items:
+     *                              oneOf:
+     *                               type: string
+     *                            example: ["xyz","abc"]
      *                        Snapchat Handle:
-     *                            type: string
+     *                            type: array
+     *                            items:
+     *                              oneOf:
+     *                               type: string
+     *                            example: ["xyz","abc"]
      *                        Tiktok Handle:
-     *                            type: string
+     *                            type: array
+     *                            items:
+     *                              oneOf:
+     *                               type: string
+     *                            example: ["xyz","abc"]
      *                        Who We Are looking For:
      *                            type: string
      *                        Brand Restrictions:
@@ -55,7 +79,11 @@ module.exports = app => {
      *                        Long Description:
      *                            type: string
      *                        Brand Website:
-     *                            type: string
+     *                            type: array
+     *                            items:
+     *                              oneOf:
+     *                               type: string
+     *                            example: ["xyz","abc"]
      *                        Contact Person Name:
      *                            type: string
      *                        Person Department:
@@ -249,17 +277,41 @@ module.exports = app => {
      *                        cr_co_email:
      *                            type: string
      *                        cr_co_fb_handle:
-     *                            type: string
+     *                            type: array
+     *                            items:
+     *                              oneOf:
+     *                               type: string
+     *                            example: ["xyz","abc"]
      *                        cr_co_tw_handle:
-     *                            type: string
+     *                            type: array
+     *                            items:
+     *                              oneOf:
+     *                               type: string
+     *                            example: ["xyz","abc"]
      *                        cr_co_pint_handle:
-     *                            type: string
+     *                            type: array
+     *                            items:
+     *                              oneOf:
+     *                               type: string
+     *                            example: ["xyz","abc"]
      *                        cr_co_insta_handle:
-     *                            type: string
+     *                            type: array
+     *                            items:
+     *                              oneOf:
+     *                               type: string
+     *                            example: ["xyz","abc"]
      *                        cr_co_snapchat_handle:
-     *                            type: string
+     *                            type: array
+     *                            items:
+     *                              oneOf:
+     *                               type: string
+     *                            example: ["xyz","abc"]
      *                        cr_co_tiktok_handle:
-     *                            type: string
+     *                            type: array
+     *                            items:
+     *                              oneOf:
+     *                               type: string
+     *                            example: ["xyz","abc"]
      *                        cr_co_who_we_are_looking_for:
      *                            type: string
      *                        cr_co_restrictions:
@@ -273,7 +325,11 @@ module.exports = app => {
      *                        cr_co_desc_long:
      *                            type: string
      *                        cr_co_website:
-     *                            type: string
+     *                            type: array
+     *                            items:
+     *                              oneOf:
+     *                               type: string
+     *                            example: ["xyz","abc"]
      *                        cr_co_contact_pers:
      *                            type: string
      *                        cr_co_contact_pers_dept:
