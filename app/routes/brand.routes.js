@@ -98,6 +98,8 @@ module.exports = app => {
      *                            type: string
      *                        Total Token:
      *                            type: integer
+     *                        Brand Status:
+     *                            type: integer
      *     tags:
      *       - Brand
      *     description: Add new brand

@@ -74,7 +74,7 @@ exports.createNewBrand = async(req, res) => {
         "cr_co_contact_pers_industry": body.hasOwnProperty("Person Industry") ? req.body["Person Industry"] : "",
         "cr_co_total_token": body.hasOwnProperty("Total Token") ? req.body["Total Token"] : 0,
         "cr_co_token_spent": 0,
-        "cr_co_status": 1,
+        "cr_co_status": body.hasOwnProperty("Brand Status") ? req.body["Brand Status"] : 0,
 		"cr_co_alias": BrandDetails ? co_alias_name_sec : co_alias_name
     }
     Brand.create(data)
