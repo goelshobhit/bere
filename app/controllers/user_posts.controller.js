@@ -220,9 +220,6 @@ exports.createNewPost = async (req, res) => {
                             bonus_tickets_rules_autoid: bonusSetActiveDetails.bonus_tickets_rules_ids
                         }
                     });
-                    //    return res.status(200).send({
-                    //         message : bonusTicketRules_list
-                    //     });
     
                     if (bonusTicketRules_list.length) {
                         bonusTicketRules_list.forEach(element => {
@@ -230,11 +227,6 @@ exports.createNewPost = async (req, res) => {
                                 var riddimLevel = bonusUserDetails.bonus_usr_riddim_level;
                                 var followers = bonusUserDetails.bonus_usr_followers_riddim;
                                 var history_not_won = bonusUserDetails.bonus_usr_history_not_won;
-                                // return res.status(200).send({
-                                //     message : element.bonus_tickets_rules,
-                                //     level : riddimLevel
-                                // });
-    
                                 if (element.bonus_tickets_rules) {
                                     for (const bonus_key in element.bonus_tickets_rules) {
                                         var ranges = bonus_key.split("-");
@@ -243,27 +235,20 @@ exports.createNewPost = async (req, res) => {
                                         if (element.bonus_ticket_rule.dataValues.bonus_tickets_rule_name == 'Riddim level' && min_range <= riddimLevel && riddimLevel <= max_range) {
                                             riddim_total_tickets = element.bonus_tickets_rules[bonus_key];
                                             riddim_rule_id = element.bonus_tickets_rules_autoid;
-                                            //total_tickets['riddim_total_tickets']['total_tickets'] =  element.bonus_tickets_rules[bonus_key];
                                         }
                                         if (element.bonus_ticket_rule.dataValues.bonus_tickets_rule_name == 'Followers' && min_range <= followers && followers <= max_range) {
                                             followers_total_tickets = element.bonus_tickets_rules[bonus_key];
                                             followers_rule_id = element.bonus_tickets_rules_autoid;
-                                            // total_tickets['followers_total_tickets']['total_tickets'] =  element.bonus_tickets_rules[bonus_key];
                                         }
     
                                         if (element.bonus_ticket_rule.dataValues.bonus_tickets_rule_name == 'History (Not won)' && min_range <= history_not_won && history_not_won <= max_range) {
                                             not_won_total_tickets = element.bonus_tickets_rules[bonus_key];
                                             not_won_rule_id = element.bonus_tickets_rules_autoid;
-                                            // total_tickets['not_won_total_tickets']['total_tickets'] =  element.bonus_tickets_rules[bonus_key];
                                         }
                                     }
                                 }
                             }
                         });
-                        // return res.status(200).send({
-                        //     message: bonusTicketRules_list,
-                        //     bonusUserDetails: bonusUserDetails
-                        // });
                         if (riddim_total_tickets) {
                             bonusTicketDetails.create({
                                 user_id: userId,

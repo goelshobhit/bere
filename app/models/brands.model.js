@@ -33,7 +33,7 @@ module.exports = (sequelize, Sequelize) => {
             type: Sequelize.STRING(50)
         },
         cr_co_logo_path: {
-            type: Sequelize.STRING(50)
+            type: Sequelize.STRING(255)
         },
         cr_co_fb_handle: {
             type: Sequelize.STRING(50)
@@ -46,6 +46,18 @@ module.exports = (sequelize, Sequelize) => {
         },
         cr_co_insta_handle: {
             type: Sequelize.STRING(50) //0 offline 1 online
+        },
+        cr_co_snapchat_handle: {
+            type: Sequelize.STRING(255) 
+        },
+        cr_co_tiktok_handle: {
+            type: Sequelize.STRING(255) 
+        },
+        cr_co_who_we_are_looking_for: {
+            type: Sequelize.STRING(255) 
+        },
+        cr_co_restrictions: {
+            type: Sequelize.STRING(255) 
         },
         cr_co_desc_short: {
             type: Sequelize.STRING(50) //0 offline 1 online
@@ -81,7 +93,7 @@ module.exports = (sequelize, Sequelize) => {
             type: Sequelize.INTEGER //0 offline 1 online
         },
         cr_co_cover_img_path: {
-            type: Sequelize.STRING(50) //0 offline 1 online
+            type: Sequelize.STRING(255) 
         },
         cr_co_total_token: {
             type: Sequelize.INTEGER //0 offline 1 online

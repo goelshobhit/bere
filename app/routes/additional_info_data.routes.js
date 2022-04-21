@@ -152,62 +152,6 @@ module.exports = app => {
      */
     router.get('/addtionalInfoData', auth, AdditionalInfoData.listing)
 
-
-    // Retrieve all Data
-    /**
-     * @swagger
-     * /api/addtionalInfoData2:
-     *   get:
-     *     parameters:
-     *         - name: pageNumber
-     *           in: query
-     *           required: false
-     *           schema:
-     *              type: integer
-     *         - name: sortBy
-     *           in: query
-     *           required: false
-     *           schema:
-     *              type: string
-     *              example: ad_info_id,ad_info_data_name,ad_info_data_description,ad_info_data_image  # Example of a parameter value
-     *         - name: type
-     *           in: query
-     *           required: false
-     *           schema:
-     *              type: string
-     *              example: Tips, FAQ, Rules  # Example of a parameter value
-     *         - name: sortOrder
-     *           in: query
-     *           required: false
-     *           schema:
-     *              type: string
-     *              example: ASC,DESC    # Example of a parameter value
-     *         - name: sortVal
-     *           in: query
-     *           required: false
-     *           schema:
-     *              type: string
-     *     tags:
-     *       - Additional Info Data
-     *     description: Returns all Additional Info Data
-     *     produces:
-     *       - application/json
-     *     responses:
-     *       200:
-     *         description: A list of Additional Info Data
-     *       401:
-     *          description: Unauthorized
-     *          content:
-     *              application/json:
-     *                  schema:
-     *                      type: object
-     *                      properties:
-     *                          message:
-     *                              type: string
-     *                              example: Authorisation Required
-     */
-    router.get('/addtionalInfoData2', auth, AdditionalInfoData.listing)
-
     /**
      * @swagger
      * /api/additionalInfoData/{adInfoDataId}:

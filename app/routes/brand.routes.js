@@ -38,6 +38,18 @@ module.exports = app => {
      *                            type: string
      *                        Instagram Handle:
      *                            type: string
+     *                        Snapchat Handle:
+     *                            type: string
+     *                        Tiktok Handle:
+     *                            type: string
+     *                        Who We Are looking For:
+     *                            type: string
+     *                        Brand Restrictions:
+     *                            type: string
+     *                        Brand Logo:
+     *                            type: string
+     *                        Cover Image:
+     *                            type: string
      *                        Brand Short Description:
      *                            type: string
      *                        Long Description:
@@ -243,6 +255,18 @@ module.exports = app => {
      *                        cr_co_pint_handle:
      *                            type: string
      *                        cr_co_insta_handle:
+     *                            type: string
+     *                        cr_co_snapchat_handle:
+     *                            type: string
+     *                        cr_co_tiktok_handle:
+     *                            type: string
+     *                        cr_co_who_we_are_looking_for:
+     *                            type: string
+     *                        cr_co_restrictions:
+     *                            type: string
+     *                        cr_co_logo_path:
+     *                            type: string
+     *                        cr_co_cover_img_path:
      *                            type: string
      *                        cr_co_desc_short:
      *                            type: string
