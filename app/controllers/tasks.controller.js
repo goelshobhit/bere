@@ -18,7 +18,6 @@ const levelTask = db.level_task;
 const sequelize= require('sequelize');
 const bonus_set = db.bonus_set;
 const BonusTicketRules = db.bonus_ticket_rules;
-const BonusTicketRule = db.bonus_ticket_rule;
 const bonusTicketDetails = db.bonus_ticket_details;
 const bonus_user = db.bonus_usr;
 const {

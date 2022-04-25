@@ -13,7 +13,7 @@ const logger = require("../middleware/logger");
 const User_profile = db.user_profile;
 const bonus_set = db.bonus_set;
 const BonusTicketRules = db.bonus_ticket_rules;
-const BonusTicketRule = db.bonus_ticket_rule;
+const BonusRuleDetail = db.bonus_ticket_rule_detail;
 const bonusTicketDetails = db.bonus_ticket_details;
 const bonus_user = db.bonus_usr;
 
@@ -202,93 +202,90 @@ exports.createNewPost = async (req, res) => {
                     }
                 });
                 if (bonusSetActiveDetails.bonus_tickets_rules_ids && bonusSetActiveDetails.bonus_tickets_rules_ids.length) {
-                    var riddim_total_tickets = 0;
-                    var followers_total_tickets = 0;
-                    var not_won_total_tickets = 0;
-                    var riddim_rule_id = 0;
-                    var followers_rule_id = 0;
-                    var not_won_rule_id = 0;
+                    // var riddim_total_tickets = 0;
+                    // var followers_total_tickets = 0;
+                    // var not_won_total_tickets = 0;
+                    // var riddim_rule_id = 0;
+                    // var followers_rule_id = 0;
+                    // var not_won_rule_id = 0;
                     //var total_tickets = {};
-                    const bonusTicketRules_list = await BonusTicketRules.findAll({
-                        include: [{
-                            model: BonusTicketRule,
-                            attributes: [
-                                'bonus_tickets_rule_name'
-                            ]
-                        }],
-                        where: {
-                            bonus_tickets_rules_autoid: bonusSetActiveDetails.bonus_tickets_rules_ids
-                        }
-                    });
+                    // const bonusTicketRules_list = await BonusTicketRules.findAll({
+                    //     include: [{
+                    //         model: BonusRuleDetail
+                    //     }],
+                    //     where: {
+                    //         bonus_tickets_rules_autoid: bonusSetActiveDetails.bonus_tickets_rules_ids
+                    //     }
+                    // });
+                    
+                    // if (bonusTicketRules_list.length) {
+                    //     bonusTicketRules_list.forEach(element => {
+                    //         if (element.bonus_ticket_rule.dataValues.bonus_tickets_rule_name == 'Riddim level' || element.bonus_ticket_rule.dataValues.bonus_tickets_rule_name == 'Followers' || element.bonus_ticket_rule.dataValues.bonus_tickets_rule_name == 'History (Not won)') {
+                    //             var riddimLevel = bonusUserDetails.bonus_usr_riddim_level;
+                    //             var followers = bonusUserDetails.bonus_usr_followers_riddim;
+                    //             var history_not_won = bonusUserDetails.bonus_usr_history_not_won;
+                    //             if (element.bonus_tickets_rules) {
+                    //                 for (const bonus_key in element.bonus_tickets_rules) {
+                    //                     var ranges = bonus_key.split("-");
+                    //                     const min_range = ranges[0].trim();
+                    //                     const max_range = ranges[1].trim();
+                    //                     if (element.bonus_ticket_rule.dataValues.bonus_tickets_rule_name == 'Riddim level' && min_range <= riddimLevel && riddimLevel <= max_range) {
+                    //                         riddim_total_tickets = element.bonus_tickets_rules[bonus_key];
+                    //                         riddim_rule_id = element.bonus_tickets_rules_autoid;
+                    //                     }
+                    //                     if (element.bonus_ticket_rule.dataValues.bonus_tickets_rule_name == 'Followers' && min_range <= followers && followers <= max_range) {
+                    //                         followers_total_tickets = element.bonus_tickets_rules[bonus_key];
+                    //                         followers_rule_id = element.bonus_tickets_rules_autoid;
+                    //                     }
     
-                    if (bonusTicketRules_list.length) {
-                        bonusTicketRules_list.forEach(element => {
-                            if (element.bonus_ticket_rule.dataValues.bonus_tickets_rule_name == 'Riddim level' || element.bonus_ticket_rule.dataValues.bonus_tickets_rule_name == 'Followers' || element.bonus_ticket_rule.dataValues.bonus_tickets_rule_name == 'History (Not won)') {
-                                var riddimLevel = bonusUserDetails.bonus_usr_riddim_level;
-                                var followers = bonusUserDetails.bonus_usr_followers_riddim;
-                                var history_not_won = bonusUserDetails.bonus_usr_history_not_won;
-                                if (element.bonus_tickets_rules) {
-                                    for (const bonus_key in element.bonus_tickets_rules) {
-                                        var ranges = bonus_key.split("-");
-                                        const min_range = ranges[0].trim();
-                                        const max_range = ranges[1].trim();
-                                        if (element.bonus_ticket_rule.dataValues.bonus_tickets_rule_name == 'Riddim level' && min_range <= riddimLevel && riddimLevel <= max_range) {
-                                            riddim_total_tickets = element.bonus_tickets_rules[bonus_key];
-                                            riddim_rule_id = element.bonus_tickets_rules_autoid;
-                                        }
-                                        if (element.bonus_ticket_rule.dataValues.bonus_tickets_rule_name == 'Followers' && min_range <= followers && followers <= max_range) {
-                                            followers_total_tickets = element.bonus_tickets_rules[bonus_key];
-                                            followers_rule_id = element.bonus_tickets_rules_autoid;
-                                        }
-    
-                                        if (element.bonus_ticket_rule.dataValues.bonus_tickets_rule_name == 'History (Not won)' && min_range <= history_not_won && history_not_won <= max_range) {
-                                            not_won_total_tickets = element.bonus_tickets_rules[bonus_key];
-                                            not_won_rule_id = element.bonus_tickets_rules_autoid;
-                                        }
-                                    }
-                                }
-                            }
-                        });
-                        if (riddim_total_tickets) {
-                            bonusTicketDetails.create({
-                                user_id: userId,
-                                bonus_set_id: bonusSetActiveDetails.bonus_set_id,
-                                event_id: req.body["Task id"],
-                                event_type: 'Task',
-                                bonus_ticket_rules_id: riddim_rule_id,
-                                tickets_earned_for: 'Riddim level',
-                                tickets_earned: riddim_total_tickets
-                            }).catch(err => {
-                                logger.log("error", err + ": Error occurred while creating the bonus ticket details for user riddim level:" + userId);
-                            });
-                        }
-                        if (followers_total_tickets) {
-                            bonusTicketDetails.create({
-                                user_id: userId,
-                                bonus_set_id: bonusSetActiveDetails.bonus_set_id,
-                                event_id: req.body["Task id"],
-                                event_type: 'Task',
-                                bonus_ticket_rules_id: followers_rule_id,
-                                tickets_earned_for: 'Followers',
-                                tickets_earned: followers_total_tickets
-                            }).catch(err => {
-                                logger.log("error", err + ": Error occurred while creating the bonus ticket details for user riddim level:" + userId);
-                            });
-                        }
-                        if (not_won_total_tickets) {
-                            bonusTicketDetails.create({
-                                user_id: userId,
-                                bonus_set_id: bonusSetActiveDetails.bonus_set_id,
-                                event_id: req.body["Task id"],
-                                event_type: 'Task',
-                                bonus_ticket_rules_id: not_won_rule_id,
-                                tickets_earned_for: 'History (Not won)',
-                                tickets_earned: not_won_total_tickets
-                            }).catch(err => {
-                                logger.log("error", err + ": Error occurred while creating the bonus ticket details for user riddim level:" + userId);
-                            });
-                        }
-                    }
+                    //                     if (element.bonus_ticket_rule.dataValues.bonus_tickets_rule_name == 'History (Not won)' && min_range <= history_not_won && history_not_won <= max_range) {
+                    //                         not_won_total_tickets = element.bonus_tickets_rules[bonus_key];
+                    //                         not_won_rule_id = element.bonus_tickets_rules_autoid;
+                    //                     }
+                    //                 }
+                    //             }
+                    //         }
+                    //     });
+                    //     if (riddim_total_tickets) {
+                    //         bonusTicketDetails.create({
+                    //             user_id: userId,
+                    //             bonus_set_id: bonusSetActiveDetails.bonus_set_id,
+                    //             event_id: req.body["Task id"],
+                    //             event_type: 'Task',
+                    //             bonus_ticket_rules_id: riddim_rule_id,
+                    //             tickets_earned_for: 'Riddim level',
+                    //             tickets_earned: riddim_total_tickets
+                    //         }).catch(err => {
+                    //             logger.log("error", err + ": Error occurred while creating the bonus ticket details for user riddim level:" + userId);
+                    //         });
+                    //     }
+                    //     if (followers_total_tickets) {
+                    //         bonusTicketDetails.create({
+                    //             user_id: userId,
+                    //             bonus_set_id: bonusSetActiveDetails.bonus_set_id,
+                    //             event_id: req.body["Task id"],
+                    //             event_type: 'Task',
+                    //             bonus_ticket_rules_id: followers_rule_id,
+                    //             tickets_earned_for: 'Followers',
+                    //             tickets_earned: followers_total_tickets
+                    //         }).catch(err => {
+                    //             logger.log("error", err + ": Error occurred while creating the bonus ticket details for user riddim level:" + userId);
+                    //         });
+                    //     }
+                    //     if (not_won_total_tickets) {
+                    //         bonusTicketDetails.create({
+                    //             user_id: userId,
+                    //             bonus_set_id: bonusSetActiveDetails.bonus_set_id,
+                    //             event_id: req.body["Task id"],
+                    //             event_type: 'Task',
+                    //             bonus_ticket_rules_id: not_won_rule_id,
+                    //             tickets_earned_for: 'History (Not won)',
+                    //             tickets_earned: not_won_total_tickets
+                    //         }).catch(err => {
+                    //             logger.log("error", err + ": Error occurred while creating the bonus ticket details for user riddim level:" + userId);
+                    //         });
+                    //     }
+                    // }
                 }
                 bonusTicketDetails.create({
                     user_id: userId,
