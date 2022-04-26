@@ -16,6 +16,10 @@ module.exports = app => {
    *                    properties:
    *                        Bonus Ticket Rule Name:
    *                            type: string
+   *                        Bonus Ticket How It Work:
+   *                            type: string
+   *                        Bonus Ticket Cashout Rules:
+   *                            type: string
    *                        Bonus Ticket Rule Details:
    *                            type: array
    *                            items:
@@ -23,7 +27,7 @@ module.exports = app => {
    *                               properties:
    *                                   Bonus Rule Type:
    *                                       type: integer
-   *                                       example: 1 = Historical Data,2=Follower,3=App Level,4=Social Network
+   *                                       example: 1=Historical Data,2=Follower,3=App Level,4=Social Network
    *                                   Social Networks:
    *                                       type: string   
    *                                   Bonus Rules:
@@ -75,6 +79,10 @@ module.exports = app => {
    *                    properties:
    *                        bonus_ticket_rule_name:
    *                            type: string
+   *                        bonus_ticket_how_it_works:
+   *                            type: string
+   *                        bonus_ticket_cashout_rules:
+   *                            type: string
    *                        bonus_ticket_rule_details:
    *                            type: array
    *                            items:
@@ -84,7 +92,7 @@ module.exports = app => {
    *                                       type: integer
    *                                   bonus_ticket_rule_type:
    *                                       type: integer
-   *                                       example: 1 = Historical Data,2=Follower,3=App Level,4=Social Network
+   *                                       example: 1=Historical Data,2=Follower,3=App Level,4=Social Network
    *                                   bonus_ticket_social_networks:
    *                                       type: string   
    *                                   bonus_rules:
@@ -133,6 +141,11 @@ module.exports = app => {
    * /api/bonus_tickets_rules:
    *   get:
    *     parameters:
+   *         - name: bonusTicketRulesId
+   *           in: query
+   *           required: false
+   *           schema:
+   *              type: integer
    *         - name: pageNumber
    *           in: query
    *           required: false
@@ -143,7 +156,7 @@ module.exports = app => {
    *           required: false
    *           schema:
    *              type: string
-   *              example: bonus_tickets_rules,bonus_tickets_how_it_works,bonus_tickets_cashout_rules # Example of a parameter value
+   *              example: bonus_ticket_rules_id,bonus_ticket_rule_name,bonus_ticket_how_it_works,bonus_ticket_cashout_rules,bonus_ticket_rules_created_at,bonus_ticket_rules_updated_at # Example of a parameter value
    *         - name: sortOrder
    *           in: query
    *           required: false

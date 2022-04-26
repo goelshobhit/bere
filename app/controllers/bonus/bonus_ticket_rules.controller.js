@@ -24,7 +24,9 @@ exports.createBonusTicketRules = async (req, res) => {
     }
 
     const bonusTicketRule = {
-        "bonus_ticket_rule_name": body.hasOwnProperty("Bonus Ticket Rule Name") ? body["Bonus Ticket Rule Name"] : ""
+        "bonus_ticket_rule_name": body.hasOwnProperty("Bonus Ticket Rule Name") ? body["Bonus Ticket Rule Name"] : "",
+        "bonus_ticket_how_it_works": body.hasOwnProperty("Bonus Ticket How It Work") ? body["Bonus Ticket How It Work"] : "",
+        "bonus_ticket_cashout_rules": body.hasOwnProperty("Bonus Ticket Cashout Rules") ? body["Bonus Ticket Cashout Rules"] : ""
     }
     BonusTicketRules.create(bonusTicketRule)
         .then(data => {
@@ -89,7 +91,7 @@ exports.bonusTicketRulesListing = async (req, res) => {
     const skipCount = (pageNumber - 1) * pageSize;
     const sortBy = req.query.sortBy || 'bonus_ticket_rules_id'
     const sortOrder = req.query.sortOrder || 'DESC'
-
+    
     var options = {
         include: [{
             model: BonusRuleDetail
@@ -106,6 +108,9 @@ exports.bonusTicketRulesListing = async (req, res) => {
         options.where = sortValue ? {
             [sortBy]: `${sortValue}`
         } : null;
+    }
+    if (req.query.bonusTicketRulesId) {
+        options['where']['bonus_ticket_rules_id'] = req.query.bonusTicketRulesId;
     }
     var total = await BonusTicketRules.count({
         where: options['where']
@@ -126,10 +131,7 @@ exports.bonusTicketRulesDetails = async (req, res) => {
     const bonusTicketsRulesId = req.params.bonusTicketsRulesId;
     var options = {
         include: [{
-            model: BonusTicketRule,
-            attributes: [
-                ["bonus_tickets_rule_name", "Bonus Ticket Rule Name"]
-            ]
+            model: BonusRuleDetail
         }],
         where: {
             bonus_ticket_rules_id: bonusTicketsRulesId
@@ -276,7 +278,7 @@ exports.updateBonusTicketRules = async (req, res) => {
 exports.deleteBonusTicketRules = async (req, res) => {
     const BonusTicketRulesDetails = await BonusTicketRules.findOne({
         where: {
-            bonus_tickets_rules_id: req.params.bonusTicketsRulesId
+            bonus_ticket_rules_id: req.params.bonusTicketsRulesId
         }
     });
     if (!BonusTicketRulesDetails) {
@@ -287,7 +289,7 @@ exports.deleteBonusTicketRules = async (req, res) => {
     }
     BonusTicketRules.destroy({
         where: {
-            bonus_tickets_rules_id: req.params.bonusTicketsRulesId
+            bonus_ticket_rules_id: req.params.bonusTicketsRulesId
         }
     })
         .then(num => {
