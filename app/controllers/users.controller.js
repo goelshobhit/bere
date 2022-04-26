@@ -1208,11 +1208,6 @@ exports.userlogin = async (req, res) => {
                 return;
             }
             var user_password = Users.encryptPassword(password, resultData.u_salt);
-            res.status(400).send({
-                user_password: user_password,
-                resultData: resultData
-            });
-            return;
             if (user_password != resultData.u_pass) {
                 res.status(400).send({
                     message: "Email or Password is incorrect"
