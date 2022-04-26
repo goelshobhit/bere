@@ -4,6 +4,8 @@ const logger = require("../../middleware/logger");
 const { comments_likes } = require("../../models");
 const common = require("../../common");
 const bonus_item = db.bonus_item;
+const Op = db.Sequelize.Op;
+const RiddimBrandId = process.env.RIDDIM_BRAND_ID || 0;
 
 /**
  * Function to get all bonus Items
@@ -45,14 +47,20 @@ exports.bonusItemlisting = async (req, res) => {
       [sortBy]: `${sortValue}`
     } : null;
   }
-  if (req.query.bonusItemId) {
-    options['where'] = {
-      bonus_item_id: req.query.bonusItemId
-    }
-  }
   if (req.query.brandId) {
-    options['where']['bonus_item_brand_id'] = req.query.brandId;
+    options['where'][Op.or] = [{
+      bonus_item_brand_id: RiddimBrandId
+       },
+       {
+        bonus_item_brand_id: req.query.brandId
+       }
+   ]
   }
+
+  if (req.query.bonusItemId) {
+    options['where']['bonus_item_id'] =  req.query.bonusItemId;
+  }
+  
   var isError = 0;
   var total = await bonus_item.count({
     where: options['where']
@@ -68,6 +76,10 @@ exports.bonusItemlisting = async (req, res) => {
         //var site_url = process.env.SITE_API_URL;
         //var site_new_url = site_url.replace("/api", '');
         for (const bonus_item_key in bonus_item_list) {
+          bonus_item_list[bonus_item_key].dataValues.is_riddim = 0;
+          if (bonus_item_list[bonus_item_key].bonus_item_brand_id == RiddimBrandId) {
+            bonus_item_list[bonus_item_key].dataValues.is_riddim = 1;
+          }
           if (bonus_item_list[bonus_item_key].bonus_item_icons) {
             var bonus_item_icons_arr = bonus_item_list[bonus_item_key].bonus_item_icons.split(",");
             var icon_images = [];
