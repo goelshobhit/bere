@@ -93,7 +93,6 @@ db.user_fan_following = require("./user_fan_following.model")(sequelize, Sequeli
 db.budget_history=require("./budget_history.model")(sequelize,Sequelize);
 db.bonus_ticket = require("./bonus/bonus_ticket.model")(sequelize, Sequelize);
 db.bonus_ticket_details = require("./bonus/bonus_ticket_details.model")(sequelize, Sequelize);
-//db.bonus_ticket_rule = require("./bonus/bonus_ticket_rule.model")(sequelize, Sequelize);
 db.bonus_ticket_rules = require("./bonus/bonus_ticket_rules.model")(sequelize, Sequelize);
 db.bonus_ticket_rule_detail = require("./bonus/bonus_ticket_rule_detail.model")(sequelize, Sequelize);
 db.bonus_task = require("./bonus/bonus_task.model")(sequelize, Sequelize);

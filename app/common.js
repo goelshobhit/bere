@@ -311,7 +311,9 @@ function Common() {
         coins = parseFloat(userAccount.ac_balance) - parseFloat(coins);
         stars = parseFloat(userAccount.ac_balance_stars) - parseFloat(stars);
       }
-
+      /* to resolve nan issue */
+      stars = stars || 0;
+      coins = coins || 0;
       accountBalance.update({ ac_balance: coins, ac_balance_stars: stars }, {
         where: {
           ac_user_id: userId
