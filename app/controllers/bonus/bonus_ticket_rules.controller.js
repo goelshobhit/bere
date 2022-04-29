@@ -28,47 +28,12 @@ exports.createBonusTicketRules = async (req, res) => {
         "bonus_ticket_how_it_works": body.hasOwnProperty("Bonus Ticket How It Work") ? body["Bonus Ticket How It Work"] : "",
         "bonus_ticket_cashout_rules": body.hasOwnProperty("Bonus Ticket Cashout Rules") ? body["Bonus Ticket Cashout Rules"] : ""
     }
-    BonusTicketRules.create(bonusTicketRule)
+    var bonus_ticket_rules_id = '';
+    var errorMessage = '';
+    await BonusTicketRules.create(bonusTicketRule)
         .then(data => {
             audit_log.saveAuditLog(req.header(process.env.UKEY_HEADER || "x-api-key"), 'add', 'Survey', data.bonus_ticket_rules_id, data.dataValues);
-            var bonusTicketRequestRules = body.hasOwnProperty("Bonus Ticket Rule Details") ? body["Bonus Ticket Rule Details"] : '';
-            if (bonusTicketRequestRules.length) {
-                var requestedBonusTicketType = bonusTicketRequestRules.map(function (item) {
-                    return item['Bonus Rule Type']
-                });
-                requestedBonusTicketType = requestedBonusTicketType.filter(function(e){ return e === 0 || e });
-               if (requestedBonusTicketType.length != bonusTicketRequestRules.length) {
-                    return res.status(400).send({
-                        msg: "Bonus Rule Type is required in all rules"
-                    });
-               }
-                for (const bonusTicketRuleKey in bonusTicketRequestRules) {
-                    var socialNetworks = '';
-                    if (bonusTicketRequestRules[bonusTicketRuleKey]['Social Networks'] != undefined) {
-                        socialNetworks = bonusTicketRequestRules[bonusTicketRuleKey]['Social Networks'];
-                    }
-                    BonusRuleDetail.create({
-                        "bonus_ticket_rules_id": data.bonus_ticket_rules_id,
-                        "bonus_ticket_rule_type": bonusTicketRequestRules[bonusTicketRuleKey]['Bonus Rule Type'],
-                        "bonus_ticket_social_networks": socialNetworks,
-                        "bonus_rules": bonusTicketRequestRules[bonusTicketRuleKey]['Bonus Rules']
-                    }).then(bonusRuleData => {
-                        audit_log.saveAuditLog(req.header(process.env.UKEY_HEADER || "x-api-key"), 'add', 'bonus_rules', bonusRuleData.bonus_ticket_rule_detail_id, bonusRuleData.dataValues);
-                    })
-                        .catch(err => {
-                            logger.log("error", "Some error occurred while creating the Bonus Ticket Rules=" + err);
-                            res.status(500).send({
-                                message:
-                                    err.message || "Some error occurred while creating the Bonus Ticket Rules."
-                            });
-                        });
-                }
-            }
-            console.log("out condirtion============");
-            res.status(201).send({
-                msg: "Bonus Ticket Rules Added Successfully",
-                SurveyID: data.sr_id
-            });
+            bonus_ticket_rules_id = data.bonus_ticket_rules_id;
         })
         .catch(err => {
             logger.log("error", "Some error occurred while creating the Bonus Ticket Rules=" + err);
@@ -77,6 +42,47 @@ exports.createBonusTicketRules = async (req, res) => {
                     err.message || "Some error occurred while creating the Bonus Ticket Rules."
             });
         });
+        var bonusTicketRequestRules = body.hasOwnProperty("Bonus Ticket Rule Details") ? body["Bonus Ticket Rule Details"] : '';
+        if (bonusTicketRequestRules.length) {
+            var requestedBonusTicketType = bonusTicketRequestRules.map(function (item) {
+                return item['Bonus Rule Type']
+            });
+            requestedBonusTicketType = requestedBonusTicketType.filter(function(e){ return e === 0 || e });
+            if (requestedBonusTicketType.length != bonusTicketRequestRules.length) {
+                return res.status(400).send({
+                    msg: "Bonus Rule Type is required in all rules"
+                });
+            }
+            for (const bonusTicketRuleKey in bonusTicketRequestRules) {
+                var socialNetworks = '';
+                if (bonusTicketRequestRules[bonusTicketRuleKey]['Social Networks'] != undefined) {
+                    socialNetworks = bonusTicketRequestRules[bonusTicketRuleKey]['Social Networks'];
+                }
+                await BonusRuleDetail.create({
+                    "bonus_ticket_rules_id": bonus_ticket_rules_id,
+                    "bonus_ticket_rule_type": bonusTicketRequestRules[bonusTicketRuleKey]['Bonus Rule Type'],
+                    "bonus_ticket_social_networks": socialNetworks,
+                    "bonus_rules": bonusTicketRequestRules[bonusTicketRuleKey]['Bonus Rules']
+                }).then(bonusRuleData => {
+                    audit_log.saveAuditLog(req.header(process.env.UKEY_HEADER || "x-api-key"), 'add', 'bonus_rules', bonusRuleData.bonus_ticket_rule_detail_id, bonusRuleData.dataValues);
+                })
+                    .catch(err => {
+                        logger.log("error", "Some error occurred while creating the Bonus Ticket Rules=" + err);
+                        errorMessage = err.message || "Some error occurred while give Reward.";
+                    });
+            }
+        }
+        if (errorMessage) {
+            res.status(500).send({
+                msg: errorMessage
+            });
+        } else {
+            res.status(201).send({
+                msg: "Bonus Ticket Rules Added Successfully",
+                bonusTicketRulesId: bonus_ticket_rules_id
+                
+            });
+        }
 };
 
 /**
