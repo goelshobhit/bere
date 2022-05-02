@@ -1016,7 +1016,9 @@ function Common() {
       })
       .then(message =>
         console.log(message.sid)
-      );
+      ).catch(err => {
+        console.log(err)
+     });
 
   };
   Common.prototype.searchObject = function () {
