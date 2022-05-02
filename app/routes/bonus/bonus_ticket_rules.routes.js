@@ -2,6 +2,7 @@ module.exports = app => {
     const BonusTicketRules = require("../../controllers/bonus/bonus_ticket_rules.controller.js");
     var router = require("express").Router();
     const auth = require("../../middleware/auth");
+    const access = require("../../middleware/access");
 
     /**
    * @swagger
@@ -64,7 +65,7 @@ module.exports = app => {
    *                              type: string
    *                              example: Authorisation Required
    */
-  router.post("/bonus_tickets_rules",auth, BonusTicketRules.createBonusTicketRules);
+  router.post("/bonus_tickets_rules",access, BonusTicketRules.createBonusTicketRules);
 
   /**
    * @swagger
@@ -135,7 +136,7 @@ module.exports = app => {
    *                              type: string
    *                              example: Authorisation Required
    */
-   router.put("/bonus_tickets_rules/:bonusTicketsRulesId",auth, BonusTicketRules.updateBonusTicketRules);
+   router.put("/bonus_tickets_rules/:bonusTicketsRulesId",access, BonusTicketRules.updateBonusTicketRules);
   /**
    * @swagger
    * /api/bonus_tickets_rules:
@@ -260,7 +261,7 @@ module.exports = app => {
    *                              type: string
    *                              example: Authorisation Required
    */
-    router.delete("/bonus_tickets_rules/:bonusTicketsRulesId", auth, BonusTicketRules.deleteBonusTicketRules); 
+    router.delete("/bonus_tickets_rules/:bonusTicketsRulesId", access, BonusTicketRules.deleteBonusTicketRules); 
     app.use("/api", router);
 };
   

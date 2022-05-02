@@ -2,6 +2,7 @@ module.exports = app => {
     const tips = require("../controllers/tips.controller.js");
     var router = require("express").Router();
     const auth = require("../middleware/auth");
+    const access = require("../middleware/access");
 
     /**
    * @swagger
@@ -45,7 +46,7 @@ module.exports = app => {
    *                              type: string
    *                              example: Authorisation Required
    */
-    router.post("/tips", auth, tips.addTips);
+    router.post("/tips", access, tips.addTips);
 
    // Retrieve all Tips Listing
     /**
@@ -178,7 +179,7 @@ module.exports = app => {
  *                              type: string
  *                              example: Authorisation Required
  */
- router.put("/tips/:tipId",auth, tips.updateTips);
+ router.put("/tips/:tipId",access, tips.updateTips);
 
  /**
  * @swagger
@@ -209,7 +210,7 @@ module.exports = app => {
  *                              type: string
  *                              example: Authorisation Required
  */
-router.delete("/tips/:tipId", auth, tips.deleteTips);
+router.delete("/tips/:tipId", access, tips.deleteTips);
     
   app.use("/api", router);
 };

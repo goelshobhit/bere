@@ -2,6 +2,7 @@ module.exports = app => {
     const BonusItemSet = require("../../controllers/bonus/bonus_item_set.controller.js");
     var router = require("express").Router();
     const auth = require("../../middleware/auth");
+    const access = require("../../middleware/access");
      /**
      * @swagger
      * /api/bonus_set:
@@ -70,7 +71,7 @@ module.exports = app => {
      *                              type: string
      *                              example: Authorisation Required
      */
-    router.post("/bonus_set", BonusItemSet.createBonusItemSet);
+    router.post("/bonus_set", access, BonusItemSet.createBonusItemSet);
     
    /**
      * @swagger
@@ -140,7 +141,7 @@ module.exports = app => {
      *                              type: string
      *                              example: Authorisation Required
      */
-    router.put("/bonus_set/:bonusSetId",auth,BonusItemSet.updateBonusSet);
+    router.put("/bonus_set/:bonusSetId",access,BonusItemSet.updateBonusSet);
 
     /**
    * @swagger
@@ -171,7 +172,7 @@ module.exports = app => {
    *                              type: string
    *                              example: Authorisation Required
    */
-  router.delete("/bonus_set/:bonusSetId", auth, BonusItemSet.deleteBonusSet); 
+  router.delete("/bonus_set/:bonusSetId", access, BonusItemSet.deleteBonusSet); 
 
     // Retrieve all Bonus sets
     /**

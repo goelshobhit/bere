@@ -2,6 +2,7 @@ module.exports = app => {
     const NotifyCat = require("../controllers/notify_cat.controller.js");
     var router = require("express").Router();
     const auth = require("../middleware/auth");
+    const access = require("../middleware/access");
   /**
    * @swagger
    * /api/notify/categories:
@@ -42,7 +43,7 @@ module.exports = app => {
    *                              type: string
    *                              example: Authorisation Required
    */
-	router.post("/notify/categories", auth, NotifyCat.createNotifyCat);
+	router.post("/notify/categories", access, NotifyCat.createNotifyCat);
   /**
    * @swagger
    * /api/notify/categories/{notifyTrigCatId}:
@@ -89,7 +90,7 @@ module.exports = app => {
    *                              type: string
    *                              example: Authorisation Required
    */
-   router.put("/notify/categories/:notifyTrigCatId", auth, NotifyCat.updateNotifyCat);
+   router.put("/notify/categories/:notifyTrigCatId", access, NotifyCat.updateNotifyCat);
   /**
    * @swagger
    * /api/notify/categories:
@@ -206,7 +207,7 @@ module.exports = app => {
    *                              type: string
    *                              example: Authorisation Required
    */
-   router.delete("/notify/categories/:notifyTrigCatId", auth, NotifyCat.deleteNotifyCat);   
+   router.delete("/notify/categories/:notifyTrigCatId", access, NotifyCat.deleteNotifyCat);   
     app.use("/api", router);
 };
   

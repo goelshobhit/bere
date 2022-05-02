@@ -2,6 +2,7 @@ module.exports = app => {
     const VideoAds = require("../controllers/video_ads.controller.js");
     var router = require("express").Router();
     const auth = require("../middleware/auth");
+    const access = require("../middleware/access");
   /**
    * @swagger
    * /api/video_ads:
@@ -65,7 +66,7 @@ module.exports = app => {
    *                              type: string
    *                              example: Authorisation Required
    */
-	 router.post("/video_ads",auth, VideoAds.createVideoAds);
+	 router.post("/video_ads",access, VideoAds.createVideoAds);
   /**
    * @swagger
    * /api/video_ads/{videoAdsId}:
@@ -133,7 +134,7 @@ module.exports = app => {
    *                              type: string
    *                              example: Authorisation Required
    */
-   router.put("/video_ads/:videoAdsId",auth, VideoAds.updateVideoAds);
+   router.put("/video_ads/:videoAdsId",access, VideoAds.updateVideoAds);
   /**
    * @swagger
    * /api/video_ads:
@@ -290,7 +291,7 @@ module.exports = app => {
    *                              type: string
    *                              example: Authorisation Required
    */
-   router.delete("/video_ads/:videoAdsId", auth, VideoAds.deleteVideoAds);   
+   router.delete("/video_ads/:videoAdsId", access, VideoAds.deleteVideoAds);   
    app.use("/api", router);
 };
   

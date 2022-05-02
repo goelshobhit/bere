@@ -99,15 +99,15 @@ exports.categoryDetails = async(req, res) => {
             category_id: req.params.categoryId
         }
     };
-    const faqDetail = await Category.findOne(options);
-    if(!faqDetail){
+    const catDetail = await Category.findOne(options);
+    if(!catDetail){
         res.status(500).send({
             message: "Category not found"
         });
         return
     }
     res.status(200).send({
-        data: faqDetail
+        data: catDetail
     });
 };
 
@@ -119,7 +119,7 @@ exports.categoryDetails = async(req, res) => {
  */
 exports.updateCategory = async(req, res) => {
     const id = req.params.categoryId;
-    var faqDetails = await Category.findOne({
+    var catDetails = await Category.findOne({
         where: {
             category_id: id
         }
@@ -131,7 +131,7 @@ exports.updateCategory = async(req, res) => {
         }
     }).then(function([ num, [result] ]) {
         if (num == 1) {
-            audit_log.saveAuditLog(req.header(process.env.UKEY_HEADER || "x-api-key"),'update','Category',id,result.dataValues,faqDetails);
+            audit_log.saveAuditLog(req.header(process.env.UKEY_HEADER || "x-api-key"),'update','Category',id,result.dataValues,catDetails);
             res.status(200).send({
                 message: "Category updated successfully."
             });
@@ -155,12 +155,12 @@ exports.updateCategory = async(req, res) => {
  * @return {Promise}
  */
 exports.deleteCategory = async (req, res) => {
-    const faqDetails = await Category.findOne({
+    const catDetails = await Category.findOne({
             where: {
                 category_id: req.params.categoryId
             }
         });
-    if(!faqDetails){
+    if(!catDetails){
         res.status(500).send({
             message: "Could not delete Category with id=" + req.params.categoryId
           });

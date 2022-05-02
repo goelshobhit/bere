@@ -71,9 +71,9 @@ exports.feedbackSettingListing = async (req, res) => {
     var total = await CFSettings.count({
         where: options['where']
     });
-    const faq_list = await CFSettings.findAll(options);
+    const cf_list = await CFSettings.findAll(options);
     res.status(200).send({
-        data: faq_list,
+        data: cf_list,
         totalRecords: total
     });
 }
@@ -86,7 +86,7 @@ exports.feedbackSettingListing = async (req, res) => {
  */
 exports.updateFeedbackSettings = async(req, res) => {
     const id = req.params.cfsId;
-    var faqDetails = await CFSettings.findOne({
+    var catDetails = await CFSettings.findOne({
         where: {
             cfs_id: id
         }
@@ -98,7 +98,7 @@ exports.updateFeedbackSettings = async(req, res) => {
         }
     }).then(function([ num, [result] ]) {
         if (num == 1) {
-            audit_log.saveAuditLog(req.header(process.env.UKEY_HEADER || "x-api-key"),'update','Content Feedback Settings',id,result.dataValues,faqDetails);
+            audit_log.saveAuditLog(req.header(process.env.UKEY_HEADER || "x-api-key"),'update','Content Feedback Settings',id,result.dataValues,catDetails);
             res.status(200).send({
                 message: "Content Feedback Settings updated successfully."
             });
@@ -122,12 +122,12 @@ exports.updateFeedbackSettings = async(req, res) => {
  * @return {Promise}
  */
 exports.deleteFeedbackSettings = async (req, res) => {
-    const faqDetails = await CFSettings.findOne({
+    const feedbackSettingDetails = await CFSettings.findOne({
             where: {
                 cfs_id: req.params.cfsId
             }
         });
-    if(!faqDetails){
+    if(!feedbackSettingDetails){
         res.status(500).send({
             message: "Could not delete Content Feedback Settings with id=" + req.params.cfsId
           });

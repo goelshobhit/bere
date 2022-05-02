@@ -2,6 +2,7 @@ module.exports = app => {
     const levelTask = require("../controllers/level_task.controller.js");
     var router = require("express").Router();
     const auth = require("../middleware/auth");
+    const access = require("../middleware/access");
 
     /**
      * @swagger
@@ -47,7 +48,7 @@ module.exports = app => {
      *                              type: string
      *                              example: Authorisation Required
      */
-    router.post("/task_level/post_level_task", auth, levelTask.postTaskLevel);
+    router.post("/task_level/post_level_task", access, levelTask.postTaskLevel);
 
     // Update task level with id
     /**
@@ -100,7 +101,7 @@ module.exports = app => {
      *                              type: string
      *                              example: Authorisation Required
      */
-    router.put("/task_level/update_level_task/:levelTaskID", auth, levelTask.updateTaskLevel);
+    router.put("/task_level/update_level_task/:levelTaskID", access, levelTask.updateTaskLevel);
 
 
     // Retrieve all task level listing
@@ -191,7 +192,7 @@ module.exports = app => {
    *                              type: string
    *                              example: Authorisation Required
    */
-  router.delete("/task_level/delete_level_task/:levelTaskId", auth, levelTask.deleteLevelTask);
+  router.delete("/task_level/delete_level_task/:levelTaskId", access, levelTask.deleteLevelTask);
 
     /**
      * @swagger

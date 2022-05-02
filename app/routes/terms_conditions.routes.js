@@ -2,6 +2,7 @@ module.exports = app => {
     const terms_conditions = require("../controllers/terms_conditions.controller.js");
     var router = require("express").Router();
     const auth = require("../middleware/auth");
+    const access = require("../middleware/access");
 
     /**
    * @swagger
@@ -39,7 +40,7 @@ module.exports = app => {
    *                              type: string
    *                              example: Authorisation Required
    */
-    router.post("/terms_conditions", auth, terms_conditions.addTermsConditions);
+    router.post("/terms_conditions", access, terms_conditions.addTermsConditions);
 
     
 
@@ -140,7 +141,7 @@ module.exports = app => {
  *                              type: string
  *                              example: Authorisation Required
  */
- router.put("/terms_conditions/:termsId",auth, terms_conditions.updateTermsConditions);
+ router.put("/terms_conditions/:termsId",access, terms_conditions.updateTermsConditions);
 
  /**
  * @swagger
@@ -171,7 +172,7 @@ module.exports = app => {
  *                              type: string
  *                              example: Authorisation Required
  */
-router.delete("/terms_conditions/:termsId", auth, terms_conditions.deleteTerms);
+router.delete("/terms_conditions/:termsId", access, terms_conditions.deleteTerms);
 
 // Retrieve all Terms & Conditions Listing
     /**

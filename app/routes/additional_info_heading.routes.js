@@ -41,7 +41,7 @@ module.exports = app => {
      *                              type: string
      *                              example: Authorisation Required
      */
-    router.post("/addtionalInfoHeading",auth, AdditionalInfoHeading.createNewAdditionalInfoHeading);
+    router.post("/addtionalInfoHeading",access, AdditionalInfoHeading.createNewAdditionalInfoHeading);
 
     // Update a Heading with id
     /**
@@ -88,7 +88,7 @@ module.exports = app => {
      *                              type: string
      *                              example: Authorisation Required
      */
-     router.put("/additionalInfoHeading/:adInfoId", auth, AdditionalInfoHeading.updateAddtionalInfoHeading);
+     router.put("/additionalInfoHeading/:adInfoId", access, AdditionalInfoHeading.updateAddtionalInfoHeading);
     // Retrieve all Headings
     /**
      * @swagger
@@ -203,6 +203,6 @@ module.exports = app => {
  *                              type: string
  *                              example: Authorisation Required
  */
-  router.delete("/addtionalInfoHeading/:id", auth, AdditionalInfoHeading.deleteHeading);
+  router.delete("/addtionalInfoHeading/:id", access, AdditionalInfoHeading.deleteHeading);
     app.use("/api", router);
 };

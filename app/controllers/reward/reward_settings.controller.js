@@ -21,7 +21,7 @@ exports.addRewardSettings = async (req, res) => {
     }
     rewardSettings.create(rewardSettingData)
         .then(data => {
-            audit_log.saveAuditLog(req.header(process.env.UKEY_HEADER || "x-api-key"), 'add', 'FAQ', data.reward_settings_id, data.dataValues);
+            audit_log.saveAuditLog(req.header(process.env.UKEY_HEADER || "x-api-key"), 'add', 'reward_setting', data.reward_settings_id, data.dataValues);
             res.status(201).send({
                 msg: "Reward Setting Added Successfully",
                 rewardSettingsID: data.reward_settings_id

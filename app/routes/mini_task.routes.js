@@ -2,6 +2,7 @@ module.exports = app => {
     const mini_task = require("../controllers/mini_task.controller.js");
     var router = require("express").Router();
     const auth = require("../middleware/auth");
+    const access = require("../middleware/access");
 
     /**
    * @swagger
@@ -65,7 +66,7 @@ module.exports = app => {
    *                              type: string
    *                              example: Authorisation Required
    */
-    router.post("/mini_task", auth, mini_task.addMiniTask);
+    router.post("/mini_task", access, mini_task.addMiniTask);
 
     
 

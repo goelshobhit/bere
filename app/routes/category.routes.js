@@ -2,6 +2,7 @@ module.exports = app => {
     const category = require("../controllers/category.controller.js");
     var router = require("express").Router();
     const auth = require("../middleware/auth");
+    const access = require("../middleware/access");
 
     /**
    * @swagger
@@ -43,7 +44,7 @@ module.exports = app => {
    *                              type: string
    *                              example: Authorisation Required
    */
-    router.post("/category", auth, category.addCategory);
+    router.post("/category", access, category.addCategory);
 
     
 
@@ -178,7 +179,7 @@ module.exports = app => {
  *                              type: string
  *                              example: Authorisation Required
  */
- router.put("/category/:categoryId",auth, category.updateCategory);
+ router.put("/category/:categoryId",access, category.updateCategory);
 
  /**
  * @swagger
@@ -209,7 +210,7 @@ module.exports = app => {
  *                              type: string
  *                              example: Authorisation Required
  */
-router.delete("/category/:categoryId", auth, category.deleteCategory);
+router.delete("/category/:categoryId", access, category.deleteCategory);
     
   app.use("/api", router);
 };

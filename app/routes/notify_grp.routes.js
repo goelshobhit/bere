@@ -2,6 +2,7 @@ module.exports = app => {
     const NotifyGrp = require("../controllers/notify_grp.controller.js");
     var router = require("express").Router();
     const auth = require("../middleware/auth");
+    const access = require("../middleware/access");
   /**
    * @swagger
    * /api/notify/groups:
@@ -48,7 +49,7 @@ module.exports = app => {
    *                              type: string
    *                              example: Authorisation Required
    */
-	router.post("/notify/groups", auth, NotifyGrp.createNotifyGrp);
+	router.post("/notify/groups", access, NotifyGrp.createNotifyGrp);
   /**
    * @swagger
    * /api/notify/groups/{notifyTrigGrpId}:
@@ -101,7 +102,7 @@ module.exports = app => {
    *                              type: string
    *                              example: Authorisation Required
    */
-   router.put("/notify/groups/:notifyTrigGrpId", auth, NotifyGrp.updateNotifyGrp);
+   router.put("/notify/groups/:notifyTrigGrpId", access, NotifyGrp.updateNotifyGrp);
   /**
    * @swagger
    * /api/notify/groups:
@@ -218,7 +219,7 @@ module.exports = app => {
    *                              type: string
    *                              example: Authorisation Required
    */
-   router.delete("/notify/groups/:notifyTrigGrpId", auth, NotifyGrp.deleteNotifyGrp);   
+   router.delete("/notify/groups/:notifyTrigGrpId", access, NotifyGrp.deleteNotifyGrp);   
     app.use("/api", router);
 };
   

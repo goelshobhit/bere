@@ -139,7 +139,7 @@ module.exports = app => {
    *                              type: string
    *                              example: Authorisation Required
    */
-  router.post("/tasks", auth, adminValidate.validate("create_task"), Tasks.createNewTask);
+  router.post("/tasks", access, adminValidate.validate("create_task"), Tasks.createNewTask);
 
   /**
    * @swagger
@@ -284,7 +284,7 @@ module.exports = app => {
    *                              type: string
    *                              example: Authorisation Required
    */
-  router.post("/contest", auth, Tasks.createNewContest);
+  router.post("/contest", access, Tasks.createNewContest);
   /**
    * @swagger
    * /api/tasks:
@@ -661,7 +661,7 @@ module.exports = app => {
   *                              type: string
   *                              example: Authorisation Required
   */
-  router.put("/tasks/:taskID", auth, Tasks.updateTasks);
+  router.put("/tasks/:taskID", access, Tasks.updateTasks);
 	/**
 	* @swagger
 	* /api/media-upload:
@@ -712,7 +712,7 @@ module.exports = app => {
 	*                              type: string
 	*                              example: Authorisation Required
 	*/
-  router.post("/media-upload", Tasks.mediaUpload);
+  router.post("/media-upload", auth, Tasks.mediaUpload);
 
 
 
@@ -857,7 +857,7 @@ module.exports = app => {
   *                              type: string
   *                              example: Authorisation Required
   */
-  router.put("/contest/:taskID", auth, Tasks.updateContest);
+  router.put("/contest/:taskID", access, Tasks.updateContest);
   /**
     * @swagger
     * /api/file/{action_id}/{media_token}/{attachment}:

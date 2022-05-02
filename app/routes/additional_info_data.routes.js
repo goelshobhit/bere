@@ -45,7 +45,7 @@ module.exports = app => {
      *                              type: string
      *                              example: Authorisation Required
      */
-    router.post("/addtionalInfoData", AdditionalInfoData.createNewAdditionalInfoData);
+    router.post("/addtionalInfoData", access, AdditionalInfoData.createNewAdditionalInfoData);
 
     // Update a Data with id
     /**
@@ -96,7 +96,7 @@ module.exports = app => {
      *                              type: string
      *                              example: Authorisation Required
      */
-     router.put("/additionalInfoData/:adInfoDataId", auth, AdditionalInfoData.updateAddtionalInfoData);
+     router.put("/additionalInfoData/:adInfoDataId", access, AdditionalInfoData.updateAddtionalInfoData);
     // Retrieve all Data
     /**
      * @swagger
@@ -212,6 +212,6 @@ module.exports = app => {
  *                              type: string
  *                              example: Authorisation Required
  */
-  router.delete("/additionalInfoData/:id", auth, AdditionalInfoData.deleteData);
+  router.delete("/additionalInfoData/:id", access, AdditionalInfoData.deleteData);
     app.use("/api", router);
 };

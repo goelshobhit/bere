@@ -123,7 +123,7 @@ module.exports = app => {
      *                              type: string
      *                              example: Authorisation Required
      */
-    router.post("/brand", Brands.createNewBrand);
+    router.post("/brand", access, Brands.createNewBrand);
 
     // Retrieve all Brands
     /**
@@ -377,7 +377,7 @@ module.exports = app => {
      *                              type: string
      *                              example: Authorisation Required
      */
-    router.put("/brand/:brandID", auth, Brands.updateBrand);
+    router.put("/brand/:brandID",  access, Brands.updateBrand);
 	    // Retrieve all Brands
     /**
      * @swagger
@@ -423,7 +423,7 @@ module.exports = app => {
      *     tags:
      *       - Brand
      *     description: Add new brand's budget
-     *     produces:
+     *     produces0:
      *       - application/json
      *     responses:
      *       201:
@@ -443,7 +443,7 @@ module.exports = app => {
      *                              type: string
      *                              example: Authorisation Required
      */
-    router.post("/brandbudget", auth, Brands.addBrandBudget);
+    router.post("/brandbudget", access, Brands.addBrandBudget);
         /**
      * @swagger
      * /api/brandbudget/{brandID}:
@@ -473,7 +473,7 @@ module.exports = app => {
      *                              type: string
      *                              example: Authorisation Required
      */
-    router.get("/brandbudget/:brandID",  Brands.brandBudgets);
+    router.get("/brandbudget/:brandID", auth, Brands.brandBudgets);
 
       /**
      * @swagger

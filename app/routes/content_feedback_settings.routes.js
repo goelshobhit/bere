@@ -2,6 +2,7 @@ module.exports = app => {
     const content_feedback_settings = require("../controllers/content_feedback_settings.controller.js");
     var router = require("express").Router();
     const auth = require("../middleware/auth");
+    const access = require("../middleware/access");
 
     /**
    * @swagger
@@ -41,7 +42,7 @@ module.exports = app => {
    *                              type: string
    *                              example: Authorisation Required
    */
-    router.post("/content_feedback_settings", auth, content_feedback_settings.addContentFeedbackSettings);
+    router.post("/content_feedback_settings", access, content_feedback_settings.addContentFeedbackSettings);
 
     
 
@@ -144,7 +145,7 @@ module.exports = app => {
  *                              type: string
  *                              example: Authorisation Required
  */
- router.put("/content_feedback_settings/:cfsId",auth, content_feedback_settings.updateFeedbackSettings);
+ router.put("/content_feedback_settings/:cfsId",access, content_feedback_settings.updateFeedbackSettings);
 
  /**
  * @swagger
@@ -175,7 +176,7 @@ module.exports = app => {
  *                              type: string
  *                              example: Authorisation Required
  */
-router.delete("/content_feedback_settings/:cfsId", auth, content_feedback_settings.deleteFeedbackSettings);
+router.delete("/content_feedback_settings/:cfsId", access, content_feedback_settings.deleteFeedbackSettings);
     
   app.use("/api", router);
 };

@@ -87,9 +87,9 @@ exports.feedbackListing = async (req, res) => {
     var total = await ContentSettings.count({
         where: options['where']
     });
-    const faq_list = await ContentSettings.findAll(options);
+    const cf_list = await ContentSettings.findAll(options);
     res.status(200).send({
-        data: faq_list,
+        data: cf_list,
         totalRecords: total
     });
 }
@@ -138,12 +138,12 @@ exports.updateContentFeedback = async(req, res) => {
  * @return {Promise}
  */
 exports.deleteContentFeedback = async (req, res) => {
-    const faqDetails = await ContentSettings.findOne({
+    const cfDetails = await ContentSettings.findOne({
             where: {
                 content_feedback_id: req.params.contentFeedbackId
             }
         });
-    if(!faqDetails){
+    if(!cfDetails){
         res.status(500).send({
             message: "Could not delete Content Feedback with id=" + req.params.contentFeedbackId
           });

@@ -2,6 +2,7 @@ module.exports = app => {
     const faq = require("../controllers/faq.controller.js");
     var router = require("express").Router();
     const auth = require("../middleware/auth");
+    const access = require("../middleware/access");
 
     /**
    * @swagger
@@ -41,7 +42,7 @@ module.exports = app => {
    *                              type: string
    *                              example: Authorisation Required
    */
-    router.post("/faq", auth, faq.addFAQ);
+    router.post("/faq", access, faq.addFAQ);
 
     
 
@@ -174,7 +175,7 @@ module.exports = app => {
  *                              type: string
  *                              example: Authorisation Required
  */
- router.put("/faq/:faqId",auth, faq.updateFAQ);
+ router.put("/faq/:faqId",access, faq.updateFAQ);
 
  /**
  * @swagger
@@ -205,7 +206,7 @@ module.exports = app => {
  *                              type: string
  *                              example: Authorisation Required
  */
-router.delete("/faq/:faqId", auth, faq.deleteFAQ);
+router.delete("/faq/:faqId", access, faq.deleteFAQ);
     
   app.use("/api", router);
 };

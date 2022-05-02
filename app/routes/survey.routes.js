@@ -3,6 +3,7 @@ module.exports = app => {
 	const Survey = require("../controllers/Survey.controller.js");
 	var router = require("express").Router();
   const auth = require("../middleware/auth");
+  const access = require("../middleware/access");
   const adminValidate = require("../middleware/adminValidate");
 	/**
      * @swagger
@@ -79,7 +80,7 @@ module.exports = app => {
      *                              type: string
      *                              example: Authorisation Required
      */
-    router.post("/survey", auth, adminValidate.validate("create_survey"), Survey.createNewSurvey);
+    router.post("/survey", access, adminValidate.validate("create_survey"), Survey.createNewSurvey);
     // LIST ALL SURVEYS
     /** 
      * @swagger
@@ -246,7 +247,7 @@ module.exports = app => {
      *                                  example: Authorisation Required                      
     */
 
-   router.put("/survey/:surveyID",auth,Survey.updateSurvey)
+   router.put("/survey/:surveyID",access,Survey.updateSurvey)
    /**
      * @swagger
      * /api/survey_questions:
@@ -287,7 +288,7 @@ module.exports = app => {
      *                              type: string
      *                              example: Authorisation Required
      */
-    router.post("/survey_questions", auth, adminValidate.validate("create_survey_question"), Survey.createSurveyQuestions);
+    router.post("/survey_questions", access, adminValidate.validate("create_survey_question"), Survey.createSurveyQuestions);
     // LIST ALL Survey Questions
     /** 
      * @swagger
@@ -371,7 +372,7 @@ module.exports = app => {
    *                              type: string
    *                              example: Authorisation Required
    */
-  router.delete("/survey_questions/:surveyQuestionId", auth, Survey.deleteSurveyQuestion); 
+  router.delete("/survey_questions/:surveyQuestionId", access, Survey.deleteSurveyQuestion); 
 
   /**
      * @swagger
@@ -418,7 +419,7 @@ module.exports = app => {
      *                              type: string
      *                              example: Authorisation Required
      */
-    router.post("/survey_question_answers", auth, adminValidate.validate("create_survey_question_answer"), Survey.createSurveyQuestionAnswer);
+    router.post("/survey_question_answers", access, adminValidate.validate("create_survey_question_answer"), Survey.createSurveyQuestionAnswer);
 
    /**
      * @swagger

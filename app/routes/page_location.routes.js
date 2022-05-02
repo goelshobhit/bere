@@ -2,6 +2,7 @@ module.exports = app => {
     const pageLocation = require("../controllers/page_location.controller.js");
     var router = require("express").Router();
     const auth = require("../middleware/auth");
+    const access = require("../middleware/access");
 
     /**
    * @swagger
@@ -43,7 +44,7 @@ module.exports = app => {
    *                              type: string
    *                              example: Authorisation Required
    */
-    router.post("/page_location", auth, pageLocation.addPageLocation);
+    router.post("/page_location", access, pageLocation.addPageLocation);
 
     
 
@@ -183,7 +184,7 @@ module.exports = app => {
  *                              type: string
  *                              example: Authorisation Required
  */
- router.put("/page_location/:pageId",auth, pageLocation.updatepageLocation);
+ router.put("/page_location/:pageId",access, pageLocation.updatepageLocation);
 
  /**
  * @swagger
@@ -214,7 +215,7 @@ module.exports = app => {
  *                              type: string
  *                              example: Authorisation Required
  */
-router.delete("/page_location/:pageId", auth, pageLocation.deletePageLocation);
+router.delete("/page_location/:pageId", access, pageLocation.deletePageLocation);
     
   app.use("/api", router);
 };

@@ -84,7 +84,7 @@ module.exports = app => {
      *                                  type: string
      *                                  example: Authorisation Required
     */
-    router.post("/campaign",auth,adminValidate.validate("create_camp"),Campaign.createCampaign);
+    router.post("/campaign", access, adminValidate.validate("create_camp"),Campaign.createCampaign);
 
     // LIST ALL CAMPAIGN
     /** 
@@ -158,7 +158,7 @@ module.exports = app => {
      *              description: Unauthorized
      *              content:
      *                  application/json:
-     *                      schema:
+     *      0                schema:
      *                          type: object
      *                          properties:
      *                              message:
@@ -243,6 +243,6 @@ module.exports = app => {
      *                                  example: Authorisation Required                      
     */
 
-    router.put("/campaign/:campaignID",auth,Campaign.updateCampaign)
+    router.put("/campaign/:campaignID",access,Campaign.updateCampaign)
     app.use("/api", router);
 }

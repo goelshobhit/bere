@@ -2,6 +2,7 @@ module.exports = app => {
     const NotifyObject = require("../controllers/notify_object.controller.js");
     var router = require("express").Router();
     const auth = require("../middleware/auth");
+    const access = require("../middleware/access");
   /**
    * @swagger
    * /api/notify/objects:
@@ -42,7 +43,7 @@ module.exports = app => {
    *                              type: string
    *                              example: Authorisation Required
    */
-	router.post("/notify/objects", auth, NotifyObject.createNotifyObject);
+	router.post("/notify/objects", access, NotifyObject.createNotifyObject);
   /**
    * @swagger
    * /api/notify/objects/{notifyObjectId}:
@@ -89,7 +90,7 @@ module.exports = app => {
    *                              type: string
    *                              example: Authorisation Required
    */
-   router.put("/notify/objects/:notifyObjectId", auth, NotifyObject.updateNotifyObject);
+   router.put("/notify/objects/:notifyObjectId", access, NotifyObject.updateNotifyObject);
   /**
    * @swagger
    * /api/notify/objects:
@@ -206,7 +207,7 @@ module.exports = app => {
    *                              type: string
    *                              example: Authorisation Required
    */
-   router.delete("/notify/objects/:notifyObjectId", auth, NotifyObject.deleteNotifyObject);   
+   router.delete("/notify/objects/:notifyObjectId", access, NotifyObject.deleteNotifyObject);   
     app.use("/api", router);
 };
   

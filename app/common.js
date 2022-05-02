@@ -142,7 +142,7 @@ function Common() {
         },
         {
           "Add Search Object": {
-            "/search/object": "POST/api/search"
+            "search/object": "POST/api/search"
           }
         }
       ],
@@ -192,6 +192,11 @@ function Common() {
         {
           "Delete Brand": {
             "brand/delete": "DELETE/api/brand"
+          }
+        },
+        {
+          "Add Brand Budget": {
+            "brandbudget/add": "POST/api/brandbudget"
           }
         },
         {
@@ -252,7 +257,22 @@ function Common() {
           "All Tasks": {
             "task/all": "GET/api/tasks"
           }
+        },
+        {
+          "Add Contest": {
+            "contest/add": "POST/api/contest"
+          }
+        },
+        {
+          "Update Contest": {
+            "contest/update": "PUT/api/contest"
+          }
+        },
+        {
+          "Delete Contest": {
+          "contest/delete": "DELETE/api/contest"
         }
+      }
       ],
       "Admin Rights": [
         {
@@ -265,7 +285,354 @@ function Common() {
             "setting/all": "GET/api/admin_setting"
           }
         }
-      ]
+      ],
+      "Bonus Rights": [
+        {
+          "Add Bonus Set": {
+            "bonus_set/add": "POST/api/bonus_set"
+          }
+        },
+        {
+          "Update Bonus Set": {
+            "bonus_set/update": "PUT/api/bonus_set"
+          }
+        },
+        {
+          "Delete Bonus Set": {
+            "bonus_set/delete": "DELETE/api/bonus_set"
+          }
+        },
+        {
+          "Add Bonus Item": {
+            "bonus_item/add": "POST/api/bonus_item"
+          }
+        },
+        {
+          "Update Bonus Item": {
+            "bonus_item/update": "PUT/api/bonus_item"
+          }
+        },
+        {
+          "Delete Bonus Item": {
+          "bonus_item/delete": "DELETE/api/bonus_item"
+        },
+        },
+        {
+          "Add Bonus Rules": {
+            "bonus_tickets_rules/add": "POST/api/bonus_tickets_rules"
+          }
+        },
+        {
+          "Update Bonus Rules": {
+            "bonus_tickets_rules/update": "PUT/api/bonus_tickets_rules"
+          }
+        },
+        {
+          "Delete Bonus Rules": {
+          "bonus_tickets_rules/delete": "DELETE/api/bonus_tickets_rules"
+          }
+        }
+        
+      ],
+      "Content Report Rights": [
+        {
+          "Add Content Report Category": {
+            "contentreport_category/add": "POST/api/contentreport_category"
+          }
+        },
+        {
+          "Update Content Report Category": {
+            "contentreport_category/update": "PUT/api/contentreport_category"
+          }
+        },
+        {
+          "Delete Content Report Category": {
+            "contentreport_category/delete": "DELETE/api/contentreport_category"
+          }
+        }
+        
+      ],
+      "Additional Info Data Rights": [
+        {
+          "Add Additional Info Data": {
+            "addtionalInfoData/add": "POST/api/addtionalInfoData"
+          }
+        },
+        {
+          "Update Additional Info Data": {
+            "additionalInfoData/update": "PUT/api/additionalInfoData"
+          }
+        },
+        {
+          "Delete Additional Info Data": {
+            "additionalInfoData/delete": "DELETE/api/additionalInfoData"
+          }
+        },
+        {
+          "Add Additional Info Heading": {
+            "addtionalInfoHeading/add": "POST/api/addtionalInfoHeading"
+          }
+        },
+        {
+          "Update Additional Info Heading": {
+            "additionalInfoHeading/update": "PUT/api/additionalInfoHeading"
+          }
+        },
+        {
+          "Delete Additional Info Heading": {
+            "addtionalInfoHeading/delete": "DELETE/api/addtionalInfoHeading"
+          }
+        }
+      ],
+      "Category Rights": [
+        {
+          "Add Category": {
+            "category/add": "POST/api/category"
+          }
+        },
+        {
+          "Update Category": {
+            "category/update": "PUT/api/category"
+          }
+        },
+        {
+          "Delete Category": {
+            "category/delete": "DELETE/api/category"
+          }
+        }
+      ],
+      "Content Feedback Settings Rights": [
+        {
+          "Add Content Feedback Settings": {
+            "content_feedback_settings/add": "POST/api/content_feedback_settings"
+          }
+        },
+        {
+          "Update Content Feedback Settings": {
+            "content_feedback_settings/update": "PUT/api/content_feedback_settings"
+          }
+        },
+        {
+          "Delete Content Feedback Settings": {
+            "content_feedback_settings/delete": "DELETE/api/content_feedback_settings"
+          }
+        },
+        {
+          "Add Content Feedback": {
+            "content_feedback/add": "POST/api/content_feedback"
+          }
+        },
+        {
+          "Update Content Feedback": {
+            "content_feedback/update": "PUT/api/content_feedback"
+          }
+        },
+        {
+          "Delete Content Feedback": {
+            "content_feedback/delete": "DELETE/api/content_feedback"
+          }
+        }
+      ],
+      "FAQ Rights": [
+        {
+          "Add FAQ": {
+            "faq/add": "POST/api/faq"
+          }
+        },
+        {
+          "Update FAQ": {
+            "faq/update": "PUT/api/faq"
+          }
+        },
+        {
+          "Delete FAQ": {
+            "faq/delete": "DELETE/api/faq"
+          }
+        }
+      ],
+      "TIPS Rights": [
+        {
+          "Add Tips": {
+            "tips/add": "POST/api/tips"
+          }
+        },
+        {
+          "Update Tips": {
+            "tips/update": "PUT/api/tips"
+          }
+        },
+        {
+          "Delete Tips": {
+            "tips/delete": "DELETE/api/tips"
+          }
+        }
+      ],
+      "Video Ads Rights": [
+        {
+          "Add Video Ads": {
+            "video_ads/add": "POST/api/video_ads"
+          }
+        },
+        {
+          "Update Video Ads": {
+            "video_ads/update": "PUT/api/video_ads"
+          }
+        },
+        {
+          "Delete Video Ads": {
+            "video_ads/delete": "DELETE/api/video_ads"
+          }
+        }
+      ],
+      "Terms and Conditions Rights": [
+        {
+          "Add Terms and Conditions": {
+            "terms_conditions/add": "POST/api/terms_conditions"
+          }
+        },
+        {
+          "Update Terms and Conditions": {
+            "terms_conditions/update": "PUT/api/terms_conditions"
+          }
+        },
+        {
+          "Delete Terms and Conditions": {
+            "terms_conditions/delete": "DELETE/api/terms_conditions"
+          }
+        }
+      ],
+      "Survey Rights": [
+        {
+          "Add Survey": {
+            "survey/add": "POST/api/survey"
+          }
+        },
+        {
+          "Update Survey": {
+            "survey/update": "PUT/api/survey"
+          }
+        },
+        {
+          "Add Survey Questions": {
+            "survey_questions/add": "POST/api/survey_questions"
+          }
+        },
+        {
+          "Delete Survey Questions": {
+            "survey_questions/delete": "DELETE/api/survey_questions"
+          }
+        },
+        {
+          "Add Survey Question Answers": {
+            "survey_question_answers/add": "POST/api/survey_question_answers"
+          }
+        },
+      ],
+      "Page Location Rights": [
+        {
+          "Add Page Location": {
+            "page_location/add": "POST/api/page_location"
+          }
+        },
+        {
+          "Update Page Location": {
+            "page_location/update": "PUT/api/page_location"
+          }
+        },
+        {
+          "Delete Page Location": {
+            "page_location/delete": "DELETE/api/page_location"
+          }
+        }
+      ],
+      "Notify Triggers Rights": [
+        {
+          "Add Notify Triggers": {
+            "notify/triggers/add": "POST/api/notify/triggers"
+          }
+        },
+        {
+          "Update Notify Triggers": {
+            "notify/triggers/update": "PUT/api/notify/triggers"
+          }
+        },
+        {
+          "Delete Notify Triggers": {
+            "notify/triggers/delete": "DELETE/api/notify/triggers"
+          }
+        }
+      ],
+      "Notify Object Rights": [
+        {
+          "Add Notify Object": {
+            "notify/objects/add": "POST/api/notify/objects"
+          }
+        },
+        {
+          "Update Notify Object": {
+            "notify/objects/update": "PUT/api/notify/objects"
+          }
+        },
+        {
+          "Delete Notify Object": {
+            "notify/objects/delete": "DELETE/api/notify/objects"
+          }
+        },
+        {
+          "Add Notify groups": {
+            "notify/groups/add": "POST/api/notify/groups"
+          }
+        },
+        {
+          "Update Notify groups": {
+            "notify/groups/update": "PUT/api/notify/groups"
+          }
+        },
+        {
+          "Delete Notify groups": {
+            "notify/groups/delete": "DELETE/api/notify/groups"
+          }
+        },
+        {
+          "Add Notify category": {
+            "notify/categories/add": "POST/api/notify/categories"
+          }
+        },
+        {
+          "Update Notify category": {
+            "notify/categories/update": "PUT/api/notify/categories"
+          }
+        },
+        {
+          "Delete Notify category": {
+            "notify/categories/delete": "DELETE/api/notify/categories"
+          }
+        }
+      ],
+      "Mini Task Rights": [
+        {
+          "Add Notify Triggers": {
+            "mini_task/add": "POST/api/mini_task"
+          }
+        }
+      ],
+      "Task Level Rights": [
+        {
+          "Add Task Level": {
+            "task_level/post_level_task/add": "POST/api/task_level/post_level_task"
+          }
+        },
+        {
+          "Update Task Level": {
+            "task_level/update_level_task/update": "POST/api/task_level/update_level_task"
+          }
+        },
+        {
+          "Delete Task Level": {
+            "task_level/delete_level_task/delete": "POST/api/task_level/delete_level_task"
+          }
+        }
+      ],
     };
     return role_actions;
   };

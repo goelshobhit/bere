@@ -2,6 +2,7 @@ module.exports = app => {
   const Contentreport = require("../../controllers/contentReport/content_report_category.controller.js");
   var router = require("express").Router();
   const auth = require("../../middleware/auth");
+  const access = require("../../middleware/access");
   /**
    * @swagger
    * /api/contentreport_category:
@@ -47,7 +48,7 @@ module.exports = app => {
    *                              type: string
    *                              example: Authorisation Required
    */
-  router.post("/contentreport_category", auth, Contentreport.createContentReportCategory);
+  router.post("/contentreport_category", access, Contentreport.createContentReportCategory);
 
   // LIST all Content Report Categories
   /** 
@@ -147,7 +148,7 @@ module.exports = app => {
    *                                  type: string
    *                                  example: Authorisation Required                      
   */
-  router.put("/contentreport_category/:contentReportCatID", auth, Contentreport.updateContentReportCategory);
+  router.put("/contentreport_category/:contentReportCatID", access, Contentreport.updateContentReportCategory);
   /**
  * @swagger
  * /api/contentreport_category/{contentReportCatID}:
@@ -177,6 +178,6 @@ module.exports = app => {
  *                              type: string
  *                              example: Authorisation Required
  */
-  router.delete("/contentreport_category/:contentReportCatID", auth, Contentreport.deleteContentReportCategory);
+  router.delete("/contentreport_category/:contentReportCatID", access, Contentreport.deleteContentReportCategory);
   app.use("/api", router);
 };
