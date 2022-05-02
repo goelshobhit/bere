@@ -225,7 +225,7 @@ exports.createBonusItemSet = async (req, res) => {
     "bonus_set_item_qty": body.hasOwnProperty("Bonus Set Item Qty") ? body["Bonus Set Item Qty"] : 0,
     "bonus_set_icons": body.hasOwnProperty("Bonus Set Icons") ? req.body["Bonus Set Icons"] : "",
     "bonus_set_images": body.hasOwnProperty("Bonus Set Images") ? req.body["Bonus Set Images"] : "",
-    "bonus_set_start_date": body.hasOwnProperty("Bonus Set Start Date") ? req.body["Bonus Set Start Date"] : "",
+    "bonus_set_start_date": body.hasOwnProperty("Bonus Set Start Date") ? req.body["Bonus Set Start Date"] : new Date(),
     "bonus_set_default": body.hasOwnProperty("Bonus Set Default") ? req.body["Bonus Set Default"] : "0",
     "bonus_set_item_timestamp": (body.hasOwnProperty("Bonus Set Item Timestamp") && body["Bonus Set Item Timestamp"]) ? body["Bonus Set Item Timestamp"] : '',
     "bonus_set_status": body.hasOwnProperty("Bonus Set Status") ? body["Bonus Set Status"] : 0,

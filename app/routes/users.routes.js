@@ -329,7 +329,7 @@ module.exports = app => {
    *                        u_prof_img_path:
    *                            type: string
    *                        u_phone:
-   *                            type: integer
+   *                            type: string
    *                        u_status:
    *                            type: string
    *                        u_has_children:

@@ -86,10 +86,10 @@ exports.createNewSurvey = async (req, res) => {
                     })
                         .catch(err => {
                             logger.log("error", "Some error occurred while creating the Survey Question=" + err);
-                            res.status(500).send({
-                                message:
-                                    err.message || "Some error occurred while creating the Survey Question."
-                            });
+                            // res.status(500).send({
+                            //     message:
+                            //         err.message || "Some error occurred while creating the Survey Question."
+                            // });
                         });
                 }
             }
