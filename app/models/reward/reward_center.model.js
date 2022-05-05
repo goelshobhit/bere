@@ -28,7 +28,7 @@ module.exports = (sequelize, Sequelize) => {
             allowNull: false,
         },
         average_token_value: {
-            type: Sequelize.INTEGER
+            type: Sequelize.DECIMAL(10,2)
         }
     }, {
         createdAt: 'reward_center_created_at',
