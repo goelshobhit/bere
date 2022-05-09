@@ -131,7 +131,7 @@ const swaggerOptions = {
 };
 const swaggerDocs = swaggerJsDoc(swaggerOptions);
 // app.use("/", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
-app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
+app.use("/swagger-documentation", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 // simple route
 app.get("/", (req, res) => {
   res.json({ message: "Welcome to Social App api application." });
