@@ -48,6 +48,10 @@ module.exports = (sequelize, Sequelize) => {
         u_phone:{
             type: Sequelize.STRING(15)
         },
+        u_phone_verify_status:{
+            type: Sequelize.BOOLEAN,
+			defaultValue: false
+        },
         u_status:{
             type: Sequelize.INTEGER,
 			default:0

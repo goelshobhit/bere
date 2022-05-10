@@ -237,6 +237,8 @@ module.exports = app => {
    *                schema:
    *                    type: object
    *                    properties:
+   *                        u_email:
+   *                            type: string
    *                        u_login:
    *                            type: string
    *                        u_acct_type:

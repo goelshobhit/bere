@@ -870,9 +870,12 @@ exports.userBrandTaskDetails = async (req, res) => {
 exports.updateUser = async (req, res) => {
     const id = parseInt(req.params.userID);
     let updateData = req.body;
+    let template = {};
+    var already_verified = 0;
     if (req.body["u_email"]) {
+        updateData['u_email'] = req.body["u_email"].toLowerCase();
         const UserDetails = await Users.findOne({
-            attributes: ['u_id'],
+            attributes: ['u_id', 'u_email_verify_status'],
             where: {
                 u_email: req.body["u_email"].toLowerCase()
             }
@@ -883,37 +886,17 @@ exports.updateUser = async (req, res) => {
             });
             return;
         }
-        const template = await mail_templates.findOne({
-            where: {
-                mt_name: 'verify_email'
-            }
-        });
-        Users.update({ u_email_verify_status: false, u_email: req.body["u_email"].toLowerCase() }, {
-            where: {
-                u_id: id
-            }
-        });
-        try {
-            const encryptedID = cryptr.encrypt(id);
-            const vlink = process.env.SITE_API_URL + 'users/verify_email/' + encryptedID;
-            var templateBody = template.mt_body;
-            templateBody = templateBody.replace("[CNAME]", req.body["u_email"].toLowerCase());
-            templateBody = templateBody.replace("[VLINK]", vlink);
-            const message = {
-                from: "Socialbrands1@gmail.com",
-                to: req.body["u_email"].toLowerCase(),
-                subject: template.mt_subject,
-                html: templateBody
-            };
-            mailer.sendMail(message);
-        } catch (error) {
-            console.log(error);
+        if (UserDetails && UserDetails.u_email_verify_status == true) {
+            already_verified = 1;
         }
-        res.status(200).send({
-            u_id: id,
-            message: "Email verification Send to email"
-        });
-        return;
+        if (already_verified == 0) {
+            updateData['u_email_verify_status'] = false;
+            template = await mail_templates.findOne({
+                where: {
+                    mt_name: 'verify_email'
+                }
+            });
+        }
     }
 
     if (req.body['u_active'] !== undefined) {
@@ -956,7 +939,7 @@ exports.updateUser = async (req, res) => {
         });
         if ((UserDetails && UserDetails.u_id !== id) || (Userprofile && Userprofile.u_id !== id)) {
             res.status(200).send({
-                message: "Already Exist"
+                message: "UserName Already Exist"
             });
             return;
         }
@@ -986,6 +969,24 @@ exports.updateUser = async (req, res) => {
         }
     }).then(function ([num, [result]]) {
         if (num == 1) {
+            if (req.body["u_email"] && already_verified == 0 && template.mt_body != undefined) {
+                try {
+                    const encryptedID = cryptr.encrypt(id);
+                    const vlink = process.env.SITE_API_URL + 'users/verify_email/' + encryptedID;
+                    var templateBody = template.mt_body;
+                    templateBody = templateBody.replace("[CNAME]", req.body["u_email"].toLowerCase());
+                    templateBody = templateBody.replace("[VLINK]", vlink);
+                    const message = {
+                        from: "Socialbrands1@gmail.com",
+                        to: req.body["u_email"].toLowerCase(),
+                        subject: template.mt_subject,
+                        html: templateBody
+                    };
+                    mailer.sendMail(message);
+                } catch (error) {
+                    console.log(error);
+                }
+            }
             audit_log.saveAuditLog(req.header(process.env.UKEY_HEADER || "x-api-key"), 'update', 'user_login', id, result.dataValues, UserDetails);
             User_profile.update({ u_display_name: result.dataValues.u_login }, {
                 where: {
@@ -1068,7 +1069,8 @@ exports.updateUserProfile = async (req, res) => {
         var sms = common.sendSMS(req.body["u_phone"], "OTP for Social App is " + otp);
         var data = {
             u_phone: req.body["u_phone"],
-            phone_otp: otp
+            phone_otp: otp,
+            u_phone_verify_status:false
         };
         User_profile.update(data, {
             where: {
@@ -1825,10 +1827,23 @@ exports.verify_otp = async (req, res) => {
         });
         return;
     }
-    res.status(200).send({
-        message: "Otp Verified"
-    });
-    return;
+    if (UserDetails.u_phone_verify_status == true) {
+        res.status(200).send({
+            message: "Already Verified"
+        });
+        return;
+    } else {
+        User_profile.update({u_phone_verify_status:true}, {
+            where: {
+                u_id: user_id
+            }
+        });
+        res.status(200).send({
+            message: "Otp Verified"
+        });
+        return;
+    }
+    
 };
 /**
  * [check follow,unfollow and fan unfane
