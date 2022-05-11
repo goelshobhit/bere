@@ -26,7 +26,7 @@ exports.createRewardCenter = async(req, res) => {
     const data = {
         "reward_center_name": body.hasOwnProperty("Center Name") ? body["Center Name"] : 0,
         "reward_center_image": body.hasOwnProperty("Center Image") ? body["Center Image"] : '',
-        "reward_center_owner_id": body.hasOwnProperty("Owner Id") ? body["Owner Id"] : "",
+        "reward_center_owner_id": body.hasOwnProperty("Owner Id") ? body["Owner Id"] : 0,
         "reward_center_location_id": body.hasOwnProperty("Location Id") ? body["Location Id"] : 0,
         "reward_center_reward_type": body.hasOwnProperty("Reward Type") ? body["Reward Type"] : 0,
         "reward_center_reward_trigger_id": body.hasOwnProperty("Trigger Id") ? body["Trigger Id"] : 0,

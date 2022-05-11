@@ -374,8 +374,8 @@ db.rewards_given.belongsTo(db.reward_center, {foreignKey: 'reward_center_id', ta
 db.reward_center_dist.belongsTo(db.reward_center, {foreignKey: 'reward_center_id', targetKey: 'reward_center_id'});
 db.users.hasMany(db.reward_count, {foreignKey: 'u_id', targetKey: 'reward_count_usr_id'});
 db.reward_count.belongsTo(db.users, {foreignKey: 'reward_count_usr_id', targetKey: 'u_id'});
-db.users.hasMany(db.reward_center, {foreignKey: 'u_id', targetKey: 'reward_center_owner_id'});
-db.reward_center.belongsTo(db.users, {foreignKey: 'reward_center_owner_id', targetKey: 'u_id'});
+//db.users.hasMany(db.reward_center, {foreignKey: 'u_id', targetKey: 'reward_center_owner_id'});
+//db.reward_center.belongsTo(db.users, {foreignKey: 'reward_center_owner_id', targetKey: 'u_id'});
 db.brandscore_engagement_settings.belongsTo(db.brandscore_engagement_type, {foreignKey: 'engagement_id', targetKey: 'engagement_id'});
 db.brandscore_engagement_type.hasMany(db.brandscore_engagement_settings, {foreignKey: 'engagement_id', targetKey: 'engagement_id'});
 db.brandscore_increase.belongsTo(db.brands, {foreignKey: 'brand_id', targetKey: 'cr_co_id'});
