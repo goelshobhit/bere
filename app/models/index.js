@@ -52,6 +52,7 @@ db.Sequelize = Sequelize;
 db.sequelize = sequelize;
 
 //Modesl/Tables
+db.help_support = require("./help_support.model")(sequelize, Sequelize);
 db.brand_user_share = require("./brand_user_share.model")(sequelize, Sequelize);
 db.category = require("./category.model")(sequelize, Sequelize);
 db.content_feedback_settings = require("./content_feedback_settings.model")(sequelize, Sequelize);
