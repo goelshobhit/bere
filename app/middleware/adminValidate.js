@@ -39,8 +39,8 @@ exports.validate = (method) => {
                 //body('Campaign id', 'Invalid Campaign').isNumeric(),
                 body('Task name', 'Invalid Task name').isLength({
                     min: 3
-                }).withMessage('Task Name must be of 3 characters long.')
-                //body('Task type', 'Invalid Task type').isNumeric()
+                }).withMessage('Task Name must be of 3 characters long.'),
+                body('Task type', 'Invalid Task type').isNumeric()
             ]
         }
         case 'create_survey': {

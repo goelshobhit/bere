@@ -30,10 +30,7 @@ module.exports = app => {
    *                            type: integer
    *                        Task type:
    *                            type: integer
-   *                            example: "1: Questions/ instruction,2: Reference Picture,3: Reference video,4: Reference audio"
-   *                        Media type:
-   *                            type: integer
-   *                            example: "1: video contest,2: image contest,3: video,4: image,5: view created with sound we provide,6: versus ( we provide first half of sound/ makes second half of sound with our provided music behind),7: video response ( user gives a video explaining answer to question brand asked),8: caption this ( user captions photo we provide),9: background (NEW-using a background we provide),10: background contest,11: sound"
+   *                            example: "1: video,2: image,3: sound,4: versus ( we provide first half of sound/ makes second half of sound with our provided music behind),5: video response ( user gives a video explaining answer to question brand asked),6: caption this ( user captions photo we provide),7: background (NEW-using a background we provide)"
    *                        Reward Type:
    *                            type: integer
    *                            example: "1: tokens- fixed per entry,2: available presents (token value here),3: available chests (token value here ),4: Contest (tokens to winner only"
@@ -160,10 +157,7 @@ module.exports = app => {
    *                            type: integer
    *                        Task type:
    *                            type: integer
-   *                            example: "1: Questions/ instruction,2: Reference Picture,3: Reference video,4: Reference audio"
-   *                        Media type:
-   *                            type: integer
-   *                            example: "1: video contest,2: image contest,3: video,4: image,5: view created with sound we provide,6: versus ( we provide first half of sound/ makes second half of sound with our provided music behind),7: video response ( user gives a video explaining answer to question brand asked),8: caption this ( user captions photo we provide),9: background (NEW-using a background we provide),10: background contest,11: sound"
+   *                            example: "1: video,2: image,3: sound,4: versus ( we provide first half of sound/ makes second half of sound with our provided music behind),5: video response ( user gives a video explaining answer to question brand asked),6: caption this ( user captions photo we provide),7: background (NEW-using a background we provide)"
    *                        Reward Type:
    *                            type: integer
    *                            example: "1: tokens- fixed per entry,2: available presents (token value here),3: available chests (token value here ),4: Contest (tokens to winner only)"
@@ -551,10 +545,7 @@ module.exports = app => {
   *                            type: integer
   *                        ta_type:
   *                            type: integer
-  *                            example: "1: Questions/ instruction,2: Reference Picture,3: Reference video,4: Reference audio"
-  *                        media_type:
-  *                            type: integer
-  *                            example: "1: video contest,2: image contest,3: video,4: image,5: view created with sound we provide,6: versus ( we provide first half of sound/ makes second half of sound with our provided music behind),7: video response ( user gives a video explaining answer to question brand asked),8: caption this ( user captions photo we provide),9: background (NEW-using a background we provide),10: background contest,11: sound"
+  *                            example: "1: video,2: image,3: sound,4: versus ( we provide first half of sound/ makes second half of sound with our provided music behind),5: video response ( user gives a video explaining answer to question brand asked),6: caption this ( user captions photo we provide),7: background (NEW-using a background we provide)"
   *                        reward_type:
   *                            type: integer
   *                            example: "1: tokens- fixed per entry,2: available presents (token value here),3: available chests (token value here ),4: Contest (tokens to winner only"
@@ -735,10 +726,7 @@ module.exports = app => {
   *                            type: integer
   *                        ct_type:
   *                            type: integer
-  *                            example: "1: Questions/ instruction,2: Reference Picture,3: Reference video,4: Reference audio"
-  *                        media_type:
-  *                            type: integer
-  *                            example: "1: video contest,2: image contest,3: video,4: image,5: view created with sound we provide,6: versus ( we provide first half of sound/ makes second half of sound with our provided music behind),7: video response ( user gives a video explaining answer to question brand asked),8: caption this ( user captions photo we provide),9: background (NEW-using a background we provide),10: background contest,11: sound"
+  *                            example: "1: video,2: image,3: sound,4: versus ( we provide first half of sound/ makes second half of sound with our provided music behind),5: video response ( user gives a video explaining answer to question brand asked),6: caption this ( user captions photo we provide),7: background (NEW-using a background we provide)"
   *                        reward_type:
   *                            type: integer
   *                            example: "1: tokens- fixed per entry,2: available presents (token value here),3: available chests (token value here ),4: Contest (tokens to winner only"

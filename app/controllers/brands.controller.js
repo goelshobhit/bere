@@ -133,7 +133,7 @@ exports.listing = async(req, res) => {
 			{
                 model: brands_budget,
 				attributes:
-                    ["cr_bu_amount", "cr_bu_note","cr_bu_created_at"]
+                    ["cr_bu_amount", "cr_bu_note","cr_bu_created_at", "token_value_in_usd", "cr_bu_tokens", "cr_bu_updated_at"]
             }
         ],
         limit: pageSize,
@@ -220,7 +220,7 @@ exports.brandDetail = async(req, res) => {
 			{
                 model: brands_budget,
 				attributes:
-                    ["cr_bu_amount", "cr_bu_note","cr_bu_created_at"]
+                    ["cr_bu_amount", "cr_bu_note","cr_bu_created_at", "token_value_in_usd", "cr_bu_tokens", "cr_bu_updated_at"]
             }
         ],
         where: {
@@ -366,7 +366,7 @@ exports.Brandslisting = async(req, res) => {
 			{
                 model: brands_budget,
 				attributes:
-                    ["cr_bu_amount", "cr_bu_note","cr_bu_created_at"]
+                    ["cr_bu_amount", "cr_bu_note","cr_bu_created_at", "token_value_in_usd", "cr_bu_tokens", "cr_bu_updated_at"]
             }
         ],
 		attributes:["cr_co_id","cr_co_name"],
@@ -417,7 +417,9 @@ exports.addBrandBudget = async(req, res) => {
     const data = {
         "cr_co_id": body.hasOwnProperty("Brand id") ? req.body["Brand id"] : "",
         "cr_bu_amount": body.hasOwnProperty("Budget amount") ? req.body["Budget amount"] : "",
-        "cr_bu_note": body.hasOwnProperty("Note") ? req.body["Note"] : ""
+        "cr_bu_note": body.hasOwnProperty("Note") ? req.body["Note"] : "",
+        "token_value_in_usd": body.hasOwnProperty("Token Value In Usd") ? req.body["Token Value In Usd"] : 0,
+        "cr_bu_tokens": body.hasOwnProperty("Tokens") ? req.body["Tokens"] : 0
     }
     brands_budget.create(data)
     .then(data => {

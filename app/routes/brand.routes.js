@@ -418,6 +418,10 @@ module.exports = app => {
      *                            type: integer
      *                        Budget amount:
      *                            type: string
+     *                        Token Value In Usd:
+     *                            type: Integer
+     *                        Tokens:
+     *                            type: Integer
      *                        Note:
      *                            type: string
      *     tags:
