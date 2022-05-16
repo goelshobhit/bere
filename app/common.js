@@ -727,12 +727,15 @@ function Common() {
             ta_task_id: id
           }
         }).then(function (result) {
+          // for task
+          result.dataValues.ta_type = "2";
           var add_data = {
             "tj_type": type,
             "tj_task_id": id,
             "tj_data": result,
             "tj_status": result.dataValues.ta_status
           };
+          
           tasks_json.create(add_data);
         });
       } else {
@@ -767,6 +770,7 @@ function Common() {
             ta_task_id: id
           }
         }).then(function (result) {
+          result.dataValues.ta_type = "2";
           var update_data = {
             "tj_data": result,
             "tj_status": result.dataValues.ta_status
@@ -814,6 +818,7 @@ function Common() {
             ct_id: id
           }
         }).then(function (result) {
+          result.dataValues.ta_type = "2";
           var add_data = {
             "tj_type": type,
             "tj_task_id": id,
@@ -854,6 +859,7 @@ function Common() {
             ct_id: id
           }
         }).then(function (result) {
+          result.dataValues.ta_type = "2";
           var update_data = {
             "tj_data": result,
             "tj_status": result.dataValues.ta_status
