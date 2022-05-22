@@ -203,6 +203,37 @@ module.exports = app => {
      *                              example: Authorisation Required
      */
     router.get("/brand/:brandID", auth, Brands.brandDetail);
+
+    /**
+     * @swagger
+     * /api/brand_user_listing/{brandID}:
+     *   get:
+     *     parameters:
+     *         - name: brandID
+     *           in: path
+     *           required: true
+     *           schema:
+     *              type: string
+     *     tags:
+     *       - Brand
+     *     description: Retrieve User Listing For Given brandID
+     *     produces:
+     *       - application/json
+     *     responses:
+     *       200:
+     *         description: User Listing for Brands
+     *       401:
+     *          description: Unauthorized
+     *          content:
+     *              application/json:
+     *                  schema:
+     *                      type: object
+     *                      properties:
+     *                          message:
+     *                              type: string
+     *                              example: Authorisation Required
+     */
+    router.get("/brand_user_listing/:brandID", auth, Brands.brandUsersListing);
 	    /**
      * @swagger
      * /api/brand_tasklist/{brandID}:

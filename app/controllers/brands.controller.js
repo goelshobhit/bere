@@ -171,6 +171,343 @@ exports.listing = async(req, res) => {
 }
 
 /**
+ * Function to get all brands
+ * @param  {object}  req expressJs request object
+ * @param  {object}  res expressJs response object
+ * @return {Promise}
+ */
+exports.brandUsersListing = async(req, res) => {
+    const pageSize = parseInt(req.query.pageSize || 10);
+    const pageNumber = parseInt(req.query.pageNumber || 1);
+    const skipCount = (pageNumber - 1) * pageSize;
+    //const userID = req.params.userID;
+    const Uid = req.header(process.env.UKEY_HEADER || "x-api-key");
+    options = {
+        limit: pageSize,
+        offset: skipCount,
+        include: [
+        {
+            required: true,
+            model: db.user_content_post,
+            attributes: ["ucpl_content_data", ['ucpl_id', 'post_id'], 'ta_task_id', 'ucpl_content_type', 'upcl_brand_details', 'ucpl_created_at'],
+           
+            where: {
+                ucpl_status: 1,
+                upcl_brand_details:{
+                    id: req.params.brandID
+                    }
+            },
+            include: [
+                {
+                    model: db.post_comment,
+                    required: false
+                    // where: {
+                    //     pc_commenter_uid: {
+                    //         [Op.not]: userID
+                    //     }
+                    // }
+                }
+            ],
+            order: [
+                ['ucpl_id', "DESC"]
+            ],
+            group: ['ucpl_id']
+        }
+        ],
+        attributes: ["u_id", "u_display_name"
+        ],
+        where: {
+           // u_id: Uid,
+            //is_user_hidden: 0
+        },
+        group: ['u_display_name', "u_id"]
+    };
+    const userList = await db.user_profile.findAll(options);
+    var userIds = [];
+    var brandContent = {};
+        var brandTaskIds = {};
+        var brandContestIds = {};
+        var brandCommentData = {};
+    if (userList.length) {
+        userList.forEach(element => {
+            userIds.push(element.u_id);
+
+        let brandData = [];
+        var userContentPosts = element.user_content_posts;
+        
+        var taskUserId = element.u_id;
+        if (userContentPosts.length) {
+            userContentPosts.forEach(element => {
+                if (!brandTaskIds[taskUserId]) {
+                    brandTaskIds[taskUserId] = [];
+                }
+                if (!brandContestIds[taskUserId]) {
+                    brandContestIds[taskUserId] = [];
+                }
+                if (element.ucpl_content_type == '1') {
+                    brandTaskIds[taskUserId].push(element.ta_task_id);
+                } else if (element.ucpl_content_type == 2) {
+                    brandContestIds[taskUserId].push(element.ta_task_id);
+                }
+                if (element.upcl_brand_details) {
+                    brandData[taskUserId] = element.upcl_brand_details.name;
+                }
+                if (!brandContent[taskUserId]) {
+                    brandContent[taskUserId] = [];
+                }
+                brandContent[taskUserId].push(element);
+                if (!brandCommentData[taskUserId]) {
+                    brandCommentData[taskUserId] = [];
+                }
+                if (element.post_comments.length) {
+                    brandCommentData[taskUserId].push(element.post_comments);
+                }
+            });
+        }
+        
+
+        });
+    }
+    var videoOptions = {
+        include: [
+            {
+                model: db.video_ads,
+                where: {
+                    cr_co_id: req.params.brandID
+                }
+            }
+            
+        ],
+        where: {
+            u_id: userIds
+        }
+    };
+    var videoAddCount = {};
+    const video_ads_listing = await db.video_ads_submit.findAll(videoOptions);
+    if (video_ads_listing.length) {
+
+        for (const video_ad_key in video_ads_listing) {
+            var user_id = video_ads_listing[video_ad_key].u_id;
+            var video_ads_id = video_ads_listing[video_ad_key].video_ads_id;
+            if (!videoAddCount[user_id]) {
+                videoAddCount[user_id] = [];
+            }
+            videoAddCount[user_id].push(video_ads_id);
+        }
+    }
+
+    var reward_given_options = {
+        include: [
+            {
+                model: db.reward_center
+            }
+        ],
+        where: {
+            rewards_award_user_id: userIds,
+            rewards_brand_id: req.params.brandID
+        }
+    };
+    const reward_given_listing = await db.rewards_given.findAll(reward_given_options);
+
+    var rewardBrandTokens = {};
+    var rewardBrandStars = {};
+    if (reward_given_listing.length) {
+        for (const reward_given_key in reward_given_listing) {
+            var reward_listing = reward_given_listing[reward_given_key];
+            if (!rewardBrandTokens[reward_listing.rewards_award_user_id]) {
+                rewardBrandTokens[reward_listing.rewards_award_user_id] = [];
+            }
+            if (!rewardBrandStars[reward_listing.rewards_award_user_id]) {
+                rewardBrandStars[reward_listing.rewards_award_user_id] = [];
+            }
+            rewardBrandTokens[reward_listing.rewards_award_user_id].push(reward_listing.rewards_award_token);
+            rewardBrandStars[reward_listing.rewards_award_user_id].push(reward_listing.rewards_award_stars);
+        }
+
+
+    }
+
+    var survey_options = {
+        include: [
+            {
+                model: db.survey,
+                attributes: ['sr_id', 'sr_brand_id'],
+                where: {
+                    sr_brand_id: req.params.brandID
+                }
+            }
+        ],
+        attributes: ['sr_id', 'sr_completed', 'sr_uid'],
+        where: {
+            sr_uid: userIds
+        }
+    };
+
+    var surveyCount = {};
+    const survey_listing = await db.survey_user_complete.findAll(survey_options);
+    if (survey_listing.length) {
+
+        for (const survey_listing_key in survey_listing) {
+            var user_id = survey_listing[survey_listing_key].sr_uid;
+            var sr_id = survey_listing[survey_listing_key].sr_id;
+            if (!surveyCount[user_id]) {
+                surveyCount[user_id] = [];
+            }
+            surveyCount[user_id].push(sr_id);
+        }
+    }
+
+    var bonus_reward_options = {
+        include: [
+            {
+                model: db.bonus_item,
+                attributes: ['bonus_item_brand_id'],
+                where: {
+                    bonus_item_brand_id: req.params.brandID
+                }
+            }
+        ],
+        attributes: ['bonus_rewards_usrid', 'bonus_rewards_id'],
+        where: {
+            bonus_rewards_usrid: userIds
+        }
+    };
+    const bonus_rewards_listing = await db.bonus_rewards.findAll(bonus_reward_options);
+    var bonusRewardIds = {};
+    if (bonus_rewards_listing.length) {
+        bonus_rewards_listing.forEach(element => {
+            if (!bonusRewardIds[element.bonus_rewards_usrid]) {
+                bonusRewardIds[element.bonus_rewards_usrid] = [];
+            }
+            bonusRewardIds[element.bonus_rewards_usrid].push(element);
+
+        });
+    }
+
+    var level_options = {
+        include: [
+            {
+                model: db.level_task,
+                where: {
+                    brand_id: req.params.brandID
+                }
+            }
+            
+        ],
+        where: {
+            task_user_id: userIds
+        }
+    };
+    const user_level_listing = await db.user_level_task_action.findAll(level_options);
+    var taskLevelBrandTwoCount = {};
+    var taskLevelBrandThreeCount = {};
+    var tasklevelBrandTwoDecline = {};
+    var tasklevelBrandThreeDecline = {};
+    var tasklevelBrandTwoComplete = {};
+    var tasklevelBrandThreeComplete = {};
+    var tasklevelBrandTwoInComplete = {};
+    var tasklevelBrandThreeInComplete = {};
+    if (user_level_listing.length) {
+        for (const user_level_key in user_level_listing) {
+            var user_id = user_level_listing[user_level_key].task_user_id;
+            var task_id = user_level_listing[user_level_key].task_id;
+            if (user_level_listing[user_level_key].level_task.task_level == 2) {
+                if (!taskLevelBrandTwoCount[user_id]) {
+                    taskLevelBrandTwoCount[user_id] = [];
+                }
+                taskLevelBrandTwoCount[user_id].push(task_id);
+                if (user_level_listing[user_level_key].user_cta_action == 0) { // decline
+                    if (!tasklevelBrandTwoDecline[user_id]) {
+                        tasklevelBrandTwoDecline[user_id] = [];
+                    }
+                    tasklevelBrandTwoDecline[user_id].push(task_id);
+                } else if (user_level_listing[user_level_key].user_cta_action == 1) { // accept
+                    if (!tasklevelBrandTwoComplete[user_id]) {
+                        tasklevelBrandTwoComplete[user_id] = [];
+                    }
+                    tasklevelBrandTwoComplete[user_id].push(task_id);
+                }
+                if (user_level_listing[user_level_key].user_cta_action == 1 && user_level_listing[user_level_key].task_status == 0) {
+                    if (!tasklevelBrandTwoInComplete[user_id]) {
+                        tasklevelBrandTwoInComplete[user_id] = [];
+                    }
+                    tasklevelBrandTwoInComplete[user_id].push(task_id);
+                }
+            } else if (user_level_listing[user_level_key].level_task.task_level == 3) {
+                if (!taskLevelBrandThreeCount[user_id]) {
+                    taskLevelBrandThreeCount[user_id] = [];
+                }
+                taskLevelBrandThreeCount[user_id].push(task_id);
+
+                if (user_level_listing[user_level_key].user_cta_action == 0) {
+                    if (!tasklevelBrandThreeDecline[user_id]) {
+                        tasklevelBrandThreeDecline[user_id] = [];
+                    }
+                    tasklevelBrandThreeDecline[user_id].push(task_id);
+                } else if (user_level_listing[user_level_key].user_cta_action == 1) { // accept
+                    if (!tasklevelBrandThreeComplete[user_id]) {
+                        tasklevelBrandThreeComplete[user_id] = [];
+                    }
+                    tasklevelBrandThreeComplete[user_id].push(task_id);
+                }
+                if (user_level_listing[user_level_key].user_cta_action == 1 && user_level_listing[user_level_key].task_status == 0) {
+                    if (!tasklevelBrandThreeInComplete[user_id]) {
+                        tasklevelBrandThreeInComplete[user_id] = [];
+                    }
+                    tasklevelBrandThreeInComplete[user_id].push(task_id);
+                }
+            }
+        }
+    }
+    var userId = 0;
+    if (userList.length) {
+        for (const userListKey in userList) {
+            var userId = userList[userListKey].u_id;
+            userList[userListKey].dataValues.user_engagment_rate = brandCommentData[userId][0] ? brandCommentData[userId][0].length : 0;
+            userList[userListKey].dataValues.bonuses_won = bonusRewardIds[userId] ? bonusRewardIds[userId].length : 0;
+            userList[userListKey].dataValues.survey_questions_tasks = (surveyCount && surveyCount[userId]) ? surveyCount[userId].length : 0;
+            userList[userListKey].dataValues.content_task_entered = (brandContent && brandContent[userId]) ? brandContent[userId].length : 0;
+            userList[userListKey].dataValues.task_entered = 0;
+            if (brandTaskIds[userId].length) {
+                userList[userListKey].dataValues.task_entered = brandTaskIds[userId].length;
+            }
+            userList[userListKey].dataValues.contest_task_entered = 0;
+            if (brandContestIds[userId].length) {
+                //var brandContestUniqueIds = brandContestIds[brand_id].filter((v, i, a) => a.indexOf(v) === i);
+                userList[userListKey].dataValues.contest_task_entered = brandContestIds[userId].length;
+            }
+            userList[userListKey].dataValues.tokens_earned = rewardBrandTokens[userId] ? rewardBrandTokens[userId].reduce((a, b) => a + b, 0) : 0;
+            userList[userListKey].dataValues.stars_earned = rewardBrandStars[userId] ? rewardBrandStars[userId].reduce((a, b) => a + b, 0) : 0;
+            userList[userListKey].dataValues.ads_watched = (videoAddCount && videoAddCount[userId]) ? videoAddCount[userId].length : 0;
+            userList[userListKey].dataValues.offers_sent_tier_2 = (taskLevelBrandTwoCount && taskLevelBrandTwoCount[userId]) ? taskLevelBrandTwoCount[userId].length : 0;
+            userList[userListKey].dataValues.completed_tier_2 = (tasklevelBrandTwoComplete && tasklevelBrandTwoComplete[userId]) ? tasklevelBrandTwoComplete[userId].length : 0;
+            userList[userListKey].dataValues.accepted_not_completed_tier_2 = (tasklevelBrandTwoInComplete && tasklevelBrandTwoInComplete[userId]) ? tasklevelBrandTwoInComplete[userId].length : 0;
+            userList[userListKey].dataValues.not_accepted_tier_2_declined = tasklevelBrandTwoDecline[userId] ? tasklevelBrandTwoDecline[userId].length : 0;
+            userList[userListKey].dataValues.completed_tier_3 = tasklevelBrandThreeComplete[userId] ? tasklevelBrandThreeComplete[userId].length : 0;
+            userList[userListKey].dataValues.offers_sent_tier_3 = taskLevelBrandThreeCount[userId] ? taskLevelBrandThreeCount[userId].length : 0;
+            userList[userListKey].dataValues.accepted_not_completed_tier_3 = tasklevelBrandThreeInComplete[userId] ? tasklevelBrandThreeInComplete[userId].length : 0;
+            userList[userListKey].dataValues.not_accepted_tier_3_declined = tasklevelBrandThreeDecline[userId] ? tasklevelBrandThreeDecline[userId].length : 0;
+        }
+    }
+    var totalOptions = {
+        distinct: true,
+        col: 'ucpl_u_id',
+        where: {
+            ucpl_status: 1,
+            upcl_brand_details:{
+                id: req.params.brandID
+                }
+        }
+    };
+    var total = await db.user_content_post.count(totalOptions);
+    res.status(200).send({
+        data: userList,
+        totalRecords: total
+    });
+    return
+}
+
+/**
  * Function to get brand details
  * @param  {object}  req expressJs request object
  * @param  {object}  res expressJs response object
