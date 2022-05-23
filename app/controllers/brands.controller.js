@@ -8,6 +8,7 @@ const Op = db.Sequelize.Op;
 const common = require("../common");
 const taskJson = db.tasks_json
 const Task = db.tasks
+const sequelize= require('sequelize');
 /**
  * Function to add new brand
  * @param  {object}  req expressJs request object
@@ -571,6 +572,127 @@ exports.brandDetail = async(req, res) => {
         });
         return
     }
+    var reward_given_options = {
+        where: {
+            rewards_brand_id: req.params.brandID
+        },
+        attributes:[
+        [sequelize.fn('sum', sequelize.col('rewards_award_stars')), 'rewards_award_stars'],
+        [sequelize.fn('sum', sequelize.col('rewards_award_token')), 'rewards_award_token']
+    ],
+    };
+    const reward_given_listing = await db.rewards_given.findOne(reward_given_options);
+    brand.dataValues.total_stars_given = 0;
+    brand.dataValues.total_token_given = 0;
+    if (reward_given_listing) {
+        brand.dataValues.total_stars_given = reward_given_listing.rewards_award_stars || 0
+        brand.dataValues.total_token_given = reward_given_listing.rewards_award_token || 0;
+    }
+
+    var user_content_options = {
+        where: {
+            ucpl_status: 1,
+            upcl_brand_details:{
+                id: req.params.brandID
+                }
+        },
+        attributes:[
+        'ta_task_id'
+    ],
+    };
+    const user_content_listing = await db.user_content_post.findAll(user_content_options);
+
+    var task_options = {
+        where: {
+            tj_data:{
+                brand : {
+                    brand_id: req.params.brandID
+                }
+            }
+        },
+        attributes:[
+        'tj_data'
+    ],
+    };
+    const task_listing = await db.tasks_json.findAll(task_options);
+
+    var videoOptions = {
+        where: {
+            cr_co_id: req.params.brandID
+        },
+        attributes:[
+            'cr_co_id', 'video_ads_name'
+        ]
+    };
+    const video_ads_listing = await db.video_ads.findAll(videoOptions);
+
+    var level_options = {
+        include: [
+            {
+                model: db.level_task,
+                where: {
+                    brand_id: req.params.brandID
+                }
+            }
+        ],
+        attributes:[
+            'user_cta_action', 'task_user_id'
+        ]
+    };
+    const user_level_listing = await db.user_level_task_action.findAll(level_options);
+    var levelOneUsers = [];
+    var levelTwoUsers = [];
+    var levelThreeUsers = [];
+    if (user_level_listing.length) {
+        for (const user_level_key in user_level_listing) {
+            if (user_level_listing[user_level_key].level_task.task_level == 1) {
+                levelOneUsers.push(user_level_listing[user_level_key].task_user_id);
+            } else if (user_level_listing[user_level_key].level_task.task_level == 2) {
+                levelTwoUsers.push(user_level_listing[user_level_key].task_user_id);
+            } else if (user_level_listing[user_level_key].level_task.task_level == 3) {
+                levelThreeUsers.push(user_level_listing[user_level_key].task_user_id);
+            }
+        }
+    }
+
+    var userContentEntries = 0;
+    var contestTask = [];
+    var contentTask = [];
+    var task = [];
+    var surveyTask = [];
+    var contestTask = [];
+    var videoAdsTask = 0;
+    if (task_listing) {
+        for (const task_list_key in task_listing) {
+            var tj_data = task_listing[task_list_key].tj_data;
+            if (tj_data.ta_type == 1) {
+                contestTask.push(tj_data.ta_task_id);
+                contentTask.push(tj_data.ta_task_id);
+            } else if (tj_data.ta_type == 2) {
+                task.push(tj_data.ta_task_id);
+                contentTask.push(tj_data.ta_task_id);
+            } else if (tj_data.ta_type == 5) {
+                surveyTask.push(tj_data.ta_task_id);
+            }
+        }
+        
+    }
+    if (video_ads_listing) {
+        videoAdsTask = video_ads_listing.length;
+    }
+    if (user_content_listing) {
+        userContentEntries = user_content_listing.length;
+    }
+    brand.dataValues.video_ads_tasks = videoAdsTask;
+    brand.dataValues.contest_tasks = contestTask.length;
+    brand.dataValues.tasks = task.length;
+    brand.dataValues.survey_task = surveyTask.length;
+    brand.dataValues.content_tasks = contentTask.length;
+    brand.dataValues.level_one_users = levelOneUsers.length;
+    brand.dataValues.level_two_users = levelTwoUsers.length;
+    brand.dataValues.level_three_users = levelThreeUsers.length;
+    brand.dataValues.user_content_entries = userContentEntries;
+
     res.status(200).send({
         data: brand,
 		media_token: common.imageToken(brandID)

@@ -790,6 +790,10 @@ function Common() {
         Contest.findOne({
           include: [
             {
+              model: db.brands,
+              attributes: [["cr_co_id", 'brand_id'], ["cr_co_name", 'brand_name'], ["cr_co_logo_path", 'brand_logo']],
+            },
+            {
               model: db.campaigns,
               attributes: [["cp_campaign_name", "campaign_name"]],
               include: [{
@@ -818,7 +822,7 @@ function Common() {
             ct_id: id
           }
         }).then(function (result) {
-          result.dataValues.ta_type = "2";
+          result.dataValues.ta_type = "1";
           var add_data = {
             "tj_type": type,
             "tj_task_id": id,
@@ -831,6 +835,10 @@ function Common() {
         Contest.findOne({
           include: [
             {
+              model: db.brands,
+              attributes: [["cr_co_id", 'brand_id'], ["cr_co_name", 'brand_name'], ["cr_co_logo_path", 'brand_logo']],
+            },
+            {
               model: db.campaigns,
               attributes: [["cp_campaign_name", "campaign_name"]],
               include: [{
@@ -859,7 +867,7 @@ function Common() {
             ct_id: id
           }
         }).then(function (result) {
-          result.dataValues.ta_type = "2";
+          result.dataValues.ta_type = "1";
           var update_data = {
             "tj_data": result,
             "tj_status": result.dataValues.ta_status
@@ -891,7 +899,7 @@ function Common() {
         }).then(function (result) {
           result.dataValues.campaign = {};
           result.dataValues.campaign.brand = result.dataValues.brand;
-          delete result.dataValues.brand;
+          // delete result.dataValues.brand;
           result.dataValues.surveyId = result.dataValues.sr_id;
           result.dataValues.ta_name = result.dataValues.sr_title;
           result.dataValues.ta_type = "5";
@@ -919,7 +927,7 @@ function Common() {
         }).then(function (result) {
           result.dataValues.campaign = {};
           result.dataValues.campaign.brand = result.dataValues.brand;
-          delete result.dataValues.brand;
+          //delete result.dataValues.brand;
           result.dataValues.surveyId = result.dataValues.sr_id;
           result.dataValues.ta_type = "5";
           result.dataValues.ta_name = result.dataValues.sr_title;
