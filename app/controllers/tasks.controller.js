@@ -396,7 +396,7 @@ exports.taskDetail = async (req, res) => {
         include: [
             {
                 model: db.brands,
-                attributes: [["cr_co_id", 'brand_id'], ["cr_co_name", 'brand_name'], ["cr_co_logo_path", 'brand_logo']]
+                attributes: [["cr_co_id", 'brand_id'], ["cr_co_name", 'brand_name'], ["cr_co_logo_path", 'brand_logo'], 'cr_co_total_token', 'cr_co_token_spent']
             },
             {
                 model: db.campaigns,
