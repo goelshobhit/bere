@@ -298,11 +298,6 @@ exports.brandUsersListing = async(req, res) => {
     }
 
     var reward_given_options = {
-        include: [
-            {
-                model: db.reward_center
-            }
-        ],
         where: {
             rewards_award_user_id: userIds,
             rewards_brand_id: req.params.brandID
@@ -324,8 +319,6 @@ exports.brandUsersListing = async(req, res) => {
             rewardBrandTokens[reward_listing.rewards_award_user_id].push(reward_listing.rewards_award_token);
             rewardBrandStars[reward_listing.rewards_award_user_id].push(reward_listing.rewards_award_stars);
         }
-
-
     }
 
     var survey_options = {

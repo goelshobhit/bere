@@ -431,6 +431,22 @@ exports.taskDetail = async (req, res) => {
         });
         return
     }
+    
+    var reward_given_options = {
+        where: {
+            rewards_award_event_id: taskID,
+            rewards_award_event_type: 'Task'
+        },
+        attributes:[
+        [sequelize.fn('sum', sequelize.col('rewards_award_stars')), 'rewards_award_stars'],
+        [sequelize.fn('sum', sequelize.col('rewards_award_coins')), 'rewards_award_coins']
+    ],
+    };
+    const reward_given_listing = await db.rewards_given.findOne(reward_given_options);
+
+    
+    task.dataValues.reward_coins = reward_given_listing.rewards_award_stars || 0
+    task.dataValues.reward_stars = reward_given_listing.rewards_award_coins || 0
     var endDate = '';
     if (userTaskPost &&  userTaskPost.ucpl_created_at!= undefined) {
         var todayDate = new Date();
@@ -523,6 +539,7 @@ exports.taskDetail = async (req, res) => {
             }
         }
     res.status(200).send({
+        reward_given_listing: reward_given_listing,
         data: task,
         taskDetails: common.taskStatusArr()[task.ta_status],
         media_token: common.imageToken(taskID)
