@@ -308,6 +308,8 @@ module.exports = app => {
    *                    properties:
    *                        u_display_name:
    *                            type: string
+   *                        u_profile_name:
+   *                            type: string
    *                        u_f_name:
    *                            type: string
    *                        u_l_name:
@@ -389,33 +391,45 @@ module.exports = app => {
    *                schema:
    *                    type: object
    *                    properties:
-   *                        use_u_fb_link:
+   *                        use_u_facebook_link:
    *                            type: string
-   *                        use_u_insta_link:
+   *                        use_u_instagram_link:
    *                            type: string
    *                        use_u_twitter_link:
    *                            type: string
    *                        use_u_pinterest_link:
    *                            type: string
-   *                        use_u_fb_followers_count:
+   *                        use_u_snapchat_link:
+   *                            type: string
+   *                        use_u_tiktok_link:
+   *                            type: string
+   *                        use_u_facebook_followers_count:
    *                            type: integer
-   *                        use_u_insta_followers_count:
+   *                        use_u_instagram_followers_count:
    *                            type: integer
    *                        use_u_twitter_followers_count:
    *                            type: integer
-   *                        use_u_pinsterest_followers_count:
+   *                        use_u_pinterest_followers_count:
+   *                            type: integer
+   *                        use_u_snapchat_followers_count:
+   *                            type: integer
+   *                        use_u_tiktok_followers_count:
    *                            type: integer
    *                        use_u_platform_followers_count:
    *                            type: integer
    *                        use_u_platform_following_count:
    *                            type: integer
-   *                        show_fb:
+   *                        show_facebook:
    *                            type: boolean
-   *                        show_insta:
+   *                        show_instagram:
    *                            type: boolean
    *                        show_twitter:
    *                            type: boolean
    *                        show_pinterest:
+   *                            type: boolean
+   *                        show_snapchat:
+   *                            type: boolean
+   *                        show_tiktok:
    *                            type: boolean
    *     parameters:
    *         - name: userID

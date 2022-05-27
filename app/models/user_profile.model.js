@@ -8,6 +8,9 @@ module.exports = (sequelize, Sequelize) => {
         u_display_name: {
 			type: Sequelize.STRING(50)
         },
+        u_profile_name: {
+			type: Sequelize.STRING(50)
+        },
         u_f_name: {
 			type: Sequelize.STRING(50)
         },

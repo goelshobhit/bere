@@ -83,10 +83,10 @@ module.exports = passport => {
                     accountBalance.create({ac_user_id:data.u_id,ac_balance:0,ac_account_no:''});
                     User_profile.create({u_id:data.u_id});
                     User_social_ext.create({
-                        use_u_insta_link: linkEnd,
-                        use_u_fb_link: "",
-                        show_fb: false,
-                        show_insta: true,
+                        use_u_instagram_link: linkEnd,
+                        use_u_facebook_link: "",
+                        show_facebook: false,
+                        show_instagram: true,
                         u_id:data.u_id
                     });
                     audit_log.saveAuditLog(data.u_id,'add','user_login',data.u_id,data.dataValues);

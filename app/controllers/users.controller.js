@@ -167,10 +167,10 @@ exports.createNewUser = async (req, res) => {
             accountBalance.create({ ac_user_id: data.u_id, ac_balance: 0, ac_account_no: '' });
             User_profile.create({ u_id: data.u_id });
             User_social_ext.create({
-                use_u_insta_link: body.hasOwnProperty("User instagram name") ? 'https://www.instagram.com/' + req.body["User instagram name"] : "",
-                use_u_fb_link: body.hasOwnProperty("User fb name") ? 'https://www.facebook.com/' + req.body["User fb name"] : "",
-                show_fb: body.hasOwnProperty("User fb name") ? true : false,
-                show_insta: body.hasOwnProperty("User instagram name") ? true : false,
+                use_u_instagram_link: body.hasOwnProperty("User instagram name") ? 'https://www.instagram.com/' + req.body["User instagram name"] : "",
+                use_u_facebook_link: body.hasOwnProperty("User fb name") ? 'https://www.facebook.com/' + req.body["User fb name"] : "",
+                show_facebook: body.hasOwnProperty("User fb name") ? true : false,
+                show_instagram: body.hasOwnProperty("User instagram name") ? true : false,
                 u_id: data.u_id
             });
             audit_log.saveAuditLog(data.u_id, 'add', 'user_login', data.u_id, data.dataValues);
@@ -1908,7 +1908,7 @@ exports.followingListing = async (req, res) => {
             {
                 model: db.user_profile,
                 as: 'following',
-                attributes: [["u_display_name", "username"], ["u_f_name", "frist_name"],
+                attributes: [["u_display_name", "username"], ["u_f_name", "first_name"],
                 ["u_l_name", "last_name"],
                 ["u_prof_img_path", "prof_img"]
                 ]

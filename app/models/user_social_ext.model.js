@@ -5,10 +5,10 @@ module.exports = (sequelize, Sequelize) => {
             type: Sequelize.INTEGER,
             primaryKey: true
         },
-        use_u_fb_link: {
+        use_u_facebook_link: {
 			type: Sequelize.STRING(100)
         },
-        use_u_insta_link: {
+        use_u_instagram_link: {
 			type: Sequelize.STRING(100)
         },
         use_u_twitter_link: {
@@ -17,11 +17,17 @@ module.exports = (sequelize, Sequelize) => {
 		use_u_pinterest_link: {
             type: Sequelize.STRING(100)
         },
-		use_u_fb_followers_count:{
+		use_u_snapchat_link: {
+            type: Sequelize.STRING(100)
+        },
+		use_u_tiktok_link: {
+            type: Sequelize.STRING(100)
+        },
+		use_u_facebook_followers_count:{
 		type: Sequelize.INTEGER,
 		default:0
 		},
-		use_u_insta_followers_count:{
+		use_u_instagram_followers_count:{
 		type: Sequelize.INTEGER,
 		default:0
 		},
@@ -29,7 +35,15 @@ module.exports = (sequelize, Sequelize) => {
 		type: Sequelize.INTEGER,
 		default:0
 		},
-		use_u_pinsterest_followers_count:{
+		use_u_pinterest_followers_count:{
+		type: Sequelize.INTEGER,
+		default:0
+		},
+		use_u_snapchat_followers_count:{
+		type: Sequelize.INTEGER,
+		default:0
+		},
+		use_u_tiktok_followers_count:{
 		type: Sequelize.INTEGER,
 		default:0
 		},
@@ -37,11 +51,11 @@ module.exports = (sequelize, Sequelize) => {
 		type: Sequelize.INTEGER,
 		default:0
 		},
-		show_fb:{
+		show_facebook:{
 		type: Sequelize.BOOLEAN,
 		default: true
 		},
-		show_insta:{
+		show_instagram:{
 		type: Sequelize.BOOLEAN,
 		default: true
 		},
@@ -50,6 +64,14 @@ module.exports = (sequelize, Sequelize) => {
 		default: true
 		},
 		show_pinterest:{
+		type: Sequelize.BOOLEAN,
+		default: true
+		},
+		show_snapchat:{
+		type: Sequelize.BOOLEAN,
+		default: true
+		},
+		show_tiktok:{
 		type: Sequelize.BOOLEAN,
 		default: true
 		}
