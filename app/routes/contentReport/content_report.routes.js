@@ -17,12 +17,6 @@ module.exports = app => {
      *                        Content Report Cat Id:
      *                            type: integer
      *                            required: true
-     *                        Content Id:
-     *                            type: integer
-     *                            required: true
-     *                        Content Type:
-     *                            type: string
-     *                            required: true
      *                        Content Report Name:
      *                            type: string
      *                        Content Report Type:

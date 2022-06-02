@@ -129,9 +129,14 @@ const swaggerOptions = {
    __dirname + "/app/routes/bonus/*.js",
    __dirname + "/app/routes/reward/*.js"]
 };
+var options = {
+  swaggerOptions: {
+    docExpansion: "full"
+  }
+};
 const swaggerDocs = swaggerJsDoc(swaggerOptions);
 // app.use("/", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
-app.use("/swagger-documentation", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
+app.use("/swagger-documentation", swaggerUi.serve, swaggerUi.setup(swaggerDocs, options));
 // simple route
 app.get("/", (req, res) => {
   res.json({ message: "Welcome to Social App api application." });
