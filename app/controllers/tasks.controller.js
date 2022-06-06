@@ -286,6 +286,7 @@ exports.jsonlisting = async (req, res) => {
     //     message : surveyCompletedTaskIds
     // });
     var options = {
+
         limit: pageSize,
         offset: skipCount,
         order: [
@@ -293,14 +294,6 @@ exports.jsonlisting = async (req, res) => {
         ],
         attributes: [["tj_type", "task_type"], ["tj_task_id", "task_id"], ["tj_data", "task_data"], ["tj_status", "task_status"]],
         where: {
-            /* tj_data: {
-                ta_start_date: {
-                    [Op.lte]: todayDate
-                },
-                ta_end_date: {
-                    [Op.gte]: todayDate
-                }
-            }, */
             tj_task_id: {
                 [Op.not]: taskIdsValues
             },
@@ -316,6 +309,25 @@ exports.jsonlisting = async (req, res) => {
                 [Op.gte]: todayDate
             }
         };
+    }
+    if (surveyCompletedTaskIds.length) {
+        if (!options['where']['tj_data']) {
+            options['where']['tj_data'] = {};
+        }
+        options['where']['tj_data'][Op.or] =  [{
+            sr_id: {
+                [Op.not]: surveyCompletedTaskIds
+            }
+        },
+        {
+            sr_id: {
+                [Op.eq]: null
+            }
+        }
+    ]
+        // options['where']['tj_data']['sr_id'] = {
+        //     [Op.not]: surveyCompletedTaskIds
+        // };
     }
 
     var total = await taskJson.count({
