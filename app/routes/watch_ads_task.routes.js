@@ -1,11 +1,11 @@
 module.exports = app => {
-    const VideoAds = require("../controllers/video_ads.controller.js");
+    const watchAdsTask = require("../controllers/watch_ads_task.controller.js");
     var router = require("express").Router();
     const auth = require("../middleware/auth");
     const access = require("../middleware/access");
   /**
    * @swagger
-   * /api/video_ads:
+   * /api/watch_ads_task:
    *   post:
    *     requestBody:
    *        required: false
@@ -16,22 +16,22 @@ module.exports = app => {
    *                    properties:
    *                        Brand Id:
    *                           type: integer
-   *                        Ads Name:
+   *                        Task Name:
    *                           type: integer
-   *                        Ads Url:
+   *                        Task Url:
    *                           type: integer
-   *                        Ads Timestamp:
+   *                        Task Timestamp:
    *                            format: date-time
    *                            example: 2020-09-30
-   *                        Ads Lenght Secs:
+   *                        Task Lenght Secs:
    *                           type: integer
-   *                        Ads Status:
+   *                        Task Status:
    *                           type: integer
-   *                        Ads Brand Tier:
+   *                        Task Brand Tier:
    *                             type: integer
-   *                        Ads Campaign Type:
+   *                        Campaign Type:
    *                             type: integer
-   *                        Ads Budget:
+   *                        Budget:
    *                            type: integer
    *                        Budget Left:
    *                           type: integer
@@ -44,13 +44,13 @@ module.exports = app => {
    *                        Stars Given Value:
    *                           type: integer
    *     tags:
-   *       - Video Ads
-   *     description: Add new Video Ad
+   *       - Watch Ads Task
+   *     description: Add new Watch Add task
    *     produces:
    *       - application/json
    *     responses:
    *       201:
-   *         description: Add new Video Ads
+   *         description: Add new Watch Add task
    *       422:
    *         description: validation errors
    *       500:
@@ -66,10 +66,10 @@ module.exports = app => {
    *                              type: string
    *                              example: Authorisation Required
    */
-	 router.post("/video_ads",access, VideoAds.createVideoAds);
+	 router.post("/watch_ads_task",access, watchAdsTask.createWatchAdsTask);
   /**
    * @swagger
-   * /api/video_ads/{videoAdsId}:
+   * /api/watch_ads_task/{watchAdsTaskId}:
    *   put:
    *     requestBody:
    *        required: false
@@ -78,47 +78,47 @@ module.exports = app => {
    *                schema:
    *                    type: object
    *                    properties:
-   *                        cr_co_id:
+   *                        brand_id:
    *                           type: integer
-   *                        video_ads_name:
+   *                        task_name:
    *                           type: integer
-   *                        video_ads_url:
+   *                        task_url:
    *                           type: integer
-   *                        video_ads_timestamp:
+   *                        task_timestamp:
    *                           format: date-time
    *                           example: 2020-09-30
-   *                        video_ads_status:
+   *                        task_status:
    *                           type: integer
-   *                        video_ads_brand_tier:
+   *                        task_brand_tier:
    *                            type: integer
-   *                        video_ads_campaign_type:
+   *                        task_campaign_type:
    *                             type: integer
-   *                        video_ads_budget:
+   *                        task_budget:
    *                             type: integer
-   *                        video_budget_left:
+   *                        budget_left:
    *                           type: integer
-   *                        video_tokens_given:
+   *                        tokens_given:
    *                           type: integer
-   *                        video_stars_given:
+   *                        stars_given:
    *                           type: integer
-   *                        video_tokens_given_value:
+   *                        tokens_given_value:
    *                           type: integer
-   *                        video_stars_given_value:
+   *                        stars_given_value:
    *                           type: integer
    *     parameters:
-   *         - name: videoAdsId
+   *         - name: watchAdsTaskId
    *           in: path
    *           required: true
    *           schema:
    *              type: string
    *     tags:
-   *       - Video Ads
-   *     description: Update Video Ads
+   *       - Watch Ads Task
+   *     description: Update Watch Ads Task
    *     produces:
    *       - application/json
    *     responses:
    *       201:
-   *         description: Video Ads updated
+   *         description: Watch Ads Task updated
    *       422:
    *         description: validation errors
    *       500:
@@ -134,10 +134,10 @@ module.exports = app => {
    *                              type: string
    *                              example: Authorisation Required
    */
-   router.put("/video_ads/:videoAdsId",access, VideoAds.updateVideoAds);
+   router.put("/watch_ads_task/:watchAdsTaskId",access, watchAdsTask.updatewatchAdsTask);
   /**
    * @swagger
-   * /api/video_ads:
+   * /api/watch_ads_task:
    *   get:
    *     parameters:
    *         - name: pageNumber
@@ -150,7 +150,7 @@ module.exports = app => {
    *           required: false
    *           schema:
    *              type: string
-   *              example: video_ads_name,video_ads_url,video_ads_timestamp,video_ads_lenght_secs,video_ads_status,video_ads_public,video_ads_brand_tier,video_ads_campaign_type,video_ads_budget,video_budget_left,video_tokens_given,video_stars_given,video_tokens_given_value,video_stars_given_value # Example of a parameter value
+   *              example: task_name,task_url,task_timestamp,task_lenght_secs,task_status,task_public,brand_tier,task_campaign_type,task_budget,budget_left,tokens_given,stars_given,tokens_given_value,stars_given_value # Example of a parameter value
    *         - name: sortOrder
    *           in: query
    *           required: false
@@ -163,13 +163,13 @@ module.exports = app => {
    *           schema:
    *              type: string
    *     tags:
-   *       - Video Ads
-   *     description: Returns all Video Ads
+   *       - Watch Ads Task
+   *     description: Returns all Watch Ads Task
    *     produces:
    *       - application/json
    *     responses:
    *       200:
-   *         description: A list of Video Ads
+   *         description: A list of Watch Ads Task
    *       401:
    *          description: Unauthorized
    *          content:
@@ -181,13 +181,13 @@ module.exports = app => {
    *                              type: string
    *                              example: Authorisation Required
    */
-    router.get('/video_ads',auth, VideoAds.videoAdsListing)
+    router.get('/watch_ads_task',auth, watchAdsTask.WatchAdsTaskListing)
   /**
    * @swagger
-   * /api/video_ads/{videoAdsId}:
+   * /api/watch_ads_task/{watchAdsTaskId}:
    *   get:
    *     parameters:
-   *         - name: videoAdsId
+   *         - name: watchAdsTaskId
    *           in: path
    *           required: true
    *           schema:
@@ -203,8 +203,8 @@ module.exports = app => {
    *           schema:
    *              type: integer
    *     tags:
-   *       - Video Ads
-   *     description: Retrieve a single Video Ad with videoAdsId
+   *       - Watch Ads Task
+   *     description: Retrieve a single Video Ad with watchAdsTaskId
    *     produces:
    *       - application/json
    *     responses:
@@ -221,10 +221,10 @@ module.exports = app => {
    *                              type: string
    *                              example: Authorisation Required
    */
-    router.get("/video_ads/:videoAdsId",auth, VideoAds.videoAdsDetails);
+    router.get("/watch_ads_task/:watchAdsTaskId",auth, watchAdsTask.watchAdsTaskDetails);
   /**
    * @swagger
-   * /api/video_ads/brand/{crCoId}:
+   * /api/watch_ads_task/brand/{crCoId}:
    *   get:
    *     parameters:
    *         - name: crCoId
@@ -243,7 +243,7 @@ module.exports = app => {
    *           schema:
    *              type: integer
    *     tags:
-   *       - Video Ads
+   *       - Watch Ads Task
    *     description: Retrieve a single Video Ad with crCoId
    *     produces:
    *       - application/json
@@ -261,20 +261,20 @@ module.exports = app => {
    *                              type: string
    *                              example: Authorisation Required
    */
-   router.get("/video_ads/brand/:crCoId",auth, VideoAds.videoAdsDetailsUsingCrCoId);
+   router.get("/watch_ads_task/brand/:crCoId",auth, watchAdsTask.watchAdsTaskDetailsUsingCrCoId);
     /**
    * @swagger
-   * /api/video_ads/{videoAdsId}:
+   * /api/watch_ads_task/{watchAdsTaskId}:
    *   delete:
    *     parameters:
-   *         - name: videoAdsId
+   *         - name: watchAdsTaskId
    *           in: path
    *           required: true
    *           schema:
    *              type: integer
    *     tags:
-   *      - Video Ads
-   *     description: Delete a Video Ad with id
+   *      - Watch Ads Task
+   *     description: Delete a watch Ad task with id
    *     produces:
    *       - application/json
    *     responses:
@@ -291,7 +291,7 @@ module.exports = app => {
    *                              type: string
    *                              example: Authorisation Required
    */
-   router.delete("/video_ads/:videoAdsId", access, VideoAds.deleteVideoAds);   
+   router.delete("/watch_ads_task/:watchAdsTaskId", access, watchAdsTask.deletewatchAdsTask);   
    app.use("/api", router);
 };
   

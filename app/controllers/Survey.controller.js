@@ -644,15 +644,10 @@ exports.surveyStatsListing = async (req, res) => {
         ],
         where: {}
     };
-    if (req.query.sortVal) {
-        var sortValue = req.query.sortVal.trim();
+    if(req.query.sortVal) {
+        var sortValue = req.query.sortVal;
         options.where = sortValue ? {
-            [Op.or]: [{
-                question: {
-                    [Op.iLike]: `%${sortValue}%`
-                }
-            }
-            ]
+            [sortBy]: `${sortValue}`
         } : null;
     }
     options['include'] = [

@@ -470,17 +470,17 @@ function Common() {
       "Video Ads Rights": [
         {
           "Add Video Ads": {
-            "video_ads/add": "POST/api/video_ads"
+            "watch_ads_task/add": "POST/api/watch_ads_task"
           }
         },
         {
           "Update Video Ads": {
-            "video_ads/update": "PUT/api/video_ads"
+            "watch_ads_task/update": "PUT/api/watch_ads_task"
           }
         },
         {
           "Delete Video Ads": {
-            "video_ads/delete": "DELETE/api/video_ads"
+            "watch_ads_task/delete": "DELETE/api/watch_ads_task"
           }
         }
       ],

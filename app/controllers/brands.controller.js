@@ -272,9 +272,9 @@ exports.brandUsersListing = async(req, res) => {
     var videoOptions = {
         include: [
             {
-                model: db.video_ads,
+                model: db.watch_ads_task,
                 where: {
-                    cr_co_id: req.params.brandID
+                    brand_id: req.params.brandID
                 }
             }
             
@@ -284,16 +284,16 @@ exports.brandUsersListing = async(req, res) => {
         }
     };
     var videoAddCount = {};
-    const video_ads_listing = await db.video_ads_submit.findAll(videoOptions);
-    if (video_ads_listing.length) {
+    const watch_ads_task_listing = await db.watch_ads_task_submit.findAll(videoOptions);
+    if (watch_ads_task_listing.length) {
 
-        for (const video_ad_key in video_ads_listing) {
-            var user_id = video_ads_listing[video_ad_key].u_id;
-            var video_ads_id = video_ads_listing[video_ad_key].video_ads_id;
+        for (const video_ad_key in watch_ads_task_listing) {
+            var user_id = watch_ads_task_listing[video_ad_key].u_id;
+            var watch_ads_task_id = watch_ads_task_listing[video_ad_key].watch_ads_task_id;
             if (!videoAddCount[user_id]) {
                 videoAddCount[user_id] = [];
             }
-            videoAddCount[user_id].push(video_ads_id);
+            videoAddCount[user_id].push(watch_ads_task_id);
         }
     }
 
@@ -611,13 +611,13 @@ exports.brandDetail = async(req, res) => {
 
     var videoOptions = {
         where: {
-            cr_co_id: req.params.brandID
+            brand_id: req.params.brandID
         },
         attributes:[
-            'cr_co_id', 'video_ads_name'
+            'brand_id', 'task_name'
         ]
     };
-    const video_ads_listing = await db.video_ads.findAll(videoOptions);
+    const watch_ads_task_listing = await db.watch_ads_task.findAll(videoOptions);
 
     var level_options = {
         include: [
@@ -670,8 +670,8 @@ exports.brandDetail = async(req, res) => {
         }
         
     }
-    if (video_ads_listing) {
-        videoAdsTask = video_ads_listing.length;
+    if (watch_ads_task_listing) {
+        videoAdsTask = watch_ads_task_listing.length;
     }
     if (user_content_listing) {
         userContentEntries = user_content_listing.length;

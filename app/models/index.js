@@ -107,8 +107,9 @@ db.notify_event = require("./notify_event.model")(sequelize, Sequelize);
 db.notify_trig = require("./notify_trig.model")(sequelize, Sequelize);
 db.notify_trig_sent = require("./notify_trig_sent.model")(sequelize, Sequelize);
 // video ads templates
-db.video_ads = require("./video_ads.model")(sequelize, Sequelize);
-db.video_ads_submit = require("./video_ads_submit.model")(sequelize, Sequelize);
+db.watch_ads_task = require("./watch_ads_task.model")(sequelize, Sequelize);
+//db.video_ads = require("./video_ads.model")(sequelize, Sequelize);
+db.watch_ads_task_submit = require("./watch_ads_task_submit.model")(sequelize, Sequelize);
 //email tempaltes 
 db.mail_templates=require("./mail_templates.model")(sequelize,Sequelize);
 db.user_feedback=require("./user_feedback.model")(sequelize,Sequelize);
@@ -187,10 +188,16 @@ db.bonus_task_user_state.belongsTo(db.bonus_task, {foreignKey: 'bonus_task_id', 
 db.additional_info_heading.hasMany(db.additional_info_data, {foreignKey: 'ad_info_id', targetKey: 'ad_info_id'});
 db.additional_info_data.belongsTo(db.additional_info_heading, {foreignKey: 'ad_info_id', targetKey: 'ad_info_id'});
 
-db.brands.hasMany(db.video_ads, {foreignKey: 'cr_co_id', targetKey: 'cr_co_id'});
-db.video_ads.belongsTo(db.brands, {foreignKey: 'cr_co_id', targetKey: 'cr_co_id'});
-db.video_ads.hasMany(db.video_ads_submit, {foreignKey: 'video_ads_id', targetKey: 'video_ads_id'});
-db.video_ads_submit.belongsTo(db.video_ads, {foreignKey: 'video_ads_id', targetKey: 'video_ads_id'});
+// db.brands.hasMany(db.video_ads, {foreignKey: 'cr_co_id', targetKey: 'cr_co_id'});
+// db.video_ads.belongsTo(db.brands, {foreignKey: 'cr_co_id', targetKey: 'cr_co_id'});
+// db.video_ads.hasMany(db.video_ads_submit, {foreignKey: 'video_ads_id', targetKey: 'video_ads_id'});
+
+db.brands.hasMany(db.watch_ads_task, {foreignKey: 'brand_id', targetKey: 'cr_co_id'});
+db.watch_ads_task.belongsTo(db.brands, {foreignKey: 'brand_id', targetKey: 'cr_co_id'});
+db.watch_ads_task.hasMany(db.watch_ads_task_submit, {foreignKey: 'watch_ads_task_id', targetKey: 'watch_ads_task_id'});
+
+db.watch_ads_task_submit.belongsTo(db.watch_ads_task, {foreignKey: 'watch_ads_task_id', targetKey: 'watch_ads_task_id'});
+//db.video_ads_submit.belongsTo(db.video_ads, {foreignKey: 'video_ads_id', targetKey: 'video_ads_id'});
 db.notify_trig.hasMany(db.notify_trig_sent, {foreignKey: 'notify_trig_id', targetKey: 'notify_trig_id'});
 db.notify_trig_sent.belongsTo(db.notify_trig, {foreignKey: 'notify_trig_id', targetKey: 'notify_trig_id'});
 db.brands.hasMany(db.notify_event, {foreignKey: 'cr_co_id', targetKey: 'cr_co_id'});

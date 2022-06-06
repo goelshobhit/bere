@@ -379,14 +379,14 @@ exports.userDetailForAdmin = async (req, res) => {
     var video_add_options = {
         include: [
             {
-                model: db.video_ads
+                model: db.watch_ads_task
             }
         ],
         where: {
             u_id: userID
         }
     };
-    const video_add_listing = await db.video_ads_submit.findAll(video_add_options);
+    const video_add_listing = await db.watch_ads_task_submit.findAll(video_add_options);
     var videoAddIds = {};
     if (video_add_listing.length) {
         video_add_listing.forEach(element => {
@@ -516,7 +516,7 @@ exports.userDetailForAdmin = async (req, res) => {
             [db.sequelize.literal('(SELECT COUNT(*) FROM survey_user_complete WHERE survey_user_complete.sr_uid = ' + userID + ')'), 'Surveys'],
             [db.sequelize.literal('(SELECT COUNT(*) FROM user_fan_following WHERE user_fan_following.faf_by = ' + userID + ')'), 'Following'],
             [db.sequelize.literal('(SELECT COUNT(*) FROM user_fan_following WHERE user_fan_following.faf_to = ' + userID + ')'), 'Followers'],
-            [db.sequelize.literal('(SELECT COUNT(*) FROM video_ads_submit WHERE video_ads_submit.u_id = ' + userID + ' and video_ads_submit.u_id = user_login.u_id )'), 'Ads Watched'],
+            [db.sequelize.literal('(SELECT COUNT(*) FROM watch_ads_task_submit WHERE watch_ads_task_submit.u_id = ' + userID + ' and watch_ads_task_submit.u_id = user_login.u_id )'), 'Ads Watched'],
             [db.sequelize.literal('(SELECT SUM(pc_comment_likes) FROM post_comment WHERE post_comment.pc_commenter_uid = ' + userID + '  )'), 'Liked Comments'],
             [db.sequelize.literal('(SELECT SUM(pc_comment_unlikes) FROM post_comment WHERE post_comment.pc_commenter_uid = ' + userID + '  )'), 'Disliked Comments'],
             [db.sequelize.literal('(SELECT SUM(ucpl_reaction_counter) FROM user_content_post WHERE user_content_post.ucpl_u_id = ' + userID + '  )'), 'Reactions Received'],

@@ -1,10 +1,10 @@
 module.exports = app => {
-  const VideoAdsSubmit = require("../controllers/video_ads_submit.controller.js");
+  const WatchAdsSubmit = require("../controllers/watch_ads_task_submit.controller.js");
   var router = require("express").Router();
   const auth = require("../middleware/auth");
 /**
  * @swagger
- * /api/video_ads_submit:
+ * /api/watch_ads_task_submit:
  *   post:
  *     requestBody:
  *        required: false
@@ -15,7 +15,7 @@ module.exports = app => {
  *                    properties:
  *                        User Id:
  *                           type: integer
- *                        Video Ads Id:
+ *                        Watch Ads Task Id:
  *                           type: integer
  *                        Watch Timestamp:
  *                           format: date-time
@@ -28,13 +28,13 @@ module.exports = app => {
  *                        Reward Ack:
  *                           type: integer
  *     tags:
- *       - Video Ads Submit
- *     description: Add new Video Ad
+ *       - Watch Ads Task Submit
+ *     description: Submit Watch Ads Task
  *     produces:
  *       - application/json
  *     responses:
  *       201:
- *         description: Add new Video Ads
+ *         description: Submit Watch Ads Task
  *       422:
  *         description: validation errors
  *       500:
@@ -50,10 +50,10 @@ module.exports = app => {
  *                              type: string
  *                              example: Authorisation Required
  */
-router.post("/video_ads_submit",auth, VideoAdsSubmit.createVideoAdsSubmit);
+router.post("/watch_ads_task_submit",auth, WatchAdsSubmit.createWatchAdsTaskSubmit);
 /**
  * @swagger
- * /api/video_ads_submit/{videoAdsSubmitId}:
+ * /api/watch_ads_task_submit/{watchAdsTaskSubmitId}:
  *   put:
  *     requestBody:
  *        required: false
@@ -62,30 +62,30 @@ router.post("/video_ads_submit",auth, VideoAdsSubmit.createVideoAdsSubmit);
  *                schema:
  *                    type: object
  *                    properties:
- *                        video_ads_submit_watch_timestamp:
+ *                        submit_watch_timestamp:
  *                            format: date-time
  *                            example: 2020-09-30
- *                        video_ads_submit_watch_completion:
+ *                        submit_watch_completion:
  *                            type: integer
- *                        video_ads_submit_timestamp:
+ *                        submit_timestamp:
  *                            format: date-time
  *                            example: 2020-09-30
- *                        video_ads_submit_reward_ack:
+ *                        submit_reward_ack:
  *                            type: integer
  *     parameters:
- *         - name: videoAdsSubmitId
+ *         - name: watchAdsTaskSubmitId
  *           in: path
  *           required: true
  *           schema:
  *              type: string
  *     tags:
- *       - Video Ads Submit
- *     description: Update Video Ads Submit
+ *       - Watch Ads Task Submit
+ *     description: Update Watch Ads Task Submit
  *     produces:
  *       - application/json
  *     responses:
  *       201:
- *         description: Video Ads Submit updated
+ *         description: Watch Ads Task Submit updated
  *       422:
  *         description: validation errors
  *       500:
@@ -101,10 +101,10 @@ router.post("/video_ads_submit",auth, VideoAdsSubmit.createVideoAdsSubmit);
  *                              type: string
  *                              example: Authorisation Required
  */
- router.put("/video_ads_submit/:videoAdsSubmitId",auth, VideoAdsSubmit.updateVideoAdsSubmit);
+ router.put("/watch_ads_task_submit/:watchAdsTaskSubmitId",auth, WatchAdsSubmit.updatewatchAdsTaskSubmit);
 /**
  * @swagger
- * /api/video_ads_submit:
+ * /api/watch_ads_task_submit:
  *   get:
  *     parameters:
  *         - name: pageNumber
@@ -117,7 +117,7 @@ router.post("/video_ads_submit",auth, VideoAdsSubmit.createVideoAdsSubmit);
  *           required: false
  *           schema:
  *              type: string
- *              example: video_ads_name,video_ads_url,video_ads_timestamp,video_ads_lenght_secs,video_ads_status,video_ads_public,video_ads_brand_tier,video_ads_campaign_type,video_ads_budget,video_budget_left,video_tokens_given,video_stars_given,video_tokens_given_value,video_stars_given_value # Example of a parameter value
+ *              example: submit_watch_completion,u_id,watch_ads_task_id,submit_reward_ack # Example of a parameter value
  *         - name: sortOrder
  *           in: query
  *           required: false
@@ -130,13 +130,13 @@ router.post("/video_ads_submit",auth, VideoAdsSubmit.createVideoAdsSubmit);
  *           schema:
  *              type: string
  *     tags:
- *       - Video Ads Submit
- *     description: Returns all Video Ads Submit
+ *       - Watch Ads Task Submit
+ *     description: Returns all Watch Ads Task Submit
  *     produces:
  *       - application/json
  *     responses:
  *       200:
- *         description: A list of Video Ads Submit
+ *         description: A list of Watch Ads Task Submit
  *       401:
  *          description: Unauthorized
  *          content:
@@ -148,13 +148,13 @@ router.post("/video_ads_submit",auth, VideoAdsSubmit.createVideoAdsSubmit);
  *                              type: string
  *                              example: Authorisation Required
  */
-  router.get('/video_ads_submit',auth, VideoAdsSubmit.videoAdsSubmitListing)
+  router.get('/watch_ads_task_submit',auth, WatchAdsSubmit.watchAdsTaskSubmitListing)
 /**
  * @swagger
- * /api/video_ads_submit/{videoAdsSubmitId}:
+ * /api/watch_ads_task_submit/{watchAdsTaskSubmitId}:
  *   get:
  *     parameters:
- *         - name: videoAdsSubmitId
+ *         - name: watchAdsTaskSubmitId
  *           in: path
  *           required: true
  *           schema:
@@ -170,13 +170,13 @@ router.post("/video_ads_submit",auth, VideoAdsSubmit.createVideoAdsSubmit);
  *           schema:
  *              type: integer
  *     tags:
- *       - Video Ads Submit
- *     description: Retrieve a single Video Ads Submit with videoAdsSubmitId
+ *       - Watch Ads Task Submit
+ *     description: Retrieve a single Watch Ads Task Submit with watchAdsTaskSubmitId
  *     produces:
  *       - application/json
  *     responses:
  *       200:
- *         description: Details of a Video Ads Submit
+ *         description: Details of a Watch Ads Task Submit
  *       401:
  *          description: Unauthorized
  *          content:
@@ -188,25 +188,25 @@ router.post("/video_ads_submit",auth, VideoAdsSubmit.createVideoAdsSubmit);
  *                              type: string
  *                              example: Authorisation Required
  */
-  router.get("/video_ads_submit/:videoAdsSubmitId",auth, VideoAdsSubmit.videoAdsSubmitDetails);
+  router.get("/watch_ads_task_submit/:watchAdsTaskSubmitId",auth, WatchAdsSubmit.watchAdsTaskSubmitDetails);
 /**
  * @swagger
- * /api/video_ads_submit/{videoAdsSubmitId}:
+ * /api/watch_ads_task_submit/{watchAdsTaskSubmitId}:
  *   delete:
  *     parameters:
- *         - name: videoAdsSubmitId
+ *         - name: watchAdsTaskSubmitId
  *           in: path
  *           required: true
  *           schema:
  *              type: integer
  *     tags:
- *      - Video Ads Submit
- *     description: Delete a Video Ad Submit with id
+ *      - Watch Ads Task Submit
+ *     description: Delete a Watch Ads Task Submit with id
  *     produces:
  *       - application/json
  *     responses:
  *       200:
- *         description: Delete a Video Ad Submit
+ *         description: Delete a Watch Ads Task Submit
  *       401:
  *          description: Unauthorized
  *          content:
@@ -218,6 +218,6 @@ router.post("/video_ads_submit",auth, VideoAdsSubmit.createVideoAdsSubmit);
  *                              type: string
  *                              example: Authorisation Required
  */
- router.delete("/video_ads_submit/:videoAdsSubmitId", auth, VideoAdsSubmit.deleteVideoAdsSubmit);   
+ router.delete("/watch_ads_task_submit/:watchAdsTaskSubmitId", auth, WatchAdsSubmit.deletewatchAdsTaskSubmit);   
   app.use("/api", router);
 };

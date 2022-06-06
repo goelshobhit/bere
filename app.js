@@ -11,7 +11,7 @@ if (cluster.isMaster && 0) {
 }
 else {
 const express = require("express");
-
+const basicAuth = require('express-basic-auth');
 const bodyParser = require("body-parser");
 const cors = require("cors");
 require("dotenv").config();
@@ -131,12 +131,17 @@ const swaggerOptions = {
 };
 var options = {
   swaggerOptions: {
-    docExpansion: "full"
+    //docExpansion: "full"
   }
 };
 const swaggerDocs = swaggerJsDoc(swaggerOptions);
 // app.use("/", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
-app.use("/swagger-documentation", swaggerUi.serve, swaggerUi.setup(swaggerDocs, options));
+//app.use("/swagger-documentation", swaggerUi.serve, swaggerUi.setup(swaggerDocs, options));
+app.use("/swagger-documentation",basicAuth({
+  users: {'social-app': 'info@123#'},
+  challenge: true,
+}), swaggerUi.serve, swaggerUi.setup(swaggerDocs, options));
+
 // simple route
 app.get("/", (req, res) => {
   res.json({ message: "Welcome to Social App api application." });
@@ -285,8 +290,8 @@ require("./app/routes/notify_cat.routes")(app);
 require("./app/routes/notify_event.routes")(app);
 require("./app/routes/notify_trig.routes")(app);
 require("./app/routes/notify_trig_sent.routes")(app);
-require("./app/routes/video_ads.routes")(app);
-require("./app/routes/video_ads_submit.routes")(app);
+require("./app/routes/watch_ads_task.routes")(app);
+require("./app/routes/watch_ads_task_submit.routes")(app);
 require("./app/routes/socket_server.routes")({app, io});
 require("./app/routes/survey.routes")(app);
 require("./app/routes/bonus/bonus_user.routes")(app);

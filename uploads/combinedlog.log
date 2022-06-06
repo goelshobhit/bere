@@ -1,0 +1,6 @@
+{"level":"info","message":"Login Successfully with username: manpreet.kaur230@gmail.com , pass:123456 and login type:Normal"}
+{"level":"error","message":"Some error occurred while creating the Watch Ads Task=SequelizeValidationError: notNull Violation: watch_ads_task.task_name cannot be null"}
+{"level":"error","message":"Some error occurred while creating the Watch Ads Task Submit=SequelizeForeignKeyConstraintError: insert or update on table \"watch_ads_task_submit\" violates foreign key constraint \"watch_ads_task_submit_watch_ads_task_id_fkey\""}
+{"level":"info","message":"Login Successfully with username: manpreet.kaur230@gmail.com , pass:123456 and login type:Normal"}
+{"level":"error","message":"Some error occurred while creating the Watch Ads Task Submit=SequelizeForeignKeyConstraintError: insert or update on table \"watch_ads_task_submit\" violates foreign key constraint \"watch_ads_task_submit_watch_ads_task_id_fkey\""}
+{"level":"error","message":"Some error occurred while creating the Watch Ads Task Submit=SequelizeForeignKeyConstraintError: insert or update on table \"watch_ads_task_submit\" violates foreign key constraint \"watch_ads_task_submit_watch_ads_task_id_fkey\""}
