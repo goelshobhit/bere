@@ -131,7 +131,7 @@ const swaggerOptions = {
 };
 var options = {
   swaggerOptions: {
-    //docExpansion: "full"
+    docExpansion: "full"
   }
 };
 const swaggerDocs = swaggerJsDoc(swaggerOptions);
