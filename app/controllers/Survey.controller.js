@@ -692,10 +692,12 @@ exports.surveyStatsListing = async (req, res) => {
         options['where']['srq_answer_id'] = req.query.surveyAnswerId;
     }
     var total = await SurveyStats.count({
-        where: options['where']
+        where: options['where'],
+        distinct: true,
+        col: 'srq_id'
     });
     const surveyStatsList = await SurveyStats.findAll(options);
-    const questionAnswerCount = [];
+    //const questionAnswerCount = [];
     var QuestionCountObj = {};
     for (const surveyStats in surveyStatsList) {
         if (typeof QuestionCountObj[surveyStatsList[surveyStats].srq_id] !== 'undefined' && QuestionCountObj[surveyStatsList[surveyStats].srq_id]) {
@@ -704,26 +706,46 @@ exports.surveyStatsListing = async (req, res) => {
             QuestionCountObj[surveyStatsList[surveyStats].srq_id] = surveyStatsList[surveyStats].srq_answer_count;
         }
     }
-    questionAnswerCount.push(QuestionCountObj);
+    
+    //questionAnswerCount.push(QuestionCountObj);
     var answer_percentage = 0;
     const SurveyStatResult = [];
+    var questionAnswers = [];
     for (const surveyStats in surveyStatsList) {
-        answer_percentage = parseFloat(surveyStatsList[surveyStats].srq_answer_count * 100 / questionAnswerCount[0][surveyStatsList[surveyStats].srq_id]);
+       const srq_id =  surveyStatsList[surveyStats].srq_id;
+        answer_percentage = parseFloat(surveyStatsList[surveyStats].srq_answer_count * 100 / QuestionCountObj[srq_id]);
         var questionAnswer = '';
         if (surveyStatsList[surveyStats].survey_question_answer && surveyStatsList[surveyStats].survey_question_answer.answer) {
             questionAnswer = surveyStatsList[surveyStats].survey_question_answer.answer;
         }
-        SurveyStatResult.push({
-            "Survey": surveyStatsList[surveyStats].survey,
-            "Survey Id": surveyStatsList[surveyStats].sr_id,
-            "Survey Question Id": surveyStatsList[surveyStats].srq_id,
-            "Survey Answer Id": surveyStatsList[surveyStats].srq_answer_id,
-            "Survey Answer": questionAnswer,
-            "Answer Percentage": answer_percentage.toFixed(2),
-            "Survey Question": surveyStatsList[surveyStats].survey_question_answer.survey_question.question,
-        });
+        if (!questionAnswers[srq_id]) {
+            questionAnswers[srq_id] = [];
+            SurveyStatResult.push({
+                "Survey": surveyStatsList[surveyStats].survey,
+                "Survey Id": surveyStatsList[surveyStats].sr_id,
+                "Survey Question Id": surveyStatsList[surveyStats].srq_id,
+               // "Survey Answer Id": surveyStatsList[surveyStats].srq_answer_id,
+                //"Survey Answer": questionAnswer,
+                //"Answer Percentage": answer_percentage.toFixed(2),
+                "Survey Question": surveyStatsList[surveyStats].survey_question_answer.survey_question.question,
+            });
+        }
+        var answerData = {
+            "srq_id" : srq_id,
+            "Survey Answer Id":surveyStatsList[surveyStats].srq_answer_id,
+            "Answer Percentage":answer_percentage.toFixed(2),
+            "Survey Answer":questionAnswer
+        }
+        questionAnswers[srq_id].push(answerData);
+        
+        
     }
-
+    if (SurveyStatResult.length) {
+        for (const SurveyStatKey in SurveyStatResult) {
+            const question_id = SurveyStatResult[SurveyStatKey]['Survey Question Id'];
+            SurveyStatResult[SurveyStatKey]['Survey Answer Data'] = questionAnswers[question_id];
+        }
+    }
     res.status(200).send({
         data: SurveyStatResult,
         totalRecords: total

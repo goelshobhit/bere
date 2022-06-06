@@ -269,6 +269,22 @@ exports.jsonlisting = async (req, res) => {
         });
     }
     taskIdsValues = closedTaskIds.concat(taskIdsValues);
+    
+    var surveyOptions = {
+        attributes: ["sr_id"],
+        where: {
+            sr_uid: Uid,
+            sr_completed: 1
+        }
+    };
+    const survey_list = await db.survey_user_complete.findAll(surveyOptions);
+    var surveyCompletedTaskIds = survey_list.map(function (item) {
+        return '' +item.sr_id+ ''
+      });
+    surveyCompletedTaskIds = surveyCompletedTaskIds.filter((v, i, a) => a.indexOf(v) === i);
+    // return res.status(200).send({
+    //     message : surveyCompletedTaskIds
+    // });
     var options = {
         limit: pageSize,
         offset: skipCount,

@@ -543,10 +543,12 @@ exports.brandDetail = async(req, res) => {
             {
                 model: db.campaigns,
                 required: false,
-                where:{is_autotakedown:0,
+                where:{
+                    is_autotakedown:0,
                     cp_campaign_id:{
                         [Op.not]: CampaignIdsValues
-                    }}
+                    }
+                }
             },
 			{
                 model: brands_budget,
@@ -677,6 +679,7 @@ exports.brandDetail = async(req, res) => {
         userContentEntries = user_content_listing.length;
     }
     brand.dataValues.video_ads_tasks = videoAdsTask;
+    brand.dataValues.watch_ads_tasks = videoAdsTask;
     brand.dataValues.contest_tasks = contestTask.length;
     brand.dataValues.tasks = task.length;
     brand.dataValues.survey_task = surveyTask.length;
