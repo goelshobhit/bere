@@ -40,6 +40,8 @@ module.exports = app => {
      *                            type: integer
      *                        User Restriction:
      *                            type: integer
+     *                        Stars Per User:
+     *                            type: integer
      *                        Survey Questions:
      *                          type: array
      *                          items:
@@ -195,6 +197,10 @@ module.exports = app => {
      *                              type: date
      *                              example: 2021-12-22
      *                          sr_status:
+     *                              type: integer
+     *                          sr_usr_restriction:
+     *                              type: integer
+     *                          sr_stars_per_user:
      *                              type: integer
      *                          survey_questions:
      *                            type: array

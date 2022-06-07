@@ -9,6 +9,7 @@ const SurveyUserComplete = db.survey_user_complete;
 const audit_log = db.audit_log;
 const common = require("../common");
 const logger = require("../middleware/logger");
+const User_profile = db.user_profile;
 const {
     validationResult
 } = require("express-validator");
@@ -51,7 +52,8 @@ exports.createNewSurvey = async (req, res) => {
         "sr_startdate_time": body.hasOwnProperty("Start Date") ? body["Start Date"] : new Date(),
         "sr_enddate_time": body.hasOwnProperty("End Date") ? body["End Date"] : new Date(new Date().setFullYear(new Date().getFullYear() + 2)),
         "sr_status": body.hasOwnProperty("Survey Status") ? body["Survey Status"] : 1,
-        "sr_usr_restriction": body.hasOwnProperty("User Restriction") ? body["User Restriction"] : 0
+        "sr_usr_restriction": body.hasOwnProperty("User Restriction") ? body["User Restriction"] : 0,
+        "sr_stars_per_user": body.hasOwnProperty("Stars Per User") ? body["Stars Per User"] : 0
     }
     Survey.create(SurveyData)
         .then(data => {
@@ -853,9 +855,30 @@ exports.updateSurveyTracking = async (req, res) => {
         });
         return;
     }
+    
     var surveyCompletionDate = null;
     if (body.hasOwnProperty("Survey Completed") && body["Survey Completed"] == 1) {
         surveyCompletionDate = new Date();
+        var options = {
+            where: {
+                sr_id: body["Survey ID"]
+            }
+        };
+        const survey = await Survey.findOne(options);
+        if (survey.sr_stars_per_user) {
+            var userProfile = await User_profile.findOne({ attributes: ['u_stars'], where: { u_id: uid } });
+            const profileData = {
+                u_stars: userProfile.u_stars ? parseInt(userProfile.u_stars) + parseInt(survey.sr_stars_per_user) : survey.sr_stars_per_user
+            };
+            User_profile.update(profileData, {
+                where: {
+                    u_id: uid
+                }
+            }).catch(err => {
+                logger.log("error", err + ": Error occurred while updating the u_stars for user:" + userId);
+            });
+            common.manageUserAccount(uid, 0, survey.sr_stars_per_user, 'credit');
+        }
     }
     const SurveyTrackingData = {
         "sr_completed": body.hasOwnProperty("Survey Completed") ? body["Survey Completed"] : 1,
@@ -868,7 +891,6 @@ exports.updateSurveyTracking = async (req, res) => {
             sr_uid: uid
         }
     }).then(data => {
-        audit_log.saveAuditLog(uid, 'tracking', 'Survey tracking', data.su_id, data.dataValues);
         res.status(201).send({
             msg: "Survey Tracking Record updated Successfully"
         });
