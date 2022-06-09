@@ -701,18 +701,36 @@ exports.surveyStatsListing = async (req, res) => {
     const surveyStatsList = await SurveyStats.findAll(options);
     //const questionAnswerCount = [];
     var QuestionCountObj = {};
+    var questionIds = [];
     for (const surveyStats in surveyStatsList) {
+        questionIds.push(surveyStatsList[surveyStats].srq_id);
         if (typeof QuestionCountObj[surveyStatsList[surveyStats].srq_id] !== 'undefined' && QuestionCountObj[surveyStatsList[surveyStats].srq_id]) {
             QuestionCountObj[surveyStatsList[surveyStats].srq_id] += surveyStatsList[surveyStats].srq_answer_count;
         } else {
             QuestionCountObj[surveyStatsList[surveyStats].srq_id] = surveyStatsList[surveyStats].srq_answer_count;
         }
     }
-    
+    var surveyQuestionData = {};
+    if (questionIds.length) {
+        var questionOptions = {
+            where: {srq_id: questionIds}
+        };
+        const surveyQuestions = await surveyQuestionAnswers.findAll(questionOptions);
+        if (surveyQuestions.length) {
+            for (const surveyQuestion in surveyQuestions) {
+                if (!surveyQuestionData[surveyQuestions[surveyQuestion].srq_id]) {
+                    surveyQuestionData[surveyQuestions[surveyQuestion].srq_id] = [];
+                }
+                surveyQuestionData[surveyQuestions[surveyQuestion].srq_id].push(surveyQuestions[surveyQuestion]); 
+            }
+        }
+
+    }
     //questionAnswerCount.push(QuestionCountObj);
     var answer_percentage = 0;
     const SurveyStatResult = [];
     var questionAnswers = [];
+    var questionAnswersObj = [];
     for (const surveyStats in surveyStatsList) {
        const srq_id =  surveyStatsList[surveyStats].srq_id;
         answer_percentage = parseFloat(surveyStatsList[surveyStats].srq_answer_count * 100 / QuestionCountObj[srq_id]);
@@ -722,6 +740,7 @@ exports.surveyStatsListing = async (req, res) => {
         }
         if (!questionAnswers[srq_id]) {
             questionAnswers[srq_id] = [];
+            questionAnswersObj[srq_id] = {};
             SurveyStatResult.push({
                 "Survey": surveyStatsList[surveyStats].survey,
                 "Survey Id": surveyStatsList[surveyStats].sr_id,
@@ -738,13 +757,27 @@ exports.surveyStatsListing = async (req, res) => {
             "Answer Percentage":answer_percentage.toFixed(2),
             "Survey Answer":questionAnswer
         }
+        questionAnswersObj[srq_id][surveyStatsList[surveyStats].srq_answer_id] = answerData;
         questionAnswers[srq_id].push(answerData);
-        
-        
     }
     if (SurveyStatResult.length) {
         for (const SurveyStatKey in SurveyStatResult) {
             const question_id = SurveyStatResult[SurveyStatKey]['Survey Question Id'];
+
+            const surveyQuestionAnswer = questionAnswersObj[question_id];
+            var surveyQuestionDetail = surveyQuestionData[question_id];
+           for (surveyQuestionData_key in surveyQuestionDetail) {
+               if (!surveyQuestionAnswer.hasOwnProperty(surveyQuestionDetail[surveyQuestionData_key].srq_answer_id)) {
+                       answer_percentage = 0;
+                    var answerData = {
+                        "srq_id" : question_id,
+                        "Survey Answer Id":surveyQuestionDetail[surveyQuestionData_key].srq_answer_id,
+                        "Answer Percentage":answer_percentage.toFixed(2),
+                        "Survey Answer":surveyQuestionDetail[surveyQuestionData_key].answer
+                    }
+                    questionAnswers[question_id].push(answerData);
+               }
+            }
             SurveyStatResult[SurveyStatKey]['Survey Answer Data'] = questionAnswers[question_id];
         }
     }
