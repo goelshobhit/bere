@@ -283,6 +283,8 @@ exports.taskListing = async (req, res) => {
     }
     let bonus_ticket_listing  = [];
     let reward_given_listing  = [];
+    let contest_bonus_ticket_listing  = [];
+    let contest_reward_given_listing  = [];
     let tasks_list = [];
     let contest_list = [];
     if (taskIds.length) {
