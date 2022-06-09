@@ -312,7 +312,6 @@ exports.taskListing = async (req, res) => {
             where: { ta_task_id: taskIds }
         };
         tasks_list = await Tasks.findAll(options);
-
         var reward_given_options = {
             where: {
                 rewards_award_event_id: taskIds,
@@ -531,6 +530,7 @@ exports.taskListing = async (req, res) => {
                 tasks_list[tasks_list_key].dataValues.list_data.tickets = bonusTickets[taskId+'_1'] || 0;
                 tasks_list[tasks_list_key].dataValues.list_data.stars_given = rewardTaskStars[taskId+'_1'] || 0;
                 tasks_list[tasks_list_key].dataValues.list_data.tokens_given = rewardTaskTokens[taskId+'_1'] || 0;
+                tasks_list[tasks_list_key].dataValues.list_data.brand_data = tasks_list[tasks_list_key].brand;
                 const total_budget = tasks_list[tasks_list_key].ta_token_budget || 0;
                 const tokens_remaining = tasks_list[tasks_list_key].ta_remaining_budget || 0;
                 tasks_list[tasks_list_key].dataValues.list_data.budget_left = parseFloat(total_budget) - parseFloat(tokens_remaining);
@@ -560,6 +560,7 @@ exports.taskListing = async (req, res) => {
                 contest_list[contest_list_key].dataValues.list_data.following_users_not_completed = brandPostCount - taskIdPostCount;
                 contest_list[contest_list_key].dataValues.list_data.entries_after_reward_completed = taskIdPostCompletedCount;
                 contest_list[contest_list_key].dataValues.list_data.campaign_budget = contest_list[contest_list_key].ct_token_budget;
+                contest_list[contest_list_key].dataValues.list_data.brand_data = contest_list[contest_list_key].brand;
                 contest_list[contest_list_key].dataValues.list_data.tickets = bonusTickets[taskId+'_2'] || 0;
                 contest_list[contest_list_key].dataValues.list_data.stars_given = rewardTaskStars[taskId+'_2'] || 0;
                 contest_list[contest_list_key].dataValues.list_data.tokens_given = rewardTaskTokens[taskId+'_2'] || 0;
@@ -603,6 +604,7 @@ exports.taskListing = async (req, res) => {
                 survey_list[survey_list_key].dataValues.list_data.following_users_not_completed = 'NA';
                 survey_list[survey_list_key].dataValues.list_data.entries_after_reward_completed = 'NA';
                 survey_list[survey_list_key].dataValues.list_data.campaign_budget = 'NA';
+                survey_list[survey_list_key].dataValues.list_data.brand_data = survey_list[survey_list_key].brand;
                 survey_list[survey_list_key].dataValues.list_data.tickets = 'NA';
                 survey_list[survey_list_key].dataValues.list_data.stars_given = survey_list[survey_list_key].dataValues.total_stars_given;
                 survey_list[survey_list_key].dataValues.list_data.tokens_given = 'NA';
