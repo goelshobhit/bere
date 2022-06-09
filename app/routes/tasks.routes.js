@@ -326,6 +326,55 @@ module.exports = app => {
    *                              example: Authorisation Required
    */
   router.get('/tasks', auth, Tasks.listing)
+
+  /**
+   * @swagger
+   * /api/tasks:
+   *   get:
+   *     parameters:
+   *         - name: pageNumber
+   *           in: query
+   *           required: false
+   *           schema:
+   *              type: integer
+   *         - name: sortBy
+   *           in: query
+   *           required: false
+   *           schema:
+   *              type: string
+   *              example: ta_task_id,ta_name,cp_campaign_id,ta_type,ta_hashtag   # Example of a parameter value
+   *         - name: sortOrder
+   *           in: query
+   *           required: false
+   *           schema:
+   *              type: string
+   *              example: ASC,DESC    # Example of a parameter value
+   *         - name: sortVal
+   *           in: query
+   *           required: false
+   *           schema:
+   *              type: string
+   *     tags:
+   *       - Tasks
+   *     description: Returns all tasks
+   *     produces:
+   *       - application/json
+   *     responses:
+   *       200:
+   *         description: A list of tasks
+   *       401:
+   *          description: Unauthorized
+   *          content:
+   *              application/json:
+   *                  schema:
+   *                      type: object
+   *                      properties:
+   *                          message:
+   *                              type: string
+   *                              example: Authorisation Required
+   */
+  router.get('/tasks_listing', auth, Tasks.taskListing)
+
   /**
     * @swagger
     * /api/tasks_list:

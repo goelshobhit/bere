@@ -866,6 +866,7 @@ exports.updateSurveyTracking = async (req, res) => {
         };
         const survey = await Survey.findOne(options);
         if (survey.sr_stars_per_user) {
+            Survey.increment('total_stars_given', { by: survey.sr_stars_per_user, where: { sr_id: body["Survey ID"] } });
             var userProfile = await User_profile.findOne({ attributes: ['u_stars'], where: { u_id: uid } });
             const profileData = {
                 u_stars: userProfile.u_stars ? parseInt(userProfile.u_stars) + parseInt(survey.sr_stars_per_user) : survey.sr_stars_per_user

@@ -85,6 +85,10 @@ module.exports = (sequelize, Sequelize) => {
         },
         task_end_date: {
             type: Sequelize.DATE
+        },
+        is_budget_finished: {
+            type: Sequelize.INTEGER,
+            defaultValue: 0
         }
     }, {
         createdAt: 'ucpl_created_at',

@@ -149,6 +149,9 @@ exports.createNewPost = async (req, res) => {
             "ucpl_added_by": addedBY,
             "task_end_date": taskEndDate
         }
+        if (TaskDetails.ta_remaining_budget <= 0) {
+            data.is_budget_finished = 1;
+        }
         var is_bonus_set_active = 0;
         if (TaskDetails.bonus_reward_type == '2') {
             var todayDate = new Date().getTime();
@@ -406,7 +409,6 @@ exports.createNewPost = async (req, res) => {
             name: BrandDetails.cr_co_name,
             logo: BrandDetails.cr_co_logo_path
         };
-
         var available_budget = TaskDetails.dataValues.ta_remaining_budget ? parseInt(TaskDetails.dataValues.ta_remaining_budget) - parseInt(TaskDetails.dataValues.ta_budget_per_user) : parseInt(TaskDetails.dataValues.ta_total_available) - parseInt(TaskDetails.dataValues.ta_budget_per_user);
         var userProfile = await User_profile.findOne({ attributes: ['u_stars', 'u_budget'], where: { u_id: userId } });
         let profileData = {

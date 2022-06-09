@@ -40,7 +40,7 @@ function Reward() {
       tj_type = 'Single';
       TaskDetails = await Tasks.findOne({
         include: [{
-          model: db.campaigns,
+          model: db.brands,
           attributes: ["cr_co_id"]
         }],
         where: {
@@ -52,27 +52,22 @@ function Reward() {
       tj_type = 'Contest';
       TaskDetails = await Contest.findOne({
         include: [{
-          model: db.campaigns,
-          attributes: ["cr_co_id"]
+          model: db.brands,
+          attributes: ["cr_co_alias", "cr_co_name", "cr_co_logo_path", "cr_co_id"]
         }],
         where: {
           ct_id: event_id
         },
         attributes: [
-          ["ct_name", "ta_name"], ["ct_total_available", "ta_total_available"], ["ct_token_budget", "ta_token_budget"], ["ct_budget_per_user", "ta_budget_per_user"], ["ct_hearts_per_user", "ta_stars_per_user"], ["ct_id", "ta_task_id"]
+          ["ct_name", "ta_name"], ["ct_total_available", "ta_total_available"], ["ct_token_budget", "ta_token_budget"], ["ct_budget_per_user", "ta_budget_per_user"], ["ct_stars_per_user", "ta_stars_per_user"], ["ct_id", "ta_task_id"]
         ]
       });
     }
-    if (!TaskDetails || !TaskDetails.campaign || !TaskDetails.campaign.cr_co_id) {
+    if (!TaskDetails || (TaskDetails.brand && !TaskDetails.brand.cr_co_id)) {
       givenResponse.error_message = "Invalid campaign or Task.";
       return givenResponse;
     }
-    const BrandDetails = await Brand.findOne({
-      where: {
-        cr_co_id: TaskDetails.campaign.cr_co_id
-      },
-      attributes: ["cr_co_alias", "cr_co_name", "cr_co_logo_path", "cr_co_id"]
-    });
+    const BrandDetails = TaskDetails.brand;
     const rewardBalanceDetail = await rewardBalance.findOne({
       where: {
         rewards_balance_taskid: event_id,
@@ -88,7 +83,7 @@ function Reward() {
       "rewards_request_id": reward_request_id ? reward_request_id : 0,
       "rewards_award_event_id": event_id,
       "reward_center_id": reward_center_id,
-      "rewards_brand_id": TaskDetails.campaign.cr_co_id,
+      "rewards_brand_id": TaskDetails.brand.cr_co_id,
       "rewards_award_event_type": rewards_event_type,
       "rewards_award_user_id": uid,
       "rewards_award_name": rewardName,

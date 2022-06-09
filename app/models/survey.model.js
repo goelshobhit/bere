@@ -53,6 +53,10 @@ module.exports = (sequelize, Sequelize) => {
     },
     sr_stars_per_user: {
       type: Sequelize.INTEGER
+    },
+    total_stars_given: {
+      type: Sequelize.INTEGER,
+      defaultValue: '0'
     }
   }, {
       createdAt: 'sr_created_date_time',

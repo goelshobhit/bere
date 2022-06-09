@@ -15,7 +15,7 @@ const common = require("../common");
 var ffmpeg = require('fluent-ffmpeg');
 const User_profile = db.user_profile;
 const levelTask = db.level_task;
-const sequelize= require('sequelize');
+const sequelize = require('sequelize');
 const bonus_set = db.bonus_set;
 const BonusTicketRules = db.bonus_ticket_rules;
 const bonusTicketDetails = db.bonus_ticket_details;
@@ -228,6 +228,431 @@ exports.listing = async (req, res) => {
         totalRecords: total
     });
 }
+
+/**
+ * Function to get all Tasks
+ * @param  {object}  req expressJs request object
+ * @param  {object}  res expressJs response object
+ * @return {Promise}
+ */
+
+exports.taskListing = async (req, res) => {
+    const pageSize = parseInt(req.query.pageSize || 10);
+    const pageNumber = parseInt(req.query.pageNumber || 1);
+    const skipCount = (pageNumber - 1) * pageSize;
+    const sortBy = req.query.sortBy || 'tj_id'
+    const sortOrder = req.query.sortOrder || 'DESC'
+
+    var options = {
+        limit: pageSize,
+        offset: skipCount,
+        order: [
+            [sortBy, sortOrder]
+        ],
+        attributes: [["tj_type", "task_type"], ["tj_task_id", "task_id"], ["tj_data", "task_data"], ["tj_status", "task_status"]],
+        where: {}
+    };
+    if (req.query.taskId) {
+        options['where']['tj_task_id'] = req.query.taskId;
+    }
+    if (req.query.brandId) {
+        options['where']['tj_data'] = {};
+        options['where']['tj_data']['brand'] = {};
+        options['where']['tj_data']['brand']['brand_id'] = req.query.brandId;
+    }
+    var total = await taskJson.count({
+        where: options['where']
+    });
+    const tasks_list_data = await taskJson.findAll(options);
+    var contestIds = [];
+    var taskIds = [];
+    var surveyIds = [];
+    var brandIds = [];
+    if (tasks_list_data.length) {
+        tasks_list_data.forEach(element => {
+            brandIds.push(element.dataValues.task_data.brand.brand_id);
+            if (element.dataValues.task_data.ta_type == 1) {
+                contestIds.push(element.dataValues.task_id);
+            } else if (element.dataValues.task_data.ta_type == 2) {
+                taskIds.push(element.dataValues.task_id);
+            } else if (element.dataValues.task_data.ta_type == 5) {
+                surveyIds.push(element.dataValues.task_id);
+            }
+
+        })
+    }
+    let bonus_ticket_listing  = [];
+    let reward_given_listing  = [];
+    let tasks_list = [];
+    let contest_list = [];
+    if (taskIds.length) {
+        var options = {
+            include: [
+                {
+                    model: db.brands,
+                    attributes: [["cr_co_id", 'brand_id'], ["cr_co_name", 'brand_name'], ["cr_co_logo_path", 'brand_logo'], ["cr_co_status", 'brand_status']],
+                },
+                {
+                    model: db.user_content_post,
+                    attributes: [["ucpl_content_id", "ucpl_content_id"], ["ucpl_id", "post_id"], ['ucpl_content_data', 'post_data'], 'ucpl_created_at', 'task_end_date'],
+                    required: false,
+                    limit: pageSize,
+                    offset: skipCount,
+                    where: {
+                        ucpl_status: 1
+                    },
+                    order: [
+                        ['ucpl_added_by', 'ASC']
+                        //['ucpl_id', 'ASC']
+                    ]
+                }
+            ],
+            where: { ta_task_id: taskIds }
+        };
+        tasks_list = await Tasks.findAll(options);
+
+        var reward_given_options = {
+            where: {
+                rewards_award_event_id: taskIds,
+                rewards_award_event_type: 'Task'
+            },
+            attributes: [
+                'rewards_award_event_id',
+                [sequelize.fn('sum', sequelize.col('rewards_award_stars')), 'rewards_award_stars'],
+                [sequelize.fn('sum', sequelize.col('rewards_award_token')), 'rewards_award_token']
+            ],
+            group: ['rewards_award_event_id']
+        };
+        reward_given_listing = await db.rewards_given.findAll(reward_given_options);
+        
+        var bonus_ticket_options = {
+            where: {
+                event_id: taskIds,
+                event_type: 'Task'
+            },
+            attributes: [
+                'event_id',
+                [sequelize.fn('sum', sequelize.col('tickets_earned')), 'tickets_earned']
+            ],
+            group: ['event_id']
+        };
+        bonus_ticket_listing = await db.bonus_ticket_details.findAll(bonus_ticket_options);
+    }
+
+    if (contestIds.length) {
+        var options = {
+            include: [
+                {
+                    model: db.brands,
+                    attributes: [["cr_co_id", 'brand_id'], ["cr_co_name", 'brand_name'], ["cr_co_logo_path", 'brand_logo'], ["cr_co_status", 'brand_status']],
+                },
+                {
+                    model: db.user_content_post,
+                    attributes: [["ucpl_content_id", "ucpl_content_id"], ["ucpl_id", "post_id"], ['ucpl_content_data', 'post_data'], 'ucpl_created_at', 'task_end_date'],
+                    required: false,
+                    limit: pageSize,
+                    offset: skipCount,
+                    where: {
+                        ucpl_status: 1
+                    },
+                    order: [
+                        ['ucpl_added_by', 'ASC']
+                        //['ucpl_id', 'ASC']
+                    ]
+                }
+            ],
+            where: { ct_id: contestIds }
+        };
+        contest_list = await Contest.findAll(options);
+        var reward_given_options = {
+            where: {
+                rewards_award_event_id: contestIds,
+                rewards_award_event_type: 'Contest'
+            },
+            attributes: [
+                'rewards_award_event_id',
+                [sequelize.fn('sum', sequelize.col('rewards_award_stars')), 'rewards_award_stars'],
+                [sequelize.fn('sum', sequelize.col('rewards_award_token')), 'rewards_award_token']
+            ],
+            group: ['rewards_award_event_id']
+        };
+        contest_reward_given_listing = await db.rewards_given.findAll(reward_given_options);
+      
+        var bonus_ticket_options = {
+            where: {
+                event_id: contestIds,
+                event_type: 'Contest'
+            },
+            attributes: [
+                'event_id',
+                [sequelize.fn('sum', sequelize.col('tickets_earned')), 'tickets_earned']
+            ],
+            group: ['event_id']
+        };
+        contest_bonus_ticket_listing = await db.bonus_ticket_details.findAll(bonus_ticket_options);
+    }
+    if (surveyIds.length) {
+        var options = {
+            include: [
+                {
+                    model: db.brands,
+                    attributes: [["cr_co_id", 'brand_id'], ["cr_co_name", 'brand_name'], ["cr_co_logo_path", 'brand_logo'], ["cr_co_status", 'brand_status']],
+                }
+            ],
+            where: { sr_id: surveyIds }
+        };
+        survey_list = await db.survey.findAll(options);
+      
+    }
+        var bonusTickets = {};
+        if (bonus_ticket_listing.length) {
+            for (const bonus_ticket_key in bonus_ticket_listing) {
+                var bonus_ticket_list = bonus_ticket_listing[bonus_ticket_key];
+                bonusTickets[bonus_ticket_list.event_id+'_1'] = bonus_ticket_list.tickets_earned;
+            }
+        }
+        if (contest_bonus_ticket_listing.length) {
+            for (const bonus_ticket_key in contest_bonus_ticket_listing) {
+                var bonus_ticket_list = contest_bonus_ticket_listing[bonus_ticket_key];
+                bonusTickets[bonus_ticket_list.event_id+'_2'] = bonus_ticket_list.tickets_earned;
+            }
+        }
+        
+
+        var rewardTaskStars = {};
+        var rewardTaskTokens = {};
+        if (reward_given_listing.length) {
+            for (const reward_given_key in reward_given_listing) {
+                var reward_listing = reward_given_listing[reward_given_key];
+                rewardTaskStars[reward_listing.rewards_award_event_id+'_1'] = reward_listing.rewards_award_stars;
+                rewardTaskTokens[reward_listing.rewards_award_event_id+'_1'] = reward_listing.rewards_award_token;
+            }
+        }
+        if (contest_reward_given_listing.length) {
+            for (const reward_given_key in contest_reward_given_listing) {
+                var reward_listing = contest_reward_given_listing[reward_given_key];
+                rewardTaskStars[reward_listing.rewards_award_event_id+'_2'] = reward_listing.rewards_award_stars;
+                rewardTaskTokens[reward_listing.rewards_award_event_id+'_2'] = reward_listing.rewards_award_token;
+            }
+        }
+       
+        var brandUniqueIds = brandIds.filter((v, i, a) => a.indexOf(v) === i);
+
+        var user_content_options = {
+            where: {
+                ucpl_status: 1,
+                upcl_brand_details: {
+                    id: {
+                        [Op.in]: brandUniqueIds
+                    }
+                }
+            }
+        };
+        const user_contentbrand_listing = await db.user_content_post.count({
+            where: user_content_options['where'],
+            distinct: true,
+           // group: ['upcl_brand_details'],
+            col: 'ucpl_u_id'
+        });
+
+        var user_content_options = {
+            where: {
+                ucpl_status: 1,
+                ta_task_id: taskIds
+            }
+        };
+        const user_content_task_listing = await db.user_content_post.count({
+            where: user_content_options['where'],
+            distinct: true,
+            group: ['ta_task_id', 'ucpl_content_type'],
+            col: 'ucpl_u_id'
+        });
+        
+        var userTaskPostData = {};
+        if (user_content_task_listing.length) {
+            for (const user_content_key in user_content_task_listing) {
+                const content_task_list = user_content_task_listing[user_content_key];
+                userTaskPostData[content_task_list['ta_task_id'] + '_'+content_task_list['ucpl_content_type']] = content_task_list;
+
+            }
+        }
+
+        var user_content_options = {
+            where: {
+                ucpl_status: 1,
+                is_budget_finished : 1,
+                ta_task_id: taskIds
+            }
+        };
+        const userCompletedRewardData = await db.user_content_post.count({
+            where: user_content_options['where'],
+            group: ['ta_task_id', 'ucpl_content_type']
+        });
+        
+        var userTaskPostCompleteData = {};
+        if (userCompletedRewardData.length) {
+            for (const userCompletedRewardDataKey in userCompletedRewardData) {
+                const content_task_list = userCompletedRewardData[userCompletedRewardDataKey];
+                userTaskPostCompleteData[content_task_list['ta_task_id'] + '_'+content_task_list['ucpl_content_type']] = content_task_list;
+
+            }
+        }
+
+        // return res.status(200).send({
+        //     userTaskPostCompleteData: userTaskPostCompleteData,
+        //     userTaskPostData: userTaskPostData,
+        //     user_contentbrand_listing: user_contentbrand_listing
+        // });
+        var taskData = {};
+        var bonusSetids = [];
+        if (tasks_list.length) {
+            for (const tasks_list_key in tasks_list) {
+                if (tasks_list[tasks_list_key].bonus_reward_type == 2) {
+                    bonusSetids.push(tasks_list[tasks_list_key].bonus_set_id);
+                }
+                const taskId = tasks_list[tasks_list_key].ta_task_id;
+                tasks_list[tasks_list_key].dataValues.list_data = {};
+                tasks_list[tasks_list_key].dataValues.list_data.campaign_type = 'Task';
+                
+                taskIdPostCount = 0;
+                if (userTaskPostData[taskId+'_1'] && userTaskPostData[taskId+'_1'].count) {
+                    taskIdPostCount = userTaskPostData[taskId+'_1'].count;
+                }
+                taskIdPostCompletedCount = 0;
+                if (userTaskPostCompleteData[taskId+'_1'] && userTaskPostCompleteData[taskId+'_1'].count) {
+                    taskIdPostCompletedCount = userTaskPostCompleteData[taskId+'_1'].count;
+                }
+                var brandPostCount = user_contentbrand_listing || 0;
+                tasks_list[tasks_list_key].dataValues.list_data.following_users_not_completed = brandPostCount - taskIdPostCount;
+                tasks_list[tasks_list_key].dataValues.list_data.entries_after_reward_completed = taskIdPostCompletedCount;
+                tasks_list[tasks_list_key].dataValues.list_data.campaign_budget = tasks_list[tasks_list_key].ta_token_budget;
+                tasks_list[tasks_list_key].dataValues.list_data.tickets = bonusTickets[taskId+'_1'] || 0;
+                tasks_list[tasks_list_key].dataValues.list_data.stars_given = rewardTaskStars[taskId+'_1'] || 0;
+                tasks_list[tasks_list_key].dataValues.list_data.tokens_given = rewardTaskTokens[taskId+'_1'] || 0;
+                const total_budget = tasks_list[tasks_list_key].ta_token_budget || 0;
+                const tokens_remaining = tasks_list[tasks_list_key].ta_remaining_budget || 0;
+                tasks_list[tasks_list_key].dataValues.list_data.budget_left = parseFloat(total_budget) - parseFloat(tokens_remaining);
+                tasks_list[tasks_list_key].dataValues.list_data.task_entries = tasks_list[tasks_list_key].user_content_posts ? tasks_list[tasks_list_key].user_content_posts.length : 0;
+                taskData[taskId + '_2'] = tasks_list[tasks_list_key];
+
+            }
+        }
+        if (contest_list.length) {
+            for (const contest_list_key in contest_list) {
+                if (contest_list[contest_list_key].bonus_reward_type == 2) {
+                    bonusSetids.push(contest_list[contest_list_key].bonus_set_id);
+                }
+                const taskId = contest_list[contest_list_key].ct_id;
+                contest_list[contest_list_key].dataValues.list_data = {};
+                contest_list[contest_list_key].dataValues.list_data.campaign_type = 'Contest';
+                
+                taskIdPostCount = 0;
+                if (userTaskPostData[taskId+'_2'] && userTaskPostData[taskId+'_2'].count) {
+                    taskIdPostCount = userTaskPostData[taskId+'_2'].count;
+                }
+                taskIdPostCompletedCount = 0;
+                if (userTaskPostCompleteData[taskId+'_2'] && userTaskPostCompleteData[taskId+'_2'].count) {
+                    taskIdPostCompletedCount = userTaskPostCompleteData[taskId+'_2'].count;
+                }
+                var brandPostCount = user_contentbrand_listing || 0;
+                contest_list[contest_list_key].dataValues.list_data.following_users_not_completed = brandPostCount - taskIdPostCount;
+                contest_list[contest_list_key].dataValues.list_data.entries_after_reward_completed = taskIdPostCompletedCount;
+                contest_list[contest_list_key].dataValues.list_data.campaign_budget = contest_list[contest_list_key].ct_token_budget;
+                contest_list[contest_list_key].dataValues.list_data.tickets = bonusTickets[taskId+'_2'] || 0;
+                contest_list[contest_list_key].dataValues.list_data.stars_given = rewardTaskStars[taskId+'_2'] || 0;
+                contest_list[contest_list_key].dataValues.list_data.tokens_given = rewardTaskTokens[taskId+'_2'] || 0;
+                const total_budget = contest_list[contest_list_key].ct_token_budget || 0;
+                const tokens_remaining = rewardTaskTokens[taskId+'_2'] || 0;
+                contest_list[contest_list_key].dataValues.list_data.budget_left = parseFloat(total_budget) - parseFloat(tokens_remaining);
+                contest_list[contest_list_key].dataValues.list_data.task_entries = contest_list[contest_list_key].user_content_posts ? contest_list[contest_list_key].user_content_posts.length : 0;
+                taskData[taskId + '_1'] = contest_list[contest_list_key];
+
+            }
+        }
+        surveySubmissionList = {};
+        if (survey_list.length) {
+            var SubmissionOptions = {
+                where: {
+                    srs_sr_id: surveyIds
+                },
+                distinct: true,
+                col: 'srs_uid',
+                group:  ['srs_sr_id']
+            };
+            const SurveySubmissionsResult = await db.survey_submissions.count(SubmissionOptions);
+            if (SurveySubmissionsResult.length) {
+                for (const SurveySubmissionsKey in SurveySubmissionsResult) {
+                    surveySubmissionList[SurveySubmissionsResult[SurveySubmissionsKey].srs_sr_id] = SurveySubmissionsResult[SurveySubmissionsKey];
+                }
+            }
+            for (const survey_list_key in survey_list) {
+                const taskId = survey_list[survey_list_key].sr_id;
+                survey_list[survey_list_key].dataValues.list_data = {};
+                survey_list[survey_list_key].dataValues.list_data.campaign_type = 'Survey';
+                
+                taskIdPostCount = 0;
+                if (userTaskPostData[taskId+'_2'] && userTaskPostData[taskId+'_2'].count) {
+                    taskIdPostCount = userTaskPostData[taskId+'_2'].count;
+                }
+                taskIdPostCompletedCount = 0;
+                if (userTaskPostCompleteData[taskId+'_2'] && userTaskPostCompleteData[taskId+'_2'].count) {
+                    taskIdPostCompletedCount = userTaskPostCompleteData[taskId+'_2'].count;
+                }
+                survey_list[survey_list_key].dataValues.list_data.following_users_not_completed = 'NA';
+                survey_list[survey_list_key].dataValues.list_data.entries_after_reward_completed = 'NA';
+                survey_list[survey_list_key].dataValues.list_data.campaign_budget = 'NA';
+                survey_list[survey_list_key].dataValues.list_data.tickets = 'NA';
+                survey_list[survey_list_key].dataValues.list_data.stars_given = survey_list[survey_list_key].dataValues.total_stars_given;
+                survey_list[survey_list_key].dataValues.list_data.tokens_given = 'NA';
+                survey_list[survey_list_key].dataValues.list_data.budget_left = 'NA';
+                survey_list[survey_list_key].dataValues.list_data.bonus_set = 'NA';
+                survey_list[survey_list_key].dataValues.list_data.task_entries = surveySubmissionList[taskId] ? surveySubmissionList[taskId].count : 0 ;
+                taskData[taskId + '_5'] = survey_list[survey_list_key];
+
+            }
+        }
+        var bonus_set_data = {};
+        if (bonusSetids.length) {
+            var bonus_set_options = {
+                where: {
+                    bonus_set_id: bonusSetids
+                },
+                attributes: ["bonus_set_id", "bonus_set_item_name", "bonus_item_id", "bonus_set_status", "bonus_set_start_date" , "bonus_set_duration"],
+            };
+            const bonus_set_listing = await bonus_set.findAll(bonus_set_options);
+            for (const bonus_set_key in bonus_set_listing) {
+                bonus_set_data[bonus_set_listing[bonus_set_key].bonus_set_id] = bonus_set_listing[bonus_set_key];
+            }
+        }
+        if (tasks_list.length) {
+            for (const tasks_list_key in tasks_list) {
+                tasks_list[tasks_list_key].dataValues.list_data.bonus_set = bonus_set_data[tasks_list[tasks_list_key].bonus_set_id] ? bonus_set_data[tasks_list[tasks_list_key].bonus_set_id] : {};
+            }
+        }
+        if (contest_list.length) {
+            for (const contest_list_key in contest_list) {
+                contest_list[contest_list_key].dataValues.list_data.bonus_set = bonus_set_data[contest_list[contest_list_key].bonus_set_id] ? bonus_set_data[contest_list[contest_list_key].bonus_set_id] : {};
+            }
+        }
+        
+        
+        
+        if (tasks_list_data.length) {
+            for (const tasks_list_key in tasks_list_data) {
+                var ta_type = tasks_list_data[tasks_list_key].dataValues.task_data.ta_type;
+                var task_id = tasks_list_data[tasks_list_key].dataValues.task_id;
+                console.log(ta_type+'==='+task_id);
+                tasks_list_data[tasks_list_key].dataValues.task_list_data = (taskData[task_id + '_' + ta_type] && taskData[task_id + '_' + ta_type].dataValues.list_data) ? taskData[task_id + '_' + ta_type].dataValues.list_data : {};
+                
+            }
+        }
+        res.status(200).send({
+            data: tasks_list_data,
+            totalRecords: total
+        });
+    
+}
+
 /**
  * Function to get all Tasks
  * @param  {object}  req expressJs request object
@@ -259,8 +684,8 @@ exports.jsonlisting = async (req, res) => {
     };
     const posts_list = await Posts.findAll(userOptions);
     var closedTaskIds = posts_list.map(function (item) {
-        return '' +item.ta_task_id+ ''
-      });
+        return '' + item.ta_task_id + ''
+    });
     closedTaskIds = closedTaskIds.filter((v, i, a) => a.indexOf(v) === i);
     let taskIdsValues = [];
     if (contentUserTaskIds.length) {
@@ -269,7 +694,7 @@ exports.jsonlisting = async (req, res) => {
         });
     }
     taskIdsValues = closedTaskIds.concat(taskIdsValues);
-    
+
     var surveyOptions = {
         attributes: ["sr_id"],
         where: {
@@ -279,8 +704,8 @@ exports.jsonlisting = async (req, res) => {
     };
     const survey_list = await db.survey_user_complete.findAll(surveyOptions);
     var surveyCompletedTaskIds = survey_list.map(function (item) {
-        return '' +item.sr_id+ ''
-      });
+        return '' + item.sr_id + ''
+    });
     surveyCompletedTaskIds = surveyCompletedTaskIds.filter((v, i, a) => a.indexOf(v) === i);
     // return res.status(200).send({
     //     message : surveyCompletedTaskIds
@@ -314,7 +739,7 @@ exports.jsonlisting = async (req, res) => {
         if (!options['where']['tj_data']) {
             options['where']['tj_data'] = {};
         }
-        options['where']['tj_data'][Op.or] =  [{
+        options['where']['tj_data'][Op.or] = [{
             sr_id: {
                 [Op.not]: surveyCompletedTaskIds
             }
@@ -324,10 +749,7 @@ exports.jsonlisting = async (req, res) => {
                 [Op.eq]: null
             }
         }
-    ]
-        // options['where']['tj_data']['sr_id'] = {
-        //     [Op.not]: surveyCompletedTaskIds
-        // };
+        ]
     }
 
     var total = await taskJson.count({
@@ -379,7 +801,7 @@ exports.taskJsonDetail = async (req, res) => {
         };
     }
     const task = await taskJson.findOne(options);
-    
+
     if (!task) {
         res.status(500).send({
             message: "task not found"
@@ -414,12 +836,12 @@ exports.taskDetail = async (req, res) => {
         },
         attributes: [["ucpl_content_id", "ucpl_content_id"], ["ucpl_id", "post_id"], ['ucpl_content_data', 'post_data'], 'ucpl_created_at', 'task_end_date'],
     });
-    
-        // res.status(200).send({
-        //     message: userTaskPost
-        // });
-        // return
-    
+
+    // res.status(200).send({
+    //     message: userTaskPost
+    // });
+    // return
+
     const task = await Tasks.findOne({
         include: [
             {
@@ -459,24 +881,24 @@ exports.taskDetail = async (req, res) => {
         });
         return
     }
-    
+
     var reward_given_options = {
         where: {
             rewards_award_event_id: taskID,
             rewards_award_event_type: 'Task'
         },
-        attributes:[
-        [sequelize.fn('sum', sequelize.col('rewards_award_stars')), 'rewards_award_stars'],
-        [sequelize.fn('sum', sequelize.col('rewards_award_coins')), 'rewards_award_coins']
-    ],
+        attributes: [
+            [sequelize.fn('sum', sequelize.col('rewards_award_stars')), 'rewards_award_stars'],
+            [sequelize.fn('sum', sequelize.col('rewards_award_coins')), 'rewards_award_coins']
+        ],
     };
     const reward_given_listing = await db.rewards_given.findOne(reward_given_options);
 
-    
+
     task.dataValues.reward_coins = reward_given_listing.rewards_award_stars || 0
     task.dataValues.reward_stars = reward_given_listing.rewards_award_coins || 0
     var endDate = '';
-    if (userTaskPost &&  userTaskPost.ucpl_created_at!= undefined) {
+    if (userTaskPost && userTaskPost.ucpl_created_at != undefined) {
         var todayDate = new Date();
         if (userTaskPost.task_end_date) {
             endDate = userTaskPost.task_end_date;
@@ -494,80 +916,79 @@ exports.taskDetail = async (req, res) => {
         task.dataValues.user_task_start_date = '';
         task.dataValues.user_task_end_date = '';
     }
-    
+
     var UserId = req.header(process.env.UKEY_HEADER || "x-api-key");
     var is_bonus_set_active = 0;
-        if (task.bonus_reward_type == '2') {
-            var todayDate = new Date().getTime();
-            var bonusSetActiveDetails = {};
-            if (task.bonus_set_id) {
-                var bonusSetDetails = await bonus_set.findOne({
-                    where: {
-                        bonus_set_id: task.bonus_set_id
-                    }
-                });
-                if (bonusSetDetails) {
-                    if (bonusSetDetails.bonus_set_start_date) {
-                        var startDate = new Date(bonusSetDetails.bonus_set_start_date);
-                        var bonus_set_end_date = startDate.setDate(startDate.getDate() + bonusSetDetails.bonus_set_duration);
-                        bonus_set_end_date.toLocaleString('en-US', { timeZone: 'Asia/Calcutta' })
-                        let bonus_set_end_date_new = new Date(bonus_set_end_date);
-                        if (bonusSetDetails.bonus_set_start_date.getTime() <= todayDate && todayDate <= bonus_set_end_date_new.getTime()) {
-                            is_bonus_set_active = 1;
-                            bonusSetActiveDetails = bonusSetDetails;
-                        } else {
-                            is_bonus_set_active = 0;
-                        }
-                    }
-
+    if (task.bonus_reward_type == '2') {
+        var todayDate = new Date().getTime();
+        var bonusSetActiveDetails = {};
+        if (task.bonus_set_id) {
+            var bonusSetDetails = await bonus_set.findOne({
+                where: {
+                    bonus_set_id: task.bonus_set_id
                 }
-            }
-            if (is_bonus_set_active == 0) {
-                const bonus_set_list = await bonus_set.findAll({
-                    where: {
-                        bonus_set_default: 1
+            });
+            if (bonusSetDetails) {
+                if (bonusSetDetails.bonus_set_start_date) {
+                    var startDate = new Date(bonusSetDetails.bonus_set_start_date);
+                    var bonus_set_end_date = startDate.setDate(startDate.getDate() + bonusSetDetails.bonus_set_duration);
+                    bonus_set_end_date.toLocaleString('en-US', { timeZone: 'Asia/Calcutta' })
+                    let bonus_set_end_date_new = new Date(bonus_set_end_date);
+                    if (bonusSetDetails.bonus_set_start_date.getTime() <= todayDate && todayDate <= bonus_set_end_date_new.getTime()) {
+                        is_bonus_set_active = 1;
+                        bonusSetActiveDetails = bonusSetDetails;
+                    } else {
+                        is_bonus_set_active = 0;
                     }
-                });
-                bonus_set_list.forEach(element => {
-                    if (element.bonus_set_start_date) {
-                        var startDate = new Date(element.bonus_set_start_date);
-                        var bonus_set_end_date = startDate.setDate(startDate.getDate() + element.bonus_set_duration);
-                        bonus_set_end_date.toLocaleString('en-US', { timeZone: 'Asia/Calcutta' })
-                        let bonus_set_end_date_new = new Date(bonus_set_end_date);
-                        if (element.bonus_set_start_date.getTime() <= todayDate && todayDate <= bonus_set_end_date_new.getTime() && is_bonus_set_active == 0) {
-                            is_bonus_set_active = 1;
-                            bonusSetActiveDetails = element;
-                        }
-                    }
-                });
+                }
 
-            }
-            if (bonusSetActiveDetails && bonusSetActiveDetails.bonus_set_id !=  undefined) {
-                const total_tickets_detail = await bonusTicketDetails.findOne({
-                    attributes: [
-                      'bonus_set_id',
-                      [sequelize.fn('sum', sequelize.col('tickets_earned')), 'total_tickets'],
-                    ],
-                    where: {bonus_set_id: bonusSetActiveDetails.bonus_set_id, user_id: UserId},
-                    group: ['bonus_set_id'],
-                    raw: true
-                  });
-                  task.dataValues.total_bonus_set_tickets = total_tickets_detail ? total_tickets_detail.total_tickets : 0;
-                  task.dataValues.bonus_set = bonusSetActiveDetails;
-                  task.dataValues.active_bonus_set_id = bonusSetActiveDetails.bonus_set_id;
-            }
-        } else if (task.bonus_reward_type == '1') {
-            if (task.bonus_item_id) {
-                const bonusItem = await db.bonus_item.findOne({
-                    where: {
-                        bonus_item_id: task.bonus_item_id
-                    }
-                });
-                task.dataValues.bonus_item = bonusItem;
             }
         }
+        if (is_bonus_set_active == 0) {
+            const bonus_set_list = await bonus_set.findAll({
+                where: {
+                    bonus_set_default: 1
+                }
+            });
+            bonus_set_list.forEach(element => {
+                if (element.bonus_set_start_date) {
+                    var startDate = new Date(element.bonus_set_start_date);
+                    var bonus_set_end_date = startDate.setDate(startDate.getDate() + element.bonus_set_duration);
+                    bonus_set_end_date.toLocaleString('en-US', { timeZone: 'Asia/Calcutta' })
+                    let bonus_set_end_date_new = new Date(bonus_set_end_date);
+                    if (element.bonus_set_start_date.getTime() <= todayDate && todayDate <= bonus_set_end_date_new.getTime() && is_bonus_set_active == 0) {
+                        is_bonus_set_active = 1;
+                        bonusSetActiveDetails = element;
+                    }
+                }
+            });
+
+        }
+        if (bonusSetActiveDetails && bonusSetActiveDetails.bonus_set_id != undefined) {
+            const total_tickets_detail = await bonusTicketDetails.findOne({
+                attributes: [
+                    'bonus_set_id',
+                    [sequelize.fn('sum', sequelize.col('tickets_earned')), 'total_tickets'],
+                ],
+                where: { bonus_set_id: bonusSetActiveDetails.bonus_set_id, user_id: UserId },
+                group: ['bonus_set_id'],
+                raw: true
+            });
+            task.dataValues.total_bonus_set_tickets = total_tickets_detail ? total_tickets_detail.total_tickets : 0;
+            task.dataValues.bonus_set = bonusSetActiveDetails;
+            task.dataValues.active_bonus_set_id = bonusSetActiveDetails.bonus_set_id;
+        }
+    } else if (task.bonus_reward_type == '1') {
+        if (task.bonus_item_id) {
+            const bonusItem = await db.bonus_item.findOne({
+                where: {
+                    bonus_item_id: task.bonus_item_id
+                }
+            });
+            task.dataValues.bonus_item = bonusItem;
+        }
+    }
     res.status(200).send({
-        reward_given_listing: reward_given_listing,
         data: task,
         taskDetails: common.taskStatusArr()[task.ta_status],
         media_token: common.imageToken(taskID)
@@ -1085,7 +1506,7 @@ exports.createNewContest = async (req, res) => {
     const body = req.body;
     const data = {
         "ct_name": body.hasOwnProperty("Task name") ? req.body["Task name"] : "",
-       // "cp_campaign_id": body.hasOwnProperty("Campaign id") ? req.body["Campaign id"] : "",
+        // "cp_campaign_id": body.hasOwnProperty("Campaign id") ? req.body["Campaign id"] : "",
         "brand_id": body.hasOwnProperty("Brand Id") ? req.body["Brand Id"] : 0,
         "ct_type": body.hasOwnProperty("Task type") ? req.body["Task type"] : "",
         "media_type": body.hasOwnProperty("Media type") ? req.body["Media type"] : 0,
@@ -1217,7 +1638,7 @@ exports.listingContest = async (req, res) => {
     var UserId = req.header(process.env.UKEY_HEADER || "x-api-key");
     todayDate.toLocaleString('en-US', { timeZone: 'Asia/Calcutta' })
     console.log(todayDate);
-    
+
     const contentUserTaskIds = await common.getContentReportUser(['Contest', 'Campaign'], UserId);
 
     let contestIdsValues = [];
@@ -1237,7 +1658,7 @@ exports.listingContest = async (req, res) => {
     var options = {
         include: [{
             model: db.campaigns,
-            required : false,
+            required: false,
             attributes: [
                 ["cp_campaign_name", "Campaign Name"]
             ],
@@ -1312,11 +1733,11 @@ exports.userTasksState = async (req, res) => {
         order: [
             ['users_invitation_id', 'DESC']
         ],
-        attributes: ["users_invitation_recipient_user_id","users_invitation_object_id", "users_invitation_action_id", "users_invitation_page_id"],
+        attributes: ["users_invitation_recipient_user_id", "users_invitation_object_id", "users_invitation_action_id", "users_invitation_page_id"],
         where: {}
     };
-    
-      invitation_options['where'] = {
+
+    invitation_options['where'] = {
         users_invitation_user_id: Uid
     }
     const user_invitation_listing = await db.users_invitation.findAll(invitation_options);
@@ -1326,10 +1747,10 @@ exports.userTasksState = async (req, res) => {
     var all_bonus_task_userids = [];
     if (user_invitation_listing.length) {
         for (var user_invitation_key in user_invitation_listing) {
-            if (user_invitation_listing[user_invitation_key].users_invitation_object_id == 1 ) {    // survey
+            if (user_invitation_listing[user_invitation_key].users_invitation_object_id == 1) {    // survey
                 survey_data[user_invitation_listing[user_invitation_key].users_invitation_recipient_user_id] = user_invitation_listing[user_invitation_key].users_invitation_action_id;
             }
-            if (user_invitation_listing[user_invitation_key].users_invitation_object_id == 5 ) {    // bonus task
+            if (user_invitation_listing[user_invitation_key].users_invitation_object_id == 5) {    // bonus task
                 bonus_task_data[user_invitation_listing[user_invitation_key].users_invitation_recipient_user_id] = user_invitation_listing[user_invitation_key].users_invitation_action_id;
             }
         }
@@ -1342,20 +1763,20 @@ exports.userTasksState = async (req, res) => {
         all_bonus_task_userids = [Uid];
     }
     var options = {
-        attributes: [["sr_hashtags", "task_hashtag"],["sr_enddate_time", "task_endtime"], "sr_title"],
+        attributes: [["sr_hashtags", "task_hashtag"], ["sr_enddate_time", "task_endtime"], "sr_title"],
         where: {}
     };
     options['include'] = [
         {
-          model: db.survey_user_complete,
-         attributes:[["sr_id", "task_event_id"],["sr_completed", "task_status"],["sr_uid", "user_id"]],
-          where : {
-            sr_completed: 0,
-            sr_uid: all_user_ids
-          }
+            model: db.survey_user_complete,
+            attributes: [["sr_id", "task_event_id"], ["sr_completed", "task_status"], ["sr_uid", "user_id"]],
+            where: {
+                sr_completed: 0,
+                sr_uid: all_user_ids
+            }
         }
-      ]
-    
+    ]
+
     options['where'] = {
         sr_status: 1
     }
@@ -1366,7 +1787,7 @@ exports.userTasksState = async (req, res) => {
             var surveyDetail = {};
             var hashtag = survey_user_state[survey_key].dataValues.task_hashtag;
             surveyDetail['task_event_id'] = survey_user_state[survey_key].dataValues.survey_user_completes[0].dataValues.task_event_id;
-            
+
             surveyDetail['task_title'] = survey_user_state[survey_key].dataValues.sr_title;
             surveyDetail['task_status'] = survey_user_state[survey_key].dataValues.survey_user_completes[0].dataValues.task_status;
             surveyDetail['user_id'] = survey_user_state[survey_key].dataValues.survey_user_completes[0].dataValues.user_id;
@@ -1375,7 +1796,7 @@ exports.userTasksState = async (req, res) => {
             } else {
                 surveyDetail['task_hashtag'] = '';
             }
-           
+
             surveyDetail['task_endtime'] = survey_user_state[survey_key].dataValues.task_endtime;
             surveyDetail['task_event_type'] = 'Survey';
             surveyData.push(surveyDetail);
@@ -1383,8 +1804,8 @@ exports.userTasksState = async (req, res) => {
         }
     }
     var bonus_options = {
-        attributes: [["bonus_task_id", "task_event_id"], ["bonus_task_completion_date", "task_title"], ["bonus_task_is_finished", "task_status"],["bonus_task_usr_id", "user_id"],["bonus_task_hashtag", "task_hashtag"],["bonus_task_completion_date", "task_endtime"]],
-        where: {bonus_task_is_finished: 0, bonus_task_usr_id : all_bonus_task_userids}
+        attributes: [["bonus_task_id", "task_event_id"], ["bonus_task_completion_date", "task_title"], ["bonus_task_is_finished", "task_status"], ["bonus_task_usr_id", "user_id"], ["bonus_task_hashtag", "task_hashtag"], ["bonus_task_completion_date", "task_endtime"]],
+        where: { bonus_task_is_finished: 0, bonus_task_usr_id: all_bonus_task_userids }
     };
     const bonus_task_result = await db.bonus_task.findAll(bonus_options);
     if (bonus_task_result.length) {
