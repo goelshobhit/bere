@@ -329,9 +329,19 @@ module.exports = app => {
 
   /**
    * @swagger
-   * /api/tasks:
+   * /api/tasks_listing:
    *   get:
    *     parameters:
+   *         - name: taskId
+   *           in: query
+   *           required: false
+   *           schema:
+   *              type: integer
+   *         - name: brandId
+   *           in: query
+   *           required: false
+   *           schema:
+   *              type: integer
    *         - name: pageNumber
    *           in: query
    *           required: false
@@ -342,7 +352,7 @@ module.exports = app => {
    *           required: false
    *           schema:
    *              type: string
-   *              example: ta_task_id,ta_name,cp_campaign_id,ta_type,ta_hashtag   # Example of a parameter value
+   *              example: tj_id,tj_task_id   # Example of a parameter value
    *         - name: sortOrder
    *           in: query
    *           required: false
@@ -380,16 +390,6 @@ module.exports = app => {
     * /api/tasks_list:
     *   get:
     *     parameters:
-    *         - name: taskId
-    *           in: query
-    *           required: false
-    *           schema:
-    *              type: integer
-    *         - name: brandId
-    *           in: query
-    *           required: false
-    *           schema:
-    *              type: integer
     *         - name: pageNumber
     *           in: query
     *           required: false
