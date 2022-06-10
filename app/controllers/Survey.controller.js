@@ -540,10 +540,22 @@ exports.submitSurvey = async (req, res) => {
         return;
     }
     var uid = req.header(process.env.UKEY_HEADER || "x-api-key");
-
+    var surveyOptions = {
+        where: {
+            sr_id: body["Survey ID"]
+        }
+    };
+    const survey = await Survey.findOne(surveyOptions);
+    if (!survey) {
+        res.status(500).send({
+            message: "Survey not found or inactive."
+        });
+        return;
+    }
     var surveyAnswerIds = body["Survey Answer Ids"];
     const SurveySubmissionData = {
         "srs_sr_id": body["Survey ID"],
+        "brand_id": survey.sr_brand_id,
         "srs_uid": uid,
         "srs_srq_id": body["Question ID"],
         "srs_srq_answer_id": surveyAnswerIds,

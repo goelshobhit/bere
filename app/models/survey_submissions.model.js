@@ -6,6 +6,9 @@ module.exports = (sequelize, Sequelize) => {
       primaryKey: true,
       type: Sequelize.INTEGER
     },
+    brand_id: {
+      type: Sequelize.INTEGER
+    },
     srs_sr_id: {
       allowNull: false,
       type: Sequelize.INTEGER

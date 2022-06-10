@@ -573,6 +573,7 @@ exports.taskListing = async (req, res) => {
             }
         }
         surveySubmissionList = {};
+        surveyBrandSubmissionList = {};
         if (survey_list.length) {
             var SubmissionOptions = {
                 where: {
@@ -588,6 +589,24 @@ exports.taskListing = async (req, res) => {
                     surveySubmissionList[SurveySubmissionsResult[SurveySubmissionsKey].srs_sr_id] = SurveySubmissionsResult[SurveySubmissionsKey];
                 }
             }
+
+            var SubmissionBrandOptions = {
+                where: {
+                    brand_id: brandUniqueIds
+                }
+            };
+            const surveyBrandSubmissions = await db.survey_submissions.count({
+                where: SubmissionBrandOptions['where'],
+                distinct: true,
+                group: ['brand_id'],
+                col: 'srs_uid'
+            });
+            if (surveyBrandSubmissions.length) {
+                for (const surveyBrandKey in surveyBrandSubmissions) {
+                    surveyBrandSubmissionList[surveyBrandSubmissions[surveyBrandKey].brand_id] = surveyBrandSubmissions[surveyBrandKey];
+                }
+            }
+           
             for (const survey_list_key in survey_list) {
                 const taskId = survey_list[survey_list_key].sr_id;
                 survey_list[survey_list_key].dataValues.list_data = {};
@@ -601,7 +620,16 @@ exports.taskListing = async (req, res) => {
                 if (userTaskPostCompleteData[taskId+'_2'] && userTaskPostCompleteData[taskId+'_2'].count) {
                     taskIdPostCompletedCount = userTaskPostCompleteData[taskId+'_2'].count;
                 }
-                survey_list[survey_list_key].dataValues.list_data.following_users_not_completed = 'NA';
+                surveyTaskCount = 0;
+                if (surveySubmissionList[taskId] && surveySubmissionList[taskId].count) {
+                    surveyTaskCount = surveySubmissionList[taskId].count;
+                }
+                surveyBrandCount = 0;
+                if (surveyBrandSubmissionList[survey_list[survey_list_key].sr_brand_id] && surveyBrandSubmissionList[survey_list[survey_list_key].sr_brand_id].count) {
+                    surveyBrandCount = surveyBrandSubmissionList[survey_list[survey_list_key].sr_brand_id].count;
+                }
+                survey_list[survey_list_key].dataValues.list_data.following_users_not_completed = surveyBrandCount - surveyTaskCount;
+
                 survey_list[survey_list_key].dataValues.list_data.entries_after_reward_completed = 'NA';
                 survey_list[survey_list_key].dataValues.list_data.campaign_budget = 'NA';
                 survey_list[survey_list_key].dataValues.list_data.brand_data = survey_list[survey_list_key].brand;
