@@ -256,6 +256,9 @@ db.survey.hasMany(db.survey_submissions, {foreignKey: 'srs_sr_id', targetKey: 's
 db.survey_stats.belongsTo(db.survey, {foreignKey: 'sr_id', targetKey: 'sr_id'});
 db.survey.hasMany(db.survey_stats, {foreignKey: 'sr_id', targetKey: 'sr_id'});
 
+db.survey_submissions.belongsTo(db.user_profile, {foreignKey: 'srs_uid', targetKey: 'u_id'});
+db.user_profile.hasMany(db.survey_submissions, {foreignKey: 'srs_uid', targetKey: 'u_id'});
+
 db.survey_stats.belongsTo(db.survey_question_answers, {foreignKey: 'srq_answer_id', targetKey: 'srq_answer_id'});
 db.survey_question_answers.hasMany(db.survey_stats, {foreignKey: 'srq_answer_id', targetKey: 'srq_answer_id'});
 

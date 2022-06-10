@@ -328,6 +328,42 @@ module.exports = app => {
   router.get('/tasks', auth, Tasks.listing)
 
   /**
+     * @swagger
+     * /api/tasks_user_listing/{taskID}:
+     *   get:
+     *     parameters:
+     *         - name: taskID
+     *           in: path
+     *           required: true
+     *           schema:
+     *              type: string
+     *         - name: taskType
+     *           in: query
+     *           required: false
+     *           schema:
+     *              type: integer
+     *     tags:
+     *       - Tasks
+     *     description: Retrieve User Listing For Given taskID
+     *     produces:
+     *       - application/json
+     *     responses:
+     *       200:
+     *         description: User Listing for taskId
+     *       401:
+     *          description: Unauthorized
+     *          content:
+     *              application/json:
+     *                  schema:
+     *                      type: object
+     *                      properties:
+     *                          message:
+     *                              type: string
+     *                              example: Authorisation Required
+     */
+    router.get("/tasks_user_listing/:taskID", auth, Tasks.taskUsersListing);
+
+  /**
    * @swagger
    * /api/tasks_listing:
    *   get:

@@ -1850,3 +1850,220 @@ exports.userTasksState = async (req, res) => {
         data: result
     });
 };
+
+/**
+ * Function to get all user listing for task
+ * @param  {object}  req expressJs request object
+ * @param  {object}  res expressJs response object
+ * @return {Promise}
+ */
+exports.taskUsersListing = async(req, res) => {
+    const pageSize = parseInt(req.query.pageSize || 10);
+    const pageNumber = parseInt(req.query.pageNumber || 1);
+    const skipCount = (pageNumber - 1) * pageSize;
+    //const userID = req.params.userID;
+    const Uid = req.header(process.env.UKEY_HEADER || "x-api-key");
+    var taskType = 2;
+    if (req.query.taskType) {
+        taskType  = req.query.taskType;
+    }
+    contentTypeText = 'Task'; 
+    var contentType = 1;
+    if (taskType == 2) {
+        contentType = 1;
+        contentTypeText = 'Task';
+    } else if (taskType == 1) {
+        contentType = 2;
+        contentTypeText = 'Contest';
+    } else if (taskType == 5) {
+        contentType = 5;
+        contentTypeText = 'Survey';
+    }
+    if (contentTypeText == "Task" || contentTypeText == "Contest") {
+        options = {
+            limit: pageSize,
+            offset: skipCount,
+            include: [
+            {
+                required: true,
+                model: db.user_content_post,
+                attributes: ["ucpl_content_data", ['ucpl_id', 'post_id'], 'ta_task_id', 'ucpl_content_type', 'upcl_brand_details', 'ucpl_created_at'],
+               
+                where: {
+                    ta_task_id:req.params.taskID,
+                    ucpl_content_type: contentType
+                },
+                include: [
+                    {
+                        model: db.post_comment,
+                        required: false
+                    }
+                ],
+                order: [
+                    ['ucpl_id', "DESC"]
+                ],
+                group: ['ucpl_id']
+            }
+            ],
+            attributes: ["u_id", "u_display_name"
+            ],
+            group: ['u_display_name', "u_id"]
+        };
+    } else if (contentTypeText == 'Survey') {
+        options = {
+            limit: pageSize,
+            offset: skipCount,
+            include: [
+            {
+                required: true,
+                model: db.survey_submissions,
+               
+                where: {
+                    srs_sr_id:req.params.taskID
+                },
+                order: [
+                    ['srs_id', "DESC"]
+                ],
+                group: ['srs_uid']
+            }
+            ],
+            attributes: ["u_id", "u_display_name"
+            ],
+            group: ['u_display_name', "u_id"]
+        };
+    }
+    
+    const userList = await db.user_profile.findAll(options);
+    
+    var userIds = [];
+    var brandTaskIds = {};
+    var brandCommentData = {};
+    if (userList.length) {
+        userList.forEach(element => {
+            userIds.push(element.u_id);
+             var userContentPosts = element.user_content_posts ? element.user_content_posts : [] ;
+        
+        var taskUserId = element.u_id;
+        if (userContentPosts.length) {
+            userContentPosts.forEach(element => {
+                if (!brandTaskIds[taskUserId]) {
+                    brandTaskIds[taskUserId] = [];
+                }
+                if (!brandCommentData[taskUserId]) {
+                    brandCommentData[taskUserId] = [];
+                }
+                if (element.post_comments.length) {
+                    brandCommentData[taskUserId].push(element.post_comments);
+                }
+            });
+        }
+        
+
+        });
+    }
+    let task = {};
+    if (contentTypeText == 'Task') {
+        task = await Tasks.findOne({
+            where: {
+                ta_task_id: req.params.taskID
+            }
+        });
+    } else if (contentTypeText == 'Contest') {
+         task = await Contest.findOne({
+            where: {
+                ct_id: req.params.taskID
+            }
+        });
+    } else if (contentTypeText == 'Survey') {
+        task = await db.survey.findOne({
+           where: {
+               sr_id: req.params.taskID
+           }
+       });
+   }
+    var rewardBrandTokens = {};
+    var rewardBrandStars = {};
+    ticketsEarned = {};
+    if (contentTypeText == 'Task' || contentTypeText == 'Contest') {
+        var reward_given_options = {
+            where: {
+                rewards_award_user_id: userIds,
+                rewards_award_event_id: req.params.taskID,
+                rewards_award_event_type: contentTypeText
+            }
+        };
+        const reward_given_listing = await db.rewards_given.findAll(reward_given_options);
+       
+        if (reward_given_listing.length) {
+            for (const reward_given_key in reward_given_listing) {
+                var reward_listing = reward_given_listing[reward_given_key];
+                if (!rewardBrandTokens[reward_listing.rewards_award_user_id]) {
+                    rewardBrandTokens[reward_listing.rewards_award_user_id] = [];
+                }
+                if (!rewardBrandStars[reward_listing.rewards_award_user_id]) {
+                    rewardBrandStars[reward_listing.rewards_award_user_id] = [];
+                }
+                rewardBrandTokens[reward_listing.rewards_award_user_id].push(reward_listing.rewards_award_token);
+                rewardBrandStars[reward_listing.rewards_award_user_id].push(reward_listing.rewards_award_stars);
+            }
+        }
+        var bonus_ticket_options = {
+            where: {
+                event_id: req.params.taskID,
+                event_type: contentTypeText
+            },
+            attributes: [
+                'user_id',
+                [sequelize.fn('sum', sequelize.col('tickets_earned')), 'tickets_earned']
+            ],
+            group: ['user_id']
+        };
+       
+        const bonus_ticket_listing = await db.bonus_ticket_details.findAll(bonus_ticket_options);
+        if (bonus_ticket_listing.length) {
+            for (const bonus_ticket_key in bonus_ticket_listing) {
+                var bonus_ticket_list = bonus_ticket_listing[bonus_ticket_key];
+                ticketsEarned[bonus_ticket_list.user_id] = bonus_ticket_list.tickets_earned;
+            }
+        }
+    }
+    
+
+    
+    var userId = 0;
+    if (userList.length) {
+        for (const userListKey in userList) {
+            var userId = userList[userListKey].u_id;
+            //userList[userListKey].dataValues.user_engagment_rate = brandCommentData[userId][0] ? brandCommentData[userId][0].length : 0;
+            userList[userListKey].dataValues.tokens_earned = rewardBrandTokens[userId] ? rewardBrandTokens[userId].reduce((a, b) => a + b, 0) : 0;
+            userList[userListKey].dataValues.stars_earned = rewardBrandStars[userId] ? rewardBrandStars[userId].reduce((a, b) => a + b, 0) : 0;
+            userList[userListKey].dataValues.tickets_earned = ticketsEarned[userId] ? ticketsEarned[userId] : 0;
+            userList[userListKey].dataValues.task_detail = task;
+        }
+    }
+    if (contentTypeText == "Task" || contentTypeText == "Contest") {
+        var totalOptions = {
+            distinct: true,
+            col: 'ucpl_u_id',
+            where: {
+                ta_task_id:req.params.taskID
+            }
+        };
+        var total = await db.user_content_post.count(totalOptions);
+    } else if (contentTypeText == "Survey") {
+        var totalOptions = {
+            distinct: true,
+            col: 'srs_uid',
+            where: {
+                srs_sr_id:req.params.taskID
+            }
+        };
+        var total = await db.survey_submissions.count(totalOptions);
+    }
+
+    res.status(200).send({
+        data: userList,
+        totalRecords: total
+    });
+    return
+}
