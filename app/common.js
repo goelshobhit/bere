@@ -905,6 +905,7 @@ function Common() {
           result.dataValues.ta_type = "5";
           result.dataValues.ta_start_date = result.dataValues.sr_startdate_time;
           result.dataValues.ta_end_date = result.dataValues.sr_enddate_time;
+          result.dataValues.ta_stars_per_user = result.dataValues.sr_stars_per_user;
           var add_data = {
             "tj_type": type,
             "tj_task_id": id,
@@ -933,6 +934,7 @@ function Common() {
           result.dataValues.ta_name = result.dataValues.sr_title;
           result.dataValues.ta_start_date = result.dataValues.sr_startdate_time;
           result.dataValues.ta_end_date = result.dataValues.sr_enddate_time;
+          result.dataValues.ta_stars_per_user = result.dataValues.sr_stars_per_user;
           var update_data = {
             "tj_data": result,
             "tj_status": result.dataValues.sr_status

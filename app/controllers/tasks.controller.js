@@ -629,7 +629,6 @@ exports.taskListing = async (req, res) => {
                     surveyBrandCount = surveyBrandSubmissionList[survey_list[survey_list_key].sr_brand_id].count;
                 }
                 survey_list[survey_list_key].dataValues.list_data.following_users_not_completed = surveyBrandCount - surveyTaskCount;
-
                 survey_list[survey_list_key].dataValues.list_data.entries_after_reward_completed = 'NA';
                 survey_list[survey_list_key].dataValues.list_data.campaign_budget = 'NA';
                 survey_list[survey_list_key].dataValues.list_data.brand_data = survey_list[survey_list_key].brand;
@@ -673,7 +672,9 @@ exports.taskListing = async (req, res) => {
             for (const tasks_list_key in tasks_list_data) {
                 var ta_type = tasks_list_data[tasks_list_key].dataValues.task_data.ta_type;
                 var task_id = tasks_list_data[tasks_list_key].dataValues.task_id;
-                console.log(ta_type+'==='+task_id);
+                if (ta_type == 5) {
+                    tasks_list_data[tasks_list_key].dataValues.task_data.ta_stars_per_user = tasks_list_data[tasks_list_key].dataValues.task_data.sr_stars_per_user;
+                }
                 tasks_list_data[tasks_list_key].dataValues.task_list_data = (taskData[task_id + '_' + ta_type] && taskData[task_id + '_' + ta_type].dataValues.list_data) ? taskData[task_id + '_' + ta_type].dataValues.list_data : {};
                 
             }
@@ -788,6 +789,14 @@ exports.jsonlisting = async (req, res) => {
         where: options['where']
     });
     const tasks_list = await taskJson.findAll(options);
+    if (tasks_list.length) {
+        for (const tasks_list_key in tasks_list) {
+            var ta_type = tasks_list[tasks_list_key].dataValues.task_data.ta_type;
+            if (ta_type == 5) {
+                tasks_list[tasks_list_key].dataValues.task_data.ta_stars_per_user = tasks_list[tasks_list_key].dataValues.task_data.sr_stars_per_user;
+            }
+        }
+    }
     res.status(200).send({
         data: tasks_list,
         totalRecords: total,
