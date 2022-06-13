@@ -419,10 +419,7 @@ exports.surveyQuestionListing = async (req, res) => {
         {
             model: Survey,
             required: false,
-            attributes: ['sr_title'],
-            where: {
-                sr_status: 1
-            }
+            attributes: ['sr_title']
         },
         {
             model: surveyQuestionAnswers,
@@ -542,7 +539,8 @@ exports.submitSurvey = async (req, res) => {
     var uid = req.header(process.env.UKEY_HEADER || "x-api-key");
     var surveyOptions = {
         where: {
-            sr_id: body["Survey ID"]
+            sr_id: body["Survey ID"],
+            sr_status: 3
         }
     };
     const survey = await Survey.findOne(surveyOptions);
@@ -669,9 +667,6 @@ exports.surveyStatsListing = async (req, res) => {
             model: Survey,
             required: false,
             attributes: ['sr_title', 'sr_color'],
-            where: {
-                sr_status: 1
-            },
             include: [{
                 model: Brand,
                 required: false,
@@ -818,7 +813,7 @@ exports.surveyTracking = async (req, res) => {
     var surveyOptions = {
         where: {
             sr_id: body["Survey ID"],
-            sr_status: 1
+            sr_status: 3
         }
     };
     const survey = await Survey.findOne(surveyOptions);
@@ -906,7 +901,8 @@ exports.updateSurveyTracking = async (req, res) => {
         surveyCompletionDate = new Date();
         var options = {
             where: {
-                sr_id: body["Survey ID"]
+                sr_id: body["Survey ID"],
+                sr_status: 3
             }
         };
         const survey = await Survey.findOne(options);

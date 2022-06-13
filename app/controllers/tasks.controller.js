@@ -1819,7 +1819,7 @@ exports.userTasksState = async (req, res) => {
     ]
 
     options['where'] = {
-        sr_status: 1
+        sr_status: 3
     }
     const survey_user_state = await db.survey.findAll(options);
     var surveyData = [];
