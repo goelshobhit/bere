@@ -10,6 +10,7 @@ const audit_log = db.audit_log;
 const common = require("../common");
 const logger = require("../middleware/logger");
 const User_profile = db.user_profile;
+const ledgerTransactions = db.ledger_transactions;
 const {
     validationResult
 } = require("express-validator");
@@ -900,6 +901,13 @@ exports.updateSurveyTracking = async (req, res) => {
     if (body.hasOwnProperty("Survey Completed") && body["Survey Completed"] == 1) {
         surveyCompletionDate = new Date();
         var options = {
+            include: [
+                {
+                    model: db.brands,
+                    required: false,
+                    attributes: ["cr_co_alias", "cr_co_name", "cr_co_logo_path", "cr_co_id"]
+                }
+            ],
             where: {
                 sr_id: body["Survey ID"],
                 sr_status: 3
@@ -907,6 +915,12 @@ exports.updateSurveyTracking = async (req, res) => {
         };
         const survey = await Survey.findOne(options);
         if (survey.sr_stars_per_user) {
+            const BrandDetails = survey.brand ? survey.brand : {};
+                var brandView = {
+                    id: BrandDetails.cr_co_id,
+                    name: BrandDetails.cr_co_name,
+                    logo: BrandDetails.cr_co_logo_path
+                };
             Survey.increment('total_stars_given', { by: survey.sr_stars_per_user, where: { sr_id: body["Survey ID"] } });
             var userProfile = await User_profile.findOne({ attributes: ['u_stars'], where: { u_id: uid } });
             const profileData = {
@@ -920,6 +934,25 @@ exports.updateSurveyTracking = async (req, res) => {
                 logger.log("error", err + ": Error occurred while updating the u_stars for user:" + userId);
             });
             common.manageUserAccount(uid, 0, survey.sr_stars_per_user, 'credit');
+            let trData = {
+                trx_user_id: uid,
+                trx_unique_id: survey.sr_id + "-" + uid + "-" + new Date().getTime(),
+                trx_type: 1,
+                trx_coins: 0,
+                trx_stars: survey.sr_stars_per_user,
+                trx_date_timestamp: new Date().getTime(),
+                trx_source: {
+                    "brand_details": brandView,
+                    "task_details": survey,
+                    "task_type": 'Survey'
+                },
+                trx_approval_status: 0,
+                trx_description: survey.sr_name
+              };
+              ledgerTransactions.create(trData).then(transData => {
+              }).catch(err => {
+                logger.log("error", err + ": Error occurred while ledgerTransactions for :" + uid);
+              });
         }
     }
     const SurveyTrackingData = {
