@@ -43,6 +43,14 @@ module.exports = app => {
    *                           type: integer
    *                        Stars Given Value:
    *                           type: integer
+   *                        Start Date:
+   *                            type: string
+   *                            format: date-time
+   *                            example: 2022-06-01
+   *                        End Date:
+   *                            type: string
+   *                            format: date-time
+   *                            example: 2020-07-30
    *     tags:
    *       - Watch Ads Task
    *     description: Add new Watch Add task

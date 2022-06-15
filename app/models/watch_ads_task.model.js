@@ -65,6 +65,12 @@ module.exports = (sequelize, Sequelize) => {
             type: Sequelize.INTEGER,
             allowNull: false,
         },
+        start_date:{
+            type: Sequelize.DATE
+        },
+        end_date: {
+            type: Sequelize.DATE
+        },
     }, {
         createdAt: 'wat_created_at',
         updatedAt: 'wat_updated_at',

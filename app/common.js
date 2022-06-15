@@ -947,6 +947,67 @@ function Common() {
         });
       }
     }
+    // Single Task
+    if (type === 'Watch Ad') {
+      type = 'Single';
+      if (actionType === 'add') {
+        db.watch_ads_task.findOne({
+          include: [
+            {
+              model: db.brands,
+              attributes: [["cr_co_id", 'brand_id'], ["cr_co_name", 'brand_name'], ["cr_co_logo_path", 'brand_logo']]
+            }
+          ],
+          where: {
+            watch_ads_task_id: id
+          }
+        }).then(function (result) {
+          result.dataValues.campaign = {};
+          result.dataValues.watchAdId = result.dataValues.watch_ads_task_id;
+          result.dataValues.ta_name = result.dataValues.task_name;
+          result.dataValues.ta_type = "3";
+          result.dataValues.ta_start_date = result.dataValues.start_date;
+          result.dataValues.ta_end_date = result.dataValues.end_date;
+          result.dataValues.ta_stars_per_user = result.dataValues.stars_given_value;
+          var add_data = {
+            "tj_type": type,
+            "tj_task_id": id,
+            "tj_data": result,
+            "tj_status": result.dataValues.task_status
+          };
+          tasks_json.create(add_data);
+        });
+      } else {
+        db.watch_ads_task.findOne({
+          include: [
+            {
+              model: db.brands,
+              attributes: [["cr_co_id", 'brand_id'], ["cr_co_name", 'brand_name'], ["cr_co_logo_path", 'brand_logo']]
+            }
+          ],
+          where: {
+            watch_ads_task_id: id
+          }
+        }).then(function (result) {
+          result.dataValues.campaign = {};
+          result.dataValues.watchAdId = result.dataValues.watch_ads_task_id;
+          result.dataValues.ta_name = result.dataValues.task_name;
+          result.dataValues.ta_type = "3";
+          result.dataValues.ta_start_date = result.dataValues.start_date;
+          result.dataValues.ta_end_date = result.dataValues.end_date;
+          result.dataValues.ta_stars_per_user = result.dataValues.stars_given_value;
+          var update_data = {
+            "tj_data": result,
+            "tj_status": result.dataValues.task_status
+          };
+          tasks_json.update(update_data, {
+            where: {
+              tj_task_id: id
+            }
+          });
+        });
+      }
+    }
     // end of Single Task 
   };
   /*

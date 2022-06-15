@@ -1,6 +1,7 @@
 const db = require("../models");
 const watchAdTask = db.watch_ads_task;
 const audit_log = db.audit_log
+const common = require("../common");
 const logger = require("../middleware/logger");
 const {
     validationResult
@@ -37,9 +38,12 @@ exports.createWatchAdsTask = async(req, res) => {
         "stars_given": body.hasOwnProperty("Stars Given") ? body["Stars Given"] : 0,
         "tokens_given_value": body.hasOwnProperty("Tokens Given Value") ? body["Tokens Given Value"] : 0,
         "stars_given_value": body.hasOwnProperty("Stars Given Value") ? body["Stars Given Value"] : 0,
+        "start_date": body.hasOwnProperty("Start Date") ? body["Start Date"] : 0,
+        "end_date": body.hasOwnProperty("End Date") ? body["End Date"] : 0,
         }
         watchAdTask.create(watchAdsTask).then(data => {
             audit_log.saveAuditLog(req.header(process.env.UKEY_HEADER || "x-api-key"),'add','todayTimeStamp',data.watch_ads_task_id,data.dataValues);
+            common.jsonTask(data.watch_ads_task_id, 'Watch Ad', 'add');
         res.status(201).send({			
             msg: "Watch Ads Task Created Successfully",
             watchAdsTaskId: data.watch_ads_task_id
