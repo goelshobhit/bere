@@ -113,6 +113,14 @@ module.exports = app => {
    *                           type: integer
    *                        stars_given_value:
    *                           type: integer
+   *                        start_date:
+   *                            type: string
+   *                            format: date-time
+   *                            example: 2022-06-01
+   *                        end_date:
+   *                            type: string
+   *                            format: date-time
+   *                            example: 2020-07-30
    *     parameters:
    *         - name: watchAdsTaskId
    *           in: path
