@@ -43,6 +43,10 @@ module.exports = app => {
    *                           type: integer
    *                        Stars Given Value:
    *                           type: integer
+   *                        Video Thumbnail:
+   *                           type: string
+   *                        Audience:
+   *                           type: integer
    *                        Start Date:
    *                            type: string
    *                            format: date-time
@@ -97,11 +101,11 @@ module.exports = app => {
    *                           example: 2020-09-30
    *                        task_status:
    *                           type: integer
-   *                        task_brand_tier:
+   *                        brand_tier:
    *                            type: integer
-   *                        task_campaign_type:
+   *                        campaign_type:
    *                             type: integer
-   *                        task_budget:
+   *                        budget:
    *                             type: integer
    *                        budget_left:
    *                           type: integer
@@ -112,6 +116,10 @@ module.exports = app => {
    *                        tokens_given_value:
    *                           type: integer
    *                        stars_given_value:
+   *                           type: integer
+   *                        video_thumbnail:
+   *                           type: string
+   *                        audience:
    *                           type: integer
    *                        start_date:
    *                            type: string

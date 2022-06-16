@@ -26,7 +26,7 @@ exports.createWatchAdsTask = async(req, res) => {
         "brand_id": body.hasOwnProperty("Brand Id") ? body["Brand Id"] : 0,
         "task_name": body.hasOwnProperty("Task Name") ? body["Task Name"] : 0,
         "task_url": body.hasOwnProperty("Task Url") ? body["Task Url"] : "",
-        "task_timestamp": body.hasOwnProperty("Task Timestamp") ? body["Task Timestamp"] : "",
+        "task_timestamp": body.hasOwnProperty("Task Timestamp") ? body["Task Timestamp"] :  '',
         "task_lenght_secs": body.hasOwnProperty("Task Lenght Secs") ? body["Task Lenght Secs"] : 0,
         "task_status": body.hasOwnProperty("Task Status") ? body["Task Status"] : 0,
         "task_public": body.hasOwnProperty("Task Public") ? body["Task Public"] : 0,
@@ -38,8 +38,10 @@ exports.createWatchAdsTask = async(req, res) => {
         "stars_given": body.hasOwnProperty("Stars Given") ? body["Stars Given"] : 0,
         "tokens_given_value": body.hasOwnProperty("Tokens Given Value") ? body["Tokens Given Value"] : 0,
         "stars_given_value": body.hasOwnProperty("Stars Given Value") ? body["Stars Given Value"] : 0,
-        "start_date": body.hasOwnProperty("Start Date") ? body["Start Date"] : 0,
-        "end_date": body.hasOwnProperty("End Date") ? body["End Date"] : 0,
+        "start_date": body.hasOwnProperty("Start Date") ? body["Start Date"] : new Date(),
+        "end_date": body.hasOwnProperty("End Date") ? body["End Date"] : new Date(new Date().setFullYear(new Date().getFullYear() + 2)),
+        "video_thumbnail": body.hasOwnProperty("Video Thumbnail") ? body["Video Thumbnail"] : '',
+        "audience": body.hasOwnProperty("Audience") ? body["Audience"] : 0,
         }
         watchAdTask.create(watchAdsTask).then(data => {
             audit_log.saveAuditLog(req.header(process.env.UKEY_HEADER || "x-api-key"),'add','todayTimeStamp',data.watch_ads_task_id,data.dataValues);

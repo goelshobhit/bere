@@ -334,6 +334,15 @@ exports.userDetail = async (req, res) => {
         });
         return
     }
+    const accountDetails = await accountBalance.findOne({
+        where: {
+            ac_user_id: userID
+        },
+        attributes: [
+            ["ac_balance", "balance_coins"], ["ac_balance_stars", "balance_stars"], ["ac_account_no", "account_no"]
+        ]
+    });
+    User.dataValues.account_details = accountDetails;
     if (User && User.is_user_deactivated == 1) {
         res.status(500).send({
             message: "User Is deactivated"

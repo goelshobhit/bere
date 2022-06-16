@@ -71,6 +71,12 @@ module.exports = (sequelize, Sequelize) => {
         end_date: {
             type: Sequelize.DATE
         },
+        video_thumbnail: {
+            type: Sequelize.STRING(255),
+        },
+        audience: {     //1: public, 2: tier 2,3: tier3, 4: bonus task winner,5: specific group
+            type: Sequelize.INTEGER
+        },
     }, {
         createdAt: 'wat_created_at',
         updatedAt: 'wat_updated_at',
