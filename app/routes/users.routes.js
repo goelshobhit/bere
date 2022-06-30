@@ -1,230 +1,236 @@
-module.exports = app => {
-    const Users = require("../controllers/users.controller.js");
-    var router = require("express").Router();
-    const auth = require("../middleware/auth");
-	const access = require("../middleware/access");
-    /**
-     * @swagger
-     * /api/users:
-     *   post:
-     *     requestBody:
-     *        required: false
-     *        content:
-     *            application/json:
-     *                schema:
-     *                    type: object
-     *                    properties:
-     *                        Referer id:
-     *                            type: integer
-     *                        Account type:
-     *                            type: integer
-     *                        User login:
-     *                            type: string
-     *                        User password:
-     *                            type: string
-     *                        User email:
-     *                            type: string
-     *                        User fb name:
-     *                            type: string
-     *                        Fb id:
-     *                            type: string
-     *                        User gmail name:
-     *                            type: string
-	 *                        Gmail id:
-     *                            type: string
-	 *                        User ymail name:
-	 *                            type: string
-     *                        Ymail id:
-     *                            type: string
-     *                        User pref login:
-     *                            type: integer
-     *                        User instagram name:
-     *                            type: string
-     *                        Instagram id:
-     *                            type: string
-     *                        User status:
-     *                            type: boolean
-	 *                        User Type:
-     *                            type: string
-	 *                            example: "Normal,Fb,Gmail,Ymail,Instagram"
-     *     tags:
-     *       - Users
-     *     description: Add new user
-     *     produces:
-     *       - application/json
-     *     responses:
-     *       201:
-     *         description: Add new user
-     *       422:
-     *         description: validation errors
-     *       500:
-     *         description: Internal server error
-     *       401:
-     *          description: Unauthorized
-     *          content:
-     *              application/json:
-     *                  schema:
-     *                      type: object
-     *                      properties:
-     *                          message:
-     *                              type: string
-     *                              example: Authorisation Required
-     */
-    router.post("/users",Users.createNewUser); 
-	/**
-	* @swagger
-	* /api/users:
-	*   get:
-	*     parameters:
-	*         - name: pageNumber
-	*           in: query
-	*           required: false
-	*           schema:
-	*              type: integer
-	*         - name: sortBy
-	*           in: query
-	*           required: false
-	*           schema:
-	*              type: string
-	*              example: u_id,u_email,u_gmail_username,u_fb_username,u_ymail_username    # Example of a parameter value
-	*         - name: sortOrder
-	*           in: query
-	*           required: false
-	*           schema:
-	*              type: string
-	*              example: ASC,DESC    # Example of a parameter value
-	*         - name: sortVal
-	*           in: query
-	*           required: false
-	*           schema:
-	*              type: string
-	*     tags:
-	*       - Users
-	*     description: Returns all users
-	*     produces:
-	*       - application/json
-	*     responses:
-	*       200:
-	*         description: A list of users
-	*       401:
-	*          description: Unauthorized
-	*          content:
-	*              application/json:
-	*                  schema:
-	*                      type: object
-	*                      properties:
-	*                          message:
-	*                              type: string
-	*                              example: Authorisation Required
-	*/
-	router.get('/users', auth,Users.listing);
-	/**
-	* @swagger
-	* /api/users/{userID}:
-	*   get:
-	*     parameters:
-	*         - name: userID
-	*           in: path
-	*           required: true
-	*           schema:
-	*              type: string
-	*         - name: pageSize
-	*           in: path
-	*           required: false
-	*           schema:
-	*              type: integer
-	*         - name: pageNumber
-	*           in: path
-	*           required: false
-	*           schema:
-	*              type: integer
-	*     tags:
-	*       - Users
-	*     description: Retrieve a single User details with Role id
-	*     produces:
-	*       - application/json
-	*     responses:
-	*       200:
-	*         description: Details of a User details
-	*       401:
-	*          description: Unauthorized
-	*          content:
-	*              application/json:
-	*                  schema:
-	*                      type: object
-	*                      properties:
-	*                          message:
-	*                              type: string
-	*                              example: Authorisation Required
-	*/
-	router.get("/users/:userID", auth,Users.userDetail);
+module.exports = (app) => {
+  const Users = require("../controllers/users.controller.js");
+  var router = require("express").Router();
+  const auth = require("../middleware/auth");
+  const access = require("../middleware/access");
+  /**
+   * @swagger
+   * /api/users:
+   *   post:
+   *     requestBody:
+   *        required: false
+   *        content:
+   *            application/json:
+   *                schema:
+   *                    type: object
+   *                    properties:
+   *                        Referer id:
+   *                            type: integer
+   *                        Account type:
+   *                            type: integer
+   *                        User login:
+   *                            type: string
+   *                        User password:
+   *                            type: string
+   *                        User email:
+   *                            type: string
+   *                        User fb name:
+   *                            type: string
+   *                        Fb id:
+   *                            type: string
+   *                        User gmail name:
+   *                            type: string
+   *                        Gmail id:
+   *                            type: string
+   *                        User ymail name:
+   *                            type: string
+   *                        Ymail id:
+   *                            type: string
+   *                        User pref login:
+   *                            type: integer
+   *                        User instagram name:
+   *                            type: string
+   *                        Instagram id:
+   *                            type: string
+   *                        User status:
+   *                            type: boolean
+   *                        User Type:
+   *                            type: string
+   *                            example: "Normal,Fb,Gmail,Ymail,Instagram"
+   *     tags:
+   *       - Users
+   *     description: Add new user
+   *     produces:
+   *       - application/json
+   *     responses:
+   *       201:
+   *         description: Add new user
+   *       422:
+   *         description: validation errors
+   *       500:
+   *         description: Internal server error
+   *       401:
+   *          description: Unauthorized
+   *          content:
+   *              application/json:
+   *                  schema:
+   *                      type: object
+   *                      properties:
+   *                          message:
+   *                              type: string
+   *                              example: Authorisation Required
+   */
+  router.post("/users", Users.createNewUser);
+  /**
+   * @swagger
+   * /api/users:
+   *   get:
+   *     parameters:
+   *         - name: pageNumber
+   *           in: query
+   *           required: false
+   *           schema:
+   *              type: integer
+   *         - name: sortBy
+   *           in: query
+   *           required: false
+   *           schema:
+   *              type: string
+   *              example: u_id,u_email,u_gmail_username,u_fb_username,u_ymail_username    # Example of a parameter value
+   *         - name: sortOrder
+   *           in: query
+   *           required: false
+   *           schema:
+   *              type: string
+   *              example: ASC,DESC    # Example of a parameter value
+   *         - name: sortVal
+   *           in: query
+   *           required: false
+   *           schema:
+   *              type: string
+   *     tags:
+   *       - Users
+   *     description: Returns all users
+   *     produces:
+   *       - application/json
+   *     responses:
+   *       200:
+   *         description: A list of users
+   *       401:
+   *          description: Unauthorized
+   *          content:
+   *              application/json:
+   *                  schema:
+   *                      type: object
+   *                      properties:
+   *                          message:
+   *                              type: string
+   *                              example: Authorisation Required
+   */
+  router.get("/users", auth, Users.listing);
+  router.get("/usersv2", auth, Users.listingv2);
 
-	/**
-	* @swagger
-	* /api/user_details/{userID}:
-	*   get:
-	*     parameters:
-	*         - name: userID
-	*           in: path
-	*           required: true
-	*           schema:
-	*              type: string
-	*     tags:
-	*       - Users
-	*     description: Retrieve a single User details to use in CMS
-	*     produces:
-	*       - application/json
-	*     responses:
-	*       200:
-	*         description: Details of a User details
-	*       401:
-	*          description: Unauthorized
-	*          content:
-	*              application/json:
-	*                  schema:
-	*                      type: object
-	*                      properties:
-	*                          message:
-	*                              type: string
-	*                              example: Authorisation Required
-	*/
-	router.get("/user_details/:userID", auth,Users.userDetailForAdmin);
-	
-	/**
-	* @swagger
-	* /api/user_brand_task_detail/{userID}:
-	*   get:
-	*     parameters:
-	*         - name: userID
-	*           in: path
-	*           required: true
-	*           schema:
-	*              type: string
-	*         - name: brandId
-	*           in: query
-	*           required: false
-	*           schema:
-	*              type: integer
-	*     tags:
-	*       - Users
-	*     description: Retrieve Brand Task details for Single User
-	*     produces:
-	*       - application/json
-	*     responses:
-	*       200:
-	*         description: Brand Task Listing for User.
-	*       401:
-	*          description: Unauthorized
-	*          content:
-	*              application/json:
-	*                  schema:
-	*                      type: object
-	*                      properties:
-	*                          message:
-	*                              type: string
-	*                              example: Authorisation Required
-	*/
-	router.get("/user_brand_task_detail/:userID", auth,Users.userBrandTaskDetails);
+  /**
+   * @swagger
+   * /api/users/{userID}:
+   *   get:
+   *     parameters:
+   *         - name: userID
+   *           in: path
+   *           required: true
+   *           schema:
+   *              type: string
+   *         - name: pageSize
+   *           in: path
+   *           required: false
+   *           schema:
+   *              type: integer
+   *         - name: pageNumber
+   *           in: path
+   *           required: false
+   *           schema:
+   *              type: integer
+   *     tags:
+   *       - Users
+   *     description: Retrieve a single User details with Role id
+   *     produces:
+   *       - application/json
+   *     responses:
+   *       200:
+   *         description: Details of a User details
+   *       401:
+   *          description: Unauthorized
+   *          content:
+   *              application/json:
+   *                  schema:
+   *                      type: object
+   *                      properties:
+   *                          message:
+   *                              type: string
+   *                              example: Authorisation Required
+   */
+  router.get("/users/:userID", auth, Users.userDetail);
+
+  /**
+   * @swagger
+   * /api/user_details/{userID}:
+   *   get:
+   *     parameters:
+   *         - name: userID
+   *           in: path
+   *           required: true
+   *           schema:
+   *              type: string
+   *     tags:
+   *       - Users
+   *     description: Retrieve a single User details to use in CMS
+   *     produces:
+   *       - application/json
+   *     responses:
+   *       200:
+   *         description: Details of a User details
+   *       401:
+   *          description: Unauthorized
+   *          content:
+   *              application/json:
+   *                  schema:
+   *                      type: object
+   *                      properties:
+   *                          message:
+   *                              type: string
+   *                              example: Authorisation Required
+   */
+  router.get("/user_details/:userID", auth, Users.userDetailForAdmin);
+
+  /**
+   * @swagger
+   * /api/user_brand_task_detail/{userID}:
+   *   get:
+   *     parameters:
+   *         - name: userID
+   *           in: path
+   *           required: true
+   *           schema:
+   *              type: string
+   *         - name: brandId
+   *           in: query
+   *           required: false
+   *           schema:
+   *              type: integer
+   *     tags:
+   *       - Users
+   *     description: Retrieve Brand Task details for Single User
+   *     produces:
+   *       - application/json
+   *     responses:
+   *       200:
+   *         description: Brand Task Listing for User.
+   *       401:
+   *          description: Unauthorized
+   *          content:
+   *              application/json:
+   *                  schema:
+   *                      type: object
+   *                      properties:
+   *                          message:
+   *                              type: string
+   *                              example: Authorisation Required
+   */
+  router.get(
+    "/user_brand_task_detail/:userID",
+    auth,
+    Users.userBrandTaskDetails
+  );
 
   /**
    * @swagger
@@ -294,7 +300,7 @@ module.exports = app => {
    *                              type: string
    *                              example: Authorisation Required
    */
-  router.put("/users/:userID",auth, Users.updateUser);
+  router.put("/users/:userID", auth, Users.updateUser);
   /**
    * @swagger
    * /api/users_profile/{userID}:
@@ -379,8 +385,8 @@ module.exports = app => {
    *                              type: string
    *                              example: Authorisation Required
    */
-  router.put("/users_profile/:userID",auth, Users.updateUserProfile);
-    /**
+  router.put("/users_profile/:userID", auth, Users.updateUserProfile);
+  /**
    * @swagger
    * /api/user_social_profile/{userID}:
    *   put:
@@ -460,669 +466,672 @@ module.exports = app => {
    *                              type: string
    *                              example: Authorisation Required
    */
-  router.put("/user_social_profile/:userID",auth, Users.updateUsersocialExt);
-    /**
-     * @swagger
-     * /api/users/login:
-     *   post:
-     *     requestBody:
-     *        required: true
-     *        content:
-     *            application/json:
-     *                schema:
-     *                    type: object
-     *                    properties:
-     *                        username:
-     *                            type: string
-	 *                            example: "email,fb id,gmail id,Ymail id or Instagram id"
-     *                        password:
-     *                            type: string
-	 *                        login_type:
-     *                            type: string
-	 *                            example: "Normal,Fb,Gmail,Ymail,Instagram"
-     *     tags:
-     *       - Users
-     *     description: Login to the application
-     *     security:  []
-     *     produces:
-     *       - application/json
-     *     responses:
-     *        200:
-     *            description: Login successful
-     *            content:
-     *                application/json:
-     *                    schema:
-     *                        type: object
-     *                        properties:
-     *                            data:
-     *                                type: object
-     *                                properties:
-     *                                    user_id:
-     *                                        type: integer
-     *                                        format: int64
-     *                                        example: 4
-     *                                    name:
-     *                                        type: string
-     *                                        example: John Doe
-     *                                    user_role:
-     *                                        type: string
-     *                                        example: Designer
-     *                                    user_role_id:
-     *                                        type: integer
-     *                                        format: int64
-     *                                        example: 2
-     *                            access_token:
-     *                                type: string
-     *                                example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJpYXQiOjE1ODc2MTM0MDMsImV4cCI6MTU4NzYxNzAwM30.VW0msq1TdvCOXwn-To5i-5lZeNyAjWSIeCGeW_Jj1p0"
-     *        500:
-     *            description: Internal server error
-     *            content:
-     *                application/json:
-     *                    schema:
-     *                        type: object
-     *                        properties:
-     *                            message:
-     *                                type: string
-     *                                example: internal server error
-     *        422:
-     *            description: Validation failed
-     *            content:
-     *                application/json:
-     *                    schema:
-     *                        type: object
-     *                        properties:
-     *                            message:
-     *                                type: string
-     *                                example: email and password required
-     *        404:
-     *            description: user does not exists
-     *            content:
-     *                application/json:
-     *                    schema:
-     *                        type: object
-     *                        properties:
-     *                            message:
-     *                                type: string
-     *                                example: user does not exists
-     *
-     *        400:
-     *            description: Bad request
-     *            content:
-     *                application/json:
-     *                    schema:
-     *                        type: object
-     *                        properties:
-     *                            message:
-     *                                type: string
-     *                                example: email or password is incorrect
-     *
-     */
-    router.post("/users/login", Users.userlogin);
-	/**
-	* @swagger
-	* /api/users/forgetpassword:
-	*   post:
-	*     requestBody:
-	*        required: true
-	*        content:
-	*            application/json:
-	*                schema:
-	*                    type: object
-	*                    properties:
-	*                        email:
-	*                            type: string
-	*     tags:
-	*       - Users
-	*     description: Forgot password
-	*     security:  []
-	*     produces:
-	*       - application/json
-	*     responses:
-	*       200:
-	*         description: New password generated successfully and mail send
-	*       403:
-	*         description: Please enter valid user details
-	*/
-	router.post("/users/forgetpassword", Users.forgetPassword);
-		/**
-	* @swagger
-	* /api/users/forgetpasswordmandrill:
-	*   post:
-	*     requestBody:
-	*        required: true
-	*        content:
-	*            application/json:
-	*                schema:
-	*                    type: object
-	*                    properties:
-	*                        email:
-	*                            type: string
-	*     tags:
-	*       - Users
-	*     description: Forgot password
-	*     security:  []
-	*     produces:
-	*       - application/json
-	*     responses:
-	*       200:
-	*         description: New password generated successfully and mail send
-	*       403:
-	*         description: Please enter valid user details
-	*/
-	router.post("/users/forgetpasswordmandrill", Users.forgetPasswordUsingMandrill);
-	/**
-	* @swagger
-	* /api/users/changepassword:
-	*   post:
-	*     requestBody:
-	*        required: required
-	*        content:
-	*            application/json:
-	*                schema:
-	*                    type: object
-	*                    properties:
-	*                        current_password:
-	*                            type: string
-	*                        new_password:
-	*                            type: string
-	*                        confirm_password:
-	*                            type: string
-	*     tags:
-	*       - Users
-	*     description: Change password of a user
-	*     produces:
-	*       - application/json
-	*     responses:
-	*       200:
-	*         description: user password changed successfully
-	*       400:
-	*         description: new password and confirm password does not match
-	*       403:
-	*         description: User does not Exit
-	*       401:
-	*          description: Unauthorized
-	*          content:
-	*              application/json:
-	*                  schema:
-	*                      type: object
-	*                      properties:
-	*                          message:
-	*                              type: string
-	*                              example: Authorisation Required
-	*/
-	router.post("/users/changepassword", auth, Users.changePassword);
-	/**
-	* @swagger
-	* /api/users/check_email:
-	*   post:
-	*     requestBody:
-	*        required: true
-	*        content:
-	*            application/json:
-	*                schema:
-	*                    type: object
-	*                    properties:
-	*                        email:
-	*                            type: string
-	*     tags:
-	*       - Users
-	*     description: check email
-	*     security:  []
-	*     produces:
-	*       - application/json
-	*     responses:
-	*       400:
-	*         description: Not Exit
-	*       200:
-	*         description: Exit
-	*/
-	router.post("/users/check_email", Users.checkUserExits);
-
-		/**
-	* @swagger
-	* /api/users/check_username:
-	*   post:
-	*     requestBody:
-	*        required: true
-	*        content:
-	*            application/json:
-	*                schema:
-	*                    type: object
-	*                    properties:
-	*                        username:
-	*                            type: string
-	*     tags:
-	*       - Users
-	*     description: check username
-	*     security:  []
-	*     produces:
-	*       - application/json
-	*     responses:
-	*       400:
-	*         description: Already Exist
-	*       200:
-	*         description: Not Exist
-	*/
-	router.post("/users/check_username", Users.checkUserNameExists);
+  router.put("/user_social_profile/:userID", auth, Users.updateUsersocialExt);
+  /**
+   * @swagger
+   * /api/users/login:
+   *   post:
+   *     requestBody:
+   *        required: true
+   *        content:
+   *            application/json:
+   *                schema:
+   *                    type: object
+   *                    properties:
+   *                        username:
+   *                            type: string
+   *                            example: "email,fb id,gmail id,Ymail id or Instagram id"
+   *                        password:
+   *                            type: string
+   *                        login_type:
+   *                            type: string
+   *                            example: "Normal,Fb,Gmail,Ymail,Instagram"
+   *     tags:
+   *       - Users
+   *     description: Login to the application
+   *     security:  []
+   *     produces:
+   *       - application/json
+   *     responses:
+   *        200:
+   *            description: Login successful
+   *            content:
+   *                application/json:
+   *                    schema:
+   *                        type: object
+   *                        properties:
+   *                            data:
+   *                                type: object
+   *                                properties:
+   *                                    user_id:
+   *                                        type: integer
+   *                                        format: int64
+   *                                        example: 4
+   *                                    name:
+   *                                        type: string
+   *                                        example: John Doe
+   *                                    user_role:
+   *                                        type: string
+   *                                        example: Designer
+   *                                    user_role_id:
+   *                                        type: integer
+   *                                        format: int64
+   *                                        example: 2
+   *                            access_token:
+   *                                type: string
+   *                                example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJpYXQiOjE1ODc2MTM0MDMsImV4cCI6MTU4NzYxNzAwM30.VW0msq1TdvCOXwn-To5i-5lZeNyAjWSIeCGeW_Jj1p0"
+   *        500:
+   *            description: Internal server error
+   *            content:
+   *                application/json:
+   *                    schema:
+   *                        type: object
+   *                        properties:
+   *                            message:
+   *                                type: string
+   *                                example: internal server error
+   *        422:
+   *            description: Validation failed
+   *            content:
+   *                application/json:
+   *                    schema:
+   *                        type: object
+   *                        properties:
+   *                            message:
+   *                                type: string
+   *                                example: email and password required
+   *        404:
+   *            description: user does not exists
+   *            content:
+   *                application/json:
+   *                    schema:
+   *                        type: object
+   *                        properties:
+   *                            message:
+   *                                type: string
+   *                                example: user does not exists
+   *
+   *        400:
+   *            description: Bad request
+   *            content:
+   *                application/json:
+   *                    schema:
+   *                        type: object
+   *                        properties:
+   *                            message:
+   *                                type: string
+   *                                example: email or password is incorrect
+   *
+   */
+  router.post("/users/login", Users.userlogin);
+  /**
+   * @swagger
+   * /api/users/forgetpassword:
+   *   post:
+   *     requestBody:
+   *        required: true
+   *        content:
+   *            application/json:
+   *                schema:
+   *                    type: object
+   *                    properties:
+   *                        email:
+   *                            type: string
+   *     tags:
+   *       - Users
+   *     description: Forgot password
+   *     security:  []
+   *     produces:
+   *       - application/json
+   *     responses:
+   *       200:
+   *         description: New password generated successfully and mail send
+   *       403:
+   *         description: Please enter valid user details
+   */
+  router.post("/users/forgetpassword", Users.forgetPassword);
+  /**
+   * @swagger
+   * /api/users/forgetpasswordmandrill:
+   *   post:
+   *     requestBody:
+   *        required: true
+   *        content:
+   *            application/json:
+   *                schema:
+   *                    type: object
+   *                    properties:
+   *                        email:
+   *                            type: string
+   *     tags:
+   *       - Users
+   *     description: Forgot password
+   *     security:  []
+   *     produces:
+   *       - application/json
+   *     responses:
+   *       200:
+   *         description: New password generated successfully and mail send
+   *       403:
+   *         description: Please enter valid user details
+   */
+  router.post(
+    "/users/forgetpasswordmandrill",
+    Users.forgetPasswordUsingMandrill
+  );
+  /**
+   * @swagger
+   * /api/users/changepassword:
+   *   post:
+   *     requestBody:
+   *        required: required
+   *        content:
+   *            application/json:
+   *                schema:
+   *                    type: object
+   *                    properties:
+   *                        current_password:
+   *                            type: string
+   *                        new_password:
+   *                            type: string
+   *                        confirm_password:
+   *                            type: string
+   *     tags:
+   *       - Users
+   *     description: Change password of a user
+   *     produces:
+   *       - application/json
+   *     responses:
+   *       200:
+   *         description: user password changed successfully
+   *       400:
+   *         description: new password and confirm password does not match
+   *       403:
+   *         description: User does not Exit
+   *       401:
+   *          description: Unauthorized
+   *          content:
+   *              application/json:
+   *                  schema:
+   *                      type: object
+   *                      properties:
+   *                          message:
+   *                              type: string
+   *                              example: Authorisation Required
+   */
+  router.post("/users/changepassword", auth, Users.changePassword);
+  /**
+   * @swagger
+   * /api/users/check_email:
+   *   post:
+   *     requestBody:
+   *        required: true
+   *        content:
+   *            application/json:
+   *                schema:
+   *                    type: object
+   *                    properties:
+   *                        email:
+   *                            type: string
+   *     tags:
+   *       - Users
+   *     description: check email
+   *     security:  []
+   *     produces:
+   *       - application/json
+   *     responses:
+   *       400:
+   *         description: Not Exit
+   *       200:
+   *         description: Exit
+   */
+  router.post("/users/check_email", Users.checkUserExits);
 
   /**
-	* @swagger
-	* /api/users/send_email_verify:
-	*   post:
-	*     requestBody:
-	*        required: true
-	*        content:
-	*            application/json:
-	*                schema:
-	*                    type: object
-	*                    properties:
-	*                        email:
-	*                            type: string
-	*     tags:
-	*       - Users
-	*     description: check email
-	*     security:  []
-	*     produces:
-	*       - application/json
-	*     responses:
-	*       400:
-	*         description: Not Exit
-	*       200:
-	*         description: Exit
-	*/
-	router.post("/users/send_email_verify", Users.emailVerifyMail);
-   /**
-	* @swagger
-	* /api/users/verify_email/{verifyToken}:
-	*   get:
-	*     parameters:
-	*         - name: verifyToken
-	*           in: path
-	*           required: true
-	*           schema:
-	*              type: string
-	*     tags:
-	*       - Users
-	*     description: verify email
-	*     security:  []
-	*     produces:
-	*       - application/json
-	*     responses:
-	*       400:
-	*         description: Not Exit
-	*       200:
-	*         description: verified
-	*/
-	router.get("/users/verify_email/:verifyToken", Users.verifyEmail);
+   * @swagger
+   * /api/users/check_username:
+   *   post:
+   *     requestBody:
+   *        required: true
+   *        content:
+   *            application/json:
+   *                schema:
+   *                    type: object
+   *                    properties:
+   *                        username:
+   *                            type: string
+   *     tags:
+   *       - Users
+   *     description: check username
+   *     security:  []
+   *     produces:
+   *       - application/json
+   *     responses:
+   *       400:
+   *         description: Already Exist
+   *       200:
+   *         description: Not Exist
+   */
+  router.post("/users/check_username", Users.checkUserNameExists);
 
-   /**
-	* @swagger
-	* /api/users/reg_mobile:
-	*   post:
-	*     requestBody:
-	*        required: required
-	*        content:
-	*            application/json:
-	*                schema:
-	*                    type: object
-	*                    properties:
-	*                        mobile_number:
-	*                            type: string
-	*     tags:
-	*       - Users
-	*     description: Register and send otp to user mobile
-	*     produces:
-	*       - application/json
-	*     responses:
-	*       400:
-	*         description: Mobile Number Required
-	*       404:
-	*         description: Already Exist
-	*       200:
-	*         description: Otp Send
-	*       401:
-	*          description: Unauthorized
-	*          content:
-	*              application/json:
-	*                  schema:
-	*                      type: object
-	*                      properties:
-	*                          message:
-	*                              type: string
-	*                              example: Authorisation Required
-	*/
-	router.post("/users/reg_mobile", auth, Users.checkMobile);
   /**
-	* @swagger
-	* /api/users/resend_otp:
-	*   post:
-	*     requestBody:
-	*        required: required
-	*        content:
-	*            application/json:
-	*                schema:
-	*                    type: object
-	*                    properties:
-	*                        mobile_number:
-	*                            type: string
-	*     tags:
-	*       - Users
-	*     description: Resend otp to user mobile
-	*     produces:
-	*       - application/json
-	*     responses:
-	*       400:
-	*         description: Mobile Number Required
-	*       404:
-	*         description: Already Exist
-	*       200:
-	*         description: Otp Send
-	*       401:
-	*          description: Unauthorized
-	*          content:
-	*              application/json:
-	*                  schema:
-	*                      type: object
-	*                      properties:
-	*                          message:
-	*                              type: string
-	*                              example: Authorisation Required
-	*/
-	router.post("/users/resend_otp", auth, Users.resendOtp);
+   * @swagger
+   * /api/users/send_email_verify:
+   *   post:
+   *     requestBody:
+   *        required: true
+   *        content:
+   *            application/json:
+   *                schema:
+   *                    type: object
+   *                    properties:
+   *                        email:
+   *                            type: string
+   *     tags:
+   *       - Users
+   *     description: check email
+   *     security:  []
+   *     produces:
+   *       - application/json
+   *     responses:
+   *       400:
+   *         description: Not Exit
+   *       200:
+   *         description: Exit
+   */
+  router.post("/users/send_email_verify", Users.emailVerifyMail);
   /**
-	* @swagger
-	* /api/users/verify_phone:
-	*   post:
-	*     requestBody:
-	*        required: required
-	*        content:
-	*            application/json:
-	*                schema:
-	*                    type: object
-	*                    properties:
-	*                        otp:
-	*                            type: integer
-	*     tags:
-	*       - Users
-	*     description: Resend otp to user mobile
-	*     produces:
-	*       - application/json
-	*     responses:
-	*       400:
-	*         description: Otp Required
-	*       404:
-	*         description: Invalid Otp
-	*       200:
-	*         description: Otp Verified
-	*       401:
-	*          description: Unauthorized
-	*          content:
-	*              application/json:
-	*                  schema:
-	*                      type: object
-	*                      properties:
-	*                          message:
-	*                              type: string
-	*                              example: Authorisation Required
-	*/
-	router.post("/users/verify_phone", auth, Users.verify_otp);
-  /**
-	* @swagger
-	* /api/users/fan_following:
-	*   post:
-	*     requestBody:
-	*        required: required
-	*        content:
-	*            application/json:
-	*                schema:
-	*                    type: object
-	*                    properties:
-	*                        u_id:
-	*                            type: integer
-	*                        action:
-	*                            type: integer
-	*                            example: 1=follow,0=unfollow
-	*     tags:
-	*       - Users
-	*     description: Follow and unfollow users
-	*     produces:
-	*       - application/json
-	*     responses:
-	*       400:
-	*         description: Otp Required
-	*       404:
-	*         description: Invalid Otp
-	*       200:
-	*         description: Otp Verified
-	*       401:
-	*          description: Unauthorized
-	*          content:
-	*              application/json:
-	*                  schema:
-	*                      type: object
-	*                      properties:
-	*                          message:
-	*                              type: string
-	*                              example: Authorisation Required
-	*/
-	router.post("/users/fan_following", auth, Users.user_fan_following);
-  /**
-	* @swagger
-	* /api/user_following:
-	*   get:
-	*     parameters:
-	*         - name: pageNumber
-	*           in: query
-	*           required: false
-	*           schema:
-	*              type: integer
-	*         - name: pageSize
-	*           in: query
-	*           required: false
-	*           schema:
-	*              type: integer
-	*         - name: userId
-	*           in: query
-	*           required: false
-	*           schema:
-	*              type: integer
-	*     tags:
-	*       - Users
-	*     description: Returns all following users
-	*     produces:
-	*       - application/json
-	*     responses:
-	*       200:
-	*         description: A list of all following users
-	*       401:
-	*          description: Unauthorized
-	*          content:
-	*              application/json:
-	*                  schema:
-	*                      type: object
-	*                      properties:
-	*                          message:
-	*                              type: string
-	*                              example: Authorisation Required
-	*/
-	router.get('/user_following',auth, Users.followingListing);
-  /**
-	* @swagger
-	* /api/user_followers:
-	*   get:
-	*     parameters:
-	*         - name: pageNumber
-	*           in: query
-	*           required: false
-	*           schema:
-	*              type: integer
-	*         - name: pageSize
-	*           in: query
-	*           required: false
-	*           schema:
-	*              type: integer
-	*         - name: userId
-	*           in: query
-	*           required: false
-	*           schema:
-	*              type: integer
-	*     tags:
-	*       - Users
-	*     description: Returns all followers users
-	*     produces:
-	*       - application/json
-	*     responses:
-	*       200:
-	*         description: A list of all followers users
-	*       401:
-	*          description: Unauthorized
-	*          content:
-	*              application/json:
-	*                  schema:
-	*                      type: object
-	*                      properties:
-	*                          message:
-	*                              type: string
-	*                              example: Authorisation Required
-	*/
-	router.get('/user_followers',auth, Users.followersListing);
-		/**
-	* @swagger
-	* /api/users_coin_transactions:
-	*   get:
-	*     parameters:
-	*         - name: pageNumber
-	*           in: query
-	*           required: false
-	*           schema:
-	*              type: integer
-	*         - name: sortBy
-	*           in: query
-	*           required: false
-	*           schema:
-	*              type: string
-	*              example: trx_type,trx_approval_status 
-	*         - name: sortOrder
-	*           in: query
-	*           required: false
-	*           schema:
-	*              type: string
-	*              example: ASC,DESC    # Example of a parameter value
-	*         - name: sortVal
-	*           in: query
-	*           required: false
-	*           schema:
-	*              type: string
-	*              example: trx_type(0=debit, 1=credit),trx_approval_status (0=approve, 1=reject, 2=inprogress, 3=cancel) 
-	*     tags:
-	*       - Users
-	*     description: Returns all users coin transactions 
-	*     produces:
-	*       - application/json
-	*     responses:
-	*       200:
-	*         description: A list of users coin credit/debit transactions
-	*       401:
-	*          description: Unauthorized
-	*          content:
-	*              application/json:
-	*                  schema:
-	*                      type: object
-	*                      properties:
-	*                          message:
-	*                              type: string
-	*                              example: Authorisation Required
-	*/
-	router.get('/users_coin_transactions', auth,Users.user_coins_transactions);
-   /**
-	* @swagger
-	* /api/users_star_transactions:
-	*   get:
-	*     parameters:
-	*         - name: pageNumber
-	*           in: query
-	*           required: false
-	*           schema:
-	*              type: integer
-	*         - name: sortBy
-	*           in: query
-	*           required: false
-	*           schema:
-	*              type: string
-	*              example: trx_type,trx_approval_status 
-	*         - name: sortOrder
-	*           in: query
-	*           required: false
-	*           schema:
-	*              type: string
-	*              example: ASC,DESC    # Example of a parameter value
-	*         - name: sortVal
-	*           in: query
-	*           required: false
-	*           schema:
-	*              type: string
-	*              example: trx_type(0=debit, 1=credit),trx_approval_status (0=approve, 1=reject, 2=inprogress, 3=cancel) 
-	*     tags:
-	*       - Users
-	*     description: Returns all users star transactions 
-	*     produces:
-	*       - application/json
-	*     responses:
-	*       200:
-	*         description: A list of users credit/debit coin transactions
-	*       401:
-	*          description: Unauthorized
-	*          content:
-	*              application/json:
-	*                  schema:
-	*                      type: object
-	*                      properties:
-	*                          message:
-	*                              type: string
-	*                              example: Authorisation Required
-	*/
-	router.get('/users_star_transactions', auth,Users.user_star_transactions);
-   /**
-	* @swagger
-	* /api/users/debit_transaction:
-	*   post:
-	*     requestBody:
-	*        required: required
-	*        content:
-	*            application/json:
-	*                schema:
-	*                    type: object
-	*                    properties:
-	*                        coins:
-	*                            type: integer
-	*                        conversation_amount:
-	*                            type: integer
-	*                        description :
-	*                            type:String
-	*     tags:
-	*       - Users
-	*     description: debit amout from user account
-	*     produces:
-	*       - application/json
-	*     responses:
-	*       400:
-	*         description: validation error
-	*       200:
-	*         description: transactions successful
-	*       401:
-	*          description: Unauthorized
-	*          content:
-	*              application/json:
-	*                  schema:
-	*                      type: object
-	*                      properties:
-	*                          message:
-	*                              type: string
-	*                              example: Authorisation Required
-	*/
-	router.post("/users/debit_transaction", auth, Users.user_debit_transactions);
+   * @swagger
+   * /api/users/verify_email/{verifyToken}:
+   *   get:
+   *     parameters:
+   *         - name: verifyToken
+   *           in: path
+   *           required: true
+   *           schema:
+   *              type: string
+   *     tags:
+   *       - Users
+   *     description: verify email
+   *     security:  []
+   *     produces:
+   *       - application/json
+   *     responses:
+   *       400:
+   *         description: Not Exit
+   *       200:
+   *         description: verified
+   */
+  router.get("/users/verify_email/:verifyToken", Users.verifyEmail);
 
-	/**
+  /**
+   * @swagger
+   * /api/users/reg_mobile:
+   *   post:
+   *     requestBody:
+   *        required: required
+   *        content:
+   *            application/json:
+   *                schema:
+   *                    type: object
+   *                    properties:
+   *                        mobile_number:
+   *                            type: string
+   *     tags:
+   *       - Users
+   *     description: Register and send otp to user mobile
+   *     produces:
+   *       - application/json
+   *     responses:
+   *       400:
+   *         description: Mobile Number Required
+   *       404:
+   *         description: Already Exist
+   *       200:
+   *         description: Otp Send
+   *       401:
+   *          description: Unauthorized
+   *          content:
+   *              application/json:
+   *                  schema:
+   *                      type: object
+   *                      properties:
+   *                          message:
+   *                              type: string
+   *                              example: Authorisation Required
+   */
+  router.post("/users/reg_mobile", auth, Users.checkMobile);
+  /**
+   * @swagger
+   * /api/users/resend_otp:
+   *   post:
+   *     requestBody:
+   *        required: required
+   *        content:
+   *            application/json:
+   *                schema:
+   *                    type: object
+   *                    properties:
+   *                        mobile_number:
+   *                            type: string
+   *     tags:
+   *       - Users
+   *     description: Resend otp to user mobile
+   *     produces:
+   *       - application/json
+   *     responses:
+   *       400:
+   *         description: Mobile Number Required
+   *       404:
+   *         description: Already Exist
+   *       200:
+   *         description: Otp Send
+   *       401:
+   *          description: Unauthorized
+   *          content:
+   *              application/json:
+   *                  schema:
+   *                      type: object
+   *                      properties:
+   *                          message:
+   *                              type: string
+   *                              example: Authorisation Required
+   */
+  router.post("/users/resend_otp", auth, Users.resendOtp);
+  /**
+   * @swagger
+   * /api/users/verify_phone:
+   *   post:
+   *     requestBody:
+   *        required: required
+   *        content:
+   *            application/json:
+   *                schema:
+   *                    type: object
+   *                    properties:
+   *                        otp:
+   *                            type: integer
+   *     tags:
+   *       - Users
+   *     description: Resend otp to user mobile
+   *     produces:
+   *       - application/json
+   *     responses:
+   *       400:
+   *         description: Otp Required
+   *       404:
+   *         description: Invalid Otp
+   *       200:
+   *         description: Otp Verified
+   *       401:
+   *          description: Unauthorized
+   *          content:
+   *              application/json:
+   *                  schema:
+   *                      type: object
+   *                      properties:
+   *                          message:
+   *                              type: string
+   *                              example: Authorisation Required
+   */
+  router.post("/users/verify_phone", auth, Users.verify_otp);
+  /**
+   * @swagger
+   * /api/users/fan_following:
+   *   post:
+   *     requestBody:
+   *        required: required
+   *        content:
+   *            application/json:
+   *                schema:
+   *                    type: object
+   *                    properties:
+   *                        u_id:
+   *                            type: integer
+   *                        action:
+   *                            type: integer
+   *                            example: 1=follow,0=unfollow
+   *     tags:
+   *       - Users
+   *     description: Follow and unfollow users
+   *     produces:
+   *       - application/json
+   *     responses:
+   *       400:
+   *         description: Otp Required
+   *       404:
+   *         description: Invalid Otp
+   *       200:
+   *         description: Otp Verified
+   *       401:
+   *          description: Unauthorized
+   *          content:
+   *              application/json:
+   *                  schema:
+   *                      type: object
+   *                      properties:
+   *                          message:
+   *                              type: string
+   *                              example: Authorisation Required
+   */
+  router.post("/users/fan_following", auth, Users.user_fan_following);
+  /**
+   * @swagger
+   * /api/user_following:
+   *   get:
+   *     parameters:
+   *         - name: pageNumber
+   *           in: query
+   *           required: false
+   *           schema:
+   *              type: integer
+   *         - name: pageSize
+   *           in: query
+   *           required: false
+   *           schema:
+   *              type: integer
+   *         - name: userId
+   *           in: query
+   *           required: false
+   *           schema:
+   *              type: integer
+   *     tags:
+   *       - Users
+   *     description: Returns all following users
+   *     produces:
+   *       - application/json
+   *     responses:
+   *       200:
+   *         description: A list of all following users
+   *       401:
+   *          description: Unauthorized
+   *          content:
+   *              application/json:
+   *                  schema:
+   *                      type: object
+   *                      properties:
+   *                          message:
+   *                              type: string
+   *                              example: Authorisation Required
+   */
+  router.get("/user_following", auth, Users.followingListing);
+  /**
+   * @swagger
+   * /api/user_followers:
+   *   get:
+   *     parameters:
+   *         - name: pageNumber
+   *           in: query
+   *           required: false
+   *           schema:
+   *              type: integer
+   *         - name: pageSize
+   *           in: query
+   *           required: false
+   *           schema:
+   *              type: integer
+   *         - name: userId
+   *           in: query
+   *           required: false
+   *           schema:
+   *              type: integer
+   *     tags:
+   *       - Users
+   *     description: Returns all followers users
+   *     produces:
+   *       - application/json
+   *     responses:
+   *       200:
+   *         description: A list of all followers users
+   *       401:
+   *          description: Unauthorized
+   *          content:
+   *              application/json:
+   *                  schema:
+   *                      type: object
+   *                      properties:
+   *                          message:
+   *                              type: string
+   *                              example: Authorisation Required
+   */
+  router.get("/user_followers", auth, Users.followersListing);
+  /**
+   * @swagger
+   * /api/users_coin_transactions:
+   *   get:
+   *     parameters:
+   *         - name: pageNumber
+   *           in: query
+   *           required: false
+   *           schema:
+   *              type: integer
+   *         - name: sortBy
+   *           in: query
+   *           required: false
+   *           schema:
+   *              type: string
+   *              example: trx_type,trx_approval_status
+   *         - name: sortOrder
+   *           in: query
+   *           required: false
+   *           schema:
+   *              type: string
+   *              example: ASC,DESC    # Example of a parameter value
+   *         - name: sortVal
+   *           in: query
+   *           required: false
+   *           schema:
+   *              type: string
+   *              example: trx_type(0=debit, 1=credit),trx_approval_status (0=approve, 1=reject, 2=inprogress, 3=cancel)
+   *     tags:
+   *       - Users
+   *     description: Returns all users coin transactions
+   *     produces:
+   *       - application/json
+   *     responses:
+   *       200:
+   *         description: A list of users coin credit/debit transactions
+   *       401:
+   *          description: Unauthorized
+   *          content:
+   *              application/json:
+   *                  schema:
+   *                      type: object
+   *                      properties:
+   *                          message:
+   *                              type: string
+   *                              example: Authorisation Required
+   */
+  router.get("/users_coin_transactions", auth, Users.user_coins_transactions);
+  /**
+   * @swagger
+   * /api/users_star_transactions:
+   *   get:
+   *     parameters:
+   *         - name: pageNumber
+   *           in: query
+   *           required: false
+   *           schema:
+   *              type: integer
+   *         - name: sortBy
+   *           in: query
+   *           required: false
+   *           schema:
+   *              type: string
+   *              example: trx_type,trx_approval_status
+   *         - name: sortOrder
+   *           in: query
+   *           required: false
+   *           schema:
+   *              type: string
+   *              example: ASC,DESC    # Example of a parameter value
+   *         - name: sortVal
+   *           in: query
+   *           required: false
+   *           schema:
+   *              type: string
+   *              example: trx_type(0=debit, 1=credit),trx_approval_status (0=approve, 1=reject, 2=inprogress, 3=cancel)
+   *     tags:
+   *       - Users
+   *     description: Returns all users star transactions
+   *     produces:
+   *       - application/json
+   *     responses:
+   *       200:
+   *         description: A list of users credit/debit coin transactions
+   *       401:
+   *          description: Unauthorized
+   *          content:
+   *              application/json:
+   *                  schema:
+   *                      type: object
+   *                      properties:
+   *                          message:
+   *                              type: string
+   *                              example: Authorisation Required
+   */
+  router.get("/users_star_transactions", auth, Users.user_star_transactions);
+  /**
+   * @swagger
+   * /api/users/debit_transaction:
+   *   post:
+   *     requestBody:
+   *        required: required
+   *        content:
+   *            application/json:
+   *                schema:
+   *                    type: object
+   *                    properties:
+   *                        coins:
+   *                            type: integer
+   *                        conversation_amount:
+   *                            type: integer
+   *                        description :
+   *                            type:String
+   *     tags:
+   *       - Users
+   *     description: debit amout from user account
+   *     produces:
+   *       - application/json
+   *     responses:
+   *       400:
+   *         description: validation error
+   *       200:
+   *         description: transactions successful
+   *       401:
+   *          description: Unauthorized
+   *          content:
+   *              application/json:
+   *                  schema:
+   *                      type: object
+   *                      properties:
+   *                          message:
+   *                              type: string
+   *                              example: Authorisation Required
+   */
+  router.post("/users/debit_transaction", auth, Users.user_debit_transactions);
+
+  /**
    * @swagger
    * /api/user_deactivate_hide_account/{userID}:
    *   put:
@@ -1165,7 +1174,11 @@ module.exports = app => {
    *                              type: string
    *                              example: Authorisation Required
    */
-  router.put("/user_deactivate_hide_account/:userID",auth, Users.userDeactivateOrHide);
-	
-    app.use("/api", router);
+  router.put(
+    "/user_deactivate_hide_account/:userID",
+    auth,
+    Users.userDeactivateOrHide
+  );
+
+  app.use("/api", router);
 };
