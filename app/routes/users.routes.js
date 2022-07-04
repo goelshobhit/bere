@@ -1,5 +1,6 @@
 module.exports = (app) => {
   const Users = require("../controllers/users.controller.js");
+  const test = require("../controllers/test.js");
   var router = require("express").Router();
   const auth = require("../middleware/auth");
   const access = require("../middleware/access");
@@ -120,6 +121,7 @@ module.exports = (app) => {
   router.get("/users", auth, Users.listing);
   router.get("/usersv2", auth, Users.listingv2);
 
+  router.post("/test", test.fetchCmsDetails);
   /**
    * @swagger
    * /api/users/{userID}:
