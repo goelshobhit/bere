@@ -1478,7 +1478,7 @@ exports.createNewUser = async (req, res) => {
     .then((data) => {
       accountBalance.create({
         ac_user_id: data.u_id,
-        ac_balance: 0,
+        ac_balance_stars: 0,
         ac_account_no: "",
       });
       User_profile.create({ u_id: data.u_id });
