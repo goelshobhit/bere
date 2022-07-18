@@ -20,3 +20,7 @@
 {"level":"error"}
 {"level":"error"}
 {"level":"error"}
+{"level":"error","message":"Some error occurred while creating the Watch Ads Task Submit=SequelizeForeignKeyConstraintError: insert or update on table \"watch_ads_task_submit\" violates foreign key constraint \"watch_ads_task_submit_watch_ads_task_id_fkey\""}
+{"level":"error","message":"Some error occurred while creating the Watch Ads Task Submit=SequelizeForeignKeyConstraintError: insert or update on table \"watch_ads_task_submit\" violates foreign key constraint \"watch_ads_task_submit_watch_ads_task_id_fkey\""}
+{"level":"error","message":"Some error occurred while creating the Watch Ads Task Submit=SequelizeForeignKeyConstraintError: insert or update on table \"watch_ads_task_submit\" violates foreign key constraint \"watch_ads_task_submit_watch_ads_task_id_fkey\""}
+{"level":"info","message":"scheduleJob at :Sat Jul 16 2022 00:05:00 GMT+0530 (India Standard Time)"}

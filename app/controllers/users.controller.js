@@ -1545,12 +1545,158 @@ exports.createNewUser = async (req, res) => {
  * @return {Promise}
  */
 exports.listing = async (req, res) => {
+  try {
+    const pageSize = parseInt(req.query.pageSize || 0);
+    const pageNumber = parseInt(req.query.pageNumber || 1);
+    const skipCount = (pageNumber - 1) * pageSize;
+    const sortBy = req.query.sortBy || "u_id";
+    const sortOrder = req.query.sortOrder || "DESC";
+    const sortVal = req.query.sortVal;
+    let searchString = req.query.searchString || "";
+    searchString = searchString
+      ? typeof parseInt(searchString, 10) === "number"
+        ? searchString
+        : searchString.toLowerCase()
+      : "";
+
+    var UserId = req.header(process.env.UKEY_HEADER || "x-api-key");
+    const contentUserIds = await common.getContentReportUser(["User"], UserId);
+    const contentUserIdsValues = contentUserIds.map(function (item) {
+      return item.content_report_type_id;
+    });
+    let options = {
+      include: [
+        {
+          model: db.user_profile,
+        },
+        {
+          model: db.user_content_post,
+          attributes: ["ucpl_id"],
+          required: false,
+          where: {
+            ucpl_status: 1,
+          },
+        },
+      ],
+      // limit: pageSize,
+      // offset: skipCount,
+      order: [[sortBy, sortOrder]],
+      attributes: [
+        "u_id",
+        "u_referer_id",
+        "u_acct_type",
+        "u_act_sec",
+        "u_email",
+        "u_active",
+        "u_fb_username",
+        "u_fb_id",
+        "u_gmail_username",
+        "u_gmail_id",
+        "u_ymail_username",
+        "u_ymail_id",
+        "u_pref_login",
+        "u_instagram_username",
+        "u_instagram_id",
+        "u_created_at",
+        "u_updated_at",
+        "u_email_verify_status",
+        "is_user_deactivated",
+        "is_user_hidden",
+      ],
+      where: {
+        u_active: true,
+      },
+    };
+    // Search string pagination by u_id , name
+    if (searchString) {
+      options.include[0].where = {
+        [Op.or]: [
+          {
+            u_id: {
+              [Op.eq]: typeof searchString === "number" ? parseInt(searchString) : 0,
+            },
+          },
+          {
+            u_f_name: {
+              [Op.like]: `%${searchString.toLowerCase()}%`,
+            },
+          },
+          {
+            u_l_name: {
+              [Op.like]: `%${searchString}%`,
+            },
+          },
+          {
+            u_display_name: {
+              [Op.like]: `%${searchString}%`,
+            },
+          },
+          {
+            u_profile_name: {
+              [Op.like]: `%${searchString}%`,
+            },
+          },
+        ],
+      };
+    }
+    if (pageSize > 0) {
+      options = { ...options, limit: pageSize, offset: skipCount };
+    }
+    if (sortVal) {
+      var sortValue = sortVal.trim();
+      options.where = {
+        [sortBy]: {
+          [Op.like]: `%${sortValue}%`,
+        },
+      };
+    }
+    /* do not get users which are reported by someone */
+    if (contentUserIdsValues.length) {
+      options["where"]["u_id"] = {
+        [Op.not]: contentUserIdsValues,
+      };
+    }
+    options["where"]["is_autotakedown"] = 0;
+    options["where"]["is_user_deactivated"] = 0;
+    options["where"]["is_user_hidden"] = 0;
+    var total = await Users.count({
+      where: options["where"],
+    });
+
+    console.log(options.include[0]);
+    const users_list = await Users.findAll(options);
+    /*console.log(users_list.length);
+	for(let i=0;i<users_list.length;i++){
+		Users.update({u_email:users_list[i]['u_email'].toLowerCase()}, {
+			where: {
+				u_id:users_list[i]['u_id']
+			}
+        });
+    console.log(users_list[i]['u_email']);		
+	}*/
+    res.status(200).send({
+      data: users_list,
+      totalRecords: total,
+    });
+  } catch (error) {
+    console.log("Failed to fetch user list ", error.message);
+    res.status(400).send({
+      error: error.message,
+      data: [],
+      totalRecords: 0,
+    });
+  }
+};
+exports.listingv3 = async (req, res) => {
+  // try {
   const pageSize = parseInt(req.query.pageSize || 0);
   const pageNumber = parseInt(req.query.pageNumber || 1);
   const skipCount = (pageNumber - 1) * pageSize;
   const sortBy = req.query.sortBy || "u_id";
   const sortOrder = req.query.sortOrder || "DESC";
   const sortVal = req.query.sortVal;
+  const searchString = req.query.userName;
+
   var UserId = req.header(process.env.UKEY_HEADER || "x-api-key");
   const contentUserIds = await common.getContentReportUser(["User"], UserId);
   const contentUserIdsValues = contentUserIds.map(function (item) {
@@ -1599,7 +1745,23 @@ exports.listing = async (req, res) => {
       u_active: true,
     },
   };
-
+  //Search string pagination
+  if (searchString) {
+    options.include[0].where = {
+      [Op.or]: [
+        {
+          u_f_name: {
+            [Op.like]: `%${searchString}%`,
+          },
+        },
+        {
+          u_display_name: {
+            [Op.like]: `%${searchString}%`,
+          },
+        },
+      ],
+    };
+  }
   if (pageSize > 0) {
     options = { ...options, limit: pageSize, offset: skipCount };
   }
@@ -1623,8 +1785,9 @@ exports.listing = async (req, res) => {
   var total = await Users.count({
     where: options["where"],
   });
+
+  console.log(options);
   const users_list = await Users.findAll(options);
-  console.log(users_list);
   /*console.log(users_list.length);
 	for(let i=0;i<users_list.length;i++){
 		Users.update({u_email:users_list[i]['u_email'].toLowerCase()}, {
@@ -1634,11 +1797,18 @@ exports.listing = async (req, res) => {
         });
     console.log(users_list[i]['u_email']);		
 	}*/
-
   res.status(200).send({
     data: users_list,
     totalRecords: total,
   });
+  // } catch (error) {
+  //   console.log("Failed to fetch user list ", error.message);
+  //   res.status(400).send({
+  //     error: error.message,
+  //     data: [],
+  //     totalRecords: 0,
+  //   });
+  // }
 };
 exports.listingv2 = async (req, res) => {
   try {
