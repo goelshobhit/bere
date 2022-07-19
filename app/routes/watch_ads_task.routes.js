@@ -1,8 +1,8 @@
-module.exports = app => {
-    const watchAdsTask = require("../controllers/watch_ads_task.controller.js");
-    var router = require("express").Router();
-    const auth = require("../middleware/auth");
-    const access = require("../middleware/access");
+module.exports = (app) => {
+  const watchAdsTask = require("../controllers/watch_ads_task.controller.js");
+  var router = require("express").Router();
+  const auth = require("../middleware/auth");
+  const access = require("../middleware/access");
   /**
    * @swagger
    * /api/watch_ads_task:
@@ -78,7 +78,7 @@ module.exports = app => {
    *                              type: string
    *                              example: Authorisation Required
    */
-	 router.post("/watch_ads_task",access, watchAdsTask.createWatchAdsTask);
+  router.post("/watch_ads_task", watchAdsTask.createWatchAdsTask);
   /**
    * @swagger
    * /api/watch_ads_task/{watchAdsTaskId}:
@@ -158,7 +158,10 @@ module.exports = app => {
    *                              type: string
    *                              example: Authorisation Required
    */
-   router.put("/watch_ads_task/:watchAdsTaskId",access, watchAdsTask.updatewatchAdsTask);
+  router.put(
+    "/watch_ads_task/:watchAdsTaskId",
+    watchAdsTask.updatewatchAdsTask
+  );
   /**
    * @swagger
    * /api/watch_ads_task:
@@ -205,7 +208,7 @@ module.exports = app => {
    *                              type: string
    *                              example: Authorisation Required
    */
-    router.get('/watch_ads_task',auth, watchAdsTask.WatchAdsTaskListing)
+  router.get("/watch_ads_task", watchAdsTask.WatchAdsTaskListing);
   /**
    * @swagger
    * /api/watch_ads_task/{watchAdsTaskId}:
@@ -245,7 +248,10 @@ module.exports = app => {
    *                              type: string
    *                              example: Authorisation Required
    */
-    router.get("/watch_ads_task/:watchAdsTaskId",auth, watchAdsTask.watchAdsTaskDetails);
+  router.get(
+    "/watch_ads_task/:watchAdsTaskId",
+    watchAdsTask.watchAdsTaskDetails
+  );
   /**
    * @swagger
    * /api/watch_ads_task/brand/{crCoId}:
@@ -285,8 +291,12 @@ module.exports = app => {
    *                              type: string
    *                              example: Authorisation Required
    */
-   router.get("/watch_ads_task/brand/:crCoId",auth, watchAdsTask.watchAdsTaskDetailsUsingCrCoId);
-    /**
+  router.get(
+    "/watch_ads_task/brand/:crCoId",
+    auth,
+    watchAdsTask.watchAdsTaskDetailsUsingCrCoId
+  );
+  /**
    * @swagger
    * /api/watch_ads_task/{watchAdsTaskId}:
    *   delete:
@@ -315,7 +325,10 @@ module.exports = app => {
    *                              type: string
    *                              example: Authorisation Required
    */
-   router.delete("/watch_ads_task/:watchAdsTaskId", access, watchAdsTask.deletewatchAdsTask);   
-   app.use("/api", router);
+  router.delete(
+    "/watch_ads_task/:watchAdsTaskId",
+    access,
+    watchAdsTask.deletewatchAdsTask
+  );
+  app.use("/api", router);
 };
-  
