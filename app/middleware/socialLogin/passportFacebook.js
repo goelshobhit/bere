@@ -47,7 +47,7 @@ module.exports = passport => {
         });	
         if (UserDetails) {
             const returning = {
-                message: "Aleary Registered",
+                message: "Already Registered",
                 data: UserDetails,
                 access_token:common.genrateToken(UserDetails.u_id),
                 media_token:common.imageToken(UserDetails.u_id)

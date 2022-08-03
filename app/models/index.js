@@ -14,7 +14,7 @@ const sequelize = new Sequelize(dbConfig.DB, dbConfig.USER, dbConfig.PASSWORD, {
   port: dbConfig.PORT,
   dialect: dbConfig.dialect,
   dialectOptions: dbConfig.dialectOptions,
-  logging:true
+  logging:false
 });
 
 const migrator = new Umzug({

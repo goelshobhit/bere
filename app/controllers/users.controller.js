@@ -1303,13 +1303,8 @@ const fetchCmsDetails = async (userID) => {
 };
 exports.createNewUser = async (req, res) => {
   const body = req.body;
-  if (!req.body["User Type"]) {
-    res.status(500).send({
-      message: "User type required",
-    });
-    return;
-  }
-  var login_type = req.body["User Type"];
+
+  var login_type = req.body["User Type"] || "Normal";
   if (login_type == "Instagram") {
     const UserDetails = await Users.findOne({
       where: {
@@ -1318,7 +1313,7 @@ exports.createNewUser = async (req, res) => {
       attributes: ["u_id"],
     });
     if (UserDetails) {
-      const UserD = await Users.findOne({
+      const existingUser = await Users.findOne({
         include: [
           {
             model: db.user_profile,
@@ -1360,8 +1355,8 @@ exports.createNewUser = async (req, res) => {
         },
       });
       res.status(200).send({
-        message: "Aleary Registered",
-        data: UserD,
+        message: "Already Registered",
+        data: existingUser,
         access_token: common.genrateToken(UserDetails.u_id),
         media_token: common.imageToken(UserDetails.u_id),
       });
@@ -1371,12 +1366,12 @@ exports.createNewUser = async (req, res) => {
   if (login_type == "Normal" || login_type == "Gmail") {
     const UserDetails = await Users.findOne({
       where: {
-        u_email: req.body["User email"].toLowerCase(),
+        u_email: req.body["email"].toLowerCase(),
       },
     });
     if (UserDetails) {
       res.status(200).send({
-        message: "Aleary Registered",
+        message: "Already Registered",
       });
       return;
     }
@@ -1389,7 +1384,7 @@ exports.createNewUser = async (req, res) => {
     });
     if (UserDetails) {
       res.status(200).send({
-        message: "Aleary Registered",
+        message: "Already Registered",
       });
       return;
     }
@@ -1407,7 +1402,7 @@ exports.createNewUser = async (req, res) => {
   // });
   // if (UserDetails) {
   //     res.status(400).send({
-  //         message: "Username Aleary Exist"
+  //         message: "Username Already Exist"
   //     });
   //     return;
   // }
@@ -1416,17 +1411,17 @@ exports.createNewUser = async (req, res) => {
       // u_login: req.body["User login"],
       [Op.or]: [
         {
-          u_login: req.body["User login"].toLowerCase(),
+          u_login: req.body["username"].toLowerCase(),
         },
         {
-          u_login: req.body["User login"],
+          u_login: req.body["username"],
         },
       ],
     },
   });
   if (UserDetails) {
     res.status(400).send({
-      message: "Username Aleary Exist",
+      message: "Username Already Exist",
     });
     return;
   }
@@ -1435,44 +1430,72 @@ exports.createNewUser = async (req, res) => {
     u_acct_type: body.hasOwnProperty("Account type")
       ? req.body["Account type"]
       : 0,
-    u_referer_id: body.hasOwnProperty("Referer id")
-      ? req.body["Referer id"]
+    u_referer_id: body.hasOwnProperty("referer_id")
+      ? req.body["referer_id"]
       : 0,
+    u_display_name: body.hasOwnProperty("display_name")
+      ? req.body["display_name"]
+      : "",
+    u_first_name: body.hasOwnProperty("first_name")
+      ? req.body["first_name"]
+      : "",
+    u_last_name: body.hasOwnProperty("last_name") ? req.body["last_name"] : "",
+
     u_act_sec: body.hasOwnProperty("User act sec")
       ? req.body["User act sec"]
       : 0,
-    u_login: body.hasOwnProperty("User login")
-      ? req.body["User login"].toLowerCase()
+    u_login: body.hasOwnProperty("username")
+      ? req.body["username"].toLowerCase()
       : "",
-    u_pass: body.hasOwnProperty("User password")
-      ? req.body["User password"]
-      : login_type,
-    u_email: req.body["User email"] ? req.body["User email"].toLowerCase() : "",
+    u_pass: body.hasOwnProperty("password") ? req.body["password"] : login_type,
+    u_email: req.body["email"] ? req.body["email"].toLowerCase() : "",
     au_salt: Users.generateSalt(),
-    u_active: body.hasOwnProperty("User status")
-      ? req.body["User status"]
-      : true,
+    u_active: body.hasOwnProperty("status") ? req.body["status"] : true,
     u_fb_username: body.hasOwnProperty("User fb name")
       ? req.body["User fb name"]
       : "",
-    u_fb_id: body.hasOwnProperty("Fb id") ? req.body["Fb id"] : "",
-    u_gmail_username: body.hasOwnProperty("User gmail name")
-      ? req.body["User gmail name"]
+    u_facebook_handle: body.hasOwnProperty("facebook_handle")
+      ? req.body["facebook_handle"]
+      : [],
+    u_instagram_handle: body.hasOwnProperty("instagram_handle")
+      ? req.body["instagram_handle"]
+      : [],
+    u_tiktok_handle: body.hasOwnProperty("tiktok_handle")
+      ? req.body["tiktok_handle"]
+      : [],
+    u_twitter_handle: body.hasOwnProperty("twitter_handle")
+      ? req.body["twitter_handle"]
+      : [],
+    u_snapchat_handle: body.hasOwnProperty("snapchat_handle")
+      ? req.body["snapchat_handle"]
+      : [],
+    u_pinterest_handle: body.hasOwnProperty("pinterest_handle")
+      ? req.body["pinterest_handle"]
+      : [],
+    u_date_of_birth: body.hasOwnProperty("date_of_birth")
+      ? req.body["date_of_birth"]
       : "",
-    u_gmail_id: body.hasOwnProperty("Gmail id") ? req.body["Gmail id"] : "",
-    u_ymail_username: body.hasOwnProperty("User ymail name")
-      ? req.body["User ymail name"]
+    u_date_of_birth: body.hasOwnProperty("date_of_birth")
+      ? req.body["date_of_birth"]
       : "",
-    u_ymail_id: body.hasOwnProperty("Ymail id") ? req.body["Ymail id"] : "",
-    u_pref_login: body.hasOwnProperty("User pref login")
-      ? req.body["User pref login"]
-      : 0,
-    u_instagram_username: body.hasOwnProperty("User instagram name")
-      ? req.body["User instagram name"]
-      : "",
-    u_instagram_id: body.hasOwnProperty("Instagram id")
-      ? req.body["Instagram id"]
-      : "",
+    // u_fb_id: body.hasOwnProperty("Fb id") ? req.body["Fb id"] : "",
+    // u_gmail_username: body.hasOwnProperty("User gmail name")
+    //   ? req.body["User gmail name"]
+    //   : "",
+    // u_gmail_id: body.hasOwnProperty("Gmail id") ? req.body["Gmail id"] : "",
+    // u_ymail_username: body.hasOwnProperty("User ymail name")
+    //   ? req.body["User ymail name"]
+    //   : "",
+    // u_ymail_id: body.hasOwnProperty("Ymail id") ? req.body["Ymail id"] : "",
+    // u_pref_login: body.hasOwnProperty("User pref login")
+    //   ? req.body["User pref login"]
+    //   : 0,
+    // u_instagram_username: body.hasOwnProperty("User instagram name")
+    //   ? req.body["User instagram name"]
+    //   : "",
+    // u_instagram_id: body.hasOwnProperty("Instagram id")
+    //   ? req.body["Instagram id"]
+    //   : "",
   };
   Users.create(data)
     .then((data) => {
@@ -1502,20 +1525,17 @@ exports.createNewUser = async (req, res) => {
         data.u_id,
         data.dataValues
       );
-      if (req.body["User email"]) {
+      if (req.body["email"]) {
         try {
           const encryptedID = cryptr.encrypt(data.u_id);
           const vlink =
             process.env.SITE_API_URL + "users/verify_email/" + encryptedID;
           var templateBody = template.mt_body;
-          templateBody = templateBody.replace(
-            "[CNAME]",
-            req.body["User email"]
-          );
+          templateBody = templateBody.replace("[CNAME]", req.body["email"]);
           templateBody = templateBody.replace("[VLINK]", vlink);
           const message = {
             from: "Socialbrands1@gmail.com",
-            to: req.body["User email"],
+            to: req.body["email"],
             subject: template.mt_subject,
             html: templateBody,
           };
@@ -1588,6 +1608,7 @@ exports.listing = async (req, res) => {
         "u_act_sec",
         "u_email",
         "u_active",
+        "u_login",
         "u_fb_username",
         "u_fb_id",
         "u_gmail_username",
@@ -1613,7 +1634,8 @@ exports.listing = async (req, res) => {
         [Op.or]: [
           {
             u_id: {
-              [Op.eq]: typeof searchString === "number" ? parseInt(searchString) : 0,
+              [Op.eq]:
+                typeof searchString === "number" ? parseInt(searchString) : 0,
             },
           },
           {
@@ -2896,7 +2918,7 @@ exports.updateUser = async (req, res) => {
   }
   if (req.body.u_pass) {
     res.status(500).send({
-      message: "User password can not be updated",
+      message: "User password cannot be updated",
     });
     return;
   }
@@ -4066,7 +4088,7 @@ exports.followersListing = async (req, res) => {
         as: "follower",
         attributes: [
           ["u_display_name", "username"],
-          ["u_f_name", "frist_name"],
+          ["u_f_name", "first_name"],
           ["u_l_name", "last_name"],
           ["u_prof_img_path", "prof_img"],
         ],

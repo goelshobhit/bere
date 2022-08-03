@@ -901,6 +901,7 @@ exports.taskListing = async (req, res) => {
  * @return {Promise}
  */
 exports.jsonlisting = async (req, res) => {
+  logger.log("info", "JSON LISTING");
   const pageSize = parseInt(req.query.pageSize || 10);
   const pageNumber = parseInt(req.query.pageNumber || 1);
   const skipCount = (pageNumber - 1) * pageSize;
@@ -960,7 +961,6 @@ exports.jsonlisting = async (req, res) => {
       submit_watch_completion: 1,
     },
   };
-
   let completedWatchAdSubmits = await db.watch_ads_task_submit.findAll(
     watchAdsSubmitOptions
   );
@@ -1014,24 +1014,27 @@ exports.jsonlisting = async (req, res) => {
       },
     ];
   }
-
-  // if (completedWatchAdSubmitIds.length) {
-  //   if (!options["where"]["tj_data"]) {
-  //     options["where"]["tj_data"] = {};
-  //   }
-  //   options["where"]["tj_data"][Op.or] = [
-  //     {
-  //       watchAdId: {
-  //         [Op.not]: completedWatchAdSubmitIds,
-  //       },
-  //     },
-  //     {
-  //       watchAdId: {
-  //         [Op.eq]: null,
-  //       },
-  //     },
-  //   ];
-  // }
+  console.log(
+    "'''''''''''''''''''''''''''''''''''''''''",
+    completedWatchAdSubmitIds
+  );
+  if (completedWatchAdSubmitIds.length) {
+    if (!options["where"]["tj_data"]) {
+      options["where"]["tj_data"] = {};
+    }
+    options["where"]["tj_data"][Op.or] = [
+      {
+        watchAdId: {
+          [Op.not]: completedWatchAdSubmitIds,
+        },
+      },
+      {
+        watchAdId: {
+          [Op.eq]: null,
+        },
+      },
+    ];
+  }
   var total = await taskJson.count({
     where: options["where"],
   });
