@@ -208,11 +208,11 @@ exports.updatewatchAdsTaskSubmit = async (req, res) => {
   } catch (error) {
     logger.log(
       "error",
-      err + ":Error updating Watch Ads Task Submit with id=" + id
+      error.message + ":Error updating Watch Ads Task Submit with id=" + id
     );
-    console.log(err);
     res.status(500).send({
       message: "Error updating Watch Ads Task Submit with id=" + id,
+      error: error.message,
     });
   }
 };
