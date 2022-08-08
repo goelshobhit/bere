@@ -3,6 +3,8 @@ const watchAdsTaskSubmit = db.watch_ads_task_submit;
 const User_profile = db.user_profile;
 const audit_log = db.audit_log;
 const logger = require("../middleware/logger");
+const common = require("../common");
+
 const { validationResult } = require("express-validator");
 let userKey = process.env.UKEY_HEADER;
 /**
@@ -150,12 +152,12 @@ exports.updatewatchAdsTaskSubmit = async (req, res) => {
       return;
     }
 
-    if (watchAdsTaskSubmitDetails.submit_watch_completion === 1) {
-      res.status(500).send({
-        message: "The user is not permitted to complete the same video again.",
-      });
-      return;
-    }
+    // if (watchAdsTaskSubmitDetails.submit_watch_completion === 1) {
+    //   res.status(500).send({
+    //     message: "The user is not permitted to complete the same video again.",
+    //   });
+    //   return;
+    // }
 
     let [num, [result]] = await watchAdsTaskSubmit.update(req.body, {
       returning: true,
