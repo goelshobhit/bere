@@ -281,7 +281,7 @@ exports.userlogin = async (req, res) => {
             au_user_id: resultData.au_user_id
         }
     });
-    var access_token = common.genrateToken(resultData.au_user_id);
+    var access_token = common.generateToken(resultData.au_user_id);
     res.status(200).send({
         data: UserDetails,
         access_token: access_token

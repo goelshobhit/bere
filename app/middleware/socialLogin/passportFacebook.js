@@ -49,7 +49,7 @@ module.exports = passport => {
             const returning = {
                 message: "Already Registered",
                 data: UserDetails,
-                access_token:common.genrateToken(UserDetails.u_id),
+                access_token:common.generateToken(UserDetails.u_id),
                 media_token:common.imageToken(UserDetails.u_id)
             }
             done(null, returning);
@@ -113,7 +113,7 @@ module.exports = passport => {
             const returning = {
                 message: "User Added Successfully",
                 data,
-                access_token:common.genrateToken(data.u_id),
+                access_token:common.generateToken(data.u_id),
                 media_token:common.imageToken(data.u_id)
             }
                 done(null, returning)

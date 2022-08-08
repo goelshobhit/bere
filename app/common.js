@@ -104,7 +104,7 @@ function Common() {
     ];
     return questions;
   };
-  Common.prototype.genrateToken = function (user_id) {
+  Common.prototype.generateToken = function (user_id) {
     if (!user_id) {
       return res.status(401).end();
     }

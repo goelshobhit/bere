@@ -98,7 +98,7 @@ exports.createNewUser = async (req, res) => {
             res.status(201).send({			    
                 message: "User Added Successfully",
                 user_details:data,
-				access_token:common.genrateToken(data.u_id)
+				access_token:common.generateToken(data.u_id)
             });
         })
         .catch(err => {
@@ -410,7 +410,7 @@ default:
             u_id: uID
         }
     });
-    var access_token = common.genrateToken(uID);
+    var access_token = common.generateToken(uID);
     res.status(200).send({
 		message:"Login Successfully",
         data: UserDetails,
