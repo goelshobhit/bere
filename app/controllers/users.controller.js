@@ -55,13 +55,14 @@ exports.createNewUser = async (req, res) => {
       pinterest_handle = [],
       instagram_handle = [],
       tiktok_handle = [],
+      twitter_handle = [],
       snapchat_handle = [],
       status = true,
       user_type = "Normal",
       referer_id = 0,
       address = "",
       city = "",
-      postal_code = "",
+      zipcode = "",
       state = "",
       country = "",
       account_type = 0,
@@ -216,9 +217,26 @@ exports.createNewUser = async (req, res) => {
       "Successfully created the account balance for the user : ",
       accountRecord
     );
-
+    let u_dob = date_of_birth ? date_of_birth.split("/") : null;
     let userProfileRecord = await User_profile.create({
       u_id: userRecord.u_id,
+      u_display_name: display_name,
+      u_profile_name: null,
+      u_f_name: first_name,
+      u_l_name: last_name,
+      u_dob: date_of_birth,
+      u_dob_d: u_dob[0] || null,
+      u_dob_m: u_dob[1] || null,
+      u_dob_y: u_dob[2] || null,
+      u_gender: null,
+      u_address: address,
+      u_city: city,
+      u_state: state,
+      u_country: country,
+      u_zipcode: zipcode,
+      u_prof_img_path: null,
+      u_phone: phonenumber,
+      u_phone_verify_status: true,
     });
     console.log(
       "Successfully created the user profile for the user : ",
@@ -226,7 +244,7 @@ exports.createNewUser = async (req, res) => {
     );
 
     let userSocialRecord = await User_social_ext.create({
-      u_id: data.u_id,
+      u_id: userRecord.u_id,
       instagram_handle:
         instagram_handle.length > 0
           ? instagram_handle.map((id) => `https://www.instagram.com/${id}`)
@@ -275,7 +293,7 @@ exports.createNewUser = async (req, res) => {
 
     if (email) {
       try {
-        const encryptedID = cryptr.encrypt(data.u_id);
+        const encryptedID = cryptr.encrypt(userRecord.u_id);
         const vlink =
           process.env.SITE_API_URL + "users/verify_email/" + encryptedID;
         var templateBody = template.mt_body;
@@ -297,14 +315,14 @@ exports.createNewUser = async (req, res) => {
     }
     res.status(201).send({
       message: "User Added Successfully",
-      user_details: data,
-      access_token: common.generateToken(data.u_id),
-      media_token: common.imageToken(data.u_id),
+      user_details: userRecord,
+      access_token: common.generateToken(userRecord.u_id),
+      media_token: common.imageToken(userRecord.u_id),
     });
   } catch (error) {
-    console.log(err.message);
+    console.log(error);
     res.status(500).send({
-      message: err.message || "Some error occurred while creating the User.",
+      message: error.message || "Some error occurred while creating the User.",
     });
   }
 };

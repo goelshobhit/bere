@@ -106,7 +106,7 @@ function Common() {
   };
   Common.prototype.generateToken = function (user_id) {
     if (!user_id) {
-      return res.status(401).end();
+      throw new Error("User Id is missing");
     }
     const token = jwt.sign(
       {
