@@ -72,6 +72,7 @@ module.exports = (app) => {
    *                              example: Authorisation Required
    */
   router.post("/users", Users.createNewUser);
+  router.post("/users/v1", Users.createNewUserv1);
   /**
    * @swagger
    * /api/users:

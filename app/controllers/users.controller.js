@@ -38,6 +38,244 @@ Users.beforeUpdate(setSaltAndPassword);
  */
 
 exports.createNewUser = async (req, res) => {
+  const body = req.body;
+  if (!req.body["User Type"]) {
+    res.status(500).send({
+      message: "User type required",
+    });
+    return;
+  }
+  var login_type = req.body["User Type"];
+  if (login_type == "Instagram") {
+    const UserDetails = await Users.findOne({
+      where: {
+        u_instagram_id: req.body["Instagram id"],
+      },
+      attributes: ["u_id"],
+    });
+    if (UserDetails) {
+      const UserD = await Users.findOne({
+        include: [
+          {
+            model: db.user_profile,
+          },
+          {
+            model: db.user_social_ext,
+          },
+          {
+            model: db.user_content_post,
+            attributes: ["ta_task_id"],
+            where: {
+              ucpl_status: `1`,
+            },
+            required: false,
+          },
+        ],
+        attributes: [
+          "u_id",
+          "u_referer_id",
+          "u_acct_type",
+          "u_act_sec",
+          "u_email",
+          "u_active",
+          "u_fb_username",
+          "u_fb_id",
+          "u_gmail_username",
+          "u_gmail_id",
+          "u_ymail_username",
+          "u_ymail_id",
+          "u_pref_login",
+          "u_instagram_username",
+          "u_instagram_id",
+          "u_created_at",
+          "u_updated_at",
+          "u_email_verify_status",
+        ],
+        where: {
+          u_id: UserDetails.u_id,
+        },
+      });
+      res.status(200).send({
+        message: "Aleary Registered",
+        data: UserD,
+        access_token: common.genrateToken(UserDetails.u_id),
+        media_token: common.imageToken(UserDetails.u_id),
+      });
+      return;
+    }
+  }
+  if (login_type == "Normal" || login_type == "Gmail") {
+    const UserDetails = await Users.findOne({
+      where: {
+        u_email: req.body["User email"].toLowerCase(),
+      },
+    });
+    if (UserDetails) {
+      res.status(200).send({
+        message: "Aleary Registered",
+      });
+      return;
+    }
+  }
+  if (login_type == "Ymail") {
+    const UserDetails = await Users.findOne({
+      where: {
+        u_ymail_id: req.body["Ymail id"],
+      },
+    });
+    if (UserDetails) {
+      res.status(200).send({
+        message: "Aleary Registered",
+      });
+      return;
+    }
+  }
+  const template = await mail_templates.findOne({
+    where: {
+      mt_name: "verify_email",
+    },
+  });
+
+  // const UserDetails = await Users.findOne({
+  //     where: {
+  //         u_login: req.body["User login"].toLowerCase()
+  //     }
+  // });
+  // if (UserDetails) {
+  //     res.status(400).send({
+  //         message: "Username Aleary Exist"
+  //     });
+  //     return;
+  // }
+  const UserDetails = await Users.findOne({
+    where: {
+      // u_login: req.body["User login"],
+      [Op.or]: [
+        {
+          u_login: req.body["User login"].toLowerCase(),
+        },
+        {
+          u_login: req.body["User login"],
+        },
+      ],
+    },
+  });
+  if (UserDetails) {
+    res.status(400).send({
+      message: "Username Aleary Exist",
+    });
+    return;
+  }
+
+  const data = {
+    u_acct_type: body.hasOwnProperty("Account type")
+      ? req.body["Account type"]
+      : 0,
+    u_referer_id: body.hasOwnProperty("Referer id")
+      ? req.body["Referer id"]
+      : 0,
+    u_act_sec: body.hasOwnProperty("User act sec")
+      ? req.body["User act sec"]
+      : 0,
+    u_login: body.hasOwnProperty("User login")
+      ? req.body["User login"].toLowerCase()
+      : "",
+    u_pass: body.hasOwnProperty("User password")
+      ? req.body["User password"]
+      : login_type,
+    u_email: req.body["User email"] ? req.body["User email"].toLowerCase() : "",
+    au_salt: Users.generateSalt(),
+    u_active: body.hasOwnProperty("User status")
+      ? req.body["User status"]
+      : true,
+    u_fb_username: body.hasOwnProperty("User fb name")
+      ? req.body["User fb name"]
+      : "",
+    u_fb_id: body.hasOwnProperty("Fb id") ? req.body["Fb id"] : "",
+    u_gmail_username: body.hasOwnProperty("User gmail name")
+      ? req.body["User gmail name"]
+      : "",
+    u_gmail_id: body.hasOwnProperty("Gmail id") ? req.body["Gmail id"] : "",
+    u_ymail_username: body.hasOwnProperty("User ymail name")
+      ? req.body["User ymail name"]
+      : "",
+    u_ymail_id: body.hasOwnProperty("Ymail id") ? req.body["Ymail id"] : "",
+    u_pref_login: body.hasOwnProperty("User pref login")
+      ? req.body["User pref login"]
+      : 0,
+    u_instagram_username: body.hasOwnProperty("User instagram name")
+      ? req.body["User instagram name"]
+      : "",
+    u_instagram_id: body.hasOwnProperty("Instagram id")
+      ? req.body["Instagram id"]
+      : "",
+  };
+  Users.create(data)
+    .then((data) => {
+      accountBalance.create({
+        ac_user_id: data.u_id,
+        ac_balance: 0,
+        ac_balance_stars: 0,
+        ac_account_no: "",
+      });
+      User_profile.create({ u_id: data.u_id });
+      User_social_ext.create({
+        use_u_instagram_link: body.hasOwnProperty("User instagram name")
+          ? "https://www.instagram.com/" + req.body["User instagram name"]
+          : "",
+        use_u_facebook_link: body.hasOwnProperty("User fb name")
+          ? "https://www.facebook.com/" + req.body["User fb name"]
+          : "",
+        show_facebook: body.hasOwnProperty("User fb name") ? true : false,
+        show_instagram: body.hasOwnProperty("User instagram name")
+          ? true
+          : false,
+        u_id: data.u_id,
+      });
+      audit_log.saveAuditLog(
+        data.u_id,
+        "add",
+        "user_login",
+        data.u_id,
+        data.dataValues
+      );
+      if (req.body["User email"]) {
+        try {
+          const encryptedID = cryptr.encrypt(data.u_id);
+          const vlink =
+            process.env.SITE_API_URL + "users/verify_email/" + encryptedID;
+          var templateBody = template.mt_body;
+          templateBody = templateBody.replace(
+            "[CNAME]",
+            req.body["User email"]
+          );
+          templateBody = templateBody.replace("[VLINK]", vlink);
+          const message = {
+            from: "Socialbrands1@gmail.com",
+            to: req.body["User email"],
+            subject: template.mt_subject,
+            html: templateBody,
+          };
+          mailer.sendMail(message);
+        } catch (error) {
+          console.log(error);
+        }
+      }
+      res.status(201).send({
+        message: "User Added Successfully",
+        user_details: data,
+        access_token: common.genrateToken(data.u_id),
+        media_token: common.imageToken(data.u_id),
+      });
+    })
+    .catch((err) => {
+      console.log(err);
+      res.status(500).send({
+        message: err.message || "Some error occurred while creating the User.",
+      });
+    });
+};
+exports.createNewUserv1 = async (req, res) => {
   try {
     const body = req.body;
 
@@ -326,6 +564,7 @@ exports.createNewUser = async (req, res) => {
     });
   }
 };
+
 const fetchCmsDetailsOld = async (userID) => {
   var level_options = {
     include: [
