@@ -1,5 +1,6 @@
 const db = require("../models");
 const watchAdsTaskSubmit = db.watch_ads_task_submit;
+const watchAdTask = db.watch_ads_task;
 const User_profile = db.user_profile;
 const audit_log = db.audit_log;
 const logger = require("../middleware/logger");
@@ -138,6 +139,7 @@ exports.watchAdsTaskSubmitDetails = async (req, res) => {
 exports.updatewatchAdsTaskSubmit = async (req, res) => {
   try {
     const id = req.params.watchAdsTaskSubmitId;
+    const submit_watch_completion = req.body.submit_watch_completion;
     var uid = req.header(process.env.UKEY_HEADER || "x-api-key");
     var watchAdsTaskSubmitDetails = await watchAdsTaskSubmit.findOne({
       where: {
@@ -152,12 +154,12 @@ exports.updatewatchAdsTaskSubmit = async (req, res) => {
       return;
     }
 
-    // if (watchAdsTaskSubmitDetails.submit_watch_completion === 1) {
-    //   res.status(500).send({
-    //     message: "The user is not permitted to complete the same video again.",
-    //   });
-    //   return;
-    // }
+    if (watchAdsTaskSubmitDetails.submit_watch_completion === 1) {
+      res.status(500).send({
+        message: "The user is not permitted to complete the same video again.",
+      });
+      return;
+    }
 
     let [num, [result]] = await watchAdsTaskSubmit.update(req.body, {
       returning: true,
@@ -176,7 +178,7 @@ exports.updatewatchAdsTaskSubmit = async (req, res) => {
         result.dataValues,
         watchAdsTaskSubmitDetails
       );
-      await common.manageUserAccount(
+      common.manageUserAccount(
         uid,
         0,
         watchAdsTaskSubmitDetails.submit_reward_ack,
@@ -199,6 +201,52 @@ exports.updatewatchAdsTaskSubmit = async (req, res) => {
           u_id: uid,
         },
       });
+      if (submit_watch_completion === 1) {
+        console.log("Updating ledger transaction");
+
+        var options = {
+          include: [
+            {
+              model: db.brands,
+              attributes: [
+                ["cr_co_id", "brand_id"],
+                ["cr_co_name", "brand_name"],
+                ["cr_co_logo_path", "brand_logo"],
+                "cr_co_total_token",
+                "cr_co_token_spent",
+              ],
+            },
+          ],
+          where: {
+            watch_ads_task_id: watchAdsTaskSubmitDetails.watch_ads_task_id,
+          },
+        };
+        const videoAds = await watchAdTask.findOne(options);
+        let brand = videoAds.brand || "";
+        let brandView = {
+          id: brand ? brand.brand_id : "",
+          name: brand ? brand.brand_name : "",
+          logo: brand ? brand.brand_logo : "",
+        };
+        let trData = {
+          trx_user_id: uid,
+          trx_unique_id: id + "-" + uid + "-" + new Date().getTime(),
+          trx_type: 1,
+          trx_coins: 0,
+          trx_stars: watchAdsTaskSubmitDetails.submit_reward_ack,
+          trx_date_timestamp: new Date().getTime(),
+          trx_source: {
+            brand_details: brandView,
+            task_details: videoAds,
+            task_type: "Watch Ads",
+          },
+          trx_approval_status: 0,
+          trx_description: videoAds.task_name,
+        };
+        let transactionData = await ledgerTransactions.create(trData);
+        console.log("Stored Transactions details ", transactionData);
+      }
+
       return res.status(200).send({
         message: "Watch Ads Task Submit updated successfully.",
       });
