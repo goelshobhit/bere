@@ -2672,10 +2672,12 @@ exports.userDetailForAdmin = async (req, res) => {
   var videoAddIds = {};
   if (video_add_listing.length) {
     video_add_listing.forEach((element) => {
-      if (!videoAddIds[element.video_ad.cr_co_id]) {
-        videoAddIds[element.video_ad.cr_co_id] = [];
+      let videoBrandId = element ? video_ad.cr_co_id : "";
+      if (!videoAddIds[videoBrandId]) {
+        videoAddIds[videoBrandId] = [];
+      } else {
+        videoAddIds[videoBrandId].push(element);
       }
-      videoAddIds[element.video_ad.cr_co_id].push(element);
     });
   }
   var bonus_reward_options = {
