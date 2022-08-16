@@ -19,6 +19,7 @@ const userFF = db.user_fan_following;
 const Cryptr = require("cryptr");
 const cryptr = new Cryptr("socialappAPI");
 const { QueryTypes } = require("sequelize");
+var moment = require("moment"); // require
 
 const setSaltAndPassword = (user) => {
   if (user.changed("u_pass")) {
@@ -306,8 +307,7 @@ exports.createNewUserv1 = async (req, res) => {
       account_type = 0,
       account_section = 0,
     } = req.body;
-
-    console.log(body);
+    date_of_birth = moment(date_of_birth).format("DD/MM/YYYY");
     if (
       (!username || !email, !password, !display_name, !first_name, !last_name)
     )
@@ -443,6 +443,8 @@ exports.createNewUserv1 = async (req, res) => {
       u_pinterest_handle: pinterest_handle,
       u_date_of_birth: date_of_birth,
     };
+    console.log("User data: " + data);
+
     let userRecord = await Users.create(data);
     console.log("Successfully created the user : ", userRecord);
     let accountRecord = await accountBalance.create({
@@ -463,9 +465,9 @@ exports.createNewUserv1 = async (req, res) => {
       u_f_name: first_name,
       u_l_name: last_name,
       u_dob: date_of_birth,
-      u_dob_d: u_dob[0] || null,
-      u_dob_m: u_dob[1] || null,
-      u_dob_y: u_dob[2] || null,
+      u_dob_d: u_dob ? u_dob[0] : null,
+      u_dob_m: u_dob ? u_dob[1] : null,
+      u_dob_y: u_dob ? u_dob[2] : null,
       u_gender: null,
       u_address: address,
       u_city: city,
@@ -558,7 +560,7 @@ exports.createNewUserv1 = async (req, res) => {
       media_token: common.imageToken(userRecord.u_id),
     });
   } catch (error) {
-    console.log(error);
+    console.log("Unable to create new user ", error.message);
     res.status(500).send({
       message: error.message || "Some error occurred while creating the User.",
     });
