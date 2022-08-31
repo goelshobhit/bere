@@ -120,7 +120,7 @@ module.exports = (app) => {
    *                              example: Authorisation Required
    */
   router.get("/users", auth, Users.listing);
-  router.get("/usersv2", auth, Users.listingv2);
+  router.get("/users/v1", auth, Users.listingv2);
 
   router.post("/test", test.fetchCmsDetails);
   /**
