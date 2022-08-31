@@ -290,7 +290,7 @@ exports.createNewUserv1 = async (req, res) => {
       date_of_birth = "",
       phonenumber = "",
       facebook_handle = [],
-      twiter_handle: [],
+      twiter_handle = [],
       pinterest_handle = [],
       instagram_handle = [],
       tiktok_handle = [],
@@ -307,7 +307,10 @@ exports.createNewUserv1 = async (req, res) => {
       account_type = 0,
       account_section = 0,
     } = req.body;
-    date_of_birth = moment(date_of_birth).format("DD/MM/YYYY");
+    date_of_birth = date_of_birth
+      ? moment(date_of_birth).format("DD/MM/YYYY")
+      : "";
+    console.log(date_of_birth);
     if (
       (!username || !email, !password, !display_name, !first_name, !last_name)
     )
@@ -560,7 +563,9 @@ exports.createNewUserv1 = async (req, res) => {
       media_token: common.imageToken(userRecord.u_id),
     });
   } catch (error) {
+    console.log(error);
     console.log("Unable to create new user ", error.message);
+    audit_log.saveAuditLog(1, "Unable to create new user ", error.message);
     res.status(500).send({
       message: error.message || "Some error occurred while creating the User.",
     });
