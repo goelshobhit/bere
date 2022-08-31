@@ -99,7 +99,7 @@ exports.createNewUser = async (req, res) => {
       res.status(200).send({
         message: "Aleary Registered",
         data: UserD,
-        access_token: common.genrateToken(UserDetails.u_id),
+        access_token: common.generateToken(UserDetails.u_id),
         media_token: common.imageToken(UserDetails.u_id),
       });
       return;
@@ -265,7 +265,7 @@ exports.createNewUser = async (req, res) => {
       res.status(201).send({
         message: "User Added Successfully",
         user_details: data,
-        access_token: common.genrateToken(data.u_id),
+        access_token: common.generateToken(data.u_id),
         media_token: common.imageToken(data.u_id),
       });
     })
@@ -276,6 +276,7 @@ exports.createNewUser = async (req, res) => {
       });
     });
 };
+
 exports.createNewUserv1 = async (req, res) => {
   try {
     const body = req.body;
@@ -290,7 +291,6 @@ exports.createNewUserv1 = async (req, res) => {
       date_of_birth = "",
       phonenumber = "",
       facebook_handle = [],
-      twiter_handle = [],
       pinterest_handle = [],
       instagram_handle = [],
       tiktok_handle = [],
@@ -310,7 +310,6 @@ exports.createNewUserv1 = async (req, res) => {
     date_of_birth = date_of_birth
       ? moment(date_of_birth).format("DD/MM/YYYY")
       : "";
-    console.log(date_of_birth);
     if (
       (!username || !email, !password, !display_name, !first_name, !last_name)
     )
