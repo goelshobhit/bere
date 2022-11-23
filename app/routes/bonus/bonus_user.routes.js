@@ -215,5 +215,7 @@ module.exports = app => {
    *                              example: Authorisation Required
    */
   router.get("/bonus_user/:bonusUserId",auth, BonusUser.bonusUserDetails);
+
+  router.get("/check-api-status",auth, BonusUser.checkUserDeploy);
   app.use("/api", router);
 };

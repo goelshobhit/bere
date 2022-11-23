@@ -207,3 +207,9 @@ exports.deleteBonusUser = async (req, res) => {
       return;
     });
 }
+
+exports.checkUserDeploy = async (req, res) => {
+  res.status(200).send({
+    message: 'API Made By Shobhit Has Been Working Fine'
+  });
+}
