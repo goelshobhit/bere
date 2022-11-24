@@ -131,7 +131,7 @@ const swaggerOptions = {
 };
 var options = {
   swaggerOptions: {
-    docExpansion: "full"
+    docExpansion: "list"
   }
 };
 const swaggerDocs = swaggerJsDoc(swaggerOptions);
