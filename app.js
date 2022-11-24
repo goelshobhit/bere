@@ -142,6 +142,11 @@ app.use("/swagger-documentation",basicAuth({
   challenge: true,
 }), swaggerUi.serve, swaggerUi.setup(swaggerDocs, options));
 
+app.get('/api-docs.json', (req, res) => {
+  res.setHeader('Content-Type', 'application/json');
+  res.send(swaggerDocs);
+});
+
 // simple route
 app.get("/", (req, res) => {
   res.json({ message: "Welcome to Social App api application." });
