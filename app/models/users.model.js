@@ -84,6 +84,30 @@ module.exports = (sequelize, Sequelize) => {
 		is_user_hidden:{
             type: Sequelize.INTEGER,
 			default: 0
+        },
+        username:{
+            type: Sequelize.STRING,
+        },
+        country:{
+            type: Sequelize.STRING,
+        },
+        state:{
+            type: Sequelize.STRING,
+        },
+        city:{
+            type: Sequelize.STRING,
+        },
+        job_title:{
+            type: Sequelize.STRING,
+        },
+        bio:{
+            type: Sequelize.TEXT,
+        },
+        referral_code:{
+            type: Sequelize.STRING,
+        },
+        referral_link:{
+            type: Sequelize.STRING,
         }
         
     }, {

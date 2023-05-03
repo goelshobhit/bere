@@ -26,3 +26,12 @@
 {"level":"info","message":"scheduleJob at :Sat Jul 16 2022 00:05:00 GMT+0530 (India Standard Time)"}
 {"level":"info","message":"scheduleJob at :Fri Jul 22 2022 00:05:00 GMT+0530 (India Standard Time)"}
 {"level":"info","message":"scheduleJob at :Sun Aug 07 2022 00:05:00 GMT+0530 (India Standard Time)"}
+{"level":"error","message":"Error: WHERE parameter \"bonus_set_id\" has invalid \"undefined\" value:Error updating Bonus Set with id=undefined"}
+{"level":"error","message":"Error: WHERE parameter \"bonus_set_id\" has invalid \"undefined\" value:Error updating Bonus Set with id=undefined"}
+{"level":"error","message":"Error: WHERE parameter \"bonus_set_id\" has invalid \"undefined\" value:Error updating Bonus Set with id=undefined"}
+{"level":"error","message":"Error: WHERE parameter \"bonus_set_id\" has invalid \"undefined\" value:Error updating Bonus Set with id=undefined"}
+{"level":"error","message":"TypeError: object null is not iterable (cannot read property Symbol(Symbol.iterator)):Error updating Bonus Set with id=1"}
+{"level":"error","message":"TypeError: object null is not iterable (cannot read property Symbol(Symbol.iterator)):Error updating Bonus Set with id=1"}
+{"level":"error","message":"TypeError: undefined is not a function:Error updating Bonus Set with id=4"}
+{"level":"error","message":"TypeError: undefined is not iterable (cannot read property Symbol(Symbol.iterator)):Error updating Bonus Set with id=4"}
+{"level":"info","message":"Login Successfully with username: sample@maild.com , pass:password and login type:Normal"}
