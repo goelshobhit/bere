@@ -1,8 +1,11 @@
 const generator = {
-  referralLink: async () => {
-    const { nanoid } = await import("nanoid");
-    return nanoid();
+  referralLink: (referralCode) => {
+    return `/signup/${referralCode}`;
   },
+  // referralCode: async () => {
+  //   const { nanoid } = await import("nanoid");
+  //   return nanoid(10);
+  // },
 };
 
 module.exports = generator;

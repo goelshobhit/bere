@@ -15,18 +15,18 @@ const upload = require("../middleware/upload");
 const audit_log = db.audit_log;
 const common = require("../common");
 const logger = require("../middleware/logger");
-const userFF=db.user_fan_following;
-const Cryptr = require('cryptr');
-const cryptr = new Cryptr('socialappAPI');
-const { QueryTypes } = require('sequelize');
-const _ = require('lodash');
+const userFF = db.user_fan_following;
+const Cryptr = require("cryptr");
+const cryptr = new Cryptr("socialappAPI");
+const { QueryTypes } = require("sequelize");
+const _ = require("lodash");
 const generate = require("../helpers/generate");
 const moment = require("moment/moment");
-const setSaltAndPassword = user => {
-    if (user.changed("u_pass")) {
-        user.u_salt = Users.generateSalt();
-        user.u_pass = Users.encryptPassword(user.u_pass, user.u_salt);
-    }
+const setSaltAndPassword = (user) => {
+  if (user.changed("u_pass")) {
+    user.u_salt = Users.generateSalt();
+    user.u_pass = Users.encryptPassword(user.u_pass, user.u_salt);
+  }
 };
 
 Users.beforeCreate(setSaltAndPassword);
@@ -213,6 +213,14 @@ exports.registerUser = async (req, res, next) => {
     });
   }
 
+  let referralLink;
+
+  try {
+    referralLink = generate.referralLink(username);
+  } catch (error) {
+    return next(error);
+  }
+
   const data = {
     u_acct_type: account_type || 0,
     u_referer_id: referer_id,
@@ -235,7 +243,7 @@ exports.registerUser = async (req, res, next) => {
     country,
     state,
     u_date_of_birth: date_of_birth,
-    referral_link: await generate.referralLink(),
+    referral_link: referralLink,
   };
   console.log("User data: " + JSON.stringify(data));
 
@@ -4280,6 +4288,8 @@ exports.userlogin = async (req, res) => {
       "u_email_verify_status",
       "is_user_deactivated",
       "is_user_hidden",
+      "referral_code",
+      "referral_link"
     ],
     where: {
       u_id: uID,

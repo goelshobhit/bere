@@ -1,3 +1,5 @@
+const { body } = require("express-validator");
+const validator = require("../helpers/validator");
 module.exports = (app) => {
   const Users = require("../controllers/users.controller.js");
   const test = require("../controllers/test.js");
@@ -73,17 +75,17 @@ module.exports = (app) => {
    */
   router.post("/users", Users.createNewUser);
   router.post("/users/v1", [
-	[
-	  body("username").exists().trim(),
-	  body("email").exists().trim(),
-	  body("password").exists().trim(),
-	  body("display_name").exists().trim(),
-	  body("first_name").exists().trim(),
-	  body("last_name").exists().trim(),
-	  validator,
-	],
-	Users.registerUser,
-  ]); 
+    [
+      body("username").exists().trim(),
+      body("email").exists().trim(),
+      body("password").exists().trim(),
+      body("display_name").exists().trim(),
+      body("first_name").exists().trim(),
+      body("last_name").exists().trim(),
+      validator,
+    ],
+    Users.registerUser,
+  ]);
   /**
    * @swagger
    * /api/users:
