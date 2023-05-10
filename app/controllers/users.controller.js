@@ -64,6 +64,8 @@ exports.registerUser = async (req, res, next) => {
     zipcode = "",
     state = "",
     country = "",
+    bio = "",
+    job_title = "",
     account_type = 0,
     account_section = 0,
   } = req.body;
@@ -242,6 +244,8 @@ exports.registerUser = async (req, res, next) => {
     city,
     country,
     state,
+    bio,
+    job_title,
     u_date_of_birth: date_of_birth,
     referral_link: referralLink,
   };
@@ -4289,7 +4293,9 @@ exports.userlogin = async (req, res) => {
       "is_user_deactivated",
       "is_user_hidden",
       "referral_code",
-      "referral_link"
+      "referral_link",
+      "job_title",
+      "bio",
     ],
     where: {
       u_id: uID,
