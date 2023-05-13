@@ -74,6 +74,97 @@ module.exports = (app) => {
    *                              example: Authorisation Required
    */
   router.post("/users", Users.createNewUser);
+
+   /**
+   * @swagger
+   * /api/users/v1:
+   *   post:
+   *     requestBody:
+   *        required: false
+   *        content:
+   *            application/json:
+   *                schema:
+   *                    type: object
+   *                    properties:
+   *                        username:
+   *                            type: string
+   *                        display_name:
+   *                            type: string
+   *                        first_name:
+   *                            type: string
+   *                        last_name:
+   *                            type: string
+   *                        password:
+   *                            type: string
+   *                        email:
+   *                            type: string
+   *                        date_of_birth:
+   *                            type: string
+   *                        country_code:
+   *                            type: string
+   *                        phonenumber:
+   *                            type: string
+   *                        facebook_handle:
+   *                            type: string
+   *                        twitter_handle:
+   *                            type: string
+   *                        pinterest_handle:
+   *                            type: integer
+   *                        instagram_handle:
+   *                            type: string
+   *                        tiktok_handle:
+   *                            type: string
+   *                        snapchat_handle:
+   *                            type: string
+   *                        status:
+   *                            type: boolean
+   *                        user_type:
+   *                            type: string
+   *                            example: "Normal,Fb,Gmail,Ymail,Instagram"
+   *                        referer_id:
+   *                            type: string
+   *                        address:
+   *                            type: string
+   *                        city:
+   *                            type: string
+   *                        zipcode:
+   *                            type: string
+   *                        state:
+   *                            type: string
+   *                        country:
+   *                            type: string
+   *                        account_type:
+   *                            type: string
+   *                        account_section:
+   *                            type: string
+   *                        bio:
+   *                            type: string
+   *                        job_title:
+   *                            type: string
+   *     tags:
+   *       - Users
+   *     description: Add new user
+   *     produces:
+   *       - application/json
+   *     responses:
+   *       201:
+   *         description: Add new user
+   *       422:
+   *         description: validation errors
+   *       500:
+   *         description: Internal server error
+   *       401:
+   *          description: Unauthorized
+   *          content:
+   *              application/json:
+   *                  schema:
+   *                      type: object
+   *                      properties:
+   *                          message:
+   *                              type: string
+   *                              example: Authorisation Required
+   */
+  
   router.post("/users/v1", [
     [
       body("username").exists().trim(),
