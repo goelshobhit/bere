@@ -67,6 +67,7 @@ exports.registerUser = async (req, res, next) => {
     bio = "",
     job_title = "",
     account_type = 0,
+    referral_code = "",
     account_section = 0,
   } = req.body;
 
@@ -248,6 +249,7 @@ exports.registerUser = async (req, res, next) => {
     job_title,
     u_date_of_birth: date_of_birth,
     referral_link: referralLink,
+    referral_code,
   };
   console.log("User data: " + JSON.stringify(data));
 
@@ -3923,6 +3925,7 @@ exports.updateUser = async (req, res) => {
  */
 exports.updateUserProfile = async (req, res) => {
   const id = parseInt(req.params.userID);
+  const { bio, job_title, ...rest } = req.body;
 
   if (!id) {
     res.status(404).send({
@@ -3930,6 +3933,31 @@ exports.updateUserProfile = async (req, res) => {
     });
     return;
   }
+
+  const dbUser = await Users.findOne({
+    where: {
+      u_id: id,
+    },
+  });
+
+  if (bio !== undefined || bio !== null) {
+    dbUser.bio = bio;
+    try {
+      dbUser.save();
+    } catch (error) {
+      return next(error);
+    }
+  }
+
+  if (job_title !== undefined || job_title !== null) {
+    dbUser.job_title = job_title;
+    try {
+      dbUser.save();
+    } catch (error) {
+      return next(error);
+    }
+  }
+
   if (req.body.u_display_name) {
     const UserDetails = await Users.findOne({
       where: {
@@ -3947,10 +3975,9 @@ exports.updateUserProfile = async (req, res) => {
       (UserDetails && UserDetails.u_id !== id) ||
       (Userprofile && Userprofile.u_id !== id)
     ) {
-      res.status(200).send({
+      return res.status(200).send({
         message: "username already Exist",
       });
-      return;
     } else {
       Users.update(
         { u_login: req.body.u_display_name },
@@ -3997,76 +4024,77 @@ exports.updateUserProfile = async (req, res) => {
       u_id: id,
     },
   });
-  User_profile.update(req.body, {
-    returning: true,
-    where: {
-      u_id: id,
-    },
-  })
-    .then(function ([num, [result]]) {
-      if (num == 1) {
-        audit_log.saveAuditLog(
-          req.header(process.env.UKEY_HEADER || "x-api-key"),
-          "update",
-          "user_profile",
-          id,
-          result.dataValues,
-          UserDetails
-        );
-        Users.findOne({
-          include: [
-            {
-              model: db.user_profile,
-            },
-            {
-              model: db.user_social_ext,
-            },
-          ],
-          attributes: [
-            "u_id",
-            "u_referer_id",
-            "u_acct_type",
-            "u_act_sec",
-            "u_email",
-            "u_active",
-            "u_fb_username",
-            "u_fb_id",
-            "u_gmail_username",
-            "u_gmail_id",
-            "u_ymail_username",
-            "u_ymail_id",
-            "u_pref_login",
-            "u_instagram_username",
-            "u_instagram_id",
-            "u_created_at",
-            "u_updated_at",
-            "u_email_verify_status",
-          ],
-          where: {
-            u_id: id,
-          },
-        }).then((userData) => {
-          return res.status(200).send({
-            message: "User details updated successfully.",
-            data: userData,
-            access_token: common.generateToken(id),
-            media_token: common.imageToken(id),
-            otp: otp ? otp : null,
-          });
-        });
-      } else {
-        res.status(400).send({
-          message: `Cannot update Users with id=${id}. Maybe User was not found or req.body is empty!`,
-        });
-      }
-    })
-    .catch((err) => {
-      logger.log("error", err + ":updating User profile with id=" + id);
-      res.status(500).send({
-        message: "Error updating User with id=" + id,
-      });
-      return;
+
+  try {
+    const [num, [result]] = await User_profile.update(rest, {
+      returning: true,
+      where: {
+        u_id: id,
+      },
     });
+
+    if (num == 1) {
+      audit_log.saveAuditLog(
+        req.header(process.env.UKEY_HEADER || "x-api-key"),
+        "update",
+        "user_profile",
+        id,
+        result.dataValues,
+        UserDetails
+      );
+      const userData = await Users.findOne({
+        include: [
+          {
+            model: db.user_profile,
+          },
+          {
+            model: db.user_social_ext,
+          },
+        ],
+        attributes: [
+          "u_id",
+          "u_referer_id",
+          "u_acct_type",
+          "u_act_sec",
+          "u_email",
+          "u_active",
+          "u_fb_username",
+          "u_fb_id",
+          "u_gmail_username",
+          "u_gmail_id",
+          "u_ymail_username",
+          "u_ymail_id",
+          "u_pref_login",
+          "u_instagram_username",
+          "u_instagram_id",
+          "u_created_at",
+          "u_updated_at",
+          "u_email_verify_status",
+          "bio",
+          "job_title",
+        ],
+        where: {
+          u_id: id,
+        },
+      });
+      return res.status(200).send({
+        message: "User details updated successfully.",
+        data: userData,
+        access_token: common.generateToken(id),
+        media_token: common.imageToken(id),
+        otp: otp ? otp : null,
+      });
+    } else {
+      res.status(400).send({
+        message: `Cannot update Users with id=${id}. Maybe User was not found or req.body is empty!`,
+      });
+    }
+  } catch (err) {
+    logger.log("error", err + ":updating User profile with id=" + id);
+    return res.status(500).send({
+      message: "Error updating User with id=" + id,
+    });
+  }
 };
 /**
  * Function to update user social ext
