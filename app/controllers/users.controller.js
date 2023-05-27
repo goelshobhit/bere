@@ -3975,7 +3975,7 @@ exports.updateUserProfile = async (req, res) => {
       (UserDetails && UserDetails.u_id !== id) ||
       (Userprofile && Userprofile.u_id !== id)
     ) {
-      return res.status(200).send({
+      return res.status(400).send({
         message: "username already Exist",
       });
     } else {
