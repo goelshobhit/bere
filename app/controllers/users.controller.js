@@ -76,6 +76,23 @@ exports.registerUser = async (req, res, next) => {
     : "";
 
   const login_type = user_type;
+
+  if (referral_code) {
+    try {
+      const referrerUser = await Users.findOne({
+        where: {
+          u_login: referral_code,
+        },
+      });
+
+      if (!referrerUser) {
+        referral_code = "";
+      }
+    } catch (error) {
+      return next(error);
+    }
+  }
+
   if (login_type == "Instagram") {
     let UserDetails;
 
@@ -4703,17 +4720,16 @@ exports.emailVerifyMail = async (req, res) => {
         templateBody = templateBody.replace("[CNAME]", req.body["email"]);
         templateBody = templateBody.replace("[VLINK]", vlink);
         const message = {
-          from: "Socialbrands1@gmail.com",
+          from: "care@riddim.com",
           to: req.body["email"],
           subject: template.mt_subject,
           html: templateBody,
         };
-        mailer.sendMail(message);
+        await mailer.sendMail(message);
       } catch (error) {
-        res.status(500).send({
+        return res.status(500).send({
           message: "Email error",
         });
-        return;
       }
       res.status(200).send({
         message: "Email send",
