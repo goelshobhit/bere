@@ -912,6 +912,8 @@ module.exports = (app) => {
    *                    properties:
    *                        email:
    *                            type: string
+   *                        otp:
+   *                            type: integer
    *     tags:
    *       - Users
    *     description: check email
@@ -924,7 +926,7 @@ module.exports = (app) => {
    *       200:
    *         description: Exit
    */
-  router.post("/users/verifyEmailOTP", [
+  router.post("/users/verify_email_otp", [
     [body("email").exists().trim(), body("otp").exists().trim(), validator],
     Users.verifyEmailOTP,
   ]);
