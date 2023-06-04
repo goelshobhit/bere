@@ -22,6 +22,7 @@ const { QueryTypes } = require("sequelize");
 const _ = require("lodash");
 const generate = require("../helpers/generate");
 const moment = require("moment/moment");
+const responses = require("../helpers/responses");
 const setSaltAndPassword = (user) => {
   if (user.changed("u_pass")) {
     user.u_salt = Users.generateSalt();
@@ -409,7 +410,7 @@ exports.registerUser = async (req, res, next) => {
   });
 };
 
-exports.getMyDetails = async (req, res) => {
+exports.getMyDetails = async (req, res, next) => {
   const user_id = req.header(process.env.UKEY_HEADER || "x-api-key");
 
   let UserDetails;
@@ -4767,55 +4768,62 @@ exports.checkUserNameExists = async (req, res) => {
  * @param  {[object]}  res response object
  * @return {Promise}
  */
-exports.emailVerifyMail = async (req, res) => {
-  const UserDetails = await Users.findOne({
-    where: {
-      u_email: req.body["email"].toLowerCase(),
-    },
-    attributes: ["u_id", "u_email_verify_status"],
-  });
-  if (UserDetails) {
-    if (UserDetails.u_email_verify_status) {
-      res.status(200).send({
-        message: "Already verified",
-      });
-      return;
-    } else {
-      try {
-        const template = await mail_templates.findOne({
-          where: {
-            mt_name: "verify_email",
-          },
-        });
-
-        const encryptedID = cryptr.encrypt(UserDetails.u_id);
-        const vlink =
-          process.env.SITE_API_URL + "users/verify_email/" + encryptedID;
-        var templateBody = template.mt_body;
-        templateBody = templateBody.replace("[CNAME]", req.body["email"]);
-        templateBody = templateBody.replace("[VLINK]", vlink);
-        const message = {
-          from: "care@riddim.com",
-          to: req.body["email"],
-          subject: template.mt_subject,
-          html: templateBody,
-        };
-        await mailer.sendMail(message);
-      } catch (error) {
-        return res.status(500).send({
-          message: "Email error",
-        });
-      }
-      res.status(200).send({
-        message: "Email send",
-      });
-      return;
-    }
-  } else {
-    res.status(400).send({
-      message: "Not Exist",
+exports.emailVerifyMail = async (req, res, next) => {
+  let UserDetails;
+  try {
+    UserDetails = await Users.findOne({
+      where: {
+        u_email: req.body["email"].toLowerCase(),
+      },
+      attributes: ["u_id", "u_email_verify_status"],
     });
-    return;
+  } catch (error) {
+    return next(error);
+  }
+
+  if (!UserDetails) {
+    const error = new Error("User not found");
+    error.statusCode = 404;
+    return next(error);
+  }
+
+  if (UserDetails.u_email_verify_status) {
+    return res.status(200).send({
+      message: "Already verified",
+    });
+  } else {
+    try {
+      const template = await mail_templates.findOne({
+        where: {
+          mt_name: "verify_email",
+        },
+      });
+      const otp = Math.floor(100000 + Math.random() * 900000);
+      const encryptedID = cryptr.encrypt(UserDetails.u_id);
+      const vlink =
+        process.env.SITE_API_URL + "users/verify_email/" + encryptedID;
+      var templateBody = template.mt_body;
+      templateBody = templateBody.replace("[CNAME]", req.body["email"]);
+      templateBody = templateBody.replace("[VLINK]", vlink);
+      templateBody = templateBody.replace("[OTP]", otp);
+
+      try {
+        UserDetails.u_email_otp = otp;
+        await UserDetails.save();
+      } catch (error) {}
+      const message = {
+        from: "care@riddim.com",
+        to: req.body["email"],
+        subject: template.mt_subject,
+        html: templateBody,
+      };
+      await mailer.sendMail(message);
+    } catch (error) {
+      return next(error);
+    }
+    return res.status(200).send({
+      message: "Email send",
+    });
   }
 };
 exports.verifyEmail = async (req, res) => {
@@ -4854,6 +4862,42 @@ exports.verifyEmail = async (req, res) => {
     });
     return;
   }
+};
+
+exports.verifyEmailOTP = async (req, res, next) => {
+  const { email, otp } = req.body;
+  let UserDetails;
+  try {
+    UserDetails = await Users.findOne({
+      where: {
+        u_email: email.toLowerCase(),
+      },
+      attributes: ["u_id", "u_email_verify_status","u_email_otp"],
+    });
+  } catch (error) {
+    return next(error);
+  }
+
+  if (!UserDetails) {
+    const error = new Error("User not found");
+    error.statusCode = 404;
+    return next(error);
+  }
+
+  if (+UserDetails.u_email_otp !== +otp) {
+    const error = new Error("Invalid OTP");
+    error.statusCode = 400;
+    return responses.error(res, error);
+  }
+
+  try {
+    UserDetails.u_email_verify_status = true;
+    await UserDetails.save();
+  } catch (error) {
+    return next(error);
+  }
+
+  res.send({ message: "OTP varified successfully" });
 };
 /**
  * [check email or phone exits

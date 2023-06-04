@@ -75,7 +75,7 @@ module.exports = (app) => {
    */
   router.post("/users", Users.createNewUser);
 
-   /**
+  /**
    * @swagger
    * /api/users/v1:
    *   post:
@@ -164,7 +164,7 @@ module.exports = (app) => {
    *                              type: string
    *                              example: Authorisation Required
    */
-  
+
   router.post("/users/v1", [
     [
       body("username").exists().trim(),
@@ -322,7 +322,7 @@ module.exports = (app) => {
    *                              type: string
    *                              example: Authorisation Required
    */
-   router.get("/user/details", auth, Users.getMyDetails);
+  router.get("/user/details", auth, Users.getMyDetails);
 
   /**
    * @swagger
@@ -871,7 +871,10 @@ module.exports = (app) => {
    *       200:
    *         description: Exit
    */
-  router.post("/users/send_email_verify", Users.emailVerifyMail);
+  router.post("/users/send_email_verify", [
+    [body("email").exists().trim(), validator],
+    Users.emailVerifyMail,
+  ]);
   /**
    * @swagger
    * /api/users/verify_email/{verifyToken}:
@@ -895,6 +898,36 @@ module.exports = (app) => {
    *         description: verified
    */
   router.get("/users/verify_email/:verifyToken", Users.verifyEmail);
+
+  /**
+   * @swagger
+   * /api/users/verify_email_otp:
+   *   post:
+   *     requestBody:
+   *        required: true
+   *        content:
+   *            application/json:
+   *                schema:
+   *                    type: object
+   *                    properties:
+   *                        email:
+   *                            type: string
+   *     tags:
+   *       - Users
+   *     description: check email
+   *     security:  []
+   *     produces:
+   *       - application/json
+   *     responses:
+   *       400:
+   *         description: Not Exit
+   *       200:
+   *         description: Exit
+   */
+  router.post("/users/verifyEmailOTP", [
+    [body("email").exists().trim(), body("otp").exists().trim(), validator],
+    Users.verifyEmailOTP,
+  ]);
 
   /**
    * @swagger
