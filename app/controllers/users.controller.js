@@ -408,6 +408,81 @@ exports.registerUser = async (req, res, next) => {
     media_token: common.imageToken(userRecord.u_id),
   });
 };
+
+exports.getMyDetails = async (req, res) => {
+  const user_id = req.header(process.env.UKEY_HEADER || "x-api-key");
+
+  let UserDetails;
+  try {
+    UserDetails = await Users.findOne({
+      include: [
+        {
+          model: db.user_profile,
+        },
+        {
+          model: db.user_social_ext,
+        },
+        {
+          model: db.user_content_post,
+          attributes: ["ta_task_id"],
+          where: {
+            ucpl_status: `1`,
+          },
+          required: false,
+        },
+      ],
+      attributes: [
+        "u_id",
+        "u_referer_id",
+        "u_acct_type",
+        "u_act_sec",
+        "u_email",
+        "u_active",
+        "u_fb_username",
+        "u_fb_id",
+        "u_gmail_username",
+        "u_gmail_id",
+        "u_ymail_username",
+        "u_ymail_id",
+        "u_pref_login",
+        "u_instagram_username",
+        "u_instagram_id",
+        "u_created_at",
+        "u_updated_at",
+        "u_email_verify_status",
+        "is_user_deactivated",
+        "is_user_hidden",
+        "referral_code",
+        "referral_link",
+        "job_title",
+        "bio",
+      ],
+      where: {
+        u_id: user_id,
+      },
+    });
+  } catch (error) {
+    return next(error);
+  }
+
+  if (!UserDetails) {
+    const error = new Error("User not found");
+    error.statusCode = 404;
+    return next(error);
+  }
+  /* Account Deactivated Check */
+  if (UserDetails.is_user_deactivated == 1) {
+    const error = new Error("Your account is deactivated");
+    error.statusCode = 404;
+    return next(error);
+  }
+
+  res.status(200).send({
+    message: "User Details Fetched Successfully",
+    data: UserDetails,
+  });
+};
+
 exports.createNewUser = async (req, res) => {
   const body = req.body;
   if (!req.body["User Type"]) {

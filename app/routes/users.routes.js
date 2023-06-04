@@ -301,6 +301,31 @@ module.exports = (app) => {
 
   /**
    * @swagger
+   * /api/user/details:
+   *   get:
+   *     tags:
+   *       - Users
+   *     description: Retrieve a single User details to use in CMS
+   *     produces:
+   *       - application/json
+   *     responses:
+   *       200:
+   *         description: Details of a User details
+   *       401:
+   *          description: Unauthorized
+   *          content:
+   *              application/json:
+   *                  schema:
+   *                      type: object
+   *                      properties:
+   *                          message:
+   *                              type: string
+   *                              example: Authorisation Required
+   */
+   router.get("/user/details", auth, Users.getMyDetails);
+
+  /**
+   * @swagger
    * /api/user_brand_task_detail/{userID}:
    *   get:
    *     parameters:
