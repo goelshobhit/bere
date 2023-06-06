@@ -4719,7 +4719,7 @@ exports.checkUserExits = async (req, res) => {
       } catch (error) {
         console.log(error);
       }
-      res.status(200).send({
+      res.status(201).send({
         message: "Already Exist and not verified",
       });
       return;
