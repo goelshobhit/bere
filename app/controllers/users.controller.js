@@ -5599,3 +5599,15 @@ exports.addWallet = async (req, res) => {
 
   res.send({ message: "wallet has been added" });
 };
+
+exports.logTransactions = async (req, res) => {
+  const data = req.body;
+
+  try {
+    await TransactionModel.create(data);
+  } catch (error) {
+    return responses.internalServer(res);
+  }
+
+  res.send({message:'Transaction Created'})
+};

@@ -1398,5 +1398,11 @@ module.exports = (app) => {
     Users.addWallet
   );
 
+  router.post(
+    "/user/transactions",
+    auth,
+    Users.logTransactions
+  );
+
   app.use("/api", router);
 };
