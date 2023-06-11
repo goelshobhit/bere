@@ -7,6 +7,7 @@ const Posts = db.user_content_post;
 const adminSetting = db.admin_setting;
 const mail_templates = db.mail_templates;
 const accountBalance = db.account_balance;
+const WalletModel = db.user_wallets;
 const ledgerTransactions = db.ledger_transactions;
 const mandrillapp = require("../middleware/mandrillapp.js");
 const mailer = require("../middleware/mailer.js");
@@ -4872,7 +4873,7 @@ exports.verifyEmailOTP = async (req, res, next) => {
       where: {
         u_email: email.toLowerCase(),
       },
-      attributes: ["u_id", "u_email_verify_status","u_email_otp"],
+      attributes: ["u_id", "u_email_verify_status", "u_email_otp"],
     });
   } catch (error) {
     return next(error);
@@ -5538,4 +5539,63 @@ exports.userDeactivateOrHide = async (req, res) => {
         return;
       });
   }
+};
+
+exports.addWallet = async (req, res) => {
+  const user_id = req.header(process.env.UKEY_HEADER || "x-api-key");
+
+  const { wallet_id } = req.body;
+  let dbUser;
+
+  try {
+    dbUser = await Users.findOne({ where: { u_id: user_id } });
+  } catch (error) {
+    console.log(error);
+    return responses.internalServer(res);
+  }
+
+  if (!dbUser) {
+    const error = new Error("User does not exist");
+    error.statusCode = 404;
+    return responses.error(res, error);
+  }
+
+  let dbWallet;
+
+  try {
+    dbWallet = await WalletModel.findOne({ where: { userId: user_id } });
+  } catch (error) {
+    return responses.internalServer(res);
+  }
+
+  if (!dbWallet) {
+    const walletObj = {
+      userId: user_id,
+      userEmail: dbUser.u_email,
+      wallet_ids: _.concat([], wallet_id),
+    };
+
+    try {
+      await WalletModel.create(walletObj);
+    } catch (error) {
+      console.log(error);
+      return responses.internalServer(res);
+    }
+  } else {
+    let walletIds = _.get(dbWallet, "wallet_ids", []);
+
+    const userAlreadyHasSameWalletId = _.includes(walletIds, wallet_id);
+
+    if (!userAlreadyHasSameWalletId) {
+      walletIds = _.concat(walletIds, wallet_id);
+      try {
+        dbWallet.wallet_ids = walletIds;
+        await dbWallet.save();
+      } catch (error) {
+        return responses.internalServer(res);
+      }
+    }
+  }
+
+  res.send({ message: "wallet has been added" });
 };

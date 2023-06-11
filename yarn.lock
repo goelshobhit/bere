@@ -2100,10 +2100,10 @@
     "type-is" "^1.6.4"
     "xtend" "^4.0.0"
 
-"nanoid@^4.0.2":
-  "integrity" "sha512-7ZtY5KTCNheRGfEFxnedV5zFiORN1+Y1N6zvPTnHQd8ENUvfaDBeuJDZb2bN/oXwXxu3qkTXDzy57W5vAmDTBw=="
-  "resolved" "https://registry.npmjs.org/nanoid/-/nanoid-4.0.2.tgz"
-  "version" "4.0.2"
+"nanoid@^3.0.0":
+  "integrity" "sha512-5lU+F2QpTW1JLwlXxnu2/jkpTipIuYZL3Za6TQzM16HYDzZQqlthbXYSW0H2KzZu1UQPGHDPbCl1TS3xOKfqEQ=="
+  "resolved" "https://registry.npmjs.org/nanoid/-/nanoid-3.0.0.tgz"
+  "version" "3.0.0"
 
 "napi-build-utils@^1.0.1":
   "integrity" "sha512-ONmRUqK7zj7DWX0D9ADe03wbwOBZxNAfF20PlGfCWQcD3+/MakShIHrMqx9YwPTfxDdF1zLeL+RGZiR9kGMLdg=="

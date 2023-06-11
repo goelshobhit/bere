@@ -1347,5 +1347,56 @@ module.exports = (app) => {
     Users.userDeactivateOrHide
   );
 
+  /**
+   * @swagger
+   * /api/user/wallet:
+   *   post:
+   *     requestBody:
+   *        required: false
+   *        content:
+   *            application/json:
+   *                schema:
+   *                    type: object
+   *                    properties:
+   *                        wallet_id:
+   *                            type: string
+   *                            example: "dkfn2asdsa"
+   *     parameters:
+   *         - name: wallet_id
+   *           in: body
+   *           required: true
+   *           schema:
+   *              type: string
+   *     tags:
+   *       - Users
+   *     description: Add User Wallet
+   *     produces:
+   *       - application/json
+   *     responses:
+   *       201:
+   *         description: Successfully added user wallet
+   *       422:
+   *         description: validation errors
+   *       500:
+   *         description: Internal server error
+   *       401:
+   *          description: Unauthorized
+   *          content:
+   *              application/json:
+   *                  schema:
+   *                      type: object
+   *                      properties:
+   *                          message:
+   *                              type: string
+   *                              example: Authorisation Required
+   */
+
+  router.post(
+    "/user/wallet",
+    [body("wallet_id").exists().trim(), validator],
+    auth,
+    Users.addWallet
+  );
+
   app.use("/api", router);
 };
