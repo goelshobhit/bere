@@ -137,10 +137,7 @@ var options = {
 const swaggerDocs = swaggerJsDoc(swaggerOptions);
 // app.use("/", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 //app.use("/swagger-documentation", swaggerUi.serve, swaggerUi.setup(swaggerDocs, options));
-app.use("/swagger-documentation",basicAuth({
-  users: {'social-app': 'info@123#'},
-  challenge: true,
-}), swaggerUi.serve, swaggerUi.setup(swaggerDocs, options));
+app.use("/swagger-documentation", swaggerUi.serve, swaggerUi.setup(swaggerDocs, options));
 
 app.get('/api-docs.json', (req, res) => {
   res.setHeader('Content-Type', 'application/json');
