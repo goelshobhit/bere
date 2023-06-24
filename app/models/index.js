@@ -389,6 +389,7 @@ db.brandscore_engagement_type.hasMany(db.brandscore_engagement_settings, {foreig
 db.brandscore_increase.belongsTo(db.brands, {foreignKey: 'brand_id', targetKey: 'cr_co_id'});
 db.brandscore_increase.belongsTo(db.user_profile, {foreignKey: 'user_id', targetKey: 'u_id'});
 db.user_wallets.belongsTo(db.users, {foreignKey: 'userId', targetKey: 'u_id'});
+db.user_transactions.belongsTo(db.users, {foreignKey: 'user_id', targetKey: 'u_id'});
 //db.brandscore_increase.belongsTo(db.tasks, {foreignKey: 'event_id', targetKey: 'ta_task_id'});
 db.brandscore_increase.belongsTo(db.brandscore_engagement_type, {foreignKey: 'event_engagement_id', targetKey: 'engagement_id'});
 
