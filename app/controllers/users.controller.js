@@ -1,5 +1,6 @@
 const db = require("../models");
 const Users = db.users;
+const TransactionModel = db.user_transactions;
 const crypto = require("crypto");
 const User_profile = db.user_profile;
 const User_social_ext = db.user_social_ext;
@@ -5609,5 +5610,5 @@ exports.logTransactions = async (req, res) => {
     return responses.internalServer(res);
   }
 
-  res.send({message:'Transaction Created'})
+  res.send({ message: "Transaction Created" });
 };

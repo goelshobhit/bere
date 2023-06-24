@@ -9,10 +9,10 @@ module.exports = (sequelize, Sequelize) => {
         defaultValue: nanoid(10),
         allowNull: false,
       },
-      stripe_transactionId: {
+      stripe_transaction_id: {
         type: Sequelize.STRING,
       },
-      userId: {
+      user_id: {
         type: Sequelize.INTEGER,
         allowNull: false,
       },

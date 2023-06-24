@@ -166,6 +166,7 @@ db.brandscore_increase = require("./brandscore_increase.model")(sequelize, Seque
 db.additional_info_heading = require("./additional_info_heading.model")(sequelize, Sequelize);
 db.additional_info_data = require("./additional_info_data.model")(sequelize, Sequelize);
 db.user_wallets = require("./wallets.model")(sequelize, Sequelize);
+db.user_transactions = require("./transaction.model")(sequelize, Sequelize);
 
 //Relations
 db.users.hasMany(db.bonus_ticket, {foreignKey: 'u_id', targetKey: 'bonus_ticket_usrid'});
