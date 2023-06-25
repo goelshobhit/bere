@@ -6,7 +6,7 @@ module.exports = (sequelize, Sequelize) => {
       id: {
         type: Sequelize.STRING,
         primaryKey: true,
-        defaultValue: nanoid(10),
+        defaultValue: () => nanoid(10),
         allowNull: false,
       },
       userId: {
