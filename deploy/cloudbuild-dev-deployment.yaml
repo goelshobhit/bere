@@ -1,0 +1,10 @@
+steps:
+    # build the container image
+    - name: 'gcr.io/cloud-builders/docker'
+      args: [ 'build', '-t', 'gcr.io/${PROJECT_ID}/social-app-development', '.' ]
+    # push the container image to gcr
+    - name: 'gcr.io/cloud-builders/docker'
+      args: [ 'push', 'gcr.io/${PROJECT_ID}/social-app-development']
+      # Deploy container image to Cloud Run
+    - name: "gcr.io/cloud-builders/gcloud"
+      args: ['run', 'deploy', 'social-app-development', '--image', 'gcr.io/${PROJECT_ID}/social-app-development', '--region', 'us-central1', '--platform', 'managed', '--allow-unauthenticated']

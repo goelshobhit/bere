@@ -142,6 +142,7 @@ app.use("/swagger-documentation",basicAuth({
   challenge: true,
 }), swaggerUi.serve, swaggerUi.setup(swaggerDocs, options));
 
+
 app.get('/api-docs.json', (req, res) => {
   res.setHeader('Content-Type', 'application/json');
   res.send(swaggerDocs);

@@ -1,3 +1,5 @@
+const { body } = require("express-validator");
+const validator = require("../helpers/validator");
 module.exports = (app) => {
   const Users = require("../controllers/users.controller.js");
   const test = require("../controllers/test.js");
@@ -72,7 +74,109 @@ module.exports = (app) => {
    *                              example: Authorisation Required
    */
   router.post("/users", Users.createNewUser);
-  router.post("/users/v1", Users.createNewUserv1);
+
+  /**
+   * @swagger
+   * /api/users/v1:
+   *   post:
+   *     requestBody:
+   *        required: false
+   *        content:
+   *            application/json:
+   *                schema:
+   *                    type: object
+   *                    properties:
+   *                        username:
+   *                            type: string
+   *                        display_name:
+   *                            type: string
+   *                        first_name:
+   *                            type: string
+   *                        last_name:
+   *                            type: string
+   *                        password:
+   *                            type: string
+   *                        email:
+   *                            type: string
+   *                        date_of_birth:
+   *                            type: string
+   *                        country_code:
+   *                            type: string
+   *                        phonenumber:
+   *                            type: string
+   *                        facebook_handle:
+   *                            type: string
+   *                        twitter_handle:
+   *                            type: string
+   *                        pinterest_handle:
+   *                            type: integer
+   *                        instagram_handle:
+   *                            type: string
+   *                        tiktok_handle:
+   *                            type: string
+   *                        snapchat_handle:
+   *                            type: string
+   *                        status:
+   *                            type: boolean
+   *                        user_type:
+   *                            type: string
+   *                            example: "Normal,Fb,Gmail,Ymail,Instagram"
+   *                        referer_id:
+   *                            type: string
+   *                        address:
+   *                            type: string
+   *                        city:
+   *                            type: string
+   *                        zipcode:
+   *                            type: string
+   *                        state:
+   *                            type: string
+   *                        country:
+   *                            type: string
+   *                        account_type:
+   *                            type: string
+   *                        account_section:
+   *                            type: string
+   *                        bio:
+   *                            type: string
+   *                        job_title:
+   *                            type: string
+   *     tags:
+   *       - Users
+   *     description: Add new user
+   *     produces:
+   *       - application/json
+   *     responses:
+   *       201:
+   *         description: Add new user
+   *       422:
+   *         description: validation errors
+   *       500:
+   *         description: Internal server error
+   *       401:
+   *          description: Unauthorized
+   *          content:
+   *              application/json:
+   *                  schema:
+   *                      type: object
+   *                      properties:
+   *                          message:
+   *                              type: string
+   *                              example: Authorisation Required
+   */
+
+  router.post("/users/v1", [
+    [
+      body("username").exists().trim(),
+      body("email").exists().trim(),
+      body("password").exists().trim(),
+      body("display_name").exists().trim(),
+      body("first_name").optional().trim(),
+      body("last_name").optional().trim(),
+      validator,
+    ],
+    Users.registerUser,
+  ]);
   /**
    * @swagger
    * /api/users:
@@ -194,6 +298,31 @@ module.exports = (app) => {
    *                              example: Authorisation Required
    */
   router.get("/user_details/:userID", auth, Users.userDetailForAdmin);
+
+  /**
+   * @swagger
+   * /api/user/details:
+   *   get:
+   *     tags:
+   *       - Users
+   *     description: Retrieve a single User details to use in CMS
+   *     produces:
+   *       - application/json
+   *     responses:
+   *       200:
+   *         description: Details of a User details
+   *       401:
+   *          description: Unauthorized
+   *          content:
+   *              application/json:
+   *                  schema:
+   *                      type: object
+   *                      properties:
+   *                          message:
+   *                              type: string
+   *                              example: Authorisation Required
+   */
+  router.get("/user/details", auth, Users.getMyDetails);
 
   /**
    * @swagger
@@ -742,7 +871,10 @@ module.exports = (app) => {
    *       200:
    *         description: Exit
    */
-  router.post("/users/send_email_verify", Users.emailVerifyMail);
+  router.post("/users/send_email_verify", [
+    [body("email").exists().trim(), validator],
+    Users.emailVerifyMail,
+  ]);
   /**
    * @swagger
    * /api/users/verify_email/{verifyToken}:
@@ -766,6 +898,38 @@ module.exports = (app) => {
    *         description: verified
    */
   router.get("/users/verify_email/:verifyToken", Users.verifyEmail);
+
+  /**
+   * @swagger
+   * /api/users/verify_email_otp:
+   *   post:
+   *     requestBody:
+   *        required: true
+   *        content:
+   *            application/json:
+   *                schema:
+   *                    type: object
+   *                    properties:
+   *                        email:
+   *                            type: string
+   *                        otp:
+   *                            type: integer
+   *     tags:
+   *       - Users
+   *     description: check email
+   *     security:  []
+   *     produces:
+   *       - application/json
+   *     responses:
+   *       400:
+   *         description: Not Exit
+   *       200:
+   *         description: Exit
+   */
+  router.post("/users/verify_email_otp", [
+    [body("email").exists().trim(), body("otp").exists().trim(), validator],
+    Users.verifyEmailOTP,
+  ]);
 
   /**
    * @swagger
@@ -1181,6 +1345,63 @@ module.exports = (app) => {
     "/user_deactivate_hide_account/:userID",
     auth,
     Users.userDeactivateOrHide
+  );
+
+  /**
+   * @swagger
+   * /api/user/wallet:
+   *   post:
+   *     requestBody:
+   *        required: false
+   *        content:
+   *            application/json:
+   *                schema:
+   *                    type: object
+   *                    properties:
+   *                        wallet_id:
+   *                            type: string
+   *                            example: "dkfn2asdsa"
+   *     parameters:
+   *         - name: wallet_id
+   *           in: body
+   *           required: true
+   *           schema:
+   *              type: string
+   *     tags:
+   *       - Users
+   *     description: Add User Wallet
+   *     produces:
+   *       - application/json
+   *     responses:
+   *       201:
+   *         description: Successfully added user wallet
+   *       422:
+   *         description: validation errors
+   *       500:
+   *         description: Internal server error
+   *       401:
+   *          description: Unauthorized
+   *          content:
+   *              application/json:
+   *                  schema:
+   *                      type: object
+   *                      properties:
+   *                          message:
+   *                              type: string
+   *                              example: Authorisation Required
+   */
+
+  router.post(
+    "/user/wallet",
+    [body("wallet_id").exists().trim(), validator],
+    auth,
+    Users.addWallet
+  );
+
+  router.post(
+    "/user/transactions",
+    auth,
+    Users.logTransactions
   );
 
   app.use("/api", router);

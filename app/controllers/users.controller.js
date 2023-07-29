@@ -1,5 +1,6 @@
 const db = require("../models");
 const Users = db.users;
+const TransactionModel = db.user_transactions;
 const crypto = require("crypto");
 const User_profile = db.user_profile;
 const User_social_ext = db.user_social_ext;
@@ -7,6 +8,7 @@ const Posts = db.user_content_post;
 const adminSetting = db.admin_setting;
 const mail_templates = db.mail_templates;
 const accountBalance = db.account_balance;
+const WalletModel = db.user_wallets;
 const ledgerTransactions = db.ledger_transactions;
 const mandrillapp = require("../middleware/mandrillapp.js");
 const mailer = require("../middleware/mailer.js");
@@ -19,8 +21,10 @@ const userFF = db.user_fan_following;
 const Cryptr = require("cryptr");
 const cryptr = new Cryptr("socialappAPI");
 const { QueryTypes } = require("sequelize");
-var moment = require("moment"); // require
-
+const _ = require("lodash");
+const generate = require("../helpers/generate");
+const moment = require("moment/moment");
+const responses = require("../helpers/responses");
 const setSaltAndPassword = (user) => {
   if (user.changed("u_pass")) {
     user.u_salt = Users.generateSalt();
@@ -37,6 +41,450 @@ Users.beforeUpdate(setSaltAndPassword);
  * @param  {object}  res expressJs response object
  * @return {Promise}
  */
+exports.registerUser = async (req, res, next) => {
+  const body = req.body;
+
+  let {
+    username,
+    display_name,
+    first_name,
+    last_name,
+    password,
+    email,
+    date_of_birth = "",
+    phonenumber = "",
+    facebook_handle = [],
+    pinterest_handle = [],
+    instagram_handle = [],
+    tiktok_handle = [],
+    twitter_handle = [],
+    snapchat_handle = [],
+    status = true,
+    user_type = "Normal",
+    referer_id = 0,
+    address = "",
+    city = "",
+    zipcode = "",
+    state = "",
+    country = "",
+    bio = "",
+    job_title = "",
+    account_type = 0,
+    referral_code = "",
+    account_section = 0,
+  } = req.body;
+
+  date_of_birth = date_of_birth
+    ? moment(date_of_birth).format("DD/MM/YYYY")
+    : "";
+
+  const login_type = user_type;
+
+  if (referral_code) {
+    try {
+      const referrerUser = await Users.findOne({
+        where: {
+          u_login: referral_code,
+        },
+      });
+
+      if (!referrerUser) {
+        referral_code = "";
+      }
+    } catch (error) {
+      return next(error);
+    }
+  }
+
+  if (login_type == "Instagram") {
+    let UserDetails;
+
+    try {
+      UserDetails = await Users.findOne({
+        where: {
+          u_instagram_id: req.body["Instagram id"],
+        },
+        attributes: ["u_id"],
+      });
+    } catch (error) {
+      return next(error);
+    }
+
+    if (UserDetails) {
+      try {
+        const existingUser = await Users.findOne({
+          include: [
+            {
+              model: db.user_profile,
+            },
+            {
+              model: db.user_social_ext,
+            },
+            {
+              model: db.user_content_post,
+              attributes: ["ta_task_id"],
+              where: {
+                ucpl_status: `1`,
+              },
+              required: false,
+            },
+          ],
+          attributes: [
+            "u_id",
+            "u_referer_id",
+            "u_acct_type",
+            "u_act_sec",
+            "u_email",
+            "u_active",
+            "u_fb_username",
+            "u_fb_id",
+            "u_gmail_username",
+            "u_gmail_id",
+            "u_ymail_username",
+            "u_ymail_id",
+            "u_pref_login",
+            "u_instagram_username",
+            "u_instagram_id",
+            "u_created_at",
+            "u_updated_at",
+            "u_email_verify_status",
+          ],
+          where: {
+            u_id: UserDetails.u_id,
+          },
+        });
+        return res.status(200).send({
+          message: "Already Registered",
+          data: existingUser,
+          access_token: common.generateToken(UserDetails.u_id),
+          media_token: common.imageToken(UserDetails.u_id),
+        });
+      } catch (error) {
+        return next(error);
+      }
+    }
+  }
+  if (login_type == "Normal" || login_type == "Gmail") {
+    let UserDetails;
+
+    try {
+      UserDetails = await Users.findOne({
+        where: {
+          u_email: email.toLowerCase(),
+        },
+      });
+    } catch (error) {
+      return next(error);
+    }
+
+    if (UserDetails) {
+      return res.status(200).send({
+        message: "Already Registered",
+      });
+    }
+  }
+  //   if (login_type == "Ymail") {
+  //     const UserDetails = await Users.findOne({
+  //       where: {
+  //         u_ymail_id: req.body["Ymail id"],
+  //       },
+  //     });
+  //     if (UserDetails) {
+  //       res.status(200).send({
+  //         message: "Already Registered",
+  //       });
+  //       return;
+  //     }
+  //   }
+
+  let template;
+
+  try {
+    template = await mail_templates.findOne({
+      where: {
+        mt_name: "verify_email",
+      },
+    });
+  } catch (error) {
+    return res.status(500).send({
+      message: "Internal Server Error",
+    });
+  }
+
+  let UserDetails;
+
+  try {
+    UserDetails = await Users.findOne({
+      where: {
+        [Op.or]: [
+          {
+            u_login: req.body["username"].toLowerCase(),
+          },
+          {
+            u_login: req.body["username"],
+          },
+        ],
+      },
+    });
+  } catch (error) {
+    return next(error);
+  }
+
+  if (UserDetails) {
+    return res.status(400).send({
+      message: "Username Already Exist",
+    });
+  }
+
+  let referralLink;
+
+  try {
+    referralLink = generate.referralLink(username);
+  } catch (error) {
+    return next(error);
+  }
+
+  const data = {
+    u_acct_type: account_type || 0,
+    u_referer_id: referer_id,
+    u_display_name: display_name,
+    u_first_name: first_name,
+    u_last_name: last_name,
+    u_act_sec: account_section,
+    u_login: username,
+    u_pass: password,
+    u_email: email ? email.toLowerCase() : "",
+    au_salt: Users.generateSalt(),
+    u_active: status,
+    u_facebook_handle: _.get(facebook_handle, "[0]", ""),
+    u_instagram_handle: _.get(instagram_handle, "[0]", ""),
+    u_tiktok_handle: _.get(tiktok_handle, "[0]", ""),
+    u_twitter_handle: _.get(twitter_handle, "[0]", ""),
+    u_snapchat_handle: _.get(snapchat_handle, "[0]", ""),
+    u_pinterest_handle: _.get(pinterest_handle, "[0]", ""),
+    city,
+    country,
+    state,
+    bio,
+    job_title,
+    u_date_of_birth: date_of_birth,
+    referral_link: referralLink,
+    referral_code,
+  };
+  console.log("User data: " + JSON.stringify(data));
+
+  let userRecord;
+
+  try {
+    userRecord = await Users.create(data);
+  } catch (error) {
+    return next(error);
+  }
+
+  console.log("Successfully created the user : ", userRecord);
+  let accountRecord;
+  try {
+    accountRecord = await accountBalance.create({
+      ac_user_id: userRecord.u_id,
+      ac_balance: 0,
+      ac_balance_stars: 0,
+      ac_account_no: "",
+    });
+  } catch (error) {
+    return next(error);
+  }
+
+  console.log(
+    "Successfully created the account balance for the user : ",
+    accountRecord
+  );
+  let u_dob = date_of_birth ? date_of_birth.split("/") : null;
+  let userProfileRecord;
+  try {
+    userProfileRecord = await User_profile.create({
+      u_id: userRecord.u_id,
+      u_display_name: display_name,
+      u_profile_name: null,
+      u_f_name: first_name,
+      u_l_name: last_name,
+      u_dob: date_of_birth,
+      u_dob_d: u_dob ? u_dob[0] : null,
+      u_dob_m: u_dob ? u_dob[1] : null,
+      u_dob_y: u_dob ? u_dob[2] : null,
+      u_gender: null,
+      u_address: address,
+      u_city: city,
+      u_state: state,
+      u_country: country,
+      u_zipcode: zipcode,
+      u_prof_img_path: null,
+      u_phone: phonenumber,
+      u_phone_verify_status: true,
+    });
+  } catch (error) {
+    return next(error);
+  }
+
+  console.log(
+    "Successfully created the user profile for the user : ",
+    userProfileRecord
+  );
+
+  try {
+    let userSocialRecord = await User_social_ext.create({
+      u_id: userRecord.u_id,
+      instagram_handle:
+        instagram_handle.length > 0
+          ? instagram_handle.map((id) => `https://www.instagram.com/${id}`)
+          : [],
+      twitter_handle:
+        twitter_handle.length > 0
+          ? twitter_handle.map((id) => `https://www.twitter.com/${id}`)
+          : [],
+      facebook_handle:
+        facebook_handle.length > 0
+          ? facebook_handle.map((id) => `https://www.facebook.com/${id}`)
+          : [],
+      pinterest_handle:
+        pinterest_handle.length > 0
+          ? pinterest_handle.map((id) => `https://www.pinterest.com/${id}`)
+          : [],
+      snapchat_handle:
+        snapchat_handle.length > 0
+          ? snapchat_handle.map((id) => `https://www.snapchat.com/add/${id}`)
+          : [],
+      tiktok_handle:
+        tiktok_handle.length > 0
+          ? tiktok_handle.map((id) => `https://www.tiktok.com/${id}`)
+          : [],
+
+      use_u_instagram_link: body.hasOwnProperty("User instagram name")
+        ? "https://www.instagram.com/" + req.body["User instagram name"]
+        : "",
+      use_u_facebook_link: body.hasOwnProperty("User fb name")
+        ? "https://www.facebook.com/" + req.body["User fb name"]
+        : "",
+      show_facebook: body.hasOwnProperty("User fb name") ? true : false,
+      show_instagram: body.hasOwnProperty("User instagram name") ? true : false,
+    });
+    console.log(
+      "Successfully added social account handles: ",
+      userSocialRecord
+    );
+  } catch (error) {
+    return next(error);
+  }
+
+  audit_log.saveAuditLog(
+    userRecord.u_id,
+    "add",
+    "user_login",
+    userRecord.u_id,
+    userRecord.dataValues
+  );
+  if (email) {
+    try {
+      const encryptedID = cryptr.encrypt(userRecord.u_id);
+      const vlink =
+        process.env.SITE_API_URL + "users/verify_email/" + encryptedID;
+      var templateBody = template.mt_body;
+      templateBody = templateBody.replace("[CNAME]", email);
+      templateBody = templateBody.replace("[VLINK]", vlink);
+      const message = {
+        from: "Socialbrands1@gmail.com",
+        to: email,
+        subject: template.mt_subject,
+        html: templateBody,
+      };
+      mailer.sendMail(message);
+    } catch (error) {
+      console.log(
+        "Error occured while sending verification email ",
+        error.message
+      );
+    }
+  }
+  res.status(201).send({
+    message: "User Added Successfully",
+    user_details: userRecord,
+    access_token: common.generateToken(userRecord.u_id),
+    media_token: common.imageToken(userRecord.u_id),
+  });
+};
+
+exports.getMyDetails = async (req, res, next) => {
+  const user_id = req.header(process.env.UKEY_HEADER || "x-api-key");
+
+  let UserDetails;
+  try {
+    UserDetails = await Users.findOne({
+      include: [
+        {
+          model: db.user_profile,
+        },
+        {
+          model: db.user_social_ext,
+        },
+        {
+          model: db.user_content_post,
+          attributes: ["ta_task_id"],
+          where: {
+            ucpl_status: `1`,
+          },
+          required: false,
+        },
+      ],
+      attributes: [
+        "u_id",
+        "u_referer_id",
+        "u_acct_type",
+        "u_act_sec",
+        "u_email",
+        "u_active",
+        "u_fb_username",
+        "u_fb_id",
+        "u_gmail_username",
+        "u_gmail_id",
+        "u_ymail_username",
+        "u_ymail_id",
+        "u_pref_login",
+        "u_instagram_username",
+        "u_instagram_id",
+        "u_created_at",
+        "u_updated_at",
+        "u_email_verify_status",
+        "is_user_deactivated",
+        "is_user_hidden",
+        "referral_code",
+        "referral_link",
+        "job_title",
+        "bio",
+      ],
+      where: {
+        u_id: user_id,
+      },
+    });
+  } catch (error) {
+    return next(error);
+  }
+
+  if (!UserDetails) {
+    const error = new Error("User not found");
+    error.statusCode = 404;
+    return next(error);
+  }
+  /* Account Deactivated Check */
+  if (UserDetails.is_user_deactivated == 1) {
+    const error = new Error("Your account is deactivated");
+    error.statusCode = 404;
+    return next(error);
+  }
+
+  res.status(200).send({
+    message: "User Details Fetched Successfully",
+    data: UserDetails,
+  });
+};
 
 exports.createNewUser = async (req, res) => {
   const body = req.body;
@@ -3572,6 +4020,7 @@ exports.updateUser = async (req, res) => {
  */
 exports.updateUserProfile = async (req, res) => {
   const id = parseInt(req.params.userID);
+  const { bio, job_title, ...rest } = req.body;
 
   if (!id) {
     res.status(404).send({
@@ -3579,6 +4028,31 @@ exports.updateUserProfile = async (req, res) => {
     });
     return;
   }
+
+  const dbUser = await Users.findOne({
+    where: {
+      u_id: id,
+    },
+  });
+
+  if (bio !== undefined || bio !== null) {
+    dbUser.bio = bio;
+    try {
+      dbUser.save();
+    } catch (error) {
+      return next(error);
+    }
+  }
+
+  if (job_title !== undefined || job_title !== null) {
+    dbUser.job_title = job_title;
+    try {
+      dbUser.save();
+    } catch (error) {
+      return next(error);
+    }
+  }
+
   if (req.body.u_display_name) {
     const UserDetails = await Users.findOne({
       where: {
@@ -3596,10 +4070,9 @@ exports.updateUserProfile = async (req, res) => {
       (UserDetails && UserDetails.u_id !== id) ||
       (Userprofile && Userprofile.u_id !== id)
     ) {
-      res.status(200).send({
+      return res.status(400).send({
         message: "username already Exist",
       });
-      return;
     } else {
       Users.update(
         { u_login: req.body.u_display_name },
@@ -3646,76 +4119,77 @@ exports.updateUserProfile = async (req, res) => {
       u_id: id,
     },
   });
-  User_profile.update(req.body, {
-    returning: true,
-    where: {
-      u_id: id,
-    },
-  })
-    .then(function ([num, [result]]) {
-      if (num == 1) {
-        audit_log.saveAuditLog(
-          req.header(process.env.UKEY_HEADER || "x-api-key"),
-          "update",
-          "user_profile",
-          id,
-          result.dataValues,
-          UserDetails
-        );
-        Users.findOne({
-          include: [
-            {
-              model: db.user_profile,
-            },
-            {
-              model: db.user_social_ext,
-            },
-          ],
-          attributes: [
-            "u_id",
-            "u_referer_id",
-            "u_acct_type",
-            "u_act_sec",
-            "u_email",
-            "u_active",
-            "u_fb_username",
-            "u_fb_id",
-            "u_gmail_username",
-            "u_gmail_id",
-            "u_ymail_username",
-            "u_ymail_id",
-            "u_pref_login",
-            "u_instagram_username",
-            "u_instagram_id",
-            "u_created_at",
-            "u_updated_at",
-            "u_email_verify_status",
-          ],
-          where: {
-            u_id: id,
-          },
-        }).then((userData) => {
-          return res.status(200).send({
-            message: "User details updated successfully.",
-            data: userData,
-            access_token: common.generateToken(id),
-            media_token: common.imageToken(id),
-            otp: otp ? otp : null,
-          });
-        });
-      } else {
-        res.status(400).send({
-          message: `Cannot update Users with id=${id}. Maybe User was not found or req.body is empty!`,
-        });
-      }
-    })
-    .catch((err) => {
-      logger.log("error", err + ":updating User profile with id=" + id);
-      res.status(500).send({
-        message: "Error updating User with id=" + id,
-      });
-      return;
+
+  try {
+    const [num, [result]] = await User_profile.update(rest, {
+      returning: true,
+      where: {
+        u_id: id,
+      },
     });
+
+    if (num == 1) {
+      audit_log.saveAuditLog(
+        req.header(process.env.UKEY_HEADER || "x-api-key"),
+        "update",
+        "user_profile",
+        id,
+        result.dataValues,
+        UserDetails
+      );
+      const userData = await Users.findOne({
+        include: [
+          {
+            model: db.user_profile,
+          },
+          {
+            model: db.user_social_ext,
+          },
+        ],
+        attributes: [
+          "u_id",
+          "u_referer_id",
+          "u_acct_type",
+          "u_act_sec",
+          "u_email",
+          "u_active",
+          "u_fb_username",
+          "u_fb_id",
+          "u_gmail_username",
+          "u_gmail_id",
+          "u_ymail_username",
+          "u_ymail_id",
+          "u_pref_login",
+          "u_instagram_username",
+          "u_instagram_id",
+          "u_created_at",
+          "u_updated_at",
+          "u_email_verify_status",
+          "bio",
+          "job_title",
+        ],
+        where: {
+          u_id: id,
+        },
+      });
+      return res.status(200).send({
+        message: "User details updated successfully.",
+        data: userData,
+        access_token: common.generateToken(id),
+        media_token: common.imageToken(id),
+        otp: otp ? otp : null,
+      });
+    } else {
+      res.status(400).send({
+        message: `Cannot update Users with id=${id}. Maybe User was not found or req.body is empty!`,
+      });
+    }
+  } catch (err) {
+    logger.log("error", err + ":updating User profile with id=" + id);
+    return res.status(500).send({
+      message: "Error updating User with id=" + id,
+    });
+  }
 };
 /**
  * Function to update user social ext
@@ -3941,6 +4415,10 @@ exports.userlogin = async (req, res) => {
       "u_email_verify_status",
       "is_user_deactivated",
       "is_user_hidden",
+      "referral_code",
+      "referral_link",
+      "job_title",
+      "bio",
     ],
     where: {
       u_id: uID,
@@ -4243,7 +4721,7 @@ exports.checkUserExits = async (req, res) => {
       } catch (error) {
         console.log(error);
       }
-      res.status(200).send({
+      res.status(201).send({
         message: "Already Exist and not verified",
       });
       return;
@@ -4292,56 +4770,62 @@ exports.checkUserNameExists = async (req, res) => {
  * @param  {[object]}  res response object
  * @return {Promise}
  */
-exports.emailVerifyMail = async (req, res) => {
-  const UserDetails = await Users.findOne({
-    where: {
-      u_email: req.body["email"].toLowerCase(),
-    },
-    attributes: ["u_id", "u_email_verify_status"],
-  });
-  if (UserDetails) {
-    if (UserDetails.u_email_verify_status) {
-      res.status(200).send({
-        message: "Already verified",
-      });
-      return;
-    } else {
-      try {
-        const template = await mail_templates.findOne({
-          where: {
-            mt_name: "verify_email",
-          },
-        });
-
-        const encryptedID = cryptr.encrypt(UserDetails.u_id);
-        const vlink =
-          process.env.SITE_API_URL + "users/verify_email/" + encryptedID;
-        var templateBody = template.mt_body;
-        templateBody = templateBody.replace("[CNAME]", req.body["email"]);
-        templateBody = templateBody.replace("[VLINK]", vlink);
-        const message = {
-          from: "Socialbrands1@gmail.com",
-          to: req.body["email"],
-          subject: template.mt_subject,
-          html: templateBody,
-        };
-        mailer.sendMail(message);
-      } catch (error) {
-        res.status(500).send({
-          message: "Email error",
-        });
-        return;
-      }
-      res.status(200).send({
-        message: "Email send",
-      });
-      return;
-    }
-  } else {
-    res.status(400).send({
-      message: "Not Exist",
+exports.emailVerifyMail = async (req, res, next) => {
+  let UserDetails;
+  try {
+    UserDetails = await Users.findOne({
+      where: {
+        u_email: req.body["email"].toLowerCase(),
+      },
+      attributes: ["u_id", "u_email_verify_status"],
     });
-    return;
+  } catch (error) {
+    return next(error);
+  }
+
+  if (!UserDetails) {
+    const error = new Error("User not found");
+    error.statusCode = 404;
+    return next(error);
+  }
+
+  if (UserDetails.u_email_verify_status) {
+    return res.status(200).send({
+      message: "Already verified",
+    });
+  } else {
+    try {
+      const template = await mail_templates.findOne({
+        where: {
+          mt_name: "verify_email",
+        },
+      });
+      const otp = Math.floor(100000 + Math.random() * 900000);
+      const encryptedID = cryptr.encrypt(UserDetails.u_id);
+      const vlink =
+        process.env.SITE_API_URL + "users/verify_email/" + encryptedID;
+      var templateBody = template.mt_body;
+      templateBody = templateBody.replace("[CNAME]", req.body["email"]);
+      templateBody = templateBody.replace("[VLINK]", vlink);
+      templateBody = templateBody.replace("[OTP]", otp);
+
+      try {
+        UserDetails.u_email_otp = otp;
+        await UserDetails.save();
+      } catch (error) {}
+      const message = {
+        from: "care@riddim.com",
+        to: req.body["email"],
+        subject: template.mt_subject,
+        html: templateBody,
+      };
+      await mailer.sendMail(message);
+    } catch (error) {
+      return next(error);
+    }
+    return res.status(200).send({
+      message: "Email send",
+    });
   }
 };
 exports.verifyEmail = async (req, res) => {
@@ -4380,6 +4864,42 @@ exports.verifyEmail = async (req, res) => {
     });
     return;
   }
+};
+
+exports.verifyEmailOTP = async (req, res, next) => {
+  const { email, otp } = req.body;
+  let UserDetails;
+  try {
+    UserDetails = await Users.findOne({
+      where: {
+        u_email: email.toLowerCase(),
+      },
+      attributes: ["u_id", "u_email_verify_status", "u_email_otp"],
+    });
+  } catch (error) {
+    return next(error);
+  }
+
+  if (!UserDetails) {
+    const error = new Error("User not found");
+    error.statusCode = 404;
+    return next(error);
+  }
+
+  if (+UserDetails.u_email_otp !== +otp) {
+    const error = new Error("Invalid OTP");
+    error.statusCode = 400;
+    return responses.error(res, error);
+  }
+
+  try {
+    UserDetails.u_email_verify_status = true;
+    await UserDetails.save();
+  } catch (error) {
+    return next(error);
+  }
+
+  res.send({ message: "OTP varified successfully" });
 };
 /**
  * [check email or phone exits
@@ -5020,4 +5540,75 @@ exports.userDeactivateOrHide = async (req, res) => {
         return;
       });
   }
+};
+
+exports.addWallet = async (req, res) => {
+  const user_id = req.header(process.env.UKEY_HEADER || "x-api-key");
+
+  const { wallet_id } = req.body;
+  let dbUser;
+
+  try {
+    dbUser = await Users.findOne({ where: { u_id: user_id } });
+  } catch (error) {
+    console.log(error);
+    return responses.internalServer(res);
+  }
+
+  if (!dbUser) {
+    const error = new Error("User does not exist");
+    error.statusCode = 404;
+    return responses.error(res, error);
+  }
+
+  let dbWallet;
+
+  try {
+    dbWallet = await WalletModel.findOne({ where: { userId: user_id } });
+  } catch (error) {
+    return responses.internalServer(res);
+  }
+
+  if (!dbWallet) {
+    const walletObj = {
+      userId: user_id,
+      userEmail: dbUser.u_email,
+      wallet_ids: _.concat([], wallet_id),
+    };
+
+    try {
+      await WalletModel.create(walletObj);
+    } catch (error) {
+      console.log(error);
+      return responses.internalServer(res);
+    }
+  } else {
+    let walletIds = _.get(dbWallet, "wallet_ids", []);
+
+    const userAlreadyHasSameWalletId = _.includes(walletIds, wallet_id);
+
+    if (!userAlreadyHasSameWalletId) {
+      walletIds = _.concat(walletIds, wallet_id);
+      try {
+        dbWallet.wallet_ids = walletIds;
+        await dbWallet.save();
+      } catch (error) {
+        return responses.internalServer(res);
+      }
+    }
+  }
+
+  res.send({ message: "wallet has been added" });
+};
+
+exports.logTransactions = async (req, res) => {
+  const data = req.body;
+
+  try {
+    await TransactionModel.create(data);
+  } catch (error) {
+    return responses.internalServer(res);
+  }
+
+  res.send({ message: "Transaction Created" });
 };

@@ -165,6 +165,8 @@ db.brandscore_increase = require("./brandscore_increase.model")(sequelize, Seque
 
 db.additional_info_heading = require("./additional_info_heading.model")(sequelize, Sequelize);
 db.additional_info_data = require("./additional_info_data.model")(sequelize, Sequelize);
+db.user_wallets = require("./wallets.model")(sequelize, Sequelize);
+db.user_transactions = require("./transaction.model")(sequelize, Sequelize);
 
 //Relations
 db.users.hasMany(db.bonus_ticket, {foreignKey: 'u_id', targetKey: 'bonus_ticket_usrid'});
@@ -386,6 +388,8 @@ db.brandscore_engagement_settings.belongsTo(db.brandscore_engagement_type, {fore
 db.brandscore_engagement_type.hasMany(db.brandscore_engagement_settings, {foreignKey: 'engagement_id', targetKey: 'engagement_id'});
 db.brandscore_increase.belongsTo(db.brands, {foreignKey: 'brand_id', targetKey: 'cr_co_id'});
 db.brandscore_increase.belongsTo(db.user_profile, {foreignKey: 'user_id', targetKey: 'u_id'});
+db.user_wallets.belongsTo(db.users, {foreignKey: 'userId', targetKey: 'u_id'});
+db.user_transactions.belongsTo(db.users, {foreignKey: 'user_id', targetKey: 'u_id'});
 //db.brandscore_increase.belongsTo(db.tasks, {foreignKey: 'event_id', targetKey: 'ta_task_id'});
 db.brandscore_increase.belongsTo(db.brandscore_engagement_type, {foreignKey: 'event_engagement_id', targetKey: 'engagement_id'});
 
