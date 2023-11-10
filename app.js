@@ -84,7 +84,7 @@ async function setupDbSeederAndMigrations() {
 }
 
 // call the async function to setup DB
-setupDbSeederAndMigrations();
+// setupDbSeederAndMigrations();
 // Extended: https://swagger.io/specification/#infoObject
 const swaggerOptions = {
   swaggerDefinition: {
